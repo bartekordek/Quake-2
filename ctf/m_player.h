@@ -1,3 +1,6 @@
+#ifndef ____CTF_M_PLAYER_H__
+#define ____CTF_M_PLAYER_H__
+
 /*
 Copyright (C) 1997-2001 Id Software, Inc.
 
@@ -223,3 +226,5 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define MODEL_SCALE		1.000000
 
 
+
+#endif // ____CTF_M_PLAYER_H__

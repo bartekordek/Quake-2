@@ -1,5 +1,9 @@
+#ifndef ____WIN32_WINQUAKE_H__
+#define ____WIN32_WINQUAKE_H__
+
 /*
 Copyright (C) 1997-2001 Id Software, Inc.
+
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -8,7 +12,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -42,3 +46,5 @@ void IN_MouseEvent (int mstate);
 
 extern int		window_center_x, window_center_y;
 extern RECT		window_rect;
+
+#endif // ____WIN32_WINQUAKE_H__

@@ -1,3 +1,6 @@
+#ifndef ____CLIENT_CLIENT_H__
+#define ____CLIENT_CLIENT_H__
+
 /*
 Copyright (C) 1997-2001 Id Software, Inc.
 
@@ -582,3 +585,5 @@ void x86_TimerStop( void );
 void x86_TimerInit( unsigned long smallest, unsigned longest );
 unsigned long *x86_TimerGetHistogram( void );
 #endif
+
+#endif // ____CLIENT_CLIENT_H__

@@ -1,3 +1,6 @@
+#ifndef ____REF_SOFT_ADIVTAB_H__
+#define ____REF_SOFT_ADIVTAB_H__
+
 /*
 Copyright (C) 1997-2001 Id Software, Inc.
 
@@ -1075,3 +1078,5 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 {1, 2},
 {1, 1},
 {1, 0},
+
+#endif // ____REF_SOFT_ADIVTAB_H__

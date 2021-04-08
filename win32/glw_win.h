@@ -1,3 +1,6 @@
+#ifndef ____WIN32_GLW_WIN_H__
+#define ____WIN32_GLW_WIN_H__
+
 /*
 Copyright (C) 1997-2001 Id Software, Inc.
 
@@ -45,3 +48,5 @@ typedef struct
 extern glwstate_t glw_state;
 
 #endif
+
+#endif // ____WIN32_GLW_WIN_H__

@@ -1,3 +1,6 @@
+#ifndef ____GAME_Q_SHARED_H__
+#define ____GAME_Q_SHARED_H__
+
 /*
 Copyright (C) 1997-2001 Id Software, Inc.
 
@@ -1198,3 +1201,5 @@ typedef struct
 extern int vidref_val;
 // PGM
 // ==================
+
+#endif // ____GAME_Q_SHARED_H__

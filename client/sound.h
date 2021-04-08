@@ -1,3 +1,6 @@
+#ifndef ____CLIENT_SOUND_H__
+#define ____CLIENT_SOUND_H__
+
 /*
 Copyright (C) 1997-2001 Id Software, Inc.
 
@@ -43,3 +46,5 @@ struct sfx_s *S_FindName (char *name, qboolean create);
 // the sound code makes callbacks to the client for entitiy position
 // information, so entities can be dynamically re-spatialized
 void CL_GetEntitySoundOrigin (int ent, vec3_t org);
+
+#endif // ____CLIENT_SOUND_H__

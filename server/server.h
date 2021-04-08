@@ -1,3 +1,6 @@
+#ifndef ____SERVER_SERVER_H__
+#define ____SERVER_SERVER_H__
+
 /*
 Copyright (C) 1997-2001 Id Software, Inc.
 
@@ -339,3 +342,5 @@ trace_t SV_Trace (vec3_t start, vec3_t mins, vec3_t maxs, vec3_t end, edict_t *p
 
 // passedict is explicitly excluded from clipping checks (normally NULL)
 
+
+#endif // ____SERVER_SERVER_H__

@@ -1,3 +1,6 @@
+#ifndef ____CLIENT_CONSOLE_H__
+#define ____CLIENT_CONSOLE_H__
+
 /*
 Copyright (C) 1997-2001 Id Software, Inc.
 
@@ -60,3 +63,5 @@ void Con_Clear_f (void);
 void Con_DrawNotify (void);
 void Con_ClearNotify (void);
 void Con_ToggleConsole_f (void);
+
+#endif // ____CLIENT_CONSOLE_H__

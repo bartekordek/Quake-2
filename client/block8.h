@@ -1,3 +1,6 @@
+#ifndef ____CLIENT_BLOCK8_H__
+#define ____CLIENT_BLOCK8_H__
+
 LEnter16_8:
 	movb	(%esi),%al
 	movb	(%esi,%ebx,),%cl
@@ -122,3 +125,5 @@ LBPatch15:
 	movb	%cl,1(%edi)
 	addl	$0x2,%edi
 
+
+#endif // ____CLIENT_BLOCK8_H__

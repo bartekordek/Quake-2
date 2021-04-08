@@ -1,3 +1,6 @@
+#ifndef ____CLIENT_KEYS_H__
+#define ____CLIENT_KEYS_H__
+
 /*
 Copyright (C) 1997-2001 Id Software, Inc.
 
@@ -144,3 +147,5 @@ void Key_SetBinding (int keynum, char *binding);
 void Key_ClearStates (void);
 int Key_GetKey (void);
 
+
+#endif // ____CLIENT_KEYS_H__

@@ -1,3 +1,6 @@
+#ifndef ____QCOMMON_QCOMMON_H__
+#define ____QCOMMON_QCOMMON_H__
+
 /*
 Copyright (C) 1997-2001 Id Software, Inc.
 
@@ -824,3 +827,5 @@ void SV_Frame (int msec);
 
 
 
+
+#endif // ____QCOMMON_QCOMMON_H__

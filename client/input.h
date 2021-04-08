@@ -1,3 +1,6 @@
+#ifndef ____CLIENT_INPUT_H__
+#define ____CLIENT_INPUT_H__
+
 /*
 Copyright (C) 1997-2001 Id Software, Inc.
 
@@ -32,3 +35,5 @@ void IN_Move (usercmd_t *cmd);
 // add additional movement on top of the keyboard move cmd
 
 void IN_Activate (qboolean active);
+
+#endif // ____CLIENT_INPUT_H__

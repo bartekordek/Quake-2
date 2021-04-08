@@ -1,3 +1,6 @@
+#ifndef ____GAME_G_LOCAL_H__
+#define ____GAME_G_LOCAL_H__
+
 /*
 Copyright (C) 1997-2001 Id Software, Inc.
 
@@ -1111,3 +1114,5 @@ struct edict_s
 	monsterinfo_t	monsterinfo;
 };
 
+
+#endif // ____GAME_G_LOCAL_H__

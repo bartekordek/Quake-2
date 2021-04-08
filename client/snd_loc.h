@@ -1,3 +1,6 @@
+#ifndef ____CLIENT_SND_LOC_H__
+#define ____CLIENT_SND_LOC_H__
+
 /*
 Copyright (C) 1997-2001 Id Software, Inc.
 
@@ -162,3 +165,5 @@ channel_t *S_PickChannel(int entnum, int entchannel);
 
 // spatializes a channel
 void S_Spatialize(channel_t *ch);
+
+#endif // ____CLIENT_SND_LOC_H__

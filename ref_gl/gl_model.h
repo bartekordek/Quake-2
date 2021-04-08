@@ -1,3 +1,6 @@
+#ifndef ____REF_GL_GL_MODEL_H__
+#define ____REF_GL_GL_MODEL_H__
+
 /*
 Copyright (C) 1997-2001 Id Software, Inc.
 
@@ -259,3 +262,5 @@ void	Hunk_Free (void *base);
 
 void	Mod_FreeAll (void);
 void	Mod_Free (model_t *mod);
+
+#endif // ____REF_GL_GL_MODEL_H__

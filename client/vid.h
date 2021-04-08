@@ -1,3 +1,6 @@
+#ifndef ____CLIENT_VID_H__
+#define ____CLIENT_VID_H__
+
 /*
 Copyright (C) 1997-2001 Id Software, Inc.
 
@@ -40,3 +43,5 @@ void	VID_CheckChanges (void);
 void	VID_MenuInit( void );
 void	VID_MenuDraw( void );
 const char *VID_MenuKey( int );
+
+#endif // ____CLIENT_VID_H__

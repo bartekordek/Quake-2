@@ -1,3 +1,6 @@
+#ifndef ____WIN32_CONPROC_H__
+#define ____WIN32_CONPROC_H__
+
 /*
 Copyright (C) 1997-2001 Id Software, Inc.
 
@@ -22,3 +25,5 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 void InitConProc (int argc, char **argv);
 void DeinitConProc (void);
 
+
+#endif // ____WIN32_CONPROC_H__

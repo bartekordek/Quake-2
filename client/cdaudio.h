@@ -1,3 +1,6 @@
+#ifndef ____CLIENT_CDAUDIO_H__
+#define ____CLIENT_CDAUDIO_H__
+
 /*
 Copyright (C) 1997-2001 Id Software, Inc.
 
@@ -24,3 +27,5 @@ void	CDAudio_Play(int track, qboolean looping);
 void	CDAudio_Stop(void);
 void	CDAudio_Update(void);
 void	CDAudio_Activate (qboolean active);
+
+#endif // ____CLIENT_CDAUDIO_H__

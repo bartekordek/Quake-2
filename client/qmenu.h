@@ -1,3 +1,6 @@
+#ifndef ____CLIENT_QMENU_H__
+#define ____CLIENT_QMENU_H__
+
 /*
 Copyright (C) 1997-2001 Id Software, Inc.
 
@@ -138,3 +141,5 @@ void	 Menu_DrawStringR2L( int, int, const char * );
 void	 Menu_DrawStringR2LDark( int, int, const char * );
 
 #endif
+
+#endif // ____CLIENT_QMENU_H__

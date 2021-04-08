@@ -1,3 +1,6 @@
+#ifndef ____REF_GL_GL_LOCAL_H__
+#define ____REF_GL_GL_LOCAL_H__
+
 /*
 Copyright (C) 1997-2001 Id Software, Inc.
 
@@ -458,3 +461,5 @@ void		GLimp_AppActivate( qboolean active );
 void		GLimp_EnableLogging( qboolean enable );
 void		GLimp_LogNewFrame( void );
 
+
+#endif // ____REF_GL_GL_LOCAL_H__

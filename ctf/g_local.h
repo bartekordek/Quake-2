@@ -1,3 +1,6 @@
+#ifndef ____CTF_G_LOCAL_H__
+#define ____CTF_G_LOCAL_H__
+
 /*
 Copyright (C) 1997-2001 Id Software, Inc.
 
@@ -1143,3 +1146,5 @@ struct edict_s
 #include "g_ctf.h"
 //ZOID
 
+
+#endif // ____CTF_G_LOCAL_H__

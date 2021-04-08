@@ -1,3 +1,6 @@
+#ifndef ____CTF_G_CTF_H__
+#define ____CTF_G_CTF_H__
+
 /*
 Copyright (C) 1997-2001 Id Software, Inc.
 
@@ -183,3 +186,5 @@ void CTFObserver(edict_t *ent);
 
 void SP_trigger_teleport (edict_t *ent);
 void SP_info_teleport_destination (edict_t *ent);
+
+#endif // ____CTF_G_CTF_H__

@@ -1,3 +1,6 @@
+#ifndef ____CLIENT_ASM_I386_H__
+#define ____CLIENT_ASM_I386_H__
+
 
 #ifndef __ASM_I386__
 #define __ASM_I386__
@@ -79,3 +82,5 @@
 
 #endif
 
+
+#endif // ____CLIENT_ASM_I386_H__

@@ -1,3 +1,6 @@
+#ifndef ____REF_SOFT_R_MODEL_H__
+#define ____REF_SOFT_R_MODEL_H__
+
 /*
 Copyright (C) 1997-2001 Id Software, Inc.
 
@@ -254,3 +257,5 @@ void Mod_Free (model_t *mod);
 extern	int		registration_sequence;
 
 #endif	// __MODEL__
+
+#endif // ____REF_SOFT_R_MODEL_H__

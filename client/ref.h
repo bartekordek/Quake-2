@@ -1,3 +1,6 @@
+#ifndef ____CLIENT_REF_H__
+#define ____CLIENT_REF_H__
+
 /*
 Copyright (C) 1997-2001 Id Software, Inc.
 
@@ -222,3 +225,5 @@ typedef struct
 
 // this is the only function actually exported at the linker level
 typedef	refexport_t	(*GetRefAPI_t) (refimport_t);
+
+#endif // ____CLIENT_REF_H__

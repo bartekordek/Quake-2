@@ -1,3 +1,6 @@
+#ifndef ____CLIENT_SCREEN_H__
+#define ____CLIENT_SCREEN_H__
+
 /*
 Copyright (C) 1997-2001 Id Software, Inc.
 
@@ -60,3 +63,5 @@ void SCR_RunCinematic (void);
 void SCR_StopCinematic (void);
 void SCR_FinishCinematic (void);
 
+
+#endif // ____CLIENT_SCREEN_H__

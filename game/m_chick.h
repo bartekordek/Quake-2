@@ -1,3 +1,6 @@
+#ifndef ____GAME_M_CHICK_H__
+#define ____GAME_M_CHICK_H__
+
 /*
 Copyright (C) 1997-2001 Id Software, Inc.
 
@@ -311,3 +314,5 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define FRAME_recln140        	287
 
 #define MODEL_SCALE		1.000000
+
+#endif // ____GAME_M_CHICK_H__
