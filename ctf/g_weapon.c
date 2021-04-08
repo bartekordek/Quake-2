@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -303,7 +303,7 @@ fire_blaster
 Fires a single blaster bolt.  Used by the blaster and hyper blaster.
 =================
 */
-void blaster_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
+void blaster_touch (edict_t *self, edict_t *other, plane_t *plane, csurface_t *surf)
 {
 	int		mod;
 
@@ -382,7 +382,7 @@ void fire_blaster (edict_t *self, vec3_t start, vec3_t dir, int damage, int spee
 		VectorMA (bolt->s.origin, -10, dir, bolt->s.origin);
 		bolt->touch (bolt, tr.ent, NULL, NULL);
 	}
-}	
+}
 
 
 /*
@@ -447,7 +447,7 @@ static void Grenade_Explode (edict_t *ent)
 	G_FreeEdict (ent);
 }
 
-static void Grenade_Touch (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf)
+static void Grenade_Touch (edict_t *ent, edict_t *other, plane_t *plane, csurface_t *surf)
 {
 	if (other == ent->owner)
 		return;
@@ -561,7 +561,7 @@ void fire_grenade2 (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int 
 fire_rocket
 =================
 */
-void rocket_touch (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf)
+void rocket_touch (edict_t *ent, edict_t *other, plane_t *plane, csurface_t *surf)
 {
 	vec3_t		origin;
 	int			n;
@@ -757,7 +757,7 @@ void bfg_explode (edict_t *self)
 		self->think = G_FreeEdict;
 }
 
-void bfg_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
+void bfg_touch (edict_t *self, edict_t *other, plane_t *plane, csurface_t *surf)
 {
 	if (other == self->owner)
 		return;

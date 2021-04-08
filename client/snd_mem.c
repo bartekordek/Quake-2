@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -39,7 +39,7 @@ void ResampleSfx (sfx_t *sfx, int inrate, int inwidth, byte *data)
 	int		i;
 	int		sample, samplefrac, fracstep;
 	sfxcache_t	*sc;
-	
+
 	sc = sfx->cache;
 	if (!sc)
 		return;
@@ -114,7 +114,7 @@ sfxcache_t *S_LoadSound (sfx_t *s)
 	if (sc)
 		return sc;
 
-//Com_Printf ("S_LoadSound: %x\n", (int)stackbuf);
+//Com_Printf_G ("S_LoadSound: %x\n", (int)stackbuf);
 // load it in
 	if (s->truename)
 		name = s->truename;
@@ -126,7 +126,7 @@ sfxcache_t *S_LoadSound (sfx_t *s)
 	else
 		Com_sprintf (namebuffer, sizeof(namebuffer), "sound/%s", name);
 
-//	Com_Printf ("loading %s\n",namebuffer);
+//	Com_Printf_G ("loading %s\n",namebuffer);
 
 	size = FS_LoadFile (namebuffer, (void **)&data);
 
@@ -139,12 +139,12 @@ sfxcache_t *S_LoadSound (sfx_t *s)
 	info = GetWavinfo (s->name, data, size);
 	if (info.channels != 1)
 	{
-		Com_Printf ("%s is a stereo sample\n",s->name);
+		Com_Printf_G ("%s is a stereo sample\n",s->name);
 		FS_FreeFile (data);
 		return NULL;
 	}
 
-	stepscale = (float)info.rate / dma.speed;	
+	stepscale = (float)info.rate / dma.speed;
 	len = info.samples / stepscale;
 
 	len = len * info.width * info.channels;
@@ -155,7 +155,7 @@ sfxcache_t *S_LoadSound (sfx_t *s)
 		FS_FreeFile (data);
 		return NULL;
 	}
-	
+
 	sc->length = info.samples;
 	sc->loopstart = info.loopstart;
 	sc->speed = info.rate;
@@ -218,7 +218,7 @@ void FindNextChunk(char *name)
 			data_p = NULL;
 			return;
 		}
-		
+
 		data_p += 4;
 		iff_chunk_len = GetLittleLong();
 		if (iff_chunk_len < 0)
@@ -245,7 +245,7 @@ void FindChunk(char *name)
 void DumpChunks(void)
 {
 	char	str[5];
-	
+
 	str[4] = 0;
 	data_p=iff_data;
 	do
@@ -253,7 +253,7 @@ void DumpChunks(void)
 		memcpy (str, data_p, 4);
 		data_p += 4;
 		iff_chunk_len = GetLittleLong();
-		Com_Printf ("0x%x : %s (%d)\n", (int)(data_p - 4), str, iff_chunk_len);
+		Com_Printf_G ("0x%x : %s (%d)\n", (int)(data_p - 4), str, iff_chunk_len);
 		data_p += (iff_chunk_len + 1) & ~1;
 	} while (data_p < iff_end);
 }
@@ -274,7 +274,7 @@ wavinfo_t GetWavinfo (char *name, byte *wav, int wavlength)
 
 	if (!wav)
 		return info;
-		
+
 	iff_data = wav;
 	iff_end = wav + wavlength;
 
@@ -282,7 +282,7 @@ wavinfo_t GetWavinfo (char *name, byte *wav, int wavlength)
 	FindChunk("RIFF");
 	if (!(data_p && !strncmp(data_p+8, "WAVE", 4)))
 	{
-		Com_Printf("Missing RIFF/WAVE chunks\n");
+		Com_Printf_G("Missing RIFF/WAVE chunks\n");
 		return info;
 	}
 
@@ -293,14 +293,14 @@ wavinfo_t GetWavinfo (char *name, byte *wav, int wavlength)
 	FindChunk("fmt ");
 	if (!data_p)
 	{
-		Com_Printf("Missing fmt chunk\n");
+		Com_Printf_G("Missing fmt chunk\n");
 		return info;
 	}
 	data_p += 8;
 	format = GetLittleShort();
 	if (format != 1)
 	{
-		Com_Printf("Microsoft PCM format only\n");
+		Com_Printf_G("Microsoft PCM format only\n");
 		return info;
 	}
 
@@ -315,7 +315,7 @@ wavinfo_t GetWavinfo (char *name, byte *wav, int wavlength)
 	{
 		data_p += 32;
 		info.loopstart = GetLittleLong();
-//		Com_Printf("loopstart=%d\n", sfx->loopstart);
+//		Com_Printf_G("loopstart=%d\n", sfx->loopstart);
 
 	// if the next chunk is a LIST chunk, look for a cue length marker
 		FindNextChunk ("LIST");
@@ -326,7 +326,7 @@ wavinfo_t GetWavinfo (char *name, byte *wav, int wavlength)
 				data_p += 24;
 				i = GetLittleLong ();	// samples in loop
 				info.samples = info.loopstart + i;
-//				Com_Printf("looped length: %i\n", i);
+//				Com_Printf_G("looped length: %i\n", i);
 			}
 		}
 	}
@@ -337,7 +337,7 @@ wavinfo_t GetWavinfo (char *name, byte *wav, int wavlength)
 	FindChunk("data");
 	if (!data_p)
 	{
-		Com_Printf("Missing data chunk\n");
+		Com_Printf_G("Missing data chunk\n");
 		return info;
 	}
 
@@ -353,7 +353,7 @@ wavinfo_t GetWavinfo (char *name, byte *wav, int wavlength)
 		info.samples = samples;
 
 	info.dataofs = data_p - wav;
-	
+
 	return info;
 }
 

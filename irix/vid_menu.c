@@ -1,5 +1,5 @@
-#include "../client/client.h"
-#include "../client/qmenu.h"
+#include "client/client.h"
+#include "client/qmenu.h"
 
 #define REF_SOFT	0
 #define REF_OPENGL	1
@@ -14,7 +14,7 @@ static cvar_t *gl_driver;
 static cvar_t *gl_picmip;
 static cvar_t *gl_ext_palettedtexture;
 
-static cvar_t *sw_mode;
+cvar_t *sw_mode;
 static cvar_t *sw_stipplealpha;
 
 static cvar_t *_windowed_mouse;
@@ -165,7 +165,7 @@ static void ApplyChanges( void *unused )
 */
 void VID_MenuInit( void )
 {
-	static const char *resolutions[] = 
+	static const char *resolutions[] =
 	{
 		"[320 240  ]",
 		"[400 300  ]",
@@ -219,7 +219,7 @@ void VID_MenuInit( void )
 	s_screensize_slider[SOFTWARE_MENU].curvalue = scr_viewsize->value/10;
 	s_screensize_slider[OPENGL_MENU].curvalue = scr_viewsize->value/10;
 
-	if (strcmp( vid_ref->string, "soft" ) == 0 ) 
+	if (strcmp( vid_ref->string, "soft" ) == 0 )
 	{
 		s_current_menu_index = SOFTWARE_MENU;
 		s_ref_list[0].curvalue = s_ref_list[1].curvalue = REF_SOFT;

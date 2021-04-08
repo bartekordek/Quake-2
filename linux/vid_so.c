@@ -26,7 +26,7 @@ cvar_t		*vid_fullscreen;
 
 // Global variables used internally by this module
 viddef_t	viddef;				// global video state; used by other modules
-void		*reflib_library;		// Handle to refresh DLL 
+void		*reflib_library;		// Handle to refresh DLL
 qboolean	reflib_active = 0;
 
 #define VID_NUM_MODES ( sizeof( vid_modes ) / sizeof( vid_modes[0] ) )
@@ -60,19 +60,18 @@ DLL GLUE
 ==========================================================================
 */
 
-#define	MAXPRINTMSG	4096
 void VID_Printf (int print_level, char *fmt, ...)
 {
 	va_list		argptr;
 	char		msg[MAXPRINTMSG];
 	static qboolean	inupdate;
-	
+
 	va_start (argptr,fmt);
 	vsprintf (msg,fmt,argptr);
 	va_end (argptr);
 
 	if (print_level == PRINT_ALL)
-		Com_Printf ("%s", msg);
+		Com_Printf_G ("%s", msg);
 	else
 		Com_DPrintf ("%s", msg);
 }
@@ -82,7 +81,7 @@ void VID_Error (int err_level, char *fmt, ...)
 	va_list		argptr;
 	char		msg[MAXPRINTMSG];
 	static qboolean	inupdate;
-	
+
 	va_start (argptr,fmt);
 	vsprintf (msg,fmt,argptr);
 	va_end (argptr);
@@ -188,7 +187,7 @@ qboolean VID_LoadRefresh( char *name )
 	struct stat st;
 	extern uid_t saved_euid;
 	FILE *fp;
-	
+
 	if ( reflib_active )
 	{
 		if (KBD_Close_fp)
@@ -201,13 +200,13 @@ qboolean VID_LoadRefresh( char *name )
 		VID_FreeReflib ();
 	}
 
-	Com_Printf( "------- Loading %s -------\n", name );
+	Com_Printf_G( "------- Loading %s -------\n", name );
 
 	//regain root
 	seteuid(saved_euid);
 
 	if ((fp = fopen(SO_FILE, "r")) == NULL) {
-		Com_Printf( "LoadLibrary(\"%s\") failed: can't open " SO_FILE " (required for location of ref libraries)\n", name);
+		Com_Printf_G( "LoadLibrary(\"%s\") failed: can't open " SO_FILE " (required for location of ref libraries)\n", name);
 		return false;
 	}
 	fgets(fn, sizeof(fn), fp);
@@ -221,16 +220,16 @@ qboolean VID_LoadRefresh( char *name )
 	// permission checking
 	if (strstr(fn, "softx") == NULL) { // softx doesn't require root
 		if (stat(fn, &st) == -1) {
-			Com_Printf( "LoadLibrary(\"%s\") failed: %s\n", name, strerror(errno));
+			Com_Printf_G( "LoadLibrary(\"%s\") failed: %s\n", name, strerror(errno));
 			return false;
 		}
 		if (st.st_uid != 0) {
-			Com_Printf( "LoadLibrary(\"%s\") failed: ref is not owned by root\n", name);
+			Com_Printf_G( "LoadLibrary(\"%s\") failed: ref is not owned by root\n", name);
 			return false;
 		}
 #if 0
 		if ((st.st_mode & 0777) & ~0700) {
-			Com_Printf( "LoadLibrary(\"%s\") failed: invalid permissions, must be 700 for security considerations\n", name);
+			Com_Printf_G( "LoadLibrary(\"%s\") failed: invalid permissions, must be 700 for security considerations\n", name);
 			return false;
 		}
 #endif
@@ -242,7 +241,7 @@ qboolean VID_LoadRefresh( char *name )
 
 	if ( ( reflib_library = dlopen( fn, RTLD_NOW ) ) == 0 )
 	{
-		Com_Printf( "LoadLibrary(\"%s\") failed: %s\n", name , dlerror());
+		Com_Printf_G( "LoadLibrary(\"%s\") failed: %s\n", name , dlerror());
 		return false;
 	}
 
@@ -320,7 +319,7 @@ qboolean VID_LoadRefresh( char *name )
 	setreuid(getuid(), getuid());
 	setegid(getgid());
 
-	Com_Printf( "------------------------------------\n");
+	Com_Printf_G( "------------------------------------\n");
 	reflib_active = true;
 	return true;
 }
@@ -330,7 +329,7 @@ qboolean VID_LoadRefresh( char *name )
 VID_CheckChanges
 
 This function gets called once just before drawing each frame, and it's sole purpose in life
-is to check to see if any of the video mode parameters have changed, and if they have to 
+is to check to see if any of the video mode parameters have changed, and if they have to
 update the rendering DLL and/or video mode to match.
 ============
 */
@@ -359,10 +358,10 @@ void VID_CheckChanges (void)
 		{
 			if ( strcmp (vid_ref->string, "soft") == 0 ||
 				strcmp (vid_ref->string, "softx") == 0 ) {
-Com_Printf("Refresh failed\n");
+Com_Printf_G("Refresh failed\n");
 				sw_mode = Cvar_Get( "sw_mode", "0", 0 );
 				if (sw_mode->value != 0) {
-Com_Printf("Trying mode 0\n");
+Com_Printf_G("Trying mode 0\n");
 					Cvar_SetValue("sw_mode", 0);
 					if ( !VID_LoadRefresh( name ) )
 						Com_Error (ERR_FATAL, "Couldn't fall back to software refresh!");
@@ -408,7 +407,7 @@ void VID_Init (void)
 
 	/* Disable the 3Dfx splash screen */
 	putenv("FX_GLIDE_NO_SPLASH=0");
-		
+
 	/* Start the graphics mode and load refresh DLL */
 	VID_CheckChanges();
 }

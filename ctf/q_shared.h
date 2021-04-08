@@ -11,7 +11,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -20,7 +20,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
-	
+
 // q_shared.h -- included first by ALL program modules
 
 #ifdef _WIN32
@@ -72,7 +72,6 @@ typedef enum {false, true}	qboolean;
 #define	MAX_STRING_TOKENS	80		// max tokens resulting from Cmd_TokenizeString
 #define	MAX_TOKEN_CHARS		128		// max length of an individual token
 
-#define	MAX_QPATH			64		// max length of a quake game pathname
 #define	MAX_OSPATH			128		// max length of a filesystem pathname
 
 //
@@ -96,13 +95,7 @@ typedef enum {false, true}	qboolean;
 
 
 
-#define	ERR_FATAL			0		// exit the entire game with a popup window
-#define	ERR_DROP			1		// print to console and disconnect from game
-#define	ERR_DISCONNECT		2		// don't kill server
 
-#define	PRINT_ALL			0
-#define PRINT_DEVELOPER		1		// only print when "developer 1"
-#define PRINT_ALERT			2		
 
 
 // destination class for gi.multicast()
@@ -137,7 +130,7 @@ typedef	int	fixed16_t;
 #define M_PI		3.14159265358979323846	// matches value in gcc v2 math.h
 #endif
 
-struct cplane_s;
+struct plane_s;
 
 extern vec3_t vec3_origin;
 
@@ -185,7 +178,7 @@ void R_ConcatRotations (float in1[3][3], float in2[3][3], float out[3][3]);
 void R_ConcatTransforms (float in1[3][4], float in2[3][4], float out[3][4]);
 
 void AngleVectors (vec3_t angles, vec3_t forward, vec3_t right, vec3_t up);
-int BoxOnPlaneSide (vec3_t emins, vec3_t emaxs, struct cplane_s *plane);
+int BoxOnPlaneSide (vec3_t emins, vec3_t emaxs, struct plane_s *plane);
 float	anglemod(float a);
 float LerpAngle (float a1, float a2, float frac);
 
@@ -290,11 +283,6 @@ int		Hunk_End (void);
 char	*Sys_FindFirst (char *path, unsigned musthave, unsigned canthave );
 char	*Sys_FindNext ( unsigned musthave, unsigned canthave );
 void	Sys_FindClose (void);
-
-
-// this is only here so the functions in q_shared.c and q_shwin.c can link
-void Sys_Error (char *error, ...);
-void Com_Printf (char *msg, ...);
 
 
 /*
@@ -402,18 +390,6 @@ COLLISION DETECTION
 #define	AREA_SOLID		1
 #define	AREA_TRIGGERS	2
 
-
-// plane_t structure
-// !!! if this is changed, it must be changed in asm code too !!!
-typedef struct cplane_s
-{
-	vec3_t	normal;
-	float	dist;
-	byte	type;			// for fast side tests
-	byte	signbits;		// signx + (signy<<1) + (signz<<1)
-	byte	pad[2];
-} cplane_t;
-
 // structure offset for asm code
 #define CPLANE_NORMAL_X			0
 #define CPLANE_NORMAL_Y			4
@@ -431,13 +407,6 @@ typedef struct cmodel_s
 	int			headnode;
 } cmodel_t;
 
-typedef struct csurface_s
-{
-	char		name[16];
-	int			flags;
-	int			value;
-} csurface_t;
-
 typedef struct mapsurface_s  // used internally due to name len probs //ZOID
 {
 	csurface_t	c;
@@ -451,7 +420,7 @@ typedef struct
 	qboolean	startsolid;	// if true, the initial point was in a solid area
 	float		fraction;	// time completed, 1.0 = didn't hit anything
 	vec3_t		endpos;		// final position
-	cplane_t	plane;		// surface normal at impact
+	plane_t	plane;		// surface normal at impact
 	csurface_t	*surface;	// surface hit
 	int			contents;	// contents on other side of surface hit
 	struct edict_s	*ent;		// not set by CM_*() functions
@@ -461,7 +430,7 @@ typedef struct
 
 // pmove_state_t is the information necessary for client side movement
 // prediction
-typedef enum 
+typedef enum
 {
 	// can accelerate and turn
 	PM_NORMAL,
@@ -1183,7 +1152,7 @@ typedef struct
 	int			gunframe;
 
 	float		blend[4];		// rgba full screen effect
-	
+
 	float		fov;			// horizontal field of view
 
 	int			rdflags;		// refdef flags
@@ -1193,7 +1162,7 @@ typedef struct
 
 
 // ==================
-// PGM 
+// PGM
 #define VIDREF_GL		1
 #define VIDREF_SOFT		2
 #define VIDREF_OTHER	3

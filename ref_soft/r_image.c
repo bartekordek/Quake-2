@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -31,7 +31,7 @@ int			numr_images;
 R_ImageList_f
 ===============
 */
-void	R_ImageList_f (void)
+void ref_soft_R_ImageList_f (void)
 {
 	int		i;
 	image_t	*image;
@@ -84,7 +84,7 @@ PCX LOADING
 LoadPCX
 ==============
 */
-void LoadPCX (char *filename, byte **pic, byte **palette, int *width, int *height)
+void ref_soft_LoadPCX (char *filename, byte **pic, byte **palette, int *width, int *height)
 {
 	byte	*raw;
 	pcx_t	*pcx;
@@ -201,7 +201,7 @@ typedef struct _TargaHeader {
 LoadTGA
 =============
 */
-void LoadTGA (char *name, byte **pic, int *width, int *height)
+void ref_soft_LoadTGA (char *name, byte **pic, int *width, int *height)
 {
 	int		columns, rows, numPixels;
 	byte	*pixbuf;
@@ -229,7 +229,7 @@ void LoadTGA (char *name, byte **pic, int *width, int *height)
 	targa_header.id_length = *buf_p++;
 	targa_header.colormap_type = *buf_p++;
 	targa_header.image_type = *buf_p++;
-	
+
 	targa_header.colormap_index = LittleShort ( *((short *)buf_p) );
 	buf_p+=2;
 	targa_header.colormap_length = LittleShort ( *((short *)buf_p) );
@@ -246,11 +246,11 @@ void LoadTGA (char *name, byte **pic, int *width, int *height)
 	targa_header.pixel_size = *buf_p++;
 	targa_header.attributes = *buf_p++;
 
-	if (targa_header.image_type!=2 
-		&& targa_header.image_type!=10) 
+	if (targa_header.image_type!=2
+		&& targa_header.image_type!=10)
 		ri.Sys_Error (ERR_DROP, "LoadTGA: Only type 2 and 10 targa RGB images supported\n");
 
-	if (targa_header.colormap_type !=0 
+	if (targa_header.colormap_type !=0
 		|| (targa_header.pixel_size!=32 && targa_header.pixel_size!=24))
 		ri.Sys_Error (ERR_DROP, "LoadTGA: Only 32 or 24 bit images supported (no colormaps)\n");
 
@@ -268,7 +268,7 @@ void LoadTGA (char *name, byte **pic, int *width, int *height)
 
 	if (targa_header.id_length != 0)
 		buf_p += targa_header.id_length;  // skip TARGA image comment
-	
+
 	if (targa_header.image_type==2) {  // Uncompressed, RGB images
 		for(row=rows-1; row>=0; row--) {
 			pixbuf = targa_rgba + row*columns*4;
@@ -276,7 +276,7 @@ void LoadTGA (char *name, byte **pic, int *width, int *height)
 				unsigned char red,green,blue,alphabyte;
 				switch (targa_header.pixel_size) {
 					case 24:
-							
+
 							blue = *buf_p++;
 							green = *buf_p++;
 							red = *buf_p++;
@@ -321,7 +321,7 @@ void LoadTGA (char *name, byte **pic, int *width, int *height)
 								alphabyte = *buf_p++;
 								break;
 					}
-	
+
 					for(j=0;j<packetSize;j++) {
 						*pixbuf++=red;
 						*pixbuf++=green;
@@ -369,7 +369,7 @@ void LoadTGA (char *name, byte **pic, int *width, int *height)
 							else
 								goto breakOut;
 							pixbuf = targa_rgba + row*columns*4;
-						}						
+						}
 					}
 				}
 			}
@@ -383,7 +383,7 @@ void LoadTGA (char *name, byte **pic, int *width, int *height)
 
 //=======================================================
 
-image_t *R_FindFreeImage (void)
+image_t *ref_soft_R_FindFreeImage (void)
 {
 	image_t		*image;
 	int			i;
@@ -411,7 +411,7 @@ GL_LoadPic
 
 ================
 */
-image_t *GL_LoadPic (char *name, byte *pic, int width, int height, imagetype_t type)
+image_t *ref_soft_GL_LoadPic (char *name, byte *pic, int width, int height, imagetype_t type)
 {
 	image_t		*image;
 	int			i, c, b;
@@ -445,7 +445,7 @@ image_t *GL_LoadPic (char *name, byte *pic, int width, int height, imagetype_t t
 R_LoadWal
 ================
 */
-image_t *R_LoadWal (char *name)
+image_t *ref_soft_R_LoadWal (char *name)
 {
 	miptex_t	*mt;
 	int			ofs;
@@ -488,7 +488,7 @@ R_FindImage
 Finds or loads the given image
 ===============
 */
-image_t	*R_FindImage (char *name, imagetype_t type)
+image_t	*ref_soft_R_FindImage (char *name, imagetype_t type)
 {
 	image_t	*image;
 	int		i, len;
@@ -547,7 +547,7 @@ image_t	*R_FindImage (char *name, imagetype_t type)
 R_RegisterSkin
 ===============
 */
-struct image_s *R_RegisterSkin (char *name)
+struct image_s *ref_soft_R_RegisterSkin (char *name)
 {
 	return R_FindImage (name, it_skin);
 }
@@ -561,7 +561,7 @@ Any image that was not touched on this registration sequence
 will be freed.
 ================
 */
-void R_FreeUnusedImages (void)
+void ref_soft_R_FreeUnusedImages (void)
 {
 	int		i;
 	image_t	*image;
@@ -590,7 +590,7 @@ void R_FreeUnusedImages (void)
 R_InitImages
 ===============
 */
-void	R_InitImages (void)
+void	ref_soft_R_InitImages (void)
 {
 	registration_sequence = 1;
 }
@@ -600,7 +600,7 @@ void	R_InitImages (void)
 R_ShutdownImages
 ===============
 */
-void	R_ShutdownImages (void)
+void	ref_soft_R_ShutdownImages (void)
 {
 	int		i;
 	image_t	*image;

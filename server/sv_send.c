@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -24,27 +24,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 /*
 =============================================================================
 
-Com_Printf redirection
+Com_Printf_G redirection
 
 =============================================================================
 */
 
 char sv_outputbuf[SV_OUTPUTBUF_LENGTH];
-
-void SV_FlushRedirect (int sv_redirected, char *outputbuf)
-{
-	if (sv_redirected == RD_PACKET)
-	{
-		Netchan_OutOfBandPrint (NS_SERVER, net_from, "print\n%s", outputbuf);
-	}
-	else if (sv_redirected == RD_CLIENT)
-	{
-		MSG_WriteByte (&sv_client->netchan.message, svc_print);
-		MSG_WriteByte (&sv_client->netchan.message, PRINT_HIGH);
-		MSG_WriteString (&sv_client->netchan.message, outputbuf);
-	}
-}
-
 
 /*
 =============================================================================
@@ -66,14 +51,14 @@ void SV_ClientPrintf (client_t *cl, int level, char *fmt, ...)
 {
 	va_list		argptr;
 	char		string[1024];
-	
+
 	if (level < cl->messagelevel)
 		return;
-	
+
 	va_start (argptr,fmt);
 	vsprintf (string, fmt,argptr);
 	va_end (argptr);
-	
+
 	MSG_WriteByte (&cl->netchan.message, svc_print);
 	MSG_WriteByte (&cl->netchan.message, level);
 	MSG_WriteString (&cl->netchan.message, string);
@@ -96,18 +81,18 @@ void SV_BroadcastPrintf (int level, char *fmt, ...)
 	va_start (argptr,fmt);
 	vsprintf (string, fmt,argptr);
 	va_end (argptr);
-	
+
 	// echo to console
 	if (dedicated->value)
 	{
 		char	copy[1024];
 		int		i;
-		
+
 		// mask off high bits
 		for (i=0 ; i<1023 && string[i] ; i++)
 			copy[i] = string[i]&127;
 		copy[i] = 0;
-		Com_Printf ("%s", copy);
+		Com_Printf_G ("%s", copy);
 	}
 
 	for (i=0, cl = svs.clients ; i<maxclients->value; i++, cl++)
@@ -133,7 +118,7 @@ void SV_BroadcastCommand (char *fmt, ...)
 {
 	va_list		argptr;
 	char		string[1024];
-	
+
 	if (!sv.state)
 		return;
 	va_start (argptr,fmt);
@@ -183,7 +168,7 @@ void SV_Multicast (vec3_t origin, multicast_t to)
 	// if doing a serverrecord, store everything
 	if (svs.demofile)
 		SZ_Write (&svs.demo_multicast, sv.multicast.data, sv.multicast.cursize);
-	
+
 	switch (to)
 	{
 	case MULTICAST_ALL_R:
@@ -243,7 +228,7 @@ void SV_Multicast (vec3_t origin, multicast_t to)
 }
 
 
-/*  
+/*
 ==================
 SV_StartSound
 
@@ -268,11 +253,11 @@ later in the frame than they normally would.
 If origin is NULL, the origin is determined from the entity origin
 or the midpoint of the entity box for bmodels.
 ==================
-*/  
+*/
 void SV_StartSound (vec3_t origin, edict_t *entity, int channel,
 					int soundindex, float volume,
 					float attenuation, float timeofs)
-{       
+{
 	int			sendchan;
     int			flags;
     int			i;
@@ -313,7 +298,7 @@ void SV_StartSound (vec3_t origin, edict_t *entity, int channel,
 	// the client doesn't know that bmodels have weird origins
 	// the origin can also be explicitly set
 	if ( (entity->svflags & SVF_NOCLIENT)
-		|| (entity->solid == SOLID_BSP) 
+		|| (entity->solid == SOLID_BSP)
 		|| origin )
 		flags |= SND_POS;
 
@@ -374,7 +359,7 @@ void SV_StartSound (vec3_t origin, edict_t *entity, int channel,
 		else
 			SV_Multicast (origin, MULTICAST_ALL);
 	}
-}           
+}
 
 
 /*
@@ -411,14 +396,14 @@ qboolean SV_SendClientDatagram (client_t *client)
 	// it is necessary for this to be after the WriteEntities
 	// so that entity references will be current
 	if (client->datagram.overflowed)
-		Com_Printf ("WARNING: datagram overflowed for %s\n", client->name);
+		Com_Printf_G ("WARNING: datagram overflowed for %s\n", client->name);
 	else
 		SZ_Write (&msg, client->datagram.data, client->datagram.cursize);
 	SZ_Clear (&client->datagram);
 
 	if (msg.overflowed)
 	{	// must have room left for the packet header
-		Com_Printf ("WARNING: msg overflowed for %s\n", client->name);
+		Com_Printf_G ("WARNING: msg overflowed for %s\n", client->name);
 		SZ_Clear (&msg);
 	}
 
@@ -543,8 +528,8 @@ void SV_SendClientMessages (void)
 			SV_DropClient (c);
 		}
 
-		if (sv.state == ss_cinematic 
-			|| sv.state == ss_demo 
+		if (sv.state == ss_cinematic
+			|| sv.state == ss_demo
 			|| sv.state == ss_pic
 			)
 			Netchan_Transmit (&c->netchan, msglen, msgbuf);

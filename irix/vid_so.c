@@ -30,7 +30,7 @@ cvar_t		*vid_fullscreen;
 
 // Global variables used internally by this module
 viddef_t	viddef;				// global video state; used by other modules
-void		*reflib_library;		// Handle to refresh DLL 
+void		*reflib_library;		// Handle to refresh DLL
 qboolean	reflib_active = 0;
 
 #define VID_NUM_MODES ( sizeof( vid_modes ) / sizeof( vid_modes[0] ) )
@@ -64,19 +64,18 @@ DLL GLUE
 ==========================================================================
 */
 
-#define	MAXPRINTMSG	4096
 void VID_Printf (int print_level, char *fmt, ...)
 {
 	va_list		argptr;
 	char		msg[MAXPRINTMSG];
 	static qboolean	inupdate;
-	
+
 	va_start (argptr,fmt);
 	vsprintf (msg,fmt,argptr);
 	va_end (argptr);
 
 	if (print_level == PRINT_ALL)
-		Com_Printf ("%s", msg);
+		Com_Printf_G ("%s", msg);
 	else
 		Com_DPrintf ("%s", msg);
 }
@@ -86,7 +85,7 @@ void VID_Error (int err_level, char *fmt, ...)
 	va_list		argptr;
 	char		msg[MAXPRINTMSG];
 	static qboolean	inupdate;
-	
+
 	va_start (argptr,fmt);
 	vsprintf (msg,fmt,argptr);
 	va_end (argptr);
@@ -213,8 +212,8 @@ qboolean VID_LoadRefresh( char *name )
 
 #ifndef REF_HARD_LINKED
 	getcwd(curpath, sizeof(curpath));
-	
-	Com_Printf( "------- Loading %s -------\n", name );
+
+	Com_Printf_G( "------- Loading %s -------\n", name );
 
 	// now run through the search paths
 	path = NULL;
@@ -224,7 +223,7 @@ qboolean VID_LoadRefresh( char *name )
 		if (!path)
 			return NULL;		// couldn't find one anywhere
 		sprintf (fn, "%s/%s/%s", curpath, path, name);
-		Com_Printf ("Trying to load library (%s)\n", fn);
+		Com_Printf_G ("Trying to load library (%s)\n", fn);
 
 		reflib_library = dlopen( fn, RTLD_NOW );
 		if (reflib_library)
@@ -328,7 +327,7 @@ qboolean VID_LoadRefresh( char *name )
 	KBD_Init_fp(Do_Key_Event);
 	Real_IN_Init();
 
-	Com_Printf( "------------------------------------\n");
+	Com_Printf_G( "------------------------------------\n");
 	reflib_active = true;
 	return true;
 }
@@ -338,7 +337,7 @@ qboolean VID_LoadRefresh( char *name )
 VID_CheckChanges
 
 This function gets called once just before drawing each frame, and it's sole purpose in life
-is to check to see if any of the video mode parameters have changed, and if they have to 
+is to check to see if any of the video mode parameters have changed, and if they have to
 update the rendering DLL and/or video mode to match.
 ============
 */
@@ -366,10 +365,10 @@ void VID_CheckChanges (void)
 		if ( !VID_LoadRefresh( name ) )
 		{
 		        if ( strcmp (vid_ref->string, "soft") == 0 ) {
-			        Com_Printf("Refresh failed\n");
+			        Com_Printf_G("Refresh failed\n");
 				sw_mode = Cvar_Get( "sw_mode", "0", 0 );
 				if (sw_mode->value != 0) {
-				        Com_Printf("Trying mode 0\n");
+				        Com_Printf_G("Trying mode 0\n");
 					Cvar_SetValue("sw_mode", 0);
 					if ( !VID_LoadRefresh( name ) )
 						Com_Error (ERR_FATAL, "Couldn't fall back to software refresh!");
@@ -411,7 +410,7 @@ void VID_Init (void)
 
 	/* Disable the 3Dfx splash screen */
 	putenv("FX_GLIDE_NO_SPLASH=0");
-		
+
 	/* Start the graphics mode and load refresh DLL */
 	VID_CheckChanges();
 }

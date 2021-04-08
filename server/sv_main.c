@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
-#include "server.h"
+#include "server/server.h"
 
 netadr_t	master_adr[MAX_MASTERS];	// address of group servers
 
@@ -33,12 +33,6 @@ cvar_t	*timeout;				// seconds without any message
 cvar_t	*zombietime;			// seconds to sink messages after disconnect
 
 cvar_t	*rcon_password;			// password for remote server commands
-
-cvar_t	*allow_download;
-cvar_t *allow_download_players;
-cvar_t *allow_download_models;
-cvar_t *allow_download_sounds;
-cvar_t *allow_download_maps;
 
 cvar_t *sv_airaccelerate;
 
@@ -124,7 +118,7 @@ char	*SV_StatusString (void)
 		cl = &svs.clients[i];
 		if (cl->state == cs_connected || cl->state == cs_spawned )
 		{
-			Com_sprintf (player, sizeof(player), "%i %i \"%s\"\n", 
+			Com_sprintf (player, sizeof(player), "%i %i \"%s\"\n",
 				cl->edict->client->ps.stats[STAT_FRAGS], cl->ping, cl->name);
 			playerLength = strlen(player);
 			if (statusLength + playerLength >= sizeof(status) )
@@ -149,7 +143,7 @@ void SVC_Status (void)
 	Netchan_OutOfBandPrint (NS_SERVER, net_from, "print\n%s", SV_StatusString());
 #if 0
 	Com_BeginRedirect (RD_PACKET, sv_outputbuf, SV_OUTPUTBUF_LENGTH, SV_FlushRedirect);
-	Com_Printf (SV_StatusString());
+	Com_Printf_G (SV_StatusString());
 	Com_EndRedirect ();
 #endif
 }
@@ -162,7 +156,7 @@ SVC_Ack
 */
 void SVC_Ack (void)
 {
-	Com_Printf ("Ping acknowledge from %s\n", NET_AdrToString(net_from));
+	Com_Printf_G ("Ping acknowledge from %s\n", NET_AdrToString(net_from));
 }
 
 /*
@@ -304,7 +298,7 @@ void SVC_DirectConnect (void)
 	{
 		if (!NET_IsLocalAddress (adr))
 		{
-			Com_Printf ("Remote connect in attract loop.  Ignored.\n");
+			Com_Printf_G ("Remote connect in attract loop.  Ignored.\n");
 			Netchan_OutOfBandPrint (NS_SERVER, adr, "print\nConnection refused.\n");
 			return;
 		}
@@ -339,7 +333,7 @@ void SVC_DirectConnect (void)
 		if (cl->state == cs_free)
 			continue;
 		if (NET_CompareBaseAdr (adr, cl->netchan.remote_address)
-			&& ( cl->netchan.qport == qport 
+			&& ( cl->netchan.qport == qport
 			|| adr.port == cl->netchan.remote_address.port ) )
 		{
 			if (!NET_IsLocalAddress (adr) && (svs.realtime - cl->lastconnect) < ((int)sv_reconnect_limit->value * 1000))
@@ -347,7 +341,7 @@ void SVC_DirectConnect (void)
 				Com_DPrintf ("%s:reconnect rejected : too soon\n", NET_AdrToString (adr));
 				return;
 			}
-			Com_Printf ("%s:reconnect\n", NET_AdrToString (adr));
+			Com_Printf_G ("%s:reconnect\n", NET_AdrToString (adr));
 			newcl = cl;
 			goto gotnewcl;
 		}
@@ -370,7 +364,7 @@ void SVC_DirectConnect (void)
 		return;
 	}
 
-gotnewcl:	
+gotnewcl:
 	// build a new connection
 	// accept the new client
 	// this is the only place a client_t is ever initialized
@@ -384,8 +378,8 @@ gotnewcl:
 	// get the game a chance to reject this connection or modify the userinfo
 	if (!(ge->ClientConnect (ent, userinfo)))
 	{
-		if (*Info_ValueForKey (userinfo, "rejmsg")) 
-			Netchan_OutOfBandPrint (NS_SERVER, adr, "print\n%s\nConnection refused.\n",  
+		if (*Info_ValueForKey (userinfo, "rejmsg"))
+			Netchan_OutOfBandPrint (NS_SERVER, adr, "print\n%s\nConnection refused.\n",
 				Info_ValueForKey (userinfo, "rejmsg"));
 		else
 			Netchan_OutOfBandPrint (NS_SERVER, adr, "print\nConnection refused.\n" );
@@ -403,7 +397,7 @@ gotnewcl:
 	Netchan_Setup (NS_SERVER, &newcl->netchan , adr, qport);
 
 	newcl->state = cs_connected;
-	
+
 	SZ_Init (&newcl->datagram, newcl->datagram_buf, sizeof(newcl->datagram_buf) );
 	newcl->datagram.allowoverflow = true;
 	newcl->lastmessage = svs.realtime;	// don't timeout
@@ -438,15 +432,15 @@ void SVC_RemoteCommand (void)
 	i = Rcon_Validate ();
 
 	if (i == 0)
-		Com_Printf ("Bad rcon from %s:\n%s\n", NET_AdrToString (net_from), net_message.data+4);
+		Com_Printf_G ("Bad rcon from %s:\n%s\n", NET_AdrToString (net_from), net_message.data+4);
 	else
-		Com_Printf ("Rcon from %s:\n%s\n", NET_AdrToString (net_from), net_message.data+4);
+		Com_Printf_G ("Rcon from %s:\n%s\n", NET_AdrToString (net_from), net_message.data+4);
 
 	Com_BeginRedirect (RD_PACKET, sv_outputbuf, SV_OUTPUTBUF_LENGTH, SV_FlushRedirect);
 
 	if (!Rcon_Validate ())
 	{
-		Com_Printf ("Bad rcon_password.\n");
+		Com_Printf_G ("Bad rcon_password.\n");
 	}
 	else
 	{
@@ -504,7 +498,7 @@ void SV_ConnectionlessPacket (void)
 	else if (!strcmp(c, "rcon"))
 		SVC_RemoteCommand ();
 	else
-		Com_Printf ("bad connectionless packet from %s:\n%s\n"
+		Com_Printf_G ("bad connectionless packet from %s:\n%s\n"
 		, NET_AdrToString (net_from), s);
 }
 
@@ -583,7 +577,7 @@ void SV_GiveMsec (void)
 		cl = &svs.clients[i];
 		if (cl->state == cs_free )
 			continue;
-		
+
 		cl->commandMsec = 1800;		// 1600 + some slop
 	}
 }
@@ -627,7 +621,7 @@ void SV_ReadPackets (void)
 				continue;
 			if (cl->netchan.remote_address.port != net_from.port)
 			{
-				Com_Printf ("SV_ReadPackets: fixing up a translated port\n");
+				Com_Printf_G ("SV_ReadPackets: fixing up a translated port\n");
 				cl->netchan.remote_address.port = net_from.port;
 			}
 
@@ -641,7 +635,7 @@ void SV_ReadPackets (void)
 			}
 			break;
 		}
-		
+
 		if (i != maxclients->value)
 			continue;
 	}
@@ -682,11 +676,11 @@ void SV_CheckTimeouts (void)
 			cl->state = cs_free;	// can now be reused
 			continue;
 		}
-		if ( (cl->state == cs_connected || cl->state == cs_spawned) 
+		if ( (cl->state == cs_connected || cl->state == cs_spawned)
 			&& cl->lastmessage < droppoint)
 		{
 			SV_BroadcastPrintf (PRINT_HIGH, "%s timed out\n", cl->name);
-			SV_DropClient (cl); 
+			SV_DropClient (cl);
 			cl->state = cs_free;	// don't bother with zombie state
 		}
 	}
@@ -741,7 +735,7 @@ void SV_RunGameFrame (void)
 		if (sv.time < svs.realtime)
 		{
 			if (sv_showclamp->value)
-				Com_Printf ("sv highclamp\n");
+				Com_Printf_G ("sv highclamp\n");
 			svs.realtime = sv.time;
 		}
 	}
@@ -783,7 +777,7 @@ void SV_Frame (int msec)
 		if (sv.time - svs.realtime > 100)
 		{
 			if (sv_showclamp->value)
-				Com_Printf ("sv lowclamp\n");
+				Com_Printf_G ("sv lowclamp\n");
 			svs.realtime = sv.time - 100;
 		}
 		NET_Sleep(sv.time - svs.realtime);
@@ -829,7 +823,7 @@ void Master_Heartbeat (void)
 	char		*string;
 	int			i;
 
-	
+
 	if (!dedicated->value)
 		return;		// only dedicated servers send heartbeats
 
@@ -852,7 +846,7 @@ void Master_Heartbeat (void)
 	for (i=0 ; i<MAX_MASTERS ; i++)
 		if (master_adr[i].port)
 		{
-			Com_Printf ("Sending heartbeat to %s\n", NET_AdrToString (master_adr[i]));
+			Com_Printf_G ("Sending heartbeat to %s\n", NET_AdrToString (master_adr[i]));
 			Netchan_OutOfBandPrint (NS_SERVER, master_adr[i], "heartbeat\n%s", string);
 		}
 }
@@ -879,7 +873,7 @@ void Master_Shutdown (void)
 		if (master_adr[i].port)
 		{
 			if (i > 0)
-				Com_Printf ("Sending heartbeat to %s\n", NET_AdrToString (master_adr[i]));
+				Com_Printf_G ("Sending heartbeat to %s\n", NET_AdrToString (master_adr[i]));
 			Netchan_OutOfBandPrint (NS_SERVER, master_adr[i], "shutdown");
 		}
 }
@@ -902,7 +896,7 @@ void SV_UserinfoChanged (client_t *cl)
 
 	// call prog code to allow overrides
 	ge->ClientUserinfoChanged (cl->edict, cl->userinfo);
-	
+
 	// name for C code
 	strncpy (cl->name, Info_ValueForKey (cl->userinfo, "name"), sizeof(cl->name)-1);
 	// mask off high bit
@@ -994,7 +988,7 @@ void SV_FinalMessage (char *message, qboolean reconnect)
 {
 	int			i;
 	client_t	*cl;
-	
+
 	SZ_Clear (&net_message);
 	MSG_WriteByte (&net_message, svc_print);
 	MSG_WriteByte (&net_message, PRINT_HIGH);
@@ -1018,38 +1012,3 @@ void SV_FinalMessage (char *message, qboolean reconnect)
 			Netchan_Transmit (&cl->netchan, net_message.cursize
 			, net_message.data);
 }
-
-
-
-/*
-================
-SV_Shutdown
-
-Called when each game quits,
-before Sys_Quit or Sys_Error
-================
-*/
-void SV_Shutdown (char *finalmsg, qboolean reconnect)
-{
-	if (svs.clients)
-		SV_FinalMessage (finalmsg, reconnect);
-
-	Master_Shutdown ();
-	SV_ShutdownGameProgs ();
-
-	// free current level
-	if (sv.demofile)
-		fclose (sv.demofile);
-	memset (&sv, 0, sizeof(sv));
-	Com_SetServerState (sv.state);
-
-	// free server static data
-	if (svs.clients)
-		Z_Free (svs.clients);
-	if (svs.client_entities)
-		Z_Free (svs.client_entities);
-	if (svs.demofile)
-		fclose (svs.demofile);
-	memset (&svs, 0, sizeof(svs));
-}
-

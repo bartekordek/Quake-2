@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -33,7 +33,7 @@ void Scrap_Upload (void);
 Draw_InitLocal
 ===============
 */
-void Draw_InitLocal (void)
+void ref_gl_Draw_InitLocal (void)
 {
 	// load console characters (don't bilerp characters)
 	draw_chars = GL_FindImage ("pics/conchars.pcx", it_pic);
@@ -53,13 +53,13 @@ It can be clipped to the top of the screen to allow the console to be
 smoothly scrolled off.
 ================
 */
-void Draw_Char (int x, int y, int num)
+void ref_gl_Draw_Char(int x, int y, int num)
 {
 	int				row, col;
 	float			frow, fcol, size;
 
 	num &= 255;
-	
+
 	if ( (num&127) == 32 )
 		return;		// space
 
@@ -92,7 +92,7 @@ void Draw_Char (int x, int y, int num)
 Draw_FindPic
 =============
 */
-image_t	*Draw_FindPic (char *name)
+image_t	*ref_gl_Draw_FindPic(char *name)
 {
 	image_t *gl;
 	char	fullname[MAX_QPATH];
@@ -113,11 +113,11 @@ image_t	*Draw_FindPic (char *name)
 Draw_GetPicSize
 =============
 */
-void Draw_GetPicSize (int *w, int *h, char *pic)
+void ref_gl_Draw_GetPicSize(int *w, int *h, char *pic)
 {
 	image_t *gl;
 
-	gl = Draw_FindPic (pic);
+	gl = Draw_FindPic(pic);
 	if (!gl)
 	{
 		*w = *h = -1;
@@ -132,11 +132,11 @@ void Draw_GetPicSize (int *w, int *h, char *pic)
 Draw_StretchPic
 =============
 */
-void Draw_StretchPic (int x, int y, int w, int h, char *pic)
+void ref_gl_Draw_StretchPic (int x, int y, int w, int h, char *pic)
 {
 	image_t *gl;
 
-	gl = Draw_FindPic (pic);
+	gl = Draw_FindPic(pic);
 	if (!gl)
 	{
 		ri.Con_Printf (PRINT_ALL, "Can't find pic: %s\n", pic);
@@ -171,11 +171,11 @@ void Draw_StretchPic (int x, int y, int w, int h, char *pic)
 Draw_Pic
 =============
 */
-void Draw_Pic (int x, int y, char *pic)
+void ref_gl_Draw_Pic(int x, int y, char *pic)
 {
 	image_t *gl;
 
-	gl = Draw_FindPic (pic);
+	gl = Draw_FindPic(pic);
 	if (!gl)
 	{
 		ri.Con_Printf (PRINT_ALL, "Can't find pic: %s\n", pic);
@@ -211,11 +211,11 @@ This repeats a 64*64 tile graphic to fill the screen around a sized down
 refresh window.
 =============
 */
-void Draw_TileClear (int x, int y, int w, int h, char *pic)
+void ref_gl_Draw_TileClear(int x, int y, int w, int h, char *pic)
 {
 	image_t	*image;
 
-	image = Draw_FindPic (pic);
+	image = Draw_FindPic(pic);
 	if (!image)
 	{
 		ri.Con_Printf (PRINT_ALL, "Can't find pic: %s\n", pic);
@@ -249,7 +249,7 @@ Draw_Fill
 Fills a box of pixels with a single color
 =============
 */
-void Draw_Fill (int x, int y, int w, int h, int c)
+void ref_gl_Draw_Fill(int x, int y, int w, int h, int c)
 {
 	union
 	{
@@ -287,7 +287,7 @@ Draw_FadeScreen
 
 ================
 */
-void Draw_FadeScreen (void)
+void ref_gl_Draw_FadeScreen(void)
 {
 	qglEnable (GL_BLEND);
 	qglDisable (GL_TEXTURE_2D);
@@ -316,7 +316,7 @@ Draw_StretchRaw
 */
 extern unsigned	r_rawpalette[256];
 
-void Draw_StretchRaw (int x, int y, int w, int h, int cols, int rows, byte *data)
+void ref_gl_Draw_StretchRaw(int x, int y, int w, int h, int cols, int rows, byte *data)
 {
 	unsigned	image32[256*256];
 	unsigned char image8[256*256];
@@ -383,19 +383,19 @@ void Draw_StretchRaw (int x, int y, int w, int h, int cols, int rows, byte *data
 			}
 		}
 
-		qglTexImage2D( GL_TEXTURE_2D, 
-			           0, 
-					   GL_COLOR_INDEX8_EXT, 
-					   256, 256, 
-					   0, 
-					   GL_COLOR_INDEX, 
-					   GL_UNSIGNED_BYTE, 
+		qglTexImage2D( GL_TEXTURE_2D,
+			           0,
+					   GL_COLOR_INDEX8_EXT,
+					   256, 256,
+					   0,
+					   GL_COLOR_INDEX,
+					   GL_UNSIGNED_BYTE,
 					   image8 );
 	}
 	qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	if ( ( gl_config.renderer == GL_RENDERER_MCD ) || ( gl_config.renderer & GL_RENDERER_RENDITION ) ) 
+	if ( ( gl_config.renderer == GL_RENDERER_MCD ) || ( gl_config.renderer & GL_RENDERER_RENDITION ) )
 		qglDisable (GL_ALPHA_TEST);
 
 	qglBegin (GL_QUADS);
@@ -409,7 +409,7 @@ void Draw_StretchRaw (int x, int y, int w, int h, int cols, int rows, byte *data
 	qglVertex2f (x, y+h);
 	qglEnd ();
 
-	if ( ( gl_config.renderer == GL_RENDERER_MCD ) || ( gl_config.renderer & GL_RENDERER_RENDITION ) ) 
+	if ( ( gl_config.renderer == GL_RENDERER_MCD ) || ( gl_config.renderer & GL_RENDERER_RENDITION ) )
 		qglEnable (GL_ALPHA_TEST);
 }
 

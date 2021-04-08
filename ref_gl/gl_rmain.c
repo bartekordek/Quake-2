@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -18,9 +18,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 // r_main.c
-#include "gl_local.h"
+#include "ref_gl/gl_local.h"
+#include "shared/enum_rserr.h"
 
-void R_Clear (void);
+void ref_gl_R_Clear (void);
 
 viddef_t	vid;
 
@@ -39,7 +40,7 @@ image_t		*r_particletexture;	// little dot for particles
 entity_t	*currententity;
 model_t		*currentmodel;
 
-cplane_t	frustum[4];
+plane_t	frustum[4];
 
 int			r_visframecount;	// bumped when going to a new PVS
 int			r_framecount;		// used for dlight push checking
@@ -48,7 +49,7 @@ int			c_brush_polys, c_alias_polys;
 
 float		v_blend[4];			// final blending color
 
-void GL_Strings_f( void );
+void ref_gl_GL_Strings_f( void );
 
 //
 // view origin
@@ -140,7 +141,7 @@ R_CullBox
 Returns true if the box is completely outside the frustom
 =================
 */
-qboolean R_CullBox (vec3_t mins, vec3_t maxs)
+qboolean ref_gl_R_CullBox (vec3_t mins, vec3_t maxs)
 {
 	int		i;
 
@@ -154,7 +155,7 @@ qboolean R_CullBox (vec3_t mins, vec3_t maxs)
 }
 
 
-void R_RotateForEntity (entity_t *e)
+void ref_gl_R_RotateForEntity (entity_t *e)
 {
     qglTranslatef (e->origin[0],  e->origin[1],  e->origin[2]);
 
@@ -178,7 +179,7 @@ R_DrawSpriteModel
 
 =================
 */
-void R_DrawSpriteModel (entity_t *e)
+void ref_gl_R_DrawSpriteModel (entity_t *e)
 {
 	float alpha = 1.0F;
 	vec3_t	point;
@@ -256,7 +257,7 @@ void R_DrawSpriteModel (entity_t *e)
 	VectorMA (e->origin, -frame->origin_y, up, point);
 	VectorMA (point, frame->width - frame->origin_x, right, point);
 	qglVertex3fv (point);
-	
+
 	qglEnd ();
 
 	qglDisable (GL_ALPHA_TEST);
@@ -275,7 +276,7 @@ void R_DrawSpriteModel (entity_t *e)
 R_DrawNullModel
 =============
 */
-void R_DrawNullModel (void)
+void ref_gl_R_DrawNullModel (void)
 {
 	vec3_t	shadelight;
 	int		i;
@@ -313,7 +314,7 @@ void R_DrawNullModel (void)
 R_DrawEntitiesOnList
 =============
 */
-void R_DrawEntitiesOnList (void)
+void ref_gl_R_DrawEntitiesOnList (void)
 {
 	int		i;
 
@@ -424,7 +425,7 @@ void GL_DrawParticles( int num_particles, const particle_t particles[], const un
 	for ( p = particles, i=0 ; i < num_particles ; i++,p++)
 	{
 		// hack a scale up to keep particles from disapearing
-		scale = ( p->origin[0] - r_origin[0] ) * vpn[0] + 
+		scale = ( p->origin[0] - r_origin[0] ) * vpn[0] +
 			    ( p->origin[1] - r_origin[1] ) * vpn[1] +
 			    ( p->origin[2] - r_origin[2] ) * vpn[2];
 
@@ -442,13 +443,13 @@ void GL_DrawParticles( int num_particles, const particle_t particles[], const un
 		qglVertex3fv( p->origin );
 
 		qglTexCoord2f( 1.0625, 0.0625 );
-		qglVertex3f( p->origin[0] + up[0]*scale, 
-			         p->origin[1] + up[1]*scale, 
+		qglVertex3f( p->origin[0] + up[0]*scale,
+			         p->origin[1] + up[1]*scale,
 					 p->origin[2] + up[2]*scale);
 
 		qglTexCoord2f( 0.0625, 1.0625 );
-		qglVertex3f( p->origin[0] + right[0]*scale, 
-			         p->origin[1] + right[1]*scale, 
+		qglVertex3f( p->origin[0] + right[0]*scale,
+			         p->origin[1] + right[1]*scale,
 					 p->origin[2] + right[2]*scale);
 	}
 
@@ -464,7 +465,7 @@ void GL_DrawParticles( int num_particles, const particle_t particles[], const un
 R_DrawParticles
 ===============
 */
-void R_DrawParticles (void)
+void ref_gl_R_DrawParticles (void)
 {
 	if ( gl_ext_pointparameters->value && qglPointParameterfEXT )
 	{
@@ -507,7 +508,7 @@ void R_DrawParticles (void)
 R_PolyBlend
 ============
 */
-void R_PolyBlend (void)
+void ref_gl_R_PolyBlend (void)
 {
 	if (!gl_polyblend->value)
 		return;
@@ -544,7 +545,7 @@ void R_PolyBlend (void)
 
 //=======================================================================
 
-int SignbitsForPlane (cplane_t *out)
+int SignbitsForPlane (plane_t *out)
 {
 	int	bits, j;
 
@@ -560,7 +561,7 @@ int SignbitsForPlane (cplane_t *out)
 }
 
 
-void R_SetFrustum (void)
+void ref_gl_R_SetFrustum (void)
 {
 	int		i;
 
@@ -607,7 +608,7 @@ void R_SetFrustum (void)
 R_SetupFrame
 ===============
 */
-void R_SetupFrame (void)
+void ref_gl_R_SetupFrame (void)
 {
 	int i;
 	mleaf_t	*leaf;
@@ -624,7 +625,7 @@ void R_SetupFrame (void)
 	{
 		r_oldviewcluster = r_viewcluster;
 		r_oldviewcluster2 = r_viewcluster2;
-		leaf = Mod_PointInLeaf (r_origin, r_worldmodel);
+		leaf = ref_gl_Mod_PointInLeaf (r_origin, r_worldmodel);
 		r_viewcluster = r_viewcluster2 = leaf->cluster;
 
 		// check above and below so crossing solid water doesn't draw wrong
@@ -634,7 +635,7 @@ void R_SetupFrame (void)
 
 			VectorCopy (r_origin, temp);
 			temp[2] -= 16;
-			leaf = Mod_PointInLeaf (temp, r_worldmodel);
+			leaf = ref_gl_Mod_PointInLeaf (temp, r_worldmodel);
 			if ( !(leaf->contents & CONTENTS_SOLID) &&
 				(leaf->cluster != r_viewcluster2) )
 				r_viewcluster2 = leaf->cluster;
@@ -645,7 +646,7 @@ void R_SetupFrame (void)
 
 			VectorCopy (r_origin, temp);
 			temp[2] += 16;
-			leaf = Mod_PointInLeaf (temp, r_worldmodel);
+			leaf = ref_gl_Mod_PointInLeaf (temp, r_worldmodel);
 			if ( !(leaf->contents & CONTENTS_SOLID) &&
 				(leaf->cluster != r_viewcluster2) )
 				r_viewcluster2 = leaf->cluster;
@@ -694,7 +695,7 @@ void MYgluPerspective( GLdouble fovy, GLdouble aspect,
 R_SetupGL
 =============
 */
-void R_SetupGL (void)
+void ref_gl_R_SetupGL (void)
 {
 	float	screenaspect;
 //	float	yfov;
@@ -757,7 +758,7 @@ void R_SetupGL (void)
 R_Clear
 =============
 */
-void R_Clear (void)
+void ref_gl_R_Clear (void)
 {
 	if (gl_ztrick->value)
 	{
@@ -795,7 +796,7 @@ void R_Clear (void)
 
 }
 
-void R_Flash( void )
+void ref_gl_R_Flash( void )
 {
 	R_PolyBlend ();
 }
@@ -807,7 +808,7 @@ R_RenderView
 r_newrefdef must be set before the first call
 ================
 */
-void R_RenderView (refdef_t *fd)
+void ref_gl_R_RenderView (refdef_t *fd)
 {
 	if (r_norefresh->value)
 		return;
@@ -851,10 +852,10 @@ void R_RenderView (refdef_t *fd)
 	if (r_speeds->value)
 	{
 		ri.Con_Printf (PRINT_ALL, "%4i wpoly %4i epoly %i tex %i lmaps\n",
-			c_brush_polys, 
-			c_alias_polys, 
-			c_visible_textures, 
-			c_visible_lightmaps); 
+			c_brush_polys,
+			c_alias_polys,
+			c_visible_textures,
+			c_visible_lightmaps);
 	}
 }
 
@@ -911,7 +912,7 @@ static void GL_DrawStereoPattern( void )
 			GL_DrawColoredStereoLinePair( 1, 1, 0, 12);
 			GL_DrawColoredStereoLinePair( 0, 1, 0, 14);
 		qglEnd();
-		
+
 		GLimp_EndFrame();
 	}
 }
@@ -923,7 +924,7 @@ R_SetLightLevel
 
 ====================
 */
-void R_SetLightLevel (void)
+void ref_gl_R_SetLightLevel (void)
 {
 	vec3_t		shadelight;
 
@@ -959,7 +960,7 @@ R_RenderFrame
 
 @@@@@@@@@@@@@@@@@@@@@
 */
-void R_RenderFrame (refdef_t *fd)
+void ref_gl_R_RenderFrame (refdef_t *fd)
 {
 	R_RenderView( fd );
 	R_SetLightLevel ();
@@ -967,7 +968,7 @@ void R_RenderFrame (refdef_t *fd)
 }
 
 
-void R_Register( void )
+void ref_gl_R_Register( void )
 {
 	r_lefthand = ri.Cvar_Get( "hand", "0", CVAR_USERINFO | CVAR_ARCHIVE );
 	r_norefresh = ri.Cvar_Get ("r_norefresh", "0", 0);
@@ -1036,10 +1037,10 @@ void R_Register( void )
 	vid_gamma = ri.Cvar_Get( "vid_gamma", "1.0", CVAR_ARCHIVE );
 	vid_ref = ri.Cvar_Get( "vid_ref", "soft", CVAR_ARCHIVE );
 
-	ri.Cmd_AddCommand( "imagelist", GL_ImageList_f );
-	ri.Cmd_AddCommand( "screenshot", GL_ScreenShot_f );
-	ri.Cmd_AddCommand( "modellist", Mod_Modellist_f );
-	ri.Cmd_AddCommand( "gl_strings", GL_Strings_f );
+	ri.Cmd_AddCommand( "imagelist", ref_gl_GL_ImageList_f );
+	ri.Cmd_AddCommand( "screenshot", ref_gl_GL_ScreenShot_f );
+	ri.Cmd_AddCommand( "modellist", ref_gl_Mod_Modellist_f );
+	ri.Cmd_AddCommand( "gl_strings", ref_gl_GL_Strings_f );
 }
 
 /*
@@ -1047,7 +1048,7 @@ void R_Register( void )
 R_SetMode
 ==================
 */
-qboolean R_SetMode (void)
+qboolean ref_gl_R_SetMode (void)
 {
 	rserr_t err;
 	qboolean fullscreen;
@@ -1100,8 +1101,8 @@ qboolean R_SetMode (void)
 R_Init
 ===============
 */
-int R_Init( void *hinstance, void *hWnd )
-{	
+int ref_gl_R_Init( void *hinstance, void *hWnd )
+{
 	char renderer_buffer[1000];
 	char vendor_buffer[1000];
 	int		err;
@@ -1115,7 +1116,7 @@ int R_Init( void *hinstance, void *hWnd )
 
 	ri.Con_Printf (PRINT_ALL, "ref_gl version: "REF_VERSION"\n");
 
-	Draw_GetPalette ();
+	ref_gl_Draw_GetPalette ();
 
 	R_Register();
 
@@ -1141,7 +1142,7 @@ int R_Init( void *hinstance, void *hWnd )
 	if ( !R_SetMode () )
 	{
 		QGL_Shutdown();
-        ri.Con_Printf (PRINT_ALL, "ref_gl::R_Init() - could not R_SetMode()\n" );
+        ri.Con_Printf (PRINT_ALL, "ref_gl::R_Init() - could not ref_gl_R_SetMode()\n" );
 		return -1;
 	}
 
@@ -1196,7 +1197,7 @@ int R_Init( void *hinstance, void *hWnd )
 			ri.Cvar_Set( "gl_monolightmap", "A" );
 			ri.Con_Printf( PRINT_ALL, "...using gl_monolightmap 'a'\n" );
 		}
-		else if ( gl_config.renderer & GL_RENDERER_POWERVR ) 
+		else if ( gl_config.renderer & GL_RENDERER_POWERVR )
 		{
 			ri.Cvar_Set( "gl_monolightmap", "0" );
 		}
@@ -1208,7 +1209,7 @@ int R_Init( void *hinstance, void *hWnd )
 
 	// power vr can't have anything stay in the framebuffer, so
 	// the screen needs to redraw the tiled background every frame
-	if ( gl_config.renderer & GL_RENDERER_POWERVR ) 
+	if ( gl_config.renderer & GL_RENDERER_POWERVR )
 	{
 		ri.Cvar_Set( "scr_drawall", "1" );
 	}
@@ -1244,7 +1245,7 @@ int R_Init( void *hinstance, void *hWnd )
 	** grab extensions
 	*/
 #ifdef WIN32
-	if ( strstr( gl_config.extensions_string, "GL_EXT_compiled_vertex_array" ) || 
+	if ( strstr( gl_config.extensions_string, "GL_EXT_compiled_vertex_array" ) ||
 		 strstr( gl_config.extensions_string, "GL_SGI_compiled_vertex_array" ) )
 	{
 		ri.Con_Printf( PRINT_ALL, "...enabling GL_EXT_compiled_vertex_array\n" );
@@ -1284,7 +1285,7 @@ int R_Init( void *hinstance, void *hWnd )
 		ri.Con_Printf( PRINT_ALL, "...GL_EXT_point_parameters not found\n" );
 	}
 
-	if ( strstr( gl_config.extensions_string, "GL_EXT_paletted_texture" ) && 
+	if ( strstr( gl_config.extensions_string, "GL_EXT_paletted_texture" ) &&
 		 strstr( gl_config.extensions_string, "GL_EXT_shared_texture_palette" ) )
 	{
 		if ( gl_ext_palettedtexture->value )
@@ -1331,7 +1332,8 @@ int R_Init( void *hinstance, void *hWnd )
 #endif
 
 	GL_InitImages ();
-	Mod_Init ();
+	//TODO? which one?
+	reg_gl_Mod_Init ();
 	R_InitParticleTexture ();
 	Draw_InitLocal ();
 
@@ -1345,8 +1347,8 @@ int R_Init( void *hinstance, void *hWnd )
 R_Shutdown
 ===============
 */
-void R_Shutdown (void)
-{	
+void ref_gl_R_Shutdown (void)
+{
 	ri.Cmd_RemoveCommand ("modellist");
 	ri.Cmd_RemoveCommand ("screenshot");
 	ri.Cmd_RemoveCommand ("imagelist");
@@ -1374,7 +1376,7 @@ void R_Shutdown (void)
 R_BeginFrame
 @@@@@@@@@@@@@@@@@@@@@
 */
-void R_BeginFrame( float camera_separation )
+void ref_gl_R_BeginFrame( float camera_separation )
 {
 
 	gl_state.camera_separation = camera_separation;
@@ -1494,7 +1496,7 @@ R_SetPalette
 */
 unsigned r_rawpalette[256];
 
-void R_SetPalette ( const unsigned char *palette)
+void ref_gl_R_SetPalette ( const unsigned char *palette)
 {
 	int		i;
 
@@ -1528,9 +1530,9 @@ void R_SetPalette ( const unsigned char *palette)
 }
 
 /*
-** R_DrawBeam
+** ref_gl_R_DrawBeam
 */
-void R_DrawBeam( entity_t *e )
+void ref_gl_R_DrawBeam( entity_t *e )
 {
 #define NUM_BEAM_SEGS 6
 
@@ -1599,21 +1601,21 @@ void R_DrawBeam( entity_t *e )
 //===================================================================
 
 
-void	R_BeginRegistration (char *map);
-struct model_s	*R_RegisterModel (char *name);
-struct image_s	*R_RegisterSkin (char *name);
-void R_SetSky (char *name, float rotate, vec3_t axis);
-void	R_EndRegistration (void);
+void ref_gl_R_BeginRegistration (char *map);
+struct model_s	*ref_gl_R_RegisterModel (char *name);
+struct image_s	*ref_gl_R_RegisterSkin (char *name);
+void ref_gl_R_SetSky (char *name, float rotate, vec3_t axis);
+void ref_gl_R_EndRegistration (void);
 
-void	R_RenderFrame (refdef_t *fd);
+void ref_gl_R_RenderFrame (refdef_t *fd);
 
-struct image_s	*Draw_FindPic (char *name);
+struct image_s* ref_gl_Draw_FindPic(char *name);
 
-void	Draw_Pic (int x, int y, char *name);
-void	Draw_Char (int x, int y, int c);
-void	Draw_TileClear (int x, int y, int w, int h, char *name);
-void	Draw_Fill (int x, int y, int w, int h, int c);
-void	Draw_FadeScreen (void);
+void ref_gl_Draw_Pic(int x, int y, char *name);
+void ref_gl_Draw_Char (int x, int y, int c);
+void ref_gl_Draw_TileClear (int x, int y, int w, int h, char *name);
+void ref_gl_Draw_Fill (int x, int y, int w, int h, int c);
+void ref_gl_Draw_FadeScreen (void);
 
 /*
 @@@@@@@@@@@@@@@@@@@@@
@@ -1621,7 +1623,7 @@ GetRefAPI
 
 @@@@@@@@@@@@@@@@@@@@@
 */
-refexport_t GetRefAPI (refimport_t rimp )
+refexport_t ref_gl_GetRefAPI (refimport_t rimp )
 {
 	refexport_t	re;
 
@@ -1629,30 +1631,30 @@ refexport_t GetRefAPI (refimport_t rimp )
 
 	re.api_version = API_VERSION;
 
-	re.BeginRegistration = R_BeginRegistration;
-	re.RegisterModel = R_RegisterModel;
-	re.RegisterSkin = R_RegisterSkin;
-	re.RegisterPic = Draw_FindPic;
-	re.SetSky = R_SetSky;
-	re.EndRegistration = R_EndRegistration;
+	re.BeginRegistration = ref_gl_R_BeginRegistration;
+	re.RegisterModel = ref_gl_R_RegisterModel;
+	re.RegisterSkin = ref_gl_R_RegisterSkin;
+	re.RegisterPic = ref_gl_Draw_FindPic;
+	re.SetSky = ref_gl_R_SetSky;
+	re.EndRegistration = ref_gl_R_EndRegistration;
 
-	re.RenderFrame = R_RenderFrame;
+	re.RenderFrame = ref_gl_R_RenderFrame;
 
-	re.DrawGetPicSize = Draw_GetPicSize;
-	re.DrawPic = Draw_Pic;
-	re.DrawStretchPic = Draw_StretchPic;
-	re.DrawChar = Draw_Char;
-	re.DrawTileClear = Draw_TileClear;
-	re.DrawFill = Draw_Fill;
-	re.DrawFadeScreen= Draw_FadeScreen;
+	re.DrawGetPicSize = ref_gl_Draw_GetPicSize;
+	re.DrawPic = ref_gl_Draw_Pic;
+	re.DrawStretchPic = ref_gl_Draw_StretchPic;
+	re.DrawChar = ref_gl_Draw_Char;
+	re.DrawTileClear = ref_gl_Draw_TileClear;
+	re.DrawFill = ref_gl_Draw_Fill;
+	re.DrawFadeScreen= ref_gl_Draw_FadeScreen;
 
-	re.DrawStretchRaw = Draw_StretchRaw;
+	re.DrawStretchRaw = ref_gl_Draw_StretchRaw;
 
-	re.Init = R_Init;
-	re.Shutdown = R_Shutdown;
+	re.Init = ref_gl_R_Init;
+	re.Shutdown = ref_gl_R_Shutdown;
 
-	re.CinematicSetPalette = R_SetPalette;
-	re.BeginFrame = R_BeginFrame;
+	re.CinematicSetPalette = ref_gl_R_SetPalette;
+	re.BeginFrame = ref_gl_R_BeginFrame;
 	re.EndFrame = GLimp_EndFrame;
 
 	re.AppActivate = GLimp_AppActivate;
@@ -1661,32 +1663,3 @@ refexport_t GetRefAPI (refimport_t rimp )
 
 	return re;
 }
-
-
-#ifndef REF_HARD_LINKED
-// this is only here so the functions in q_shared.c and q_shwin.c can link
-void Sys_Error (char *error, ...)
-{
-	va_list		argptr;
-	char		text[1024];
-
-	va_start (argptr, error);
-	vsprintf (text, error, argptr);
-	va_end (argptr);
-
-	ri.Sys_Error (ERR_FATAL, "%s", text);
-}
-
-void Com_Printf (char *fmt, ...)
-{
-	va_list		argptr;
-	char		text[1024];
-
-	va_start (argptr, fmt);
-	vsprintf (text, fmt, argptr);
-	va_end (argptr);
-
-	ri.Con_Printf (PRINT_ALL, "%s", text);
-}
-
-#endif

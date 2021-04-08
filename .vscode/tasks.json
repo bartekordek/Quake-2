@@ -4,9 +4,54 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "[WINDOWS] CMD Clean",
+            "label": "[UTILITY][FIX HEADEERS]",
             "type": "shell",
-            "command": "cls",
+            "command": "python FixHeaders.py",
+            "group": {
+                "kind": "build"
+            },
+            "problemMatcher": [
+                "$gradle"
+            ]
+        },
+        {
+            "label": "[LINUX][CMAKE][CREATE]",
+            "type": "shell",
+            "command": "cd Build-Linux && cmake .. -DCMAKE_BUILD_TYPE=Debug",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$gradle"
+            ],
+            "dependsOn": "[UTILITY][FIX HEADEERS]"
+        },
+        {
+            "label": "[LINUX][BUILD][DEBUG]",
+            "type": "shell",
+            "command": "cmake --build Build-LINUX --target Quake-2 --config DEBUG -j10",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$gradle"
+            ],
+            "presentation": {
+                "echo":false,
+                "reveal": "always",
+                "focus": true,
+                "panel": "dedicated",
+                "showReuseMessage": true,
+                "clear": true
+            },
+            "dependsOn":"[LINUX][CMAKE][CREATE]"
+        }
+        {
+            "label": "[WINDOWS][CMD CLEAN]",
+            "type": "shell",
+            "command": "cls && cls",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -16,7 +61,7 @@
             ]
         },
         {
-            "label": "[WINDOWS] CMake create",
+            "label": "[WINDOWS][CMAKE][CREATE]",
             "type": "shell",
             "command": "cd Build-Windows && cmake .. -DCMAKE_BUILD_TYPE=Debug -G \"Visual Studio 16 2019\"",
             "group": {
@@ -26,7 +71,50 @@
             "problemMatcher": [
                 "$gradle"
             ],
-            "dependsOn": "[WINDOWS] CMD Clean"
+            "dependsOn": "[UTILITY][FIX HEADEERS]"
+        },
+        {
+            "label": "[WINDOWS][BUILD][DEBUG]",
+            "type": "shell",
+            "command": "cmake --build Build-Windows --target Quake-2 --config DEBUG",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$gradle"
+            ],
+            "presentation": {
+                "echo":false,
+                "reveal": "always",
+                "focus": true,
+                "panel": "dedicated",
+                "showReuseMessage": true,
+                "clear": true
+            },
+            "dependsOn":"[WINDOWS][CMAKE][CREATE]"
+        }
+        ,
+        {
+            "label": "[WINDOWS][BUILD][CLEAN]",
+            "type": "shell",
+            "command": "cmake --build Build-Windows --target clean --config DEBUG",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$gradle"
+            ],
+            "presentation": {
+                "echo":false,
+                "reveal": "always",
+                "focus": true,
+                "panel": "new",
+                "showReuseMessage": true,
+                "clear": true
+            },
+            "dependsOn":"[WINDOWS][CMAKE][CREATE]"
         }
     ]
 }

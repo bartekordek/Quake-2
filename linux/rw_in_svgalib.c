@@ -7,9 +7,9 @@
 #include <signal.h>
 #include <sys/mman.h>
 
-#include <asm/io.h>
+#include <sys/io.h>
 
-#include "vga.h"
+#include "video/vga.h"
 #include "vgakeyboard.h"
 #include "vgamouse.h"
 
@@ -57,41 +57,41 @@ void KBD_Init(Key_Event_fp_t fp)
 	scantokey[ 13] = '=';
 	scantokey[ 14] = K_BACKSPACE;
 	scantokey[ 15] = K_TAB;
-	scantokey[ 16] = 'q';       
-	scantokey[ 17] = 'w';       
-	scantokey[ 18] = 'e';       
-	scantokey[ 19] = 'r';       
-	scantokey[ 20] = 't';       
-	scantokey[ 21] = 'y';       
-	scantokey[ 22] = 'u';       
-	scantokey[ 23] = 'i';       
-	scantokey[ 24] = 'o';       
-	scantokey[ 25] = 'p';       
+	scantokey[ 16] = 'q';
+	scantokey[ 17] = 'w';
+	scantokey[ 18] = 'e';
+	scantokey[ 19] = 'r';
+	scantokey[ 20] = 't';
+	scantokey[ 21] = 'y';
+	scantokey[ 22] = 'u';
+	scantokey[ 23] = 'i';
+	scantokey[ 24] = 'o';
+	scantokey[ 25] = 'p';
 	scantokey[ 26] = '[';
 	scantokey[ 27] = ']';
 	scantokey[ 28] = K_ENTER;
 	scantokey[ 29] = K_CTRL; //left
 	scantokey[ 30] = 'a';
-	scantokey[ 31] = 's';       
-	scantokey[ 32] = 'd';       
-	scantokey[ 33] = 'f';       
-	scantokey[ 34] = 'g';       
-	scantokey[ 35] = 'h';       
-	scantokey[ 36] = 'j';       
-	scantokey[ 37] = 'k';       
-	scantokey[ 38] = 'l';       
+	scantokey[ 31] = 's';
+	scantokey[ 32] = 'd';
+	scantokey[ 33] = 'f';
+	scantokey[ 34] = 'g';
+	scantokey[ 35] = 'h';
+	scantokey[ 36] = 'j';
+	scantokey[ 37] = 'k';
+	scantokey[ 38] = 'l';
 	scantokey[ 39] = ';';
 	scantokey[ 40] = '\'';
 	scantokey[ 41] = '`';
 	scantokey[ 42] = K_SHIFT; //left
 	scantokey[ 43] = '\\';
-	scantokey[ 44] = 'z';       
-	scantokey[ 45] = 'x';  
+	scantokey[ 44] = 'z';
+	scantokey[ 45] = 'x';
 	scantokey[ 46] = 'c';
-	scantokey[ 47] = 'v';       
+	scantokey[ 47] = 'v';
 	scantokey[ 48] = 'b';
-	scantokey[ 49] = 'n';       
-	scantokey[ 50] = 'm';       
+	scantokey[ 49] = 'n';
+	scantokey[ 50] = 'm';
 	scantokey[ 51] = ',';
 	scantokey[ 52] = '.';
 	scantokey[ 53] = '/';
@@ -207,12 +207,12 @@ static void Force_CenterView_f (void)
 	in_state->viewangles[PITCH] = 0;
 }
 
-static void RW_IN_MLookDown (void) 
-{ 
-	mlooking = true; 
+static void RW_IN_MLookDown (void)
+{
+	mlooking = true;
 }
 
-static void RW_IN_MLookUp (void) 
+static void RW_IN_MLookUp (void)
 {
 	mlooking = false;
 	in_state->IN_CenterView_fp ();
@@ -345,13 +345,13 @@ void RW_IN_Move (usercmd_t *cmd)
 	mouse_y *= sensitivity->value;
 
 // add mouse X/Y movement to cmd
-	if ( (*in_state->in_strafe_state & 1) || 
+	if ( (*in_state->in_strafe_state & 1) ||
 		(lookstrafe->value && mlooking ))
 		cmd->sidemove += m_side->value * mouse_x;
 	else
 		in_state->viewangles[YAW] -= m_yaw->value * mouse_x;
 
-	if ( (mlooking || freelook->value) && 
+	if ( (mlooking || freelook->value) &&
 		!(*in_state->in_strafe_state & 1))
 	{
 		in_state->viewangles[PITCH] += m_pitch->value * mouse_y;

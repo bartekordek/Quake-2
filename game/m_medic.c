@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -27,6 +27,7 @@ MEDIC
 
 #include "g_local.h"
 #include "m_medic.h"
+#include "shared/defines.h"
 
 qboolean visible (edict_t *self, edict_t *other);
 
@@ -252,7 +253,7 @@ mframe_t medic_frames_run [] =
 	ai_run, 23.4,	NULL,
 	ai_run, 24,		NULL,
 	ai_run, 35.6,	NULL
-	
+
 };
 mmove_t medic_move_run = {FRAME_run1, FRAME_run6, medic_frames_run, NULL};
 
@@ -545,7 +546,7 @@ mframe_t medic_frames_attackBlaster [] =
 	ai_charge, 0,	medic_fire_blaster,
 	ai_charge, 0,	NULL,
 	ai_charge, 0,	NULL,
-	ai_charge, 0,	medic_fire_blaster,	
+	ai_charge, 0,	medic_fire_blaster,
 	ai_charge, 0,	NULL,
 	ai_charge, 0,	medic_continue	// Change to medic_continue... Else, go to frame 32
 };

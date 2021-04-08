@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -66,7 +66,7 @@ qboolean		r_lastvertvalid;
 int				r_skyframe;
 
 msurface_t		*r_skyfaces;
-mplane_t		r_skyplanes[6];
+plane_t		r_skyplanes[6];
 mtexinfo_t		r_skytexinfo[6];
 mvertex_t		*r_skyverts;
 medge_t			*r_skyedges;
@@ -203,7 +203,7 @@ void R_EmitSkyBox (void)
 	r_currentkey = 0x7ffffff0;
  	for (i=0 ; i<6 ; i++)
 	{
-		R_RenderFace (r_skyfaces + i, 15);
+		ref_soft_R_RenderFace (r_skyfaces + i, 15);
 	}
 	r_currentkey = oldkey;		// bsp sorting order
 }
@@ -237,16 +237,16 @@ void R_EmitEdge (mvertex_t *pv0, mvertex_t *pv1)
 	else
 	{
 		world = &pv0->position[0];
-	
+
 	// transform and project
 		VectorSubtract (world, modelorg, local);
 		TransformVector (local, transformed);
-	
+
 		if (transformed[2] < NEAR_CLIP)
 			transformed[2] = NEAR_CLIP;
-	
+
 		lzi0 = 1.0 / transformed[2];
-	
+
 	// FIXME: build x/yscale into transform?
 		scale = xscale * lzi0;
 		u0 = (xcenter + scale*transformed[0]);
@@ -254,14 +254,14 @@ void R_EmitEdge (mvertex_t *pv0, mvertex_t *pv1)
 			u0 = r_refdef.fvrectx_adj;
 		if (u0 > r_refdef.fvrectright_adj)
 			u0 = r_refdef.fvrectright_adj;
-	
+
 		scale = yscale * lzi0;
 		v0 = (ycenter - scale*transformed[1]);
 		if (v0 < r_refdef.fvrecty_adj)
 			v0 = r_refdef.fvrecty_adj;
 		if (v0 > r_refdef.fvrectbottom_adj)
 			v0 = r_refdef.fvrectbottom_adj;
-	
+
 		ceilv0 = (int) ceil(v0);
 	}
 
@@ -519,14 +519,14 @@ void R_EmitCachedEdge (void)
 
 /*
 ================
-R_RenderFace
+ref_soft_R_RenderFace
 ================
 */
-void R_RenderFace (msurface_t *fa, int clipflags)
+void ref_soft_R_RenderFace (msurface_t *fa, int clipflags)
 {
 	int			i, lindex;
 	unsigned	mask;
-	mplane_t	*pplane;
+	plane_t	*pplane;
 	float		distinv;
 	vec3_t		p_normal;
 	medge_t		*pedges, tedge;
@@ -544,7 +544,7 @@ void R_RenderFace (msurface_t *fa, int clipflags)
 	// environment box surfaces to be emited
 	if ( fa->texinfo->flags & SURF_SKY )
 	{
-		R_EmitSkyBox ();	
+		R_EmitSkyBox ();
 		return;
 	}
 
@@ -739,7 +739,7 @@ void R_RenderBmodelFace (bedge_t *pedges, msurface_t *psurf)
 {
 	int			i;
 	unsigned	mask;
-	mplane_t	*pplane;
+	plane_t	*pplane;
 	float		distinv;
 	vec3_t		p_normal;
 	medge_t		tedge;

@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -49,7 +49,7 @@ void multi_trigger (edict_t *ent)
 
 	G_UseTargets (ent, ent->activator);
 
-	if (ent->wait > 0)	
+	if (ent->wait > 0)
 	{
 		ent->think = multi_wait;
 		ent->nextthink = level.time + ent->wait;
@@ -69,7 +69,7 @@ void Use_Multi (edict_t *ent, edict_t *other, edict_t *activator)
 	multi_trigger (ent);
 }
 
-void Touch_Multi (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
+void Touch_Multi (edict_t *self, edict_t *other, plane_t *plane, csurface_t *surf)
 {
 	if(other->client)
 	{
@@ -123,7 +123,7 @@ void SP_trigger_multiple (edict_t *ent)
 		ent->noise_index = gi.soundindex ("misc/talk.wav");
 	else if (ent->sounds == 3)
 		ent->noise_index = gi.soundindex ("misc/trigger1.wav");
-	
+
 	if (!ent->wait)
 		ent->wait = 0.2;
 	ent->touch = Touch_Multi;
@@ -327,7 +327,7 @@ void trigger_counter_use(edict_t *self, edict_t *other, edict_t *activator)
 {
 	if (self->count == 0)
 		return;
-	
+
 	self->count--;
 
 	if (self->count)
@@ -339,7 +339,7 @@ void trigger_counter_use(edict_t *self, edict_t *other, edict_t *activator)
 		}
 		return;
 	}
-	
+
 	if (! (self->spawnflags & 1))
 	{
 		gi.centerprintf(activator, "Sequence completed!");
@@ -391,7 +391,7 @@ trigger_push
 
 static int windsound;
 
-void trigger_push_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
+void trigger_push_touch (edict_t *self, edict_t *other, plane_t *plane, csurface_t *surf)
 {
 	if (strcmp(other->classname, "grenade") == 0)
 	{
@@ -465,7 +465,7 @@ void hurt_use (edict_t *self, edict_t *other, edict_t *activator)
 }
 
 
-void hurt_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
+void hurt_touch (edict_t *self, edict_t *other, plane_t *plane, csurface_t *surf)
 {
 	int		dflags;
 
@@ -529,7 +529,7 @@ the value of "gravity".  1.0 is standard
 gravity for the level.
 */
 
-void trigger_gravity_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
+void trigger_gravity_touch (edict_t *self, edict_t *other, plane_t *plane, csurface_t *surf)
 {
 	other->gravity = self->gravity;
 }
@@ -563,7 +563,7 @@ Walking monsters that touch this will jump in the direction of the trigger's ang
 "height" default to 200, the speed thrown upwards
 */
 
-void trigger_monsterjump_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
+void trigger_monsterjump_touch (edict_t *self, edict_t *other, plane_t *plane, csurface_t *surf)
 {
 	if (other->flags & (FL_FLY | FL_SWIM) )
 		return;
@@ -575,10 +575,10 @@ void trigger_monsterjump_touch (edict_t *self, edict_t *other, cplane_t *plane, 
 // set XY even if not on ground, so the jump will clear lips
 	other->velocity[0] = self->movedir[0] * self->speed;
 	other->velocity[1] = self->movedir[1] * self->speed;
-	
+
 	if (!other->groundentity)
 		return;
-	
+
 	other->groundentity = NULL;
 	other->velocity[2] = self->movedir[2];
 }

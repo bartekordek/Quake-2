@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -82,7 +82,7 @@ void R_RotateBmodel (void)
 // TODO: share work with R_SetUpAliasTransform
 
 // yaw
-	angle = currententity->angles[YAW];		
+	angle = currententity->angles[YAW];
 	angle = angle * M_PI*2 / 360;
 	s = sin(angle);
 	c = cos(angle);
@@ -99,7 +99,7 @@ void R_RotateBmodel (void)
 
 
 // pitch
-	angle = currententity->angles[PITCH];		
+	angle = currententity->angles[PITCH];
 	angle = angle * M_PI*2 / 360;
 	s = sin(angle);
 	c = cos(angle);
@@ -117,7 +117,7 @@ void R_RotateBmodel (void)
 	R_ConcatRotations (temp2, temp1, temp3);
 
 // roll
-	angle = currententity->angles[ROLL];		
+	angle = currententity->angles[ROLL];
 	angle = angle * M_PI*2 / 360;
 	s = sin(angle);
 	c = cos(angle);
@@ -158,7 +158,7 @@ void R_RecursiveClipBPoly (bedge_t *pedges, mnode_t *pnode, msurface_t *psurf)
 	bedge_t		*psideedges[2], *pnextedge, *ptedge;
 	int			i, side, lastside;
 	float		dist, frac, lastdist;
-	mplane_t	*splitplane, tplane;
+	plane_t	*splitplane, tplane;
 	mvertex_t	*pvert, *plastvert, *ptvert;
 	mnode_t		*pn;
 	int			area;
@@ -339,7 +339,7 @@ void R_DrawSolidClippedSubmodelPolygons (model_t *pmodel, mnode_t *topnode)
 	vec_t		dot;
 	msurface_t	*psurf;
 	int			numsurfaces;
-	mplane_t	*pplane;
+	plane_t	*pplane;
 	mvertex_t	bverts[MAX_BMODEL_VERTS];
 	bedge_t		bedges[MAX_BMODEL_EDGES], *pbedge;
 	medge_t		*pedge, *pedges;
@@ -418,7 +418,7 @@ void R_DrawSubmodelPolygons (model_t *pmodel, int clipflags, mnode_t *topnode)
 	vec_t		dot;
 	msurface_t	*psurf;
 	int			numsurfaces;
-	mplane_t	*pplane;
+	plane_t	*pplane;
 
 // FIXME: use bounding-box-based frustum clipping info?
 
@@ -439,7 +439,7 @@ void R_DrawSubmodelPolygons (model_t *pmodel, int clipflags, mnode_t *topnode)
 			r_currentkey = ((mleaf_t *)topnode)->key;
 
 		// FIXME: use bounding-box-based frustum clipping info?
-			R_RenderFace (psurf, clipflags);
+			ref_soft_R_RenderFace (psurf, clipflags);
 		}
 	}
 }
@@ -452,11 +452,11 @@ int c_drawnode;
 R_RecursiveWorldNode
 ================
 */
-void R_RecursiveWorldNode (mnode_t *node, int clipflags)
+void ref_soft_R_RecursiveWorldNode (mnode_t *node, int clipflags)
 {
 	int			i, c, side, *pindex;
 	vec3_t		acceptpt, rejectpt;
-	mplane_t	*plane;
+	plane_t	*plane;
 	msurface_t	*surf, **mark;
 	float		d, dot;
 	mleaf_t		*pleaf;
@@ -486,7 +486,7 @@ void R_RecursiveWorldNode (mnode_t *node, int clipflags)
 			rejectpt[0] = (float)node->minmaxs[pindex[0]];
 			rejectpt[1] = (float)node->minmaxs[pindex[1]];
 			rejectpt[2] = (float)node->minmaxs[pindex[2]];
-			
+
 			d = DotProduct (rejectpt, view_clipplanes[i].normal);
 			d -= view_clipplanes[i].dist;
 			if (d <= 0)
@@ -554,7 +554,7 @@ c_drawnode++;
 			dot = DotProduct (modelorg, plane->normal) - plane->dist;
 			break;
 		}
-	
+
 		if (dot >= 0)
 			side = 0;
 		else
@@ -577,7 +577,7 @@ c_drawnode++;
 					if ((surf->flags & SURF_PLANEBACK) &&
 						(surf->visframe == r_framecount))
 					{
-						R_RenderFace (surf, clipflags);
+						ref_soft_R_RenderFace (surf, clipflags);
 					}
 
 					surf++;
@@ -590,7 +590,7 @@ c_drawnode++;
 					if (!(surf->flags & SURF_PLANEBACK) &&
 						(surf->visframe == r_framecount))
 					{
-						R_RenderFace (surf, clipflags);
+						ref_soft_R_RenderFace (surf, clipflags);
 					}
 
 					surf++;

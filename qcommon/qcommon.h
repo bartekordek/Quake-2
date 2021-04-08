@@ -11,7 +11,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -23,8 +23,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 // qcommon.h -- definitions common between client and server, but not game.dll
 
-#include "../game/q_shared.h"
-
+#include "game/q_shared.h"
+#include "shared/defines.h"
 
 #define	VERSION		3.19
 
@@ -42,6 +42,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define	CPUSTRING	"x86"
 #elif defined _M_ALPHA
 #define	CPUSTRING	"AXP"
+#else
+#define CPUSTRING "x64"
 #endif
 
 #elif defined __linux__
@@ -74,6 +76,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #endif
 
 //============================================================================
+
+extern char	*rd_buffer;
+extern int	rd_target;
 
 typedef struct sizebuf_s
 {
@@ -196,41 +201,6 @@ PROTOCOL
 
 
 
-//==================
-// the svc_strings[] array in cl_parse.c should mirror this
-//==================
-
-//
-// server to client
-//
-enum svc_ops_e
-{
-	svc_bad,
-
-	// these ops are known to the game dll
-	svc_muzzleflash,
-	svc_muzzleflash2,
-	svc_temp_entity,
-	svc_layout,
-	svc_inventory,
-
-	// the rest are private to the client and server
-	svc_nop,
-	svc_disconnect,
-	svc_reconnect,
-	svc_sound,					// <see code>
-	svc_print,					// [byte] id [string] null terminated string
-	svc_stufftext,				// [string] stuffed into client's console buffer, should be \n terminated
-	svc_serverdata,				// [long] protocol ...
-	svc_configstring,			// [short] [string]
-	svc_spawnbaseline,		
-	svc_centerprint,			// [string] to put in center of the screen
-	svc_download,				// [short] size [size bytes]
-	svc_playerinfo,				// variable
-	svc_packetentities,			// [...]
-	svc_deltapacketentities,	// [...]
-	svc_frame
-};
 
 //==============================================
 
@@ -240,7 +210,7 @@ enum svc_ops_e
 enum clc_ops_e
 {
 	clc_bad,
-	clc_nop, 		
+	clc_nop,
 	clc_move,				// [[usercmd_t]
 	clc_userinfo,			// [[userinfo string]
 	clc_stringcmd			// [string] message
@@ -725,11 +695,6 @@ MISC
 ==============================================================
 */
 
-
-#define	ERR_FATAL	0		// exit the entire game with a popup window
-#define	ERR_DROP	1		// print to console and disconnect from game
-#define	ERR_QUIT	2		// not an error, just a normal exit
-
 #define	EXEC_NOW	0		// don't return until completed
 #define	EXEC_INSERT	1		// insert at current position, but don't run yet
 #define	EXEC_APPEND	2		// add to end of the command buffer
@@ -739,7 +704,7 @@ MISC
 
 void		Com_BeginRedirect (int target, char *buffer, int buffersize, void (*flush));
 void		Com_EndRedirect (void);
-void 		Com_Printf (char *fmt, ...);
+void 		Com_Printf_G (char *fmt, ...);
 void 		Com_DPrintf (char *fmt, ...);
 void 		Com_Error (int code, char *fmt, ...);
 void 		Com_Quit (void);
@@ -822,7 +787,6 @@ void Con_Print (char *text);
 void SCR_BeginLoadingPlaque (void);
 
 void SV_Init (void);
-void SV_Shutdown (char *finalmsg, qboolean reconnect);
 void SV_Frame (int msec);
 
 

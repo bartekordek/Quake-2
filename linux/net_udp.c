@@ -111,7 +111,7 @@ qboolean	NET_CompareBaseAdr (netadr_t a, netadr_t b)
 char	*NET_AdrToString (netadr_t a)
 {
 	static	char	s[64];
-	
+
 	Com_sprintf (s, sizeof(s), "%i.%i.%i.%i:%i", a.ip[0], a.ip[1], a.ip[2], a.ip[3], ntohs(a.port));
 
 	return s;
@@ -120,7 +120,7 @@ char	*NET_AdrToString (netadr_t a)
 char	*NET_BaseAdrToString (netadr_t a)
 {
 	static	char	s[64];
-	
+
 	Com_sprintf (s, sizeof(s), "%i.%i.%i.%i", a.ip[0], a.ip[1], a.ip[2], a.ip[3]);
 
 	return s;
@@ -142,10 +142,10 @@ qboolean	NET_StringToSockaddr (char *s, struct sockaddr *sadr)
 	struct hostent	*h;
 	char	*colon;
 	char	copy[128];
-	
+
 	memset (sadr, 0, sizeof(*sadr));
 	((struct sockaddr_in *)sadr)->sin_family = AF_INET;
-	
+
 	((struct sockaddr_in *)sadr)->sin_port = 0;
 
 	strcpy (copy, s);
@@ -154,9 +154,9 @@ qboolean	NET_StringToSockaddr (char *s, struct sockaddr *sadr)
 		if (*colon == ':')
 		{
 			*colon = 0;
-			((struct sockaddr_in *)sadr)->sin_port = htons((short)atoi(colon+1));	
+			((struct sockaddr_in *)sadr)->sin_port = htons((short)atoi(colon+1));
 		}
-	
+
 	if (copy[0] >= '0' && copy[0] <= '9')
 	{
 		*(int *)&((struct sockaddr_in *)sadr)->sin_addr = inet_addr(copy);
@@ -167,7 +167,7 @@ qboolean	NET_StringToSockaddr (char *s, struct sockaddr *sadr)
 			return 0;
 		*(int *)&((struct sockaddr_in *)sadr)->sin_addr = *(int *)h->h_addr_list[0];
 	}
-	
+
 	return true;
 }
 
@@ -185,7 +185,7 @@ idnewt:28000
 qboolean	NET_StringToAdr (char *s, netadr_t *a)
 {
 	struct sockaddr_in sadr;
-	
+
 	if (!strcmp (s, "localhost"))
 	{
 		memset (a, 0, sizeof(*a));
@@ -195,7 +195,7 @@ qboolean	NET_StringToAdr (char *s, netadr_t *a)
 
 	if (!NET_StringToSockaddr (s, (struct sockaddr *)&sadr))
 		return false;
-	
+
 	SockadrToNetadr (&sadr, a);
 
 	return true;
@@ -286,13 +286,13 @@ qboolean	NET_GetPacket (netsrc_t sock, netadr_t *net_from, sizebuf_t *net_messag
 
 			if (err == EWOULDBLOCK || err == ECONNREFUSED)
 				continue;
-			Com_Printf ("NET_GetPacket: %s", NET_ErrorString());
+			Com_Printf_G ("NET_GetPacket: %s", NET_ErrorString());
 			continue;
 		}
 
 		if (ret == net_message->maxsize)
 		{
-			Com_Printf ("Oversize packet from %s\n", NET_AdrToString (*net_from));
+			Com_Printf_G ("Oversize packet from %s\n", NET_AdrToString (*net_from));
 			continue;
 		}
 
@@ -350,7 +350,7 @@ void NET_SendPacket (netsrc_t sock, int length, void *data, netadr_t to)
 	ret = sendto (net_socket, data, length, 0, (struct sockaddr *)&addr, sizeof(addr) );
 	if (ret == -1)
 	{
-		Com_Printf ("NET_SendPacket ERROR: %i\n", NET_ErrorString());
+		Com_Printf_G ("NET_SendPacket ERROR: %i\n", NET_ErrorString());
 	}
 }
 
@@ -450,21 +450,21 @@ int NET_Socket (char *net_interface, int port)
 
 	if ((newsocket = socket (PF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1)
 	{
-		Com_Printf ("ERROR: UDP_OpenSocket: socket:", NET_ErrorString());
+		Com_Printf_G ("ERROR: UDP_OpenSocket: socket:", NET_ErrorString());
 		return 0;
 	}
 
 	// make it non-blocking
 	if (ioctl (newsocket, FIONBIO, &_true) == -1)
 	{
-		Com_Printf ("ERROR: UDP_OpenSocket: ioctl FIONBIO:%s\n", NET_ErrorString());
+		Com_Printf_G ("ERROR: UDP_OpenSocket: ioctl FIONBIO:%s\n", NET_ErrorString());
 		return 0;
 	}
 
 	// make it broadcast capable
 	if (setsockopt(newsocket, SOL_SOCKET, SO_BROADCAST, (char *)&i, sizeof(i)) == -1)
 	{
-		Com_Printf ("ERROR: UDP_OpenSocket: setsockopt SO_BROADCAST:%s\n", NET_ErrorString());
+		Com_Printf_G ("ERROR: UDP_OpenSocket: setsockopt SO_BROADCAST:%s\n", NET_ErrorString());
 		return 0;
 	}
 
@@ -482,7 +482,7 @@ int NET_Socket (char *net_interface, int port)
 
 	if( bind (newsocket, (void *)&address, sizeof(address)) == -1)
 	{
-		Com_Printf ("ERROR: UDP_OpenSocket: bind: %s\n", NET_ErrorString());
+		Com_Printf_G ("ERROR: UDP_OpenSocket: bind: %s\n", NET_ErrorString());
 		close (newsocket);
 		return 0;
 	}

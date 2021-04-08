@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -17,8 +17,8 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
-#include "../client/client.h"
-#include "../client/qmenu.h"
+#include "client/client.h"
+#include "client/qmenu.h"
 
 #define REF_SOFT	0
 #define REF_OPENGL	1
@@ -37,7 +37,7 @@ static cvar_t *gl_picmip;
 static cvar_t *gl_ext_palettedtexture;
 static cvar_t *gl_finish;
 
-static cvar_t *sw_mode;
+cvar_t *sw_mode;
 static cvar_t *sw_stipplealpha;
 
 extern void M_ForceMenuOff( void );
@@ -208,7 +208,7 @@ static void CancelChanges( void *unused )
 */
 void VID_MenuInit( void )
 {
-	static const char *resolutions[] = 
+	static const char *resolutions[] =
 	{
 		"[320 240  ]",
 		"[400 300  ]",

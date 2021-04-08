@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -128,7 +128,7 @@ void CL_RegisterTEntSounds (void)
 	char	name[MAX_QPATH];
 
 	// PMM - version stuff
-//	Com_Printf ("%s\n", ROGUE_VERSION_STRING);
+//	Com_Printf_G ("%s\n", ROGUE_VERSION_STRING);
 	// PMM
 	cl_sfx_ric1 = S_RegisterSound ("world/ric1.wav");
 	cl_sfx_ric2 = S_RegisterSound ("world/ric2.wav");
@@ -162,7 +162,7 @@ void CL_RegisterTEntSounds (void)
 	if (name[0] == 'w')
 		name[0] = 'W';
 //PGM
-}	
+}
 
 /*
 =================
@@ -203,7 +203,7 @@ re.RegisterPic ("a_grenades");
 	cl_mod_heatbeam = re.RegisterModel ("models/proj/beam/tris.md2");
 	cl_mod_monster_heatbeam = re.RegisterModel ("models/proj/widowbeam/tris.md2");
 //ROGUE
-}	
+}
 
 /*
 =================
@@ -232,7 +232,7 @@ explosion_t *CL_AllocExplosion (void)
 	int		i;
 	int		time;
 	int		index;
-	
+
 	for (i=0 ; i<MAX_EXPLOSIONS ; i++)
 	{
 		if (cl_explosions[i].type == ex_free)
@@ -312,9 +312,9 @@ int CL_ParseBeam (struct model_s *model)
 	vec3_t	start, end;
 	beam_t	*b;
 	int		i;
-	
+
 	ent = MSG_ReadShort (&net_message);
-	
+
 	MSG_ReadPos (&net_message, start);
 	MSG_ReadPos (&net_message, end);
 
@@ -345,7 +345,7 @@ int CL_ParseBeam (struct model_s *model)
 			return ent;
 		}
 	}
-	Com_Printf ("beam list overflow!\n");	
+	Com_Printf_G ("beam list overflow!\n");
 	return ent;
 }
 
@@ -360,14 +360,14 @@ int CL_ParseBeam2 (struct model_s *model)
 	vec3_t	start, end, offset;
 	beam_t	*b;
 	int		i;
-	
+
 	ent = MSG_ReadShort (&net_message);
-	
+
 	MSG_ReadPos (&net_message, start);
 	MSG_ReadPos (&net_message, end);
 	MSG_ReadPos (&net_message, offset);
 
-//	Com_Printf ("end- %f %f %f\n", end[0], end[1], end[2]);
+//	Com_Printf_G ("end- %f %f %f\n", end[0], end[1], end[2]);
 
 // override any beam with the same entity
 
@@ -390,14 +390,14 @@ int CL_ParseBeam2 (struct model_s *model)
 		{
 			b->entity = ent;
 			b->model = model;
-			b->endtime = cl.time + 200;	
+			b->endtime = cl.time + 200;
 			VectorCopy (start, b->start);
 			VectorCopy (end, b->end);
 			VectorCopy (offset, b->offset);
 			return ent;
 		}
 	}
-	Com_Printf ("beam list overflow!\n");	
+	Com_Printf_G ("beam list overflow!\n");
 	return ent;
 }
 
@@ -414,9 +414,9 @@ int CL_ParsePlayerBeam (struct model_s *model)
 	vec3_t	start, end, offset;
 	beam_t	*b;
 	int		i;
-	
+
 	ent = MSG_ReadShort (&net_message);
-	
+
 	MSG_ReadPos (&net_message, start);
 	MSG_ReadPos (&net_message, end);
 	// PMM - network optimization
@@ -430,7 +430,7 @@ int CL_ParsePlayerBeam (struct model_s *model)
 	else
 		MSG_ReadPos (&net_message, offset);
 
-//	Com_Printf ("end- %f %f %f\n", end[0], end[1], end[2]);
+//	Com_Printf_G ("end- %f %f %f\n", end[0], end[1], end[2]);
 
 // override any beam with the same entity
 // PMM - For player beams, we only want one per player (entity) so..
@@ -462,7 +462,7 @@ int CL_ParsePlayerBeam (struct model_s *model)
 			return ent;
 		}
 	}
-	Com_Printf ("beam list overflow!\n");	
+	Com_Printf_G ("beam list overflow!\n");
 	return ent;
 }
 //rogue
@@ -478,7 +478,7 @@ int CL_ParseLightning (struct model_s *model)
 	vec3_t	start, end;
 	beam_t	*b;
 	int		i;
-	
+
 	srcEnt = MSG_ReadShort (&net_message);
 	destEnt = MSG_ReadShort (&net_message);
 
@@ -489,7 +489,7 @@ int CL_ParseLightning (struct model_s *model)
 	for (i=0, b=cl_beams ; i< MAX_BEAMS ; i++, b++)
 		if (b->entity == srcEnt && b->dest_entity == destEnt)
 		{
-//			Com_Printf("%d: OVERRIDE  %d -> %d\n", cl.time, srcEnt, destEnt);
+//			Com_Printf_G("%d: OVERRIDE  %d -> %d\n", cl.time, srcEnt, destEnt);
 			b->entity = srcEnt;
 			b->dest_entity = destEnt;
 			b->model = model;
@@ -505,7 +505,7 @@ int CL_ParseLightning (struct model_s *model)
 	{
 		if (!b->model || b->endtime < cl.time)
 		{
-//			Com_Printf("%d: NORMAL  %d -> %d\n", cl.time, srcEnt, destEnt);
+//			Com_Printf_G("%d: NORMAL  %d -> %d\n", cl.time, srcEnt, destEnt);
 			b->entity = srcEnt;
 			b->dest_entity = destEnt;
 			b->model = model;
@@ -516,7 +516,7 @@ int CL_ParseLightning (struct model_s *model)
 			return srcEnt;
 		}
 	}
-	Com_Printf ("beam list overflow!\n");	
+	Com_Printf_G ("beam list overflow!\n");
 	return srcEnt;
 }
 
@@ -567,7 +567,7 @@ void CL_ParseSteam (void)
 	id = MSG_ReadShort (&net_message);		// an id of -1 is an instant effect
 	if (id != -1) // sustains
 	{
-//			Com_Printf ("Sustain effect id %d\n", id);
+//			Com_Printf_G ("Sustain effect id %d\n", id);
 		free_sustain = NULL;
 		for (i=0, s=cl_sustains; i<MAX_SUSTAINS; i++, s++)
 		{
@@ -593,7 +593,7 @@ void CL_ParseSteam (void)
 		}
 		else
 		{
-//				Com_Printf ("No free sustains!\n");
+//				Com_Printf_G ("No free sustains!\n");
 			// FIXME - read the stuff anyway
 			cnt = MSG_ReadByte (&net_message);
 			MSG_ReadPos (&net_message, pos);
@@ -725,7 +725,7 @@ void CL_ParseTEnt (void)
 		if (type != TE_SPARKS)
 		{
 			CL_SmokeAndFlash(pos);
-			
+
 			// impact sound
 			cnt = rand()&15;
 			if (cnt == 1)
@@ -737,7 +737,7 @@ void CL_ParseTEnt (void)
 		}
 
 		break;
-		
+
 	case TE_SCREEN_SPARKS:
 	case TE_SHIELD_SPARKS:
 		MSG_ReadPos (&net_message, pos);
@@ -749,7 +749,7 @@ void CL_ParseTEnt (void)
 		//FIXME : replace or remove this sound
 		S_StartSound (pos, 0, 0, cl_sfx_lashit, 1, ATTN_NORM, 0);
 		break;
-		
+
 	case TE_SHOTGUN:			// bullet hitting wall
 		MSG_ReadPos (&net_message, pos);
 		MSG_ReadDir (&net_message, dir);
@@ -823,7 +823,7 @@ void CL_ParseTEnt (void)
 		ex->frames = 4;
 		S_StartSound (pos,  0, 0, cl_sfx_lashit, 1, ATTN_NORM, 0);
 		break;
-		
+
 	case TE_RAILTRAIL:			// railgun effect
 		MSG_ReadPos (&net_message, pos);
 		MSG_ReadPos (&net_message, pos2);
@@ -865,7 +865,7 @@ void CL_ParseTEnt (void)
 		ex->ent.flags = RF_FULLBRIGHT;
 		ex->start = cl.frame.servertime - 100;
 		ex->light = 350;
-		ex->lightcolor[0] = 1.0; 
+		ex->lightcolor[0] = 1.0;
 		ex->lightcolor[1] = 0.5;
 		ex->lightcolor[2] = 0.5;
 		ex->ent.angles[1] = rand() % 360;
@@ -876,7 +876,7 @@ void CL_ParseTEnt (void)
 		CL_ExplosionParticles (pos);
 		S_StartSound (pos, 0, 0, cl_sfx_rockexp, 1, ATTN_NORM, 0);
 		break;
-	
+
 	case TE_EXPLOSION1:
 	case TE_EXPLOSION1_BIG:						// PMM
 	case TE_ROCKET_EXPLOSION:
@@ -1001,7 +1001,7 @@ void CL_ParseTEnt (void)
 	case TE_FLECHETTE:			// flechette
 		MSG_ReadPos (&net_message, pos);
 		MSG_ReadDir (&net_message, dir);
-		
+
 		// PMM
 		if (type == TE_BLASTER2)
 			CL_BlasterParticles2 (pos, dir, 0xd0);
@@ -1115,7 +1115,7 @@ void CL_ParseTEnt (void)
 		CL_ParticleSteamEffect (pos, dir, color, cnt, magnitude);
 		S_StartSound (pos,  0, 0, cl_sfx_lashit, 1, ATTN_NORM, 0);
 		break;
-	
+
 	case TE_HEATBEAM_STEAM:
 //		cnt = MSG_ReadByte (&net_message);
 		cnt = 20;
@@ -1214,7 +1214,7 @@ void CL_AddBeams (void)
 	float		forward;
 	float		len, steps;
 	float		model_length;
-	
+
 // update beams
 	for (i=0, b=cl_beams ; i< MAX_BEAMS ; i++, b++)
 	{
@@ -1251,7 +1251,7 @@ void CL_AddBeams (void)
 				yaw = 270;
 			if (yaw < 0)
 				yaw += 360;
-	
+
 			forward = sqrt (dist[0]*dist[0] + dist[1]*dist[1]);
 			pitch = (atan2(dist[2], forward) * -180.0 / M_PI);
 			if (pitch < 0)
@@ -1279,7 +1279,7 @@ void CL_AddBeams (void)
 		// through the tesla mine (instead it goes through the target)
 		if ((b->model == cl_mod_lightning) && (d <= model_length))
 		{
-//			Com_Printf ("special case\n");
+//			Com_Printf_G ("special case\n");
 			VectorCopy (b->end, ent.origin);
 			// offset to push beam outside of tesla model (negative because dist is from end to start
 			// for this beam)
@@ -1290,7 +1290,7 @@ void CL_AddBeams (void)
 			ent.angles[0] = pitch;
 			ent.angles[1] = yaw;
 			ent.angles[2] = rand()%360;
-			V_AddEntity (&ent);			
+			V_AddEntity (&ent);
 			return;
 		}
 		while (d > 0)
@@ -1310,8 +1310,8 @@ void CL_AddBeams (void)
 				ent.angles[1] = yaw;
 				ent.angles[2] = rand()%360;
 			}
-			
-//			Com_Printf("B: %d -> %d\n", b->entity, b->dest_entity);
+
+//			Com_Printf_G("B: %d -> %d\n", b->entity, b->dest_entity);
 			V_AddEntity (&ent);
 
 			for (j=0 ; j<3 ; j++)
@@ -1323,16 +1323,16 @@ void CL_AddBeams (void)
 
 
 /*
-//				Com_Printf ("Endpoint:  %f %f %f\n", b->end[0], b->end[1], b->end[2]);
-//				Com_Printf ("Pred View Angles:  %f %f %f\n", cl.predicted_angles[0], cl.predicted_angles[1], cl.predicted_angles[2]);
-//				Com_Printf ("Act View Angles: %f %f %f\n", cl.refdef.viewangles[0], cl.refdef.viewangles[1], cl.refdef.viewangles[2]);
+//				Com_Printf_G ("Endpoint:  %f %f %f\n", b->end[0], b->end[1], b->end[2]);
+//				Com_Printf_G ("Pred View Angles:  %f %f %f\n", cl.predicted_angles[0], cl.predicted_angles[1], cl.predicted_angles[2]);
+//				Com_Printf_G ("Act View Angles: %f %f %f\n", cl.refdef.viewangles[0], cl.refdef.viewangles[1], cl.refdef.viewangles[2]);
 //				VectorCopy (cl.predicted_origin, b->start);
 //				b->start[2] += 22;	// adjust for view height
 //				if (fabs(cl.refdef.vieworg[2] - b->start[2]) >= 10) {
 //					b->start[2] = cl.refdef.vieworg[2];
 //				}
 
-//				Com_Printf ("Time:  %d %d %f\n", cl.time, cls.realtime, cls.frametime);
+//				Com_Printf_G ("Time:  %d %d %f\n", cl.time, cls.realtime, cls.frametime);
 */
 
 extern cvar_t *hand;
@@ -1355,7 +1355,7 @@ void CL_AddPlayerBeams (void)
 	float		len, steps;
 	int			framenum;
 	float		model_length;
-	
+
 	float		hand_multiplier;
 	frame_t		*oldframe;
 	player_state_t	*ps, *ops;
@@ -1370,7 +1370,7 @@ void CL_AddPlayerBeams (void)
 		else
 			hand_multiplier = 1;
 	}
-	else 
+	else
 	{
 		hand_multiplier = 1;
 	}
@@ -1388,7 +1388,7 @@ void CL_AddPlayerBeams (void)
 
 			// if coming from the player, update the start position
 			if (b->entity == cl.playernum+1)	// entity 0 is the world
-			{	
+			{
 				// set up gun position
 				// code straight out of CL_AddViewWeapon
 				ps = &cl.frame.playerstate;
@@ -1466,25 +1466,25 @@ void CL_AddPlayerBeams (void)
 				yaw = 270;
 			if (yaw < 0)
 				yaw += 360;
-	
+
 			forward = sqrt (dist[0]*dist[0] + dist[1]*dist[1]);
 			pitch = (atan2(dist[2], forward) * -180.0 / M_PI);
 			if (pitch < 0)
 				pitch += 360.0;
 		}
-		
+
 		if (cl_mod_heatbeam && (b->model == cl_mod_heatbeam))
 		{
 			if (b->entity != cl.playernum+1)
 			{
 				framenum = 2;
-//				Com_Printf ("Third person\n");
+//				Com_Printf_G ("Third person\n");
 				ent.angles[0] = -pitch;
 				ent.angles[1] = yaw + 180.0;
 				ent.angles[2] = 0;
-//				Com_Printf ("%f %f - %f %f %f\n", -pitch, yaw+180.0, b->offset[0], b->offset[1], b->offset[2]);
+//				Com_Printf_G ("%f %f - %f %f %f\n", -pitch, yaw+180.0, b->offset[0], b->offset[1], b->offset[2]);
 				AngleVectors(ent.angles, f, r, u);
-					
+
 				// if it's a non-origin offset, it's a player, so use the hardcoded player offset
 				if (!VectorCompare (b->offset, vec3_origin))
 				{
@@ -1535,7 +1535,7 @@ void CL_AddPlayerBeams (void)
 		// through the tesla mine (instead it goes through the target)
 		if ((b->model == cl_mod_lightning) && (d <= model_length))
 		{
-//			Com_Printf ("special case\n");
+//			Com_Printf_G ("special case\n");
 			VectorCopy (b->end, ent.origin);
 			// offset to push beam outside of tesla model (negative because dist is from end to start
 			// for this beam)
@@ -1546,7 +1546,7 @@ void CL_AddPlayerBeams (void)
 			ent.angles[0] = pitch;
 			ent.angles[1] = yaw;
 			ent.angles[2] = rand()%360;
-			V_AddEntity (&ent);			
+			V_AddEntity (&ent);
 			return;
 		}
 		while (d > 0)
@@ -1577,8 +1577,8 @@ void CL_AddPlayerBeams (void)
 				ent.angles[1] = yaw;
 				ent.angles[2] = rand()%360;
 			}
-			
-//			Com_Printf("B: %d -> %d\n", b->entity, b->dest_entity);
+
+//			Com_Printf_G("B: %d -> %d\n", b->entity, b->dest_entity);
 			V_AddEntity (&ent);
 
 			for (j=0 ; j<3 ; j++)
@@ -1720,7 +1720,7 @@ void CL_ProcessSustain ()
 		if (s->id)
 			if ((s->endtime >= cl.time) && (cl.time >= s->nextthink))
 			{
-//				Com_Printf ("think %d %d %d\n", cl.time, s->nextthink, s->thinkinterval);
+//				Com_Printf_G ("think %d %d %d\n", cl.time, s->nextthink, s->thinkinterval);
 				s->think (s);
 			}
 			else if (s->endtime < cl.time)

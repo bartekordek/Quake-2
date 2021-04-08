@@ -4,5 +4,22 @@
 			"path": "."
 		}
 	],
-	"settings": {}
+	"settings": {
+		"files.associations": {
+			"shared_functions.h": "c",
+			"glw_win.h": "c",
+			"server.h": "c",
+			"r_local.h": "c",
+			"client.h": "c",
+			"rw_win.h": "c",
+			"defines.h": "c",
+			"bit": "cpp",
+			"compare": "cpp",
+			"cstddef": "cpp",
+			"limits": "cpp",
+			"type_traits": "cpp",
+			"xutility": "cpp",
+			"gl_local.h": "c"
+		}
+	}
 }

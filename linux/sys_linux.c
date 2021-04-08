@@ -84,7 +84,7 @@ void Sys_Init(void)
 }
 
 void Sys_Error (char *error, ...)
-{ 
+{
     va_list     argptr;
     char        string[1024];
 
@@ -93,7 +93,7 @@ void Sys_Error (char *error, ...)
 
 	CL_Shutdown ();
 	Qcommon_Shutdown ();
-    
+
     va_start (argptr,error);
     vsprintf (string,error,argptr);
     va_end (argptr);
@@ -101,18 +101,18 @@ void Sys_Error (char *error, ...)
 
 	_exit (1);
 
-} 
+}
 
 void Sys_Warn (char *warning, ...)
-{ 
+{
     va_list     argptr;
     char        string[1024];
-    
+
     va_start (argptr,warning);
     vsprintf (string,warning,argptr);
     va_end (argptr);
 	fprintf(stderr, "Warning: %s", string);
-} 
+}
 
 /*
 ============
@@ -124,10 +124,10 @@ returns -1 if not present
 int	Sys_FileTime (char *path)
 {
 	struct	stat	buf;
-	
+
 	if (stat (path,&buf) == -1)
 		return -1;
-	
+
 	return buf.st_mtime;
 }
 
@@ -181,7 +181,7 @@ Sys_UnloadGame
 */
 void Sys_UnloadGame (void)
 {
-	if (game_library) 
+	if (game_library)
 		dlclose (game_library);
 	game_library = NULL;
 }
@@ -216,7 +216,7 @@ void *Sys_GetGameAPI (void *parms)
 
 	getcwd(curpath, sizeof(curpath));
 
-	Com_Printf("------- Loading %s -------", gamename);
+	Com_Printf_G("------- Loading %s -------", gamename);
 
 	// now run through the search paths
 	path = NULL;
@@ -237,7 +237,7 @@ void *Sys_GetGameAPI (void *parms)
 	GetGameAPI = (void *)dlsym (game_library, "GetGameAPI");
 	if (!GetGameAPI)
 	{
-		Sys_UnloadGame ();		
+		Sys_UnloadGame ();
 		return NULL;
 	}
 
@@ -257,7 +257,7 @@ void Sys_SendKeyEvents (void)
 		KBD_Update_fp();
 #endif
 
-	// grab frame time 
+	// grab frame time
 	sys_frame_time = Sys_Milliseconds();
 }
 

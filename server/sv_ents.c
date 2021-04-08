@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -415,7 +415,7 @@ void SV_WriteFrameToClient (client_t *client, sizebuf_t *msg)
 	client_frame_t		*frame, *oldframe;
 	int					lastframe;
 
-//Com_Printf ("%i -> %i\n", client->lastframe, sv.framenum);
+//Com_Printf_G ("%i -> %i\n", client->lastframe, sv.framenum);
 	// this is the frame we are creating
 	frame = &client->frames[sv.framenum & UPDATE_MASK];
 
@@ -426,7 +426,7 @@ void SV_WriteFrameToClient (client_t *client, sizebuf_t *msg)
 	}
 	else if (sv.framenum - client->lastframe >= (UPDATE_BACKUP - 3) )
 	{	// client hasn't gotten a good message through in a long time
-//		Com_Printf ("%s: Delta request from out-of-date packet.\n", client->name);
+//		Com_Printf_G ("%s: Delta request from out-of-date packet.\n", client->name);
 		oldframe = NULL;
 		lastframe = -1;
 	}
@@ -700,12 +700,12 @@ void SV_RecordDemoMessage (void)
 
 	e = 1;
 	ent = EDICT_NUM(e);
-	while (e < ge->num_edicts) 
+	while (e < ge->num_edicts)
 	{
 		// ignore ents without visible models unless they have an effect
 		if (ent->inuse &&
-			ent->s.number && 
-			(ent->s.modelindex || ent->s.effects || ent->s.sound || ent->s.event) && 
+			ent->s.number &&
+			(ent->s.modelindex || ent->s.effects || ent->s.sound || ent->s.event) &&
 			!(ent->svflags & SVF_NOCLIENT))
 			MSG_WriteDeltaEntity (&nostate, &ent->s, &buf, false, true);
 

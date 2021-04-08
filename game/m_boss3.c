@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -27,6 +27,7 @@ boss3
 
 #include "g_local.h"
 #include "m_boss32.h"
+#include "shared/defines.h"
 
 void Use_Boss3 (edict_t *ent, edict_t *other, edict_t *activator)
 {

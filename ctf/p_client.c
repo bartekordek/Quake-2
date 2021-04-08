@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -395,7 +395,7 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 }
 
 
-void Touch_Item (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf);
+void Touch_Item (edict_t *ent, edict_t *other, plane_t *plane, csurface_t *surf);
 
 void TossClientWeapon (edict_t *self)
 {
@@ -649,7 +649,7 @@ void InitClientResp (gclient_t *client)
 //ZOID
 
 	memset (&client->resp, 0, sizeof(client->resp));
-	
+
 //ZOID
 	client->resp.ctf_team = ctf_team;
 	client->resp.id_state = id_state;
@@ -657,7 +657,7 @@ void InitClientResp (gclient_t *client)
 
 	client->resp.enterframe = level.framenum;
 	client->resp.coop_respawn = client->pers;
- 
+
 //ZOID
 	if (ctf->value && client->resp.ctf_team < CTF_TEAM1)
 		CTFAssignTeam(client);
@@ -668,7 +668,7 @@ void InitClientResp (gclient_t *client)
 ==================
 SaveClientData
 
-Some information that should be persistant, like health, 
+Some information that should be persistant, like health,
 is still stored in the edict structure, so it needs to
 be mirrored out to the client structure before all the
 edicts are wiped.
@@ -1204,7 +1204,7 @@ void PutClientInServer (edict_t *ent)
 =====================
 ClientBeginDeathmatch
 
-A client has just connected to the server in 
+A client has just connected to the server in
 deathmatch mode, so clear everything out before starting them.
 =====================
 */
@@ -1379,7 +1379,7 @@ qboolean ClientConnect (edict_t *ent, char *userinfo)
 
 	// check for a password
 	value = Info_ValueForKey (userinfo, "password");
-	if (*password->string && strcmp(password->string, "none") && 
+	if (*password->string && strcmp(password->string, "none") &&
 		strcmp(password->string, value)) {
 		Info_SetValueForKey(userinfo, "rejmsg", "Password required or incorrect.");
 		return false;
@@ -1395,7 +1395,7 @@ qboolean ClientConnect (edict_t *ent, char *userinfo)
 		// clear the respawning variables
 //ZOID -- force team join
 		ent->client->resp.ctf_team = -1;
-		ent->client->resp.id_state = false; 
+		ent->client->resp.id_state = false;
 //ZOID
 		InitClientResp (ent->client);
 		if (!game.autosaved || !ent->client->pers.weapon)
@@ -1479,7 +1479,7 @@ void PrintPmove (pmove_t *pm)
 
 	c1 = CheckBlock (&pm->s, sizeof(pm->s));
 	c2 = CheckBlock (&pm->cmd, sizeof(pm->cmd));
-	Com_Printf ("sv %3i:%i %i\n", pm->cmd.impulse, c1, c2);
+	Com_Printf_G ("sv %3i:%i %i\n", pm->cmd.impulse, c1, c2);
 }
 
 /*
@@ -1504,7 +1504,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	{
 		client->ps.pmove.pm_type = PM_FREEZE;
 		// can exit intermission after five seconds
-		if (level.time > level.intermissiontime + 5.0 
+		if (level.time > level.intermissiontime + 5.0
 			&& (ucmd->buttons & BUTTON_ANY) )
 			level.exitintermission = true;
 		return;

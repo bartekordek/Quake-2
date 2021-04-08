@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // cl_ents.c -- entity parsing and management
 
 #include "client.h"
-
+#include "shared/defines.h"
 
 extern	struct model_s	*cl_mod_powerscreen;
 
@@ -124,7 +124,7 @@ void CL_ParseProjectiles (void)
 
 		pr.present = true;
 
-		// find if this projectile already exists from previous frame 
+		// find if this projectile already exists from previous frame
 		for (j = 0; j < MAX_PROJECTILES; j++) {
 			if (cl_projectiles[j].modelindex) {
 				if (cl_projectiles[j].num == pr.num) {
@@ -176,7 +176,7 @@ void CL_AddProjectiles (void)
 		// interpolate origin
 		for (j=0 ; j<3 ; j++)
 		{
-			ent.origin[j] = ent.oldorigin[j] = pr->oldorigin[j] + cl.lerpfrac * 
+			ent.origin[j] = ent.oldorigin[j] = pr->oldorigin[j] + cl.lerpfrac *
 				(pr->origin[j] - pr->oldorigin[j]);
 
 		}
@@ -260,7 +260,7 @@ void CL_ParseDelta (entity_state_t *from, entity_state_t *to, int number, int bi
 		to->modelindex3 = MSG_ReadByte (&net_message);
 	if (bits & U_MODEL4)
 		to->modelindex4 = MSG_ReadByte (&net_message);
-		
+
 	if (bits & U_FRAME8)
 		to->frame = MSG_ReadByte (&net_message);
 	if (bits & U_FRAME16)
@@ -293,7 +293,7 @@ void CL_ParseDelta (entity_state_t *from, entity_state_t *to, int number, int bi
 		to->origin[1] = MSG_ReadCoord (&net_message);
 	if (bits & U_ORIGIN3)
 		to->origin[2] = MSG_ReadCoord (&net_message);
-		
+
 	if (bits & U_ANGLE1)
 		to->angles[0] = MSG_ReadAngle(&net_message);
 	if (bits & U_ANGLE2)
@@ -425,9 +425,9 @@ void CL_ParsePacketEntities (frame_t *oldframe, frame_t *newframe)
 		while (oldnum < newnum)
 		{	// one or more entities from the old packet are unchanged
 			if (cl_shownet->value == 3)
-				Com_Printf ("   unchanged: %i\n", oldnum);
+				Com_Printf_G("   unchanged: %i\n", oldnum);
 			CL_DeltaEntity (newframe, oldnum, oldstate, 0);
-			
+
 			oldindex++;
 
 			if (oldindex >= oldframe->num_entities)
@@ -442,9 +442,9 @@ void CL_ParsePacketEntities (frame_t *oldframe, frame_t *newframe)
 		if (bits & U_REMOVE)
 		{	// the entity present in oldframe is not in the current frame
 			if (cl_shownet->value == 3)
-				Com_Printf ("   remove: %i\n", newnum);
+				Com_Printf_G("   remove: %i\n", newnum);
 			if (oldnum != newnum)
-				Com_Printf ("U_REMOVE: oldnum != newnum\n");
+				Com_Printf_G("U_REMOVE: oldnum != newnum\n");
 
 			oldindex++;
 
@@ -461,7 +461,7 @@ void CL_ParsePacketEntities (frame_t *oldframe, frame_t *newframe)
 		if (oldnum == newnum)
 		{	// delta from previous state
 			if (cl_shownet->value == 3)
-				Com_Printf ("   delta: %i\n", newnum);
+				Com_Printf_G("   delta: %i\n", newnum);
 			CL_DeltaEntity (newframe, newnum, oldstate, bits);
 
 			oldindex++;
@@ -479,7 +479,7 @@ void CL_ParsePacketEntities (frame_t *oldframe, frame_t *newframe)
 		if (oldnum > newnum)
 		{	// delta from baseline
 			if (cl_shownet->value == 3)
-				Com_Printf ("   baseline: %i\n", newnum);
+				Com_Printf_G("   baseline: %i\n", newnum);
 			CL_DeltaEntity (newframe, newnum, &cl_entities[newnum].baseline, bits);
 			continue;
 		}
@@ -490,9 +490,9 @@ void CL_ParsePacketEntities (frame_t *oldframe, frame_t *newframe)
 	while (oldnum != 99999)
 	{	// one or more entities from the old packet are unchanged
 		if (cl_shownet->value == 3)
-			Com_Printf ("   unchanged: %i\n", oldnum);
+			Com_Printf_G("   unchanged: %i\n", oldnum);
 		CL_DeltaEntity (newframe, oldnum, oldstate, 0);
-		
+
 		oldindex++;
 
 		if (oldindex >= oldframe->num_entities)
@@ -681,13 +681,13 @@ void CL_ParseFrame (void)
 		cl.surpressCount = MSG_ReadByte (&net_message);
 
 	if (cl_shownet->value == 3)
-		Com_Printf ("   frame:%i  delta:%i\n", cl.frame.serverframe,
+		Com_Printf_G("   frame:%i  delta:%i\n", cl.frame.serverframe,
 		cl.frame.deltaframe);
 
 	// If the frame is delta compressed from data that we
 	// no longer have available, we must suck up the rest of
 	// the frame, but not use it, then ask for a non-compressed
-	// message 
+	// message
 	if (cl.frame.deltaframe <= 0)
 	{
 		cl.frame.valid = true;		// uncompressed frame
@@ -699,22 +699,22 @@ void CL_ParseFrame (void)
 		old = &cl.frames[cl.frame.deltaframe & UPDATE_MASK];
 		if (!old->valid)
 		{	// should never happen
-			Com_Printf ("Delta from invalid frame (not supposed to happen!).\n");
+			Com_Printf_G("Delta from invalid frame (not supposed to happen!).\n");
 		}
 		if (old->serverframe != cl.frame.deltaframe)
 		{	// The frame that the server did the delta from
 			// is too old, so we can't reconstruct it properly.
-			Com_Printf ("Delta frame too old.\n");
+			Com_Printf_G ("Delta frame too old.\n");
 		}
 		else if (cl.parse_entities - old->parse_entities > MAX_PARSE_ENTITIES-128)
 		{
-			Com_Printf ("Delta parse_entities too old.\n");
+			Com_Printf_G ("Delta parse_entities too old.\n");
 		}
 		else
 			cl.frame.valid = true;	// valid delta parse
 	}
 
-	// clamp time 
+	// clamp time
 	if (cl.time > cl.frame.servertime)
 		cl.time = cl.frame.servertime;
 	else if (cl.time < cl.frame.servertime - 100)
@@ -762,7 +762,7 @@ void CL_ParseFrame (void)
 				SCR_EndLoadingPlaque ();	// get rid of loading plaque
 		}
 		cl.sound_prepped = true;	// can start mixing ambient sounds
-	
+
 		// fire entity events
 		CL_FireEntityEvents (&cl.frame);
 		CL_CheckPredictionError ();
@@ -819,7 +819,7 @@ struct model_s *S_RegisterSexedModel (entity_state_t *ent, char *base)
 				Com_sprintf (buffer, sizeof(buffer), "players/male/weapon.md2");
 				mdl = re.RegisterModel(buffer);
 			}
-		} 
+		}
 	}
 
 	return mdl;
@@ -916,13 +916,13 @@ void CL_AddPacketEntities (frame_t *frame)
 		{	// interpolate origin
 			for (i=0 ; i<3 ; i++)
 			{
-				ent.origin[i] = ent.oldorigin[i] = cent->prev.origin[i] + cl.lerpfrac * 
+				ent.origin[i] = ent.oldorigin[i] = cent->prev.origin[i] + cl.lerpfrac *
 					(cent->current.origin[i] - cent->prev.origin[i]);
 			}
 		}
 
 		// create a new entity
-	
+
 		// tweak the color of beams
 		if ( renderfx & RF_BEAM )
 		{	// the four beam colors are encoded in 32 bits of skinnum (hack)
@@ -1145,7 +1145,7 @@ void CL_AddPacketEntities (frame_t *frame)
 				CL_RocketTrail (cent->lerp_origin, ent.origin, cent);
 				V_AddLight (ent.origin, 200, 1, 1, 0);
 			}
-			// PGM - Do not reorder EF_BLASTER and EF_HYPERBLASTER. 
+			// PGM - Do not reorder EF_BLASTER and EF_HYPERBLASTER.
 			// EF_BLASTER | EF_TRACKER is a special case for EF_BLASTER2... Cheese!
 			else if (effects & EF_BLASTER)
 			{
@@ -1154,7 +1154,7 @@ void CL_AddPacketEntities (frame_t *frame)
 				if (effects & EF_TRACKER)	// lame... problematic?
 				{
 					CL_BlasterTrail2 (cent->lerp_origin, ent.origin);
-					V_AddLight (ent.origin, 200, 0, 1, 0);		
+					V_AddLight (ent.origin, 200, 0, 1, 0);
 				}
 				else
 				{
@@ -1255,7 +1255,7 @@ void CL_AddPacketEntities (frame_t *frame)
 			// RAFAEL
 			else if (effects & EF_GREENGIB)
 			{
-				CL_DiminishingTrail (cent->lerp_origin, ent.origin, cent, effects);				
+				CL_DiminishingTrail (cent->lerp_origin, ent.origin, cent, effects);
 			}
 			// RAFAEL
 			else if (effects & EF_IONRIPPER)
@@ -1382,7 +1382,7 @@ void CL_CalcViewValues (void)
 		backlerp = 1.0 - lerp;
 		for (i=0 ; i<3 ; i++)
 		{
-			cl.refdef.vieworg[i] = cl.predicted_origin[i] + ops->viewoffset[i] 
+			cl.refdef.vieworg[i] = cl.predicted_origin[i] + ops->viewoffset[i]
 				+ cl.lerpfrac * (ps->viewoffset[i] - ops->viewoffset[i])
 				- backlerp * cl.prediction_error[i];
 		}
@@ -1395,8 +1395,8 @@ void CL_CalcViewValues (void)
 	else
 	{	// just use interpolated values
 		for (i=0 ; i<3 ; i++)
-			cl.refdef.vieworg[i] = ops->pmove.origin[i]*0.125 + ops->viewoffset[i] 
-				+ lerp * (ps->pmove.origin[i]*0.125 + ps->viewoffset[i] 
+			cl.refdef.vieworg[i] = ops->pmove.origin[i]*0.125 + ops->viewoffset[i]
+				+ lerp * (ps->pmove.origin[i]*0.125 + ps->viewoffset[i]
 				- (ops->pmove.origin[i]*0.125 + ops->viewoffset[i]) );
 	}
 
@@ -1443,14 +1443,14 @@ void CL_AddEntities (void)
 	if (cl.time > cl.frame.servertime)
 	{
 		if (cl_showclamp->value)
-			Com_Printf ("high clamp %i\n", cl.time - cl.frame.servertime);
+			Com_Printf_G ("high clamp %i\n", cl.time - cl.frame.servertime);
 		cl.time = cl.frame.servertime;
 		cl.lerpfrac = 1.0;
 	}
 	else if (cl.time < cl.frame.servertime - 100)
 	{
 		if (cl_showclamp->value)
-			Com_Printf ("low clamp %i\n", cl.frame.servertime-100 - cl.time);
+			Com_Printf_G ("low clamp %i\n", cl.frame.servertime-100 - cl.time);
 		cl.time = cl.frame.servertime - 100;
 		cl.lerpfrac = 0;
 	}

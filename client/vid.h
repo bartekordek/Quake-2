@@ -1,6 +1,8 @@
 #ifndef ____CLIENT_VID_H__
 #define ____CLIENT_VID_H__
 
+#include "shared/viddef.h"
+
 /*
 Copyright (C) 1997-2001 Id Software, Inc.
 
@@ -11,7 +13,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -21,18 +23,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 // vid.h -- video driver defs
-
-typedef struct vrect_s
-{
-	int				x,y,width,height;
-} vrect_t;
-
-typedef struct
-{
-	int		width;		
-	int		height;
-} viddef_t;
-
 extern	viddef_t	viddef;				// global video state
 
 // Video module initialisation etc

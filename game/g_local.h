@@ -11,7 +11,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -32,14 +32,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 // the "gameversion" client command will print this plus compile date
 #define	GAMEVERSION	"baseq2"
-
-// protocol bytes that can be directly added to messages
-#define	svc_muzzleflash		1
-#define	svc_muzzleflash2	2
-#define	svc_temp_entity		3
-#define	svc_layout			4
-#define	svc_inventory		5
-#define	svc_stufftext		11
 
 //==================================================================
 
@@ -91,9 +83,9 @@ typedef enum
 	DAMAGE_AIM			// auto targeting recognizes this
 } damage_t;
 
-typedef enum 
+typedef enum
 {
-	WEAPON_READY, 
+	WEAPON_READY,
 	WEAPON_ACTIVATING,
 	WEAPON_DROPPING,
 	WEAPON_FIRING
@@ -222,15 +214,15 @@ typedef struct
 #define IT_POWERUP		32
 
 // gitem_t->weapmodel for weapons indicates model index
-#define WEAP_BLASTER			1 
-#define WEAP_SHOTGUN			2 
-#define WEAP_SUPERSHOTGUN		3 
-#define WEAP_MACHINEGUN			4 
-#define WEAP_CHAINGUN			5 
-#define WEAP_GRENADES			6 
-#define WEAP_GRENADELAUNCHER	7 
-#define WEAP_ROCKETLAUNCHER		8 
-#define WEAP_HYPERBLASTER		9 
+#define WEAP_BLASTER			1
+#define WEAP_SHOTGUN			2
+#define WEAP_SUPERSHOTGUN		3
+#define WEAP_MACHINEGUN			4
+#define WEAP_CHAINGUN			5
+#define WEAP_GRENADES			6
+#define WEAP_GRENADELAUNCHER	7
+#define WEAP_ROCKETLAUNCHER		8
+#define WEAP_HYPERBLASTER		9
 #define WEAP_RAILGUN			10
 #define WEAP_BFG				11
 
@@ -572,7 +564,7 @@ extern	cvar_t	*sv_maplist;
 #define FFL_NOSPAWN			2
 
 typedef enum {
-	F_INT, 
+	F_INT,
 	F_FLOAT,
 	F_LSTRING,			// string on disk, pointer in memory, TAG_LEVEL
 	F_GSTRING,			// string on disk, pointer in memory, TAG_GAME
@@ -623,7 +615,7 @@ int ArmorIndex (edict_t *ent);
 int PowerArmorType (edict_t *ent);
 gitem_t	*GetItemByIndex (int index);
 qboolean Add_Ammo (edict_t *ent, gitem_t *item, int count);
-void Touch_Item (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf);
+void Touch_Item (edict_t *ent, edict_t *other, plane_t *plane, csurface_t *surf);
 
 //
 // g_utils.c
@@ -730,7 +722,7 @@ void ThrowDebris (edict_t *self, char *modelname, float speed, vec3_t origin);
 qboolean fire_hit (edict_t *self, vec3_t aim, int damage, int kick);
 void fire_bullet (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick, int hspread, int vspread, int mod);
 void fire_shotgun (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick, int hspread, int vspread, int count, int mod);
-void fire_blaster (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int speed, int effect, qboolean hyper);
+void fire_blaster (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int speed, int effect, qboolean hyper_in);
 void fire_grenade (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int speed, float timer, float damage_radius);
 void fire_grenade2 (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int speed, float timer, float damage_radius, qboolean held);
 void fire_rocket (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed, float damage_radius, int radius_damage);
@@ -978,7 +970,7 @@ struct edict_s
 
 	// FIXME: move these fields to a server private sv_entity_t
 	link_t		area;				// linked to a division node or leaf
-	
+
 	int			num_clusters;		// if -1, use headnode instead
 	int			clusternums[MAX_ENT_CLUSTERS];
 	int			headnode;			// unused if num_clusters != -1
@@ -1003,7 +995,7 @@ struct edict_s
 
 	char		*model;
 	float		freetime;			// sv.time when the object was freed
-	
+
 	//
 	// only used locally in game, not by server
 	//
@@ -1043,7 +1035,7 @@ struct edict_s
 	void		(*prethink) (edict_t *ent);
 	void		(*think)(edict_t *self);
 	void		(*blocked)(edict_t *self, edict_t *other);	//move to moveinfo?
-	void		(*touch)(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf);
+	void		(*touch)(edict_t *self, edict_t *other, plane_t *plane, csurface_t *surf);
 	void		(*use)(edict_t *self, edict_t *other, edict_t *activator);
 	void		(*pain)(edict_t *self, edict_t *other, float kick, int damage);
 	void		(*die)(edict_t *self, edict_t *inflictor, edict_t *attacker, int damage, vec3_t point);

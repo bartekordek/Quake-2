@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 // r_main.c
 
-#include "r_local.h"
+#include "ref_soft/r_local.h"
 
 viddef_t	vid;
 refimport_t	ri;
@@ -71,7 +71,7 @@ vec3_t	r_origin;
 //
 // screen size info
 //
-oldrefdef_t	r_refdef;
+oldrefdef_t	rrefdef;
 float		xcenter, ycenter;
 float		xscale, yscale;
 float		xscaleinv, yscaleinv;
@@ -83,7 +83,7 @@ int		r_screenwidth;
 float	verticalFieldOfView;
 float	xOrigin, yOrigin;
 
-mplane_t	screenedge[4];
+plane_t	screenedge[4];
 
 //
 // refresh flags
@@ -106,7 +106,7 @@ image_t  	*r_notexture_mip;
 float	da_time1, da_time2, dp_time1, dp_time2, db_time1, db_time2, rw_time1, rw_time2;
 float	se_time1, se_time2, de_time1, de_time2;
 
-void R_MarkLeaves (void);
+void ref_soft_R_MarkLeaves (void);
 
 cvar_t	*r_lefthand;
 cvar_t	*sw_aliasstats;
@@ -197,16 +197,16 @@ void	R_InitTextures (void)
 {
 	int		x,y, m;
 	byte	*dest;
-	
+
 // create a simple checkerboard texture for the default
 	r_notexture_mip = (image_t *)&r_notexture_buffer;
-	
+
 	r_notexture_mip->width = r_notexture_mip->height = 16;
 	r_notexture_mip->pixels[0] = &r_notexture_buffer[sizeof(image_t)];
 	r_notexture_mip->pixels[1] = r_notexture_mip->pixels[0] + 16*16;
 	r_notexture_mip->pixels[2] = r_notexture_mip->pixels[1] + 8*8;
 	r_notexture_mip->pixels[3] = r_notexture_mip->pixels[2] + 4*4;
-	
+
 	for (m=0 ; m<4 ; m++)
 	{
 		dest = r_notexture_mip->pixels[m];
@@ -219,7 +219,7 @@ void	R_InitTextures (void)
 				else
 					*dest++ = 0xff;
 			}
-	}	
+	}
 }
 
 
@@ -228,10 +228,10 @@ void	R_InitTextures (void)
 R_InitTurb
 ================
 */
-void R_InitTurb (void)
+void ref_soft_R_InitTurb (void)
 {
 	int		i;
-	
+
 	for (i=0 ; i<1280 ; i++)
 	{
 		sintable[i] = AMP + sin(i*3.14159*2/CYCLE)*AMP;
@@ -240,9 +240,9 @@ void R_InitTurb (void)
 	}
 }
 
-void R_ImageList_f( void );
+void ref_soft_R_ImageList_f( void );
 
-void R_Register (void)
+void ref_soft_R_Register (void)
 {
 	sw_aliasstats = ri.Cvar_Get ("sw_polymodelstats", "0", 0);
 	sw_allow_modex = ri.Cvar_Get( "sw_allow_modex", "1", CVAR_ARCHIVE );
@@ -273,9 +273,9 @@ void R_Register (void)
 	vid_fullscreen = ri.Cvar_Get( "vid_fullscreen", "0", CVAR_ARCHIVE );
 	vid_gamma = ri.Cvar_Get( "vid_gamma", "1.0", CVAR_ARCHIVE );
 
-	ri.Cmd_AddCommand ("modellist", Mod_Modellist_f);
-	ri.Cmd_AddCommand( "screenshot", R_ScreenShot_f );
-	ri.Cmd_AddCommand( "imagelist", R_ImageList_f );
+	ri.Cmd_AddCommand ("modellist", ref_soft_Mod_Modellist_f);
+	ri.Cmd_AddCommand( "screenshot", ref_soft_R_ScreenShot_f );
+	ri.Cmd_AddCommand( "imagelist", ref_soft_R_ImageList_f );
 
 	sw_mode->modified = true; // force us to do mode specific stuff later
 	vid_gamma->modified = true; // force us to rebuild the gamma table later
@@ -285,7 +285,7 @@ void R_Register (void)
 //PGM
 }
 
-void R_UnRegister (void)
+void ref_soft_R_UnRegister (void)
 {
 	ri.Cmd_RemoveCommand( "screenshot" );
 	ri.Cmd_RemoveCommand ("modellist");
@@ -297,10 +297,10 @@ void R_UnRegister (void)
 R_Init
 ===============
 */
-qboolean R_Init( void *hInstance, void *wndProc )
+qboolean ref_soft_R_Init( void *hInstance, void *wndProc )
 {
 	R_InitImages ();
-	Mod_Init ();
+	ref_soft_Mod_Init ();
 	Draw_InitLocal ();
 	R_InitTextures ();
 
@@ -313,8 +313,8 @@ qboolean R_Init( void *hInstance, void *wndProc )
 	view_clipplanes[0].rightedge = view_clipplanes[2].rightedge =
 			view_clipplanes[3].rightedge = false;
 
-	r_refdef.xOrigin = XCENTERING;
-	r_refdef.yOrigin = YCENTERING;
+	rrefdef.xOrigin = XCENTERING;
+	rrefdef.yOrigin = YCENTERING;
 
 // TODO: collect 386-specific code in one place
 #if	id386
@@ -326,7 +326,7 @@ qboolean R_Init( void *hInstance, void *wndProc )
 	r_aliasuvscale = 1.0;
 
 	R_Register ();
-	Draw_GetPalette ();
+	ref_soft_Draw_GetPalette ();
 	SWimp_Init( hInstance, wndProc );
 
 	// create the window
@@ -342,7 +342,7 @@ qboolean R_Init( void *hInstance, void *wndProc )
 R_Shutdown
 ===============
 */
-void R_Shutdown (void)
+void ref_soft_R_Shutdown (void)
 {
 	// free z buffer
 	if (d_pzbuffer)
@@ -365,7 +365,7 @@ void R_Shutdown (void)
 		vid.colormap = NULL;
 	}
 	R_UnRegister ();
-	Mod_FreeAll ();
+	ref_soft_Mod_FreeAll ();
 	R_ShutdownImages ();
 
 	SWimp_Shutdown();
@@ -376,7 +376,7 @@ void R_Shutdown (void)
 R_NewMap
 ===============
 */
-void R_NewMap (void)
+void ref_soft_R_NewMap (void)
 {
 	r_viewcluster = -1;
 
@@ -428,7 +428,7 @@ Mark the leaves and nodes that are in the PVS for the current
 cluster
 ===============
 */
-void R_MarkLeaves (void)
+void ref_soft_R_MarkLeaves (void)
 {
 	byte	*vis;
 	mnode_t	*node;
@@ -438,7 +438,7 @@ void R_MarkLeaves (void)
 
 	if (r_oldviewcluster == r_viewcluster && !r_novis->value && r_viewcluster != -1)
 		return;
-	
+
 	// development aid to let you run around and see exactly where
 	// the pvs ends
 	if (sw_lockpvs->value)
@@ -457,8 +457,8 @@ void R_MarkLeaves (void)
 		return;
 	}
 
-	vis = Mod_ClusterPVS (r_viewcluster, r_worldmodel);
-	
+	vis = ref_soft_Mod_ClusterPVS (r_viewcluster, r_worldmodel);
+
 	for (i=0,leaf=r_worldmodel->leafs ; i<r_worldmodel->numleafs ; i++, leaf++)
 	{
 		cluster = leaf->cluster;
@@ -496,11 +496,11 @@ void R_MarkLeaves (void)
 }
 
 /*
-** R_DrawNullModel
+** ref_soft_R_DrawNullModel
 **
 ** IMPLEMENT THIS!
 */
-void R_DrawNullModel( void )
+void ref_soft_R_DrawNullModel( void )
 {
 }
 
@@ -509,7 +509,7 @@ void R_DrawNullModel( void )
 R_DrawEntitiesOnList
 =============
 */
-void R_DrawEntitiesOnList (void)
+void ref_soft_R_DrawEntitiesOnList (void)
 {
 	int			i;
 	qboolean	translucent_entities = false;
@@ -615,7 +615,7 @@ void R_DrawEntitiesOnList (void)
 R_BmodelCheckBBox
 =============
 */
-int R_BmodelCheckBBox (float *minmaxs)
+int ref_soft_R_BmodelCheckBBox (float *minmaxs)
 {
 	int			i, *pindex, clipflags;
 	vec3_t		acceptpt, rejectpt;
@@ -634,7 +634,7 @@ int R_BmodelCheckBBox (float *minmaxs)
 		rejectpt[0] = minmaxs[pindex[0]];
 		rejectpt[1] = minmaxs[pindex[1]];
 		rejectpt[2] = minmaxs[pindex[2]];
-		
+
 		d = DotProduct (rejectpt, view_clipplanes[i].normal);
 		d -= view_clipplanes[i].dist;
 
@@ -665,7 +665,7 @@ Find the first node that splits the given box
 */
 mnode_t *R_FindTopnode (vec3_t mins, vec3_t maxs)
 {
-	mplane_t	*splitplane;
+	plane_t	*splitplane;
 	int			sides;
 	mnode_t *node;
 
@@ -675,7 +675,7 @@ mnode_t *R_FindTopnode (vec3_t mins, vec3_t maxs)
 	{
 		if (node->visframe != r_visframecount)
 			return NULL;		// not visible at all
-		
+
 		if (node->contents != CONTENTS_NODE)
 		{
 			if (node->contents != CONTENTS_SOLID)
@@ -683,13 +683,13 @@ mnode_t *R_FindTopnode (vec3_t mins, vec3_t maxs)
 							//  visible and not BSP clipped
 			return NULL;	// in solid, so not visible
 		}
-		
+
 		splitplane = node->plane;
-		sides = BOX_ON_PLANE_SIDE(mins, maxs, (cplane_t *)splitplane);
-		
+		sides = BOX_ON_PLANE_SIDE(mins, maxs, (plane_t *)splitplane);
+
 		if (sides == 3)
 			return node;	// this is the splitter
-		
+
 	// not split yet; recurse down the contacted side
 		if (sides & 1)
 			node = node->children[0];
@@ -764,7 +764,7 @@ void RotatedBBox (vec3_t mins, vec3_t maxs, vec3_t angles, vec3_t tmins, vec3_t 
 R_DrawBEntitiesOnList
 =============
 */
-void R_DrawBEntitiesOnList (void)
+void ref_soft_R_DrawBEntitiesOnList (void)
 {
 	int			i, clipflags;
 	vec3_t		oldorigin;
@@ -798,11 +798,11 @@ void R_DrawBEntitiesOnList (void)
 		VectorAdd (mins, currententity->origin, minmaxs);
 		VectorAdd (maxs, currententity->origin, (minmaxs+3));
 
-		clipflags = R_BmodelCheckBBox (minmaxs);
+		clipflags = ref_soft_R_BmodelCheckBBox (minmaxs);
 		if (clipflags == BMODEL_FULLY_CLIPPED)
 			continue;	// off the edge of the screen
 
-		topnode = R_FindTopnode (minmaxs, minmaxs+3);
+		topnode = ref_soft_R_FindTopnode (minmaxs, minmaxs+3);
 		if (!topnode)
 			continue;	// no part in a visible leaf
 
@@ -831,8 +831,8 @@ void R_DrawBEntitiesOnList (void)
 			R_DrawSubmodelPolygons (currentmodel, clipflags, topnode);
 		}
 
-	// put back world rotation and frustum clipping		
-	// FIXME: R_RotateBmodel should just work off base_vxx
+	// put back world rotation and frustum clipping
+	// FIXME: ref_soft_R_RotateBmodel should just work off base_vxx
 		VectorCopy (base_vpn, vpn);
 		VectorCopy (base_vup, vup);
 		VectorCopy (base_vright, vright);
@@ -849,7 +849,7 @@ void R_DrawBEntitiesOnList (void)
 R_EdgeDrawing
 ================
 */
-void R_EdgeDrawing (void)
+void ref_soft_R_EdgeDrawing (void)
 {
 	edge_t	ledges[NUMSTACKEDGES +
 				((CACHE_SIZE - 1) / sizeof(edge_t)) + 1];
@@ -915,7 +915,7 @@ R_CalcPalette
 
 =============
 */
-void R_CalcPalette (void)
+void ref_soft_R_CalcPalette (void)
 {
 	static qboolean modified;
 	byte	palette[256][4], *in, *out;
@@ -966,7 +966,7 @@ void R_CalcPalette (void)
 
 //=======================================================================
 
-void R_SetLightLevel (void)
+void ref_soft_R_SetLightLevel (void)
 {
 	vec3_t		light;
 
@@ -988,15 +988,15 @@ R_RenderFrame
 
 @@@@@@@@@@@@@@@@
 */
-void R_RenderFrame (refdef_t *fd)
+void ref_soft_R_RenderFrame (refdef_t *fd)
 {
 	r_newrefdef = *fd;
 
 	if (!r_worldmodel && !( r_newrefdef.rdflags & RDF_NOWORLDMODEL ) )
 		ri.Sys_Error (ERR_FATAL,"R_RenderView: NULL worldmodel");
 
-	VectorCopy (fd->vieworg, r_refdef.vieworg);
-	VectorCopy (fd->viewangles, r_refdef.viewangles);
+	VectorCopy (fd->vieworg, rrefdef.vieworg);
+	VectorCopy (fd->viewangles, rrefdef.viewangles);
 
 	if (r_speeds->value || r_dspeeds->value)
 		r_time1 = Sys_Milliseconds ();
@@ -1045,7 +1045,7 @@ void R_RenderFrame (refdef_t *fd)
 
 	if (sw_aliasstats->value)
 		R_PrintAliasStats ();
-		
+
 	if (r_speeds->value)
 		R_PrintTimes ();
 
@@ -1060,9 +1060,9 @@ void R_RenderFrame (refdef_t *fd)
 }
 
 /*
-** R_InitGraphics
+** ref_soft_R_InitGraphics
 */
-void R_InitGraphics( int width, int height )
+void ref_soft_R_InitGraphics( int width, int height )
 {
 	vid.width  = width;
 	vid.height = height;
@@ -1090,9 +1090,9 @@ void R_InitGraphics( int width, int height )
 }
 
 /*
-** R_BeginFrame
+** ref_soft_R_BeginFrame
 */
-void R_BeginFrame( float camera_separation )
+void ref_soft_R_BeginFrame( float camera_separation )
 {
 	extern void Draw_BuildGammaTable( void );
 
@@ -1149,9 +1149,9 @@ void R_BeginFrame( float camera_separation )
 }
 
 /*
-** R_GammaCorrectAndSetPalette
+** ref_soft_R_GammaCorrectAndSetPalette
 */
-void R_GammaCorrectAndSetPalette( const unsigned char *palette )
+void ref_soft_R_GammaCorrectAndSetPalette( const unsigned char *palette )
 {
 	int i;
 
@@ -1166,9 +1166,9 @@ void R_GammaCorrectAndSetPalette( const unsigned char *palette )
 }
 
 /*
-** R_CinematicSetPalette
+** ref_soft_R_CinematicSetPalette
 */
-void R_CinematicSetPalette( const unsigned char *palette )
+void ref_soft_R_CinematicSetPalette( const unsigned char *palette )
 {
 	byte palette32[1024];
 	int		i, j, w;
@@ -1221,7 +1221,7 @@ void Draw_BuildGammaTable (void)
 			sw_state.gammatable[i] = i;
 		return;
 	}
-	
+
 	for (i=0 ; i<256 ; i++)
 	{
 		inf = 255 * pow ( (i+0.5)/255.5 , g ) + 0.5;
@@ -1234,9 +1234,9 @@ void Draw_BuildGammaTable (void)
 }
 
 /*
-** R_DrawBeam
+** ref_soft_R_DrawBeam
 */
-void R_DrawBeam( entity_t *e )
+void ref_soft_R_DrawBeam( entity_t *e )
 {
 #define NUM_BEAM_SEGS 6
 
@@ -1292,10 +1292,10 @@ R_SetSky
 ============
 */
 // 3dstudio environment map names
-char	*suf[6] = {"rt", "bk", "lf", "ft", "up", "dn"};
+
 int	r_skysideimage[6] = {5, 2, 4, 1, 0, 3};
 extern	mtexinfo_t		r_skytexinfo[6];
-void R_SetSky (char *name, float rotate, vec3_t axis)
+void ref_soft_R_SetSky (char *name, float rotate, vec3_t axis)
 {
 	int		i;
 	char	pathname[MAX_QPATH];
@@ -1307,44 +1307,11 @@ void R_SetSky (char *name, float rotate, vec3_t axis)
 	for (i=0 ; i<6 ; i++)
 	{
 		Com_sprintf (pathname, sizeof(pathname), "env/%s%s.pcx", skyname, suf[r_skysideimage[i]]);
-		r_skytexinfo[i].image = R_FindImage (pathname, it_sky);
+		r_skytexinfo[i].image = ref_soft_R_FindImage (pathname, it_sky);
 	}
 }
 
-
-/*
-===============
-Draw_GetPalette
-===============
-*/
-void Draw_GetPalette (void)
-{
-	byte	*pal, *out;
-	int		i;
-	int		r, g, b;
-
-	// get the palette and colormap
-	LoadPCX ("pics/colormap.pcx", &vid.colormap, &pal, NULL, NULL);
-	if (!vid.colormap)
-		ri.Sys_Error (ERR_FATAL, "Couldn't load pics/colormap.pcx");
-	vid.alphamap = vid.colormap + 64*256;
-
-	out = (byte *)d_8to24table;
-	for (i=0 ; i<256 ; i++, out+=4)
-	{
-		r = pal[i*3+0];
-		g = pal[i*3+1];
-		b = pal[i*3+2];
-
-        out[0] = r;
-        out[1] = g;
-        out[2] = b;
-	}
-
-	free (pal);
-}
-
-struct image_s *R_RegisterSkin (char *name);
+struct image_s *ref_soft_R_RegisterSkin (char *name);
 
 /*
 @@@@@@@@@@@@@@@@@@@@@
@@ -1352,7 +1319,7 @@ GetRefAPI
 
 @@@@@@@@@@@@@@@@@@@@@
 */
-refexport_t GetRefAPI (refimport_t rimp)
+refexport_t ref_soft_GetRefAPI (refimport_t rimp)
 {
 	refexport_t	re;
 
@@ -1360,30 +1327,30 @@ refexport_t GetRefAPI (refimport_t rimp)
 
 	re.api_version = API_VERSION;
 
-	re.BeginRegistration = R_BeginRegistration;
-    re.RegisterModel = R_RegisterModel;
-    re.RegisterSkin = R_RegisterSkin;
+	re.BeginRegistration = ref_soft_R_BeginRegistration;
+    re.RegisterModel = ref_soft_R_RegisterModel;
+    re.RegisterSkin = ref_soft_R_RegisterSkin;
 	re.RegisterPic = Draw_FindPic;
-	re.SetSky = R_SetSky;
-	re.EndRegistration = R_EndRegistration;
+	re.SetSky = ref_soft_R_SetSky;
+	re.EndRegistration = ref_soft_R_EndRegistration;
 
-	re.RenderFrame = R_RenderFrame;
+	re.RenderFrame = ref_soft_R_RenderFrame;
 
-	re.DrawGetPicSize = Draw_GetPicSize;
-	re.DrawPic = Draw_Pic;
-	re.DrawStretchPic = Draw_StretchPic;
-	re.DrawChar = Draw_Char;
-	re.DrawTileClear = Draw_TileClear;
-	re.DrawFill = Draw_Fill;
-	re.DrawFadeScreen= Draw_FadeScreen;
+	re.DrawGetPicSize = ref_soft_Draw_GetPicSize;
+	re.DrawPic = ref_soft_Draw_Pic;
+	re.DrawStretchPic = ref_soft_Draw_StretchPic;
+	re.DrawChar = ref_soft_Draw_Char;
+	re.DrawTileClear = ref_soft_Draw_TileClear;
+	re.DrawFill = ref_soft_Draw_Fill;
+	re.DrawFadeScreen= ref_soft_Draw_FadeScreen;
 
-	re.DrawStretchRaw = Draw_StretchRaw;
+	re.DrawStretchRaw = ref_soft_Draw_StretchRaw;
 
-	re.Init = R_Init;
-	re.Shutdown = R_Shutdown;
+	re.Init = ref_soft_R_Init;
+	re.Shutdown = ref_soft_R_Shutdown;
 
-	re.CinematicSetPalette = R_CinematicSetPalette;
-	re.BeginFrame = R_BeginFrame;
+	re.CinematicSetPalette = ref_soft_R_CinematicSetPalette;
+	re.BeginFrame = ref_soft_R_BeginFrame;
 	re.EndFrame = SWimp_EndFrame;
 
 	re.AppActivate = SWimp_AppActivate;
@@ -1395,7 +1362,7 @@ refexport_t GetRefAPI (refimport_t rimp)
 
 #ifndef REF_HARD_LINKED
 // this is only here so the functions in q_shared.c and q_shwin.c can link
-void Sys_Error (char *error, ...)
+void Sys_Error(char *error, ...)
 {
 	va_list		argptr;
 	char		text[1024];
@@ -1407,16 +1374,6 @@ void Sys_Error (char *error, ...)
 	ri.Sys_Error (ERR_FATAL, "%s", text);
 }
 
-void Com_Printf (char *fmt, ...)
-{
-	va_list		argptr;
-	char		text[1024];
 
-	va_start (argptr, fmt);
-	vsprintf (text, fmt, argptr);
-	va_end (argptr);
-
-	ri.Con_Printf (PRINT_ALL, "%s", text);
-}
 
 #endif

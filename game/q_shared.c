@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -27,6 +27,14 @@ vec3_t vec3_origin = {0,0,0};
 
 #ifdef _WIN32
 #pragma optimize( "", off )
+#endif
+
+#if !defined ID_SOFTWARE_HACKED_FABS
+#include <math.h>
+	float Q_ftol( float f )
+	{
+		return fabs( f );
+	}
 #endif
 
 void RotatePointAroundVector( vec3_t dst, const vec3_t dir, const vec3_t point, float degrees )
@@ -307,7 +315,7 @@ float	anglemod(float a)
 
 
 // this is the slow, general version
-int BoxOnPlaneSide2 (vec3_t emins, vec3_t emaxs, struct cplane_s *p)
+int BoxOnPlaneSide2 (vec3_t emins, vec3_t emaxs, struct plane_s *p)
 {
 	int		i;
 	float	dist1, dist2;
@@ -345,8 +353,8 @@ BoxOnPlaneSide
 Returns 1, 2, or 1 + 2
 ==================
 */
-#if !id386 || defined __linux__ 
-int BoxOnPlaneSide (vec3_t emins, vec3_t emaxs, struct cplane_s *p)
+#if !id386 || defined __linux__
+int BoxOnPlaneSide (vec3_t emins, vec3_t emaxs, struct plane_s *p)
 {
 	float	dist1, dist2;
 	int		sides;
@@ -360,7 +368,7 @@ int BoxOnPlaneSide (vec3_t emins, vec3_t emaxs, struct cplane_s *p)
 			return 2;
 		return 3;
 	}
-	
+
 // general case
 	switch (p->signbits)
 	{
@@ -415,7 +423,7 @@ dist2 = p->normal[0]*emaxs[0] + p->normal[1]*emaxs[1] + p->normal[2]*emaxs[2];
 #else
 #pragma warning( disable: 4035 )
 
-__declspec( naked ) int BoxOnPlaneSide (vec3_t emins, vec3_t emaxs, struct cplane_s *p)
+__declspec( naked ) int BoxOnPlaneSide (vec3_t emins, vec3_t emaxs, struct plane_s *p)
 {
 	static int bops_initialized;
 	static int Ljmptab[8];
@@ -423,11 +431,11 @@ __declspec( naked ) int BoxOnPlaneSide (vec3_t emins, vec3_t emaxs, struct cplan
 	__asm {
 
 		push ebx
-			
+
 		cmp bops_initialized, 1
 		je  initialized
 		mov bops_initialized, 1
-		
+
 		mov Ljmptab[0*4], offset Lcase0
 		mov Ljmptab[1*4], offset Lcase1
 		mov Ljmptab[2*4], offset Lcase2
@@ -436,7 +444,7 @@ __declspec( naked ) int BoxOnPlaneSide (vec3_t emins, vec3_t emaxs, struct cplan
 		mov Ljmptab[5*4], offset Lcase5
 		mov Ljmptab[6*4], offset Lcase6
 		mov Ljmptab[7*4], offset Lcase7
-			
+
 initialized:
 
 		mov edx,ds:dword ptr[4+12+esp]
@@ -673,7 +681,7 @@ int VectorCompare (vec3_t v1, vec3_t v2)
 {
 	if (v1[0] != v2[0] || v1[1] != v2[1] || v1[2] != v2[2])
 			return 0;
-			
+
 	return 1;
 }
 
@@ -692,7 +700,7 @@ vec_t VectorNormalize (vec3_t v)
 		v[1] *= ilength;
 		v[2] *= ilength;
 	}
-		
+
 	return length;
 
 }
@@ -711,7 +719,7 @@ vec_t VectorNormalize2 (vec3_t v, vec3_t out)
 		out[1] = v[1]*ilength;
 		out[2] = v[2]*ilength;
 	}
-		
+
 	return length;
 
 }
@@ -763,7 +771,7 @@ vec_t VectorLength(vec3_t v)
 {
 	int		i;
 	float	length;
-	
+
 	length = 0;
 	for (i=0 ; i< 3 ; i++)
 		length += v[i]*v[i];
@@ -807,7 +815,7 @@ COM_SkipPath
 char *COM_SkipPath (char *pathname)
 {
 	char	*last;
-	
+
 	last = pathname;
 	while (*pathname)
 	{
@@ -859,15 +867,15 @@ COM_FileBase
 void COM_FileBase (char *in, char *out)
 {
 	char *s, *s2;
-	
+
 	s = in + strlen(in) - 1;
-	
+
 	while (s != in && *s != '.')
 		s--;
-	
+
 	for (s2 = s ; s2 != in && *s2 != '/' ; s2--)
 	;
-	
+
 	if (s-s2 < 2)
 		out[0] = 0;
 	else
@@ -888,9 +896,9 @@ Returns the path up to, but not including the last /
 void COM_FilePath (char *in, char *out)
 {
 	char *s;
-	
+
 	s = in + strlen(in) - 1;
-	
+
 	while (s != in && *s != '/')
 		s--;
 
@@ -988,8 +996,8 @@ float FloatSwap (float f)
 		float	f;
 		byte	b[4];
 	} dat1, dat2;
-	
-	
+
+
 	dat1.f = f;
 	dat2.b[0] = dat1.b[3];
 	dat2.b[1] = dat1.b[2];
@@ -1012,7 +1020,7 @@ void Swap_Init (void)
 {
 	byte	swaptest[2] = {1,0};
 
-// set the byte swapping variables in a portable manner	
+// set the byte swapping variables in a portable manner
 	if ( *(short *)swaptest == 1)
 	{
 		bigendien = false;
@@ -1051,12 +1059,12 @@ char	*va(char *format, ...)
 {
 	va_list		argptr;
 	static char		string[1024];
-	
+
 	va_start (argptr, format);
 	vsprintf (string, format,argptr);
 	va_end (argptr);
 
-	return string;	
+	return string;
 }
 
 
@@ -1078,13 +1086,13 @@ char *COM_Parse (char **data_p)
 	data = *data_p;
 	len = 0;
 	com_token[0] = 0;
-	
+
 	if (!data)
 	{
 		*data_p = NULL;
 		return "";
 	}
-		
+
 // skip whitespace
 skipwhite:
 	while ( (c = *data) <= ' ')
@@ -1096,7 +1104,7 @@ skipwhite:
 		}
 		data++;
 	}
-	
+
 // skip // comments
 	if (c=='/' && data[1] == '/')
 	{
@@ -1140,7 +1148,7 @@ skipwhite:
 
 	if (len == MAX_TOKEN_CHARS)
 	{
-//		Com_Printf ("Token exceeded %i chars, discarded.\n", MAX_TOKEN_CHARS);
+//		Com_Printf_G ("Token exceeded %i chars, discarded.\n", MAX_TOKEN_CHARS);
 		len = 0;
 	}
 	com_token[len] = 0;
@@ -1190,7 +1198,7 @@ int Q_stricmp (char *s1, char *s2)
 int Q_strncasecmp (char *s1, char *s2, int n)
 {
 	int		c1, c2;
-	
+
 	do
 	{
 		c1 = *s1++;
@@ -1198,7 +1206,7 @@ int Q_strncasecmp (char *s1, char *s2, int n)
 
 		if (!n--)
 			return 0;		// strings are equal until end point
-		
+
 		if (c1 != c2)
 		{
 			if (c1 >= 'a' && c1 <= 'z')
@@ -1209,7 +1217,7 @@ int Q_strncasecmp (char *s1, char *s2, int n)
 				return -1;		// strings not equal
 		}
 	} while (c1);
-	
+
 	return 0;		// strings are equal
 }
 
@@ -1230,7 +1238,7 @@ void Com_sprintf (char *dest, int size, char *fmt, ...)
 	len = vsprintf (bigbuffer,fmt,argptr);
 	va_end (argptr);
 	if (len >= size)
-		Com_Printf ("Com_sprintf: overflow of %i in %i\n", len, size);
+		Com_Printf_G ("Com_sprintf: overflow of %i in %i\n", len, size);
 	strncpy (dest, bigbuffer, size-1);
 }
 
@@ -1257,7 +1265,7 @@ char *Info_ValueForKey (char *s, char *key)
 								// work without stomping on each other
 	static	int	valueindex;
 	char	*o;
-	
+
 	valueindex ^= 1;
 	if (*s == '\\')
 		s++;
@@ -1301,7 +1309,7 @@ void Info_RemoveKey (char *s, char *key)
 
 	if (strstr (key, "\\"))
 	{
-//		Com_Printf ("Can't use a key with a \\\n");
+//		Com_Printf_G ("Can't use a key with a \\\n");
 		return;
 	}
 
@@ -1367,25 +1375,25 @@ void Info_SetValueForKey (char *s, char *key, char *value)
 
 	if (strstr (key, "\\") || strstr (value, "\\") )
 	{
-		Com_Printf ("Can't use keys or values with a \\\n");
+		Com_Printf_G ("Can't use keys or values with a \\\n");
 		return;
 	}
 
 	if (strstr (key, ";") )
 	{
-		Com_Printf ("Can't use keys or values with a semicolon\n");
+		Com_Printf_G ("Can't use keys or values with a semicolon\n");
 		return;
 	}
 
 	if (strstr (key, "\"") || strstr (value, "\"") )
 	{
-		Com_Printf ("Can't use keys or values with a \"\n");
+		Com_Printf_G ("Can't use keys or values with a \"\n");
 		return;
 	}
 
 	if (strlen(key) > MAX_INFO_KEY-1 || strlen(value) > MAX_INFO_KEY-1)
 	{
-		Com_Printf ("Keys and values must be < 64 characters.\n");
+		Com_Printf_G ("Keys and values must be < 64 characters.\n");
 		return;
 	}
 	Info_RemoveKey (s, key);
@@ -1396,7 +1404,7 @@ void Info_SetValueForKey (char *s, char *key, char *value)
 
 	if (strlen(newi) + strlen(s) > maxsize)
 	{
-		Com_Printf ("Info string length exceeded\n");
+		Com_Printf_G ("Info string length exceeded\n");
 		return;
 	}
 

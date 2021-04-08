@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -22,7 +22,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 /*
 ** use a real variable to control lerping
 */
-#include "r_local.h"
+#include "ref_soft/r_local.h"
+#include "shared/shared_functions.h"
 
 #define LIGHT_MIN	5		// lowest light value we'll allow, to avoid the
 							//  need for inner-loop light clamping
@@ -53,14 +54,6 @@ float   aliasoldworldtransform[3][4];
 
 static float	s_ziscale;
 static vec3_t	s_alias_forward, s_alias_right, s_alias_up;
-
-
-#define NUMVERTEXNORMALS	162
-
-float	r_avertexnormals[NUMVERTEXNORMALS][3] = {
-#include "anorms.h"
-};
-
 
 void R_AliasSetUpLerpData( dmdl_t *pmdl, float backlerp );
 void R_AliasSetUpTransform (void);
@@ -99,7 +92,7 @@ static aedge_t	aedges[12] = {
 */
 unsigned long R_AliasCheckFrameBBox( daliasframe_t *frame, float worldxf[3][4] )
 {
-	unsigned long aggregate_and_clipcode = ~0U, 
+	unsigned long aggregate_and_clipcode = ~0U,
 		          aggregate_or_clipcode = 0;
 	int           i;
 	vec3_t        mins, maxs;
@@ -346,7 +339,7 @@ void R_AliasPreparePoints (void)
 
 				R_DrawTriangle();
 			}
-			else		
+			else
 			{	// partially clipped
 				R_AliasClipTriangle (pfv[0], pfv[1], pfv[2]);
 			}
@@ -369,7 +362,7 @@ void R_AliasSetUpTransform (void)
 // TODO: should really be stored with the entity instead of being reconstructed
 // TODO: should use a look-up table
 // TODO: could cache lazily, stored in the entity
-// 
+//
 	angles[ROLL] = currententity->angles[ROLL];
 	angles[PITCH] = currententity->angles[PITCH];
 	angles[YAW] = currententity->angles[YAW];
@@ -459,7 +452,7 @@ top_of_loop:
 
 	__asm mov bl, byte ptr [esi+DTRIVERTX_V0]
 	__asm mov byte_to_dword_ptr_var, ebx
-	__asm fild dword ptr byte_to_dword_ptr_var      
+	__asm fild dword ptr byte_to_dword_ptr_var
 	__asm fmul dword ptr [r_lerp_backv+0]                  ; oldv[0]*rlb[0]
 
 	__asm mov bl, byte ptr [esi+DTRIVERTX_V1]
@@ -474,7 +467,7 @@ top_of_loop:
 
 	__asm mov bl, byte ptr [edi+DTRIVERTX_V0]
 	__asm mov byte_to_dword_ptr_var, ebx
-	__asm fild dword ptr byte_to_dword_ptr_var      
+	__asm fild dword ptr byte_to_dword_ptr_var
 	__asm fmul dword ptr [r_lerp_frontv+0]                 ; newv[0]*rlf[0] | oldv[2]*rlb[2] | oldv[1]*rlb[1] | oldv[0]*rlb[0]
 
 	__asm mov bl, byte ptr [edi+DTRIVERTX_V1]
@@ -571,7 +564,7 @@ not_powersuit:
 	__asm fadd dword ptr [aliastransform+28]       ; FV.Y | FV.X
 	__asm fxch st(1)                               ; FV.X | FV.Y
 	__asm fstp  dword ptr [eax+FINALVERT_X]        ; FV.Y
-	
+
 	__asm fld  dword ptr [lerped_vert+0]           ; lv0
 	__asm fmul dword ptr [aliastransform+32]       ; lv0*at[2][0]
 	__asm fld  dword ptr [lerped_vert+4]           ; lv1 | lv0*at[2][0]
@@ -834,7 +827,7 @@ void R_AliasProjectAndClipTestFinalVert( finalvert_t *fv )
 	if (fv->u > r_refdef.aliasvrectright)
 		fv->flags |= ALIAS_RIGHT_CLIP;
 	if (fv->v > r_refdef.aliasvrectbottom)
-		fv->flags |= ALIAS_BOTTOM_CLIP;	
+		fv->flags |= ALIAS_BOTTOM_CLIP;
 }
 
 /*
@@ -854,7 +847,7 @@ static qboolean R_AliasSetupSkin (void)
 		skinnum = currententity->skinnum;
 		if ((skinnum >= s_pmdl->num_skins) || (skinnum < 0))
 		{
-			ri.Con_Printf (PRINT_ALL, "R_AliasSetupSkin %s: no such skin # %d\n", 
+			ri.Con_Printf (PRINT_ALL, "R_AliasSetupSkin %s: no such skin # %d\n",
 				currentmodel->name, skinnum);
 			skinnum = 0;
 		}
@@ -979,21 +972,21 @@ void R_AliasSetupFrames( dmdl_t *pmdl )
 
 	if ( ( thisframe >= pmdl->num_frames ) || ( thisframe < 0 ) )
 	{
-		ri.Con_Printf (PRINT_ALL, "R_AliasSetupFrames %s: no such thisframe %d\n", 
+		ri.Con_Printf (PRINT_ALL, "R_AliasSetupFrames %s: no such thisframe %d\n",
 			currentmodel->name, thisframe);
 		thisframe = 0;
 	}
 	if ( ( lastframe >= pmdl->num_frames ) || ( lastframe < 0 ) )
 	{
-		ri.Con_Printf (PRINT_ALL, "R_AliasSetupFrames %s: no such lastframe %d\n", 
+		ri.Con_Printf (PRINT_ALL, "R_AliasSetupFrames %s: no such lastframe %d\n",
 			currentmodel->name, lastframe);
 		lastframe = 0;
 	}
 
-	r_thisframe = (daliasframe_t *)((byte *)pmdl + pmdl->ofs_frames 
+	r_thisframe = (daliasframe_t *)((byte *)pmdl + pmdl->ofs_frames
 		+ thisframe * pmdl->framesize);
 
-	r_lastframe = (daliasframe_t *)((byte *)pmdl + pmdl->ofs_frames 
+	r_lastframe = (daliasframe_t *)((byte *)pmdl + pmdl->ofs_frames
 		+ lastframe * pmdl->framesize);
 }
 

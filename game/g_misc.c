@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // g_misc.c
 
 #include "g_local.h"
-
+#include "shared/defines.h"
 
 /*QUAKED func_group (0 0 0) ?
 Used to group brushes together just for editor convenience.
@@ -63,7 +63,7 @@ void VelocityForDamage (int damage, vec3_t v)
 
 	if (damage < 50)
 		VectorScale (v, 0.7, v);
-	else 
+	else
 		VectorScale (v, 1.2, v);
 }
 
@@ -101,7 +101,7 @@ void gib_think (edict_t *self)
 	}
 }
 
-void gib_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
+void gib_touch (edict_t *self, edict_t *other, plane_t *plane, csurface_t *surf)
 {
 	vec3_t	normal_angles, right;
 
@@ -339,14 +339,14 @@ Pathtarget: gets used when an entity that has
 	this path_corner targeted touches it
 */
 
-void path_corner_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
+void path_corner_touch (edict_t *self, edict_t *other, plane_t *plane, csurface_t *surf)
 {
 	vec3_t		v;
 	edict_t		*next;
 
 	if (other->movetarget != self)
 		return;
-	
+
 	if (other->enemy)
 		return;
 
@@ -419,7 +419,7 @@ Makes this the target of a monster and it will head here
 when first activated before going after the activator.  If
 hold is selected, it will stay here.
 */
-void point_combat_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
+void point_combat_touch (edict_t *self, edict_t *other, plane_t *plane, csurface_t *surf)
 {
 	edict_t	*activator;
 
@@ -662,7 +662,7 @@ void SP_func_wall (edict_t *self)
 This is solid bmodel that will fall if it's support it removed.
 */
 
-void func_object_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
+void func_object_touch (edict_t *self, edict_t *other, plane_t *plane, csurface_t *surf)
 {
 	// only squash thing we fall on top of
 	if (!plane)
@@ -870,7 +870,7 @@ Large exploding box.  You can override its mass (100),
 health (80), and dmg (150).
 */
 
-void barrel_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
+void barrel_touch (edict_t *self, edict_t *other, plane_t *plane, csurface_t *surf)
 
 {
 	float	ratio;
@@ -1034,7 +1034,7 @@ void misc_blackhole_think (edict_t *self)
 	if (++self->s.frame < 19)
 		self->nextthink = level.time + FRAMETIME;
 	else
-	{		
+	{
 		self->s.frame = 0;
 		self->nextthink = level.time + FRAMETIME;
 	}
@@ -1062,7 +1062,7 @@ void misc_eastertank_think (edict_t *self)
 	if (++self->s.frame < 293)
 		self->nextthink = level.time + FRAMETIME;
 	else
-	{		
+	{
 		self->s.frame = 254;
 		self->nextthink = level.time + FRAMETIME;
 	}
@@ -1090,7 +1090,7 @@ void misc_easterchick_think (edict_t *self)
 	if (++self->s.frame < 247)
 		self->nextthink = level.time + FRAMETIME;
 	else
-	{		
+	{
 		self->s.frame = 208;
 		self->nextthink = level.time + FRAMETIME;
 	}
@@ -1118,7 +1118,7 @@ void misc_easterchick2_think (edict_t *self)
 	if (++self->s.frame < 287)
 		self->nextthink = level.time + FRAMETIME;
 	else
-	{		
+	{
 		self->s.frame = 248;
 		self->nextthink = level.time + FRAMETIME;
 	}
@@ -1310,7 +1310,7 @@ void SP_misc_viper (edict_t *ent)
 }
 
 
-/*QUAKED misc_bigviper (1 .5 0) (-176 -120 -24) (176 120 72) 
+/*QUAKED misc_bigviper (1 .5 0) (-176 -120 -24) (176 120 72)
 This is a large stationary viper as seen in Paul's intro
 */
 void SP_misc_bigviper (edict_t *ent)
@@ -1327,7 +1327,7 @@ void SP_misc_bigviper (edict_t *ent)
 /*QUAKED misc_viper_bomb (1 0 0) (-8 -8 -8) (8 8 8)
 "dmg"	how much boom should the bomb make?
 */
-void misc_viper_bomb_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
+void misc_viper_bomb_touch (edict_t *self, edict_t *other, plane_t *plane, csurface_t *surf)
 {
 	G_UseTargets (self, self->activator);
 
@@ -1780,7 +1780,7 @@ void SP_func_clock (edict_t *self)
 
 //=================================================================================
 
-void teleporter_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
+void teleporter_touch (edict_t *self, edict_t *other, plane_t *plane, csurface_t *surf)
 {
 	edict_t		*dest;
 	int			i;
@@ -1857,7 +1857,7 @@ void SP_misc_teleporter (edict_t *ent)
 	VectorSet (trig->mins, -8, -8, 8);
 	VectorSet (trig->maxs, 8, 8, 24);
 	gi.linkentity (trig);
-	
+
 }
 
 /*QUAKED misc_teleporter_dest (1 0 0) (-32 -32 -24) (32 32 -16)

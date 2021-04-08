@@ -11,7 +11,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -39,9 +39,16 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "keys.h"
 #include "console.h"
 #include "cdaudio.h"
+#include "server/server.h"
 
 //=============================================================================
 
+extern	cvar_t *allow_download;
+extern	cvar_t *allow_download_players;
+extern	cvar_t *allow_download_models;
+extern	cvar_t *allow_download_sounds;
+extern	cvar_t *allow_download_maps;
+extern cvar_t *sw_mode;
 typedef struct
 {
 	qboolean		valid;			// cleared if delta parsing was invalid
@@ -310,7 +317,7 @@ extern	cdlight_t	cl_dlights[MAX_DLIGHTS];
 
 // the cl_parse_entities must be large enough to hold UPDATE_BACKUP frames of
 // entities, so that when a delta compressed message arives from the server
-// it can be un-deltad from the original 
+// it can be un-deltad from the original
 #define	MAX_PARSE_ENTITIES	1024
 extern	entity_state_t	cl_parse_entities[MAX_PARSE_ENTITIES];
 

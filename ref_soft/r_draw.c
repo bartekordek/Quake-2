@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -32,7 +32,7 @@ image_t		*draw_chars;				// 8*8 graphic characters
 Draw_FindPic
 ================
 */
-image_t *Draw_FindPic (char *name)
+image_t *ref_soft_Draw_FindPic(char *name)
 {
 	image_t	*image;
 	char	fullname[MAX_QPATH];
@@ -48,19 +48,15 @@ image_t *Draw_FindPic (char *name)
 	return image;
 }
 
-
-
 /*
 ===============
 Draw_InitLocal
 ===============
 */
-void Draw_InitLocal (void)
+void ref_soft_Draw_InitLocal (void)
 {
-	draw_chars = Draw_FindPic ("conchars");
+	draw_chars = Draw_FindPic("conchars");
 }
-
-
 
 /*
 ================
@@ -71,11 +67,11 @@ It can be clipped to the top of the screen to allow the console to be
 smoothly scrolled off.
 ================
 */
-void Draw_Char (int x, int y, int num)
+void ref_soft_Draw_Char(int x, int y, int num)
 {
 	byte			*dest;
 	byte			*source;
-	int				drawline;	
+	int				drawline;
 	int				row, col;
 
 	num &= 255;
@@ -141,11 +137,11 @@ void Draw_Char (int x, int y, int num)
 Draw_GetPicSize
 =============
 */
-void Draw_GetPicSize (int *w, int *h, char *pic)
+void ref_soft_Draw_GetPicSize(int *w, int *h, char *pic)
 {
 	image_t *gl;
 
-	gl = Draw_FindPic (pic);
+	gl = Draw_FindPic(pic);
 	if (!gl)
 	{
 		*w = *h = -1;
@@ -160,7 +156,7 @@ void Draw_GetPicSize (int *w, int *h, char *pic)
 Draw_StretchPicImplementation
 =============
 */
-void Draw_StretchPicImplementation (int x, int y, int w, int h, image_t	*pic)
+void ref_soft_Draw_StretchPicImplementation(int x, int y, int w, int h, image_t	*pic)
 {
 	byte			*dest, *source;
 	int				v, u, sv;
@@ -217,11 +213,11 @@ void Draw_StretchPicImplementation (int x, int y, int w, int h, image_t	*pic)
 Draw_StretchPic
 =============
 */
-void Draw_StretchPic (int x, int y, int w, int h, char *name)
+void ref_soft_Draw_StretchPic(int x, int y, int w, int h, char *name)
 {
 	image_t	*pic;
 
-	pic = Draw_FindPic (name);
+	pic = Draw_FindPic(name);
 	if (!pic)
 	{
 		ri.Con_Printf (PRINT_ALL, "Can't find pic: %s\n", name);
@@ -235,7 +231,7 @@ void Draw_StretchPic (int x, int y, int w, int h, char *name)
 Draw_StretchRaw
 =============
 */
-void Draw_StretchRaw (int x, int y, int w, int h, int cols, int rows, byte *data)
+void ref_soft_Draw_StretchRaw(int x, int y, int w, int h, int cols, int rows, byte *data)
 {
 	image_t	pic;
 
@@ -250,7 +246,7 @@ void Draw_StretchRaw (int x, int y, int w, int h, int cols, int rows, byte *data
 Draw_Pic
 =============
 */
-void Draw_Pic (int x, int y, char *name)
+void ref_soft_Draw_Pic(int x, int y, char *name)
 {
 	image_t			*pic;
 	byte			*dest, *source;
@@ -258,7 +254,7 @@ void Draw_Pic (int x, int y, char *name)
 	int				tbyte;
 	int				height;
 
-	pic = Draw_FindPic (name);
+	pic = Draw_FindPic(name);
 	if (!pic)
 	{
 		ri.Con_Printf (PRINT_ALL, "Can't find pic: %s\n", name);
@@ -342,7 +338,7 @@ This repeats a 64*64 tile graphic to fill the screen around a sized down
 refresh window.
 =============
 */
-void Draw_TileClear (int x, int y, int w, int h, char *name)
+void ref_soft_Draw_TileClear(int x, int y, int w, int h, char *name)
 {
 	int			i, j;
 	byte		*psrc;
@@ -367,7 +363,7 @@ void Draw_TileClear (int x, int y, int w, int h, char *name)
 	if (w <= 0 || h <= 0)
 		return;
 
-	pic = Draw_FindPic (name);
+	pic = Draw_FindPic(name);
 	if (!pic)
 	{
 		ri.Con_Printf (PRINT_ALL, "Can't find pic: %s\n", name);
@@ -391,7 +387,7 @@ Draw_Fill
 Fills a box of pixels with a single color
 =============
 */
-void Draw_Fill (int x, int y, int w, int h, int c)
+void ref_soft_Draw_Fill(int x, int y, int w, int h, int c)
 {
 	byte			*dest;
 	int				u, v;
@@ -425,7 +421,7 @@ Draw_FadeScreen
 
 ================
 */
-void Draw_FadeScreen (void)
+void ref_soft_Draw_FadeScreen(void)
 {
 	int			x,y;
 	byte		*pbuf;

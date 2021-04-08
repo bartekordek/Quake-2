@@ -1,2 +1,7 @@
 .dccache
+.vs
 Build-Windows/
+build/
+Build-Linux/
+Build-Windows/
+*.log

@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -29,85 +29,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ** SWimp_SetPalette
 ** SWimp_Shutdown
 */
-#include "..\ref_soft\r_local.h"
+#include "ref_soft/r_local.h"
 #include "rw_win.h"
 #include "winquake.h"
+#include "shared/defines.h"
 
 // Console variables that we need to access from this module
 
 swwstate_t sww_state;
-
-/*
-** VID_CreateWindow
-*/
-#define	WINDOW_CLASS_NAME "Quake 2"
-
-void VID_CreateWindow( int width, int height, int stylebits )
-{
-	WNDCLASS		wc;
-	RECT			r;
-	cvar_t			*vid_xpos, *vid_ypos, *vid_fullscreen;
-	int				x, y, w, h;
-	int				exstyle;
-
-	vid_xpos = ri.Cvar_Get ("vid_xpos", "0", 0);
-	vid_ypos = ri.Cvar_Get ("vid_ypos", "0", 0);
-	vid_fullscreen = ri.Cvar_Get ("vid_fullscreen", "0", CVAR_ARCHIVE );
-
-	if ( vid_fullscreen->value )
-		exstyle = WS_EX_TOPMOST;
-	else
-		exstyle = 0;
-
-	/* Register the frame class */
-    wc.style         = 0;
-    wc.lpfnWndProc   = (WNDPROC)sww_state.wndproc;
-    wc.cbClsExtra    = 0;
-    wc.cbWndExtra    = 0;
-    wc.hInstance     = sww_state.hInstance;
-    wc.hIcon         = 0;
-    wc.hCursor       = LoadCursor (NULL,IDC_ARROW);
-	wc.hbrBackground = (void *)COLOR_GRAYTEXT;
-    wc.lpszMenuName  = 0;
-    wc.lpszClassName = WINDOW_CLASS_NAME;
-
-    if (!RegisterClass (&wc) )
-		ri.Sys_Error (ERR_FATAL, "Couldn't register window class");
-
-	r.left = 0;
-	r.top = 0;
-	r.right  = width;
-	r.bottom = height;
-
-	AdjustWindowRect (&r, stylebits, FALSE);
-
-	w = r.right - r.left;
-	h = r.bottom - r.top;
-	x = vid_xpos->value;
-	y = vid_ypos->value;
-
-	sww_state.hWnd = CreateWindowEx (
-		exstyle,
-		 WINDOW_CLASS_NAME,
-		 "Quake 2",
-		 stylebits,
-		 x, y, w, h,
-		 NULL,
-		 NULL,
-		 sww_state.hInstance,
-		 NULL);
-
-	if (!sww_state.hWnd)
-		ri.Sys_Error (ERR_FATAL, "Couldn't create window");
-	
-	ShowWindow( sww_state.hWnd, SW_SHOWNORMAL );
-	UpdateWindow( sww_state.hWnd );
-	SetForegroundWindow( sww_state.hWnd );
-	SetFocus( sww_state.hWnd );
-
-	// let the sound and input subsystems know about the new window
-	ri.Vid_NewWindow (width, height);
-}
 
 /*
 ** SWimp_Init
@@ -139,7 +68,7 @@ static qboolean SWimp_InitGraphics( qboolean fullscreen )
 	SWimp_Shutdown ();
 
 	// create a new window
-	VID_CreateWindow (vid.width, vid.height, WINDOW_STYLE);
+	VID_CreateWindow_1 (vid.width, vid.height, WINDOW_STYLE);
 
 	// initialize the appropriate subsystem
 	if ( !fullscreen )
@@ -183,7 +112,7 @@ void SWimp_EndFrame (void)
 //			RealizePalette(hdcScreen);
 		}
 
-	    
+
 		BitBlt( sww_state.hDC,
 			    0, 0,
 				vid.width,
@@ -214,15 +143,15 @@ void SWimp_EndFrame (void)
 		{
 			if ( ( rval = sww_state.lpddsBackBuffer->lpVtbl->BltFast( sww_state.lpddsBackBuffer,
 																	0, 0,
-																	sww_state.lpddsOffScreenBuffer, 
-																	&r, 
+																	sww_state.lpddsOffScreenBuffer,
+																	&r,
 																	DDBLTFAST_WAIT ) ) == DDERR_SURFACELOST )
 			{
 				sww_state.lpddsBackBuffer->lpVtbl->Restore( sww_state.lpddsBackBuffer );
 				sww_state.lpddsBackBuffer->lpVtbl->BltFast( sww_state.lpddsBackBuffer,
 															0, 0,
-															sww_state.lpddsOffScreenBuffer, 
-															&r, 
+															sww_state.lpddsOffScreenBuffer,
+															&r,
 															DDBLTFAST_WAIT );
 			}
 
@@ -237,22 +166,22 @@ void SWimp_EndFrame (void)
 		{
 			if ( ( rval = sww_state.lpddsBackBuffer->lpVtbl->BltFast( sww_state.lpddsFrontBuffer,
 																	0, 0,
-																	sww_state.lpddsOffScreenBuffer, 
-																	&r, 
+																	sww_state.lpddsOffScreenBuffer,
+																	&r,
 																	DDBLTFAST_WAIT ) ) == DDERR_SURFACELOST )
 			{
 				sww_state.lpddsBackBuffer->lpVtbl->Restore( sww_state.lpddsFrontBuffer );
 				sww_state.lpddsBackBuffer->lpVtbl->BltFast( sww_state.lpddsFrontBuffer,
 															0, 0,
-															sww_state.lpddsOffScreenBuffer, 
-															&r, 
+															sww_state.lpddsOffScreenBuffer,
+															&r,
 															DDBLTFAST_WAIT );
 			}
 		}
 
 		memset( &ddsd, 0, sizeof( ddsd ) );
 		ddsd.dwSize = sizeof( ddsd );
-	
+
 		sww_state.lpddsOffScreenBuffer->lpVtbl->Lock( sww_state.lpddsOffScreenBuffer, NULL, &ddsd, DDLOCK_WAIT, NULL );
 
 		vid.buffer = ddsd.lpSurface;
@@ -464,7 +393,7 @@ void Sys_SetFPCW( void )
 	__asm mov fpu_sp24_cw, eax
 
 	__asm and ah, 0f0h          ; ceil mode, 24-bit single precision
-	__asm or  ah, 008h          ; 
+	__asm or  ah, 008h          ;
 	__asm mov fpu_sp24_ceil_cw, eax
 }
 #endif

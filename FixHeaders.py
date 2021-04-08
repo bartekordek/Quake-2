@@ -32,7 +32,7 @@ def FixHeaderFile( filePath ):
             line_prepender( filePath, firstLine )
 
             with open(filePath, "a") as file:
-                file.write("\n#endif // " + guard)
+                file.write("\n\n#endif // " + guard)
 
 for root, dirs, files in os.walk("."):
     for file in files:
