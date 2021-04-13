@@ -1179,9 +1179,9 @@ static void R_DrawPoly( qboolean iswater )
 }
 
 /*
-** R_DrawAlphaSurfaces
+** ref_soft_R_DrawAlphaSurfaces
 */
-void R_DrawAlphaSurfaces( void )
+void ref_soft_R_DrawAlphaSurfaces( void )
 {
 	msurface_t *s = r_alpha_surfaces;
 

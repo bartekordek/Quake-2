@@ -890,7 +890,7 @@ void R_AliasSetupLighting (void)
 	}
 	else
 	{
-		R_LightPoint (currententity->origin, light);
+		ref_soft_R_LightPoint (currententity->origin, light);
 	}
 
 	// save off light value for server to look at (BIG HACK!)

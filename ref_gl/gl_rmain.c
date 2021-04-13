@@ -135,11 +135,7 @@ cvar_t	*vid_gamma;
 cvar_t	*vid_ref;
 
 /*
-=================
-R_CullBox
-
 Returns true if the box is completely outside the frustom
-=================
 */
 qboolean ref_gl_R_CullBox (vec3_t mins, vec3_t maxs)
 {
@@ -175,7 +171,7 @@ void ref_gl_R_RotateForEntity (entity_t *e)
 
 /*
 =================
-R_DrawSpriteModel
+ref_gl_R_DrawSpriteModel
 
 =================
 */
@@ -227,9 +223,9 @@ void ref_gl_R_DrawSpriteModel (entity_t *e)
 
 	qglColor4f( 1, 1, 1, alpha );
 
-    GL_Bind(currentmodel->skins[e->frame]->texnum);
+    ref_gl_GL_TexEnv(currentmodel->skins[e->frame]->texnum);
 
-	GL_TexEnv( GL_MODULATE );
+	ref_gl_GL_TexEnv( GL_MODULATE );
 
 	if ( alpha == 1.0 )
 		qglEnable (GL_ALPHA_TEST);
@@ -261,7 +257,7 @@ void ref_gl_R_DrawSpriteModel (entity_t *e)
 	qglEnd ();
 
 	qglDisable (GL_ALPHA_TEST);
-	GL_TexEnv( GL_REPLACE );
+	ref_gl_GL_TexEnv( GL_REPLACE );
 
 	if ( alpha != 1.0F )
 		qglDisable( GL_BLEND );
@@ -273,7 +269,7 @@ void ref_gl_R_DrawSpriteModel (entity_t *e)
 
 /*
 =============
-R_DrawNullModel
+ref_gl_R_DrawNullModel
 =============
 */
 void ref_gl_R_DrawNullModel (void)
@@ -284,10 +280,10 @@ void ref_gl_R_DrawNullModel (void)
 	if ( currententity->flags & RF_FULLBRIGHT )
 		shadelight[0] = shadelight[1] = shadelight[2] = 1.0F;
 	else
-		R_LightPoint (currententity->origin, shadelight);
+		ref_gl_R_LightPoint (currententity->origin, shadelight);
 
     qglPushMatrix ();
-	R_RotateForEntity (currententity);
+	ref_gl_R_RotateForEntity (currententity);
 
 	qglDisable (GL_TEXTURE_2D);
 	qglColor3fv (shadelight);
@@ -330,14 +326,14 @@ void ref_gl_R_DrawEntitiesOnList (void)
 
 		if ( currententity->flags & RF_BEAM )
 		{
-			R_DrawBeam( currententity );
+			ref_gl_R_DrawBeam( currententity );
 		}
 		else
 		{
 			currentmodel = currententity->model;
 			if (!currentmodel)
 			{
-				R_DrawNullModel ();
+				ref_gl_R_DrawNullModel ();
 				continue;
 			}
 			switch (currentmodel->type)
@@ -346,10 +342,10 @@ void ref_gl_R_DrawEntitiesOnList (void)
 				R_DrawAliasModel (currententity);
 				break;
 			case mod_brush:
-				R_DrawBrushModel (currententity);
+				ref_gl_R_DrawBrushModel (currententity);
 				break;
 			case mod_sprite:
-				R_DrawSpriteModel (currententity);
+				ref_gl_R_DrawSpriteModel (currententity);
 				break;
 			default:
 				ri.Sys_Error (ERR_DROP, "Bad modeltype");
@@ -369,7 +365,7 @@ void ref_gl_R_DrawEntitiesOnList (void)
 
 		if ( currententity->flags & RF_BEAM )
 		{
-			R_DrawBeam( currententity );
+			ref_gl_R_DrawBeam( currententity );
 		}
 		else
 		{
@@ -377,7 +373,7 @@ void ref_gl_R_DrawEntitiesOnList (void)
 
 			if (!currentmodel)
 			{
-				R_DrawNullModel ();
+				ref_gl_R_DrawNullModel ();
 				continue;
 			}
 			switch (currentmodel->type)
@@ -386,10 +382,10 @@ void ref_gl_R_DrawEntitiesOnList (void)
 				R_DrawAliasModel (currententity);
 				break;
 			case mod_brush:
-				R_DrawBrushModel (currententity);
+				ref_gl_R_DrawBrushModel (currententity);
 				break;
 			case mod_sprite:
-				R_DrawSpriteModel (currententity);
+				ref_gl_R_DrawSpriteModel (currententity);
 				break;
 			default:
 				ri.Sys_Error (ERR_DROP, "Bad modeltype");
@@ -413,10 +409,10 @@ void GL_DrawParticles( int num_particles, const particle_t particles[], const un
 	float			scale;
 	byte			color[4];
 
-    GL_Bind(r_particletexture->texnum);
+    ref_gl_GL_Bind(r_particletexture->texnum);
 	qglDepthMask( GL_FALSE );		// no z buffering
 	qglEnable( GL_BLEND );
-	GL_TexEnv( GL_MODULATE );
+	ref_gl_GL_TexEnv( GL_MODULATE );
 	qglBegin( GL_TRIANGLES );
 
 	VectorScale (vup, 1.5, up);
@@ -457,7 +453,7 @@ void GL_DrawParticles( int num_particles, const particle_t particles[], const un
 	qglDisable( GL_BLEND );
 	qglColor4f( 1,1,1,1 );
 	qglDepthMask( 1 );		// back to normal Z buffering
-	GL_TexEnv( GL_REPLACE );
+	ref_gl_GL_TexEnv( GL_REPLACE );
 }
 
 /*
@@ -505,7 +501,7 @@ void ref_gl_R_DrawParticles (void)
 
 /*
 ============
-R_PolyBlend
+ref_gl_R_PolyBlend
 ============
 */
 void ref_gl_R_PolyBlend (void)
@@ -753,11 +749,6 @@ void ref_gl_R_SetupGL (void)
 	qglEnable(GL_DEPTH_TEST);
 }
 
-/*
-=============
-R_Clear
-=============
-*/
 void ref_gl_R_Clear (void)
 {
 	if (gl_ztrick->value)
@@ -798,12 +789,12 @@ void ref_gl_R_Clear (void)
 
 void ref_gl_R_Flash( void )
 {
-	R_PolyBlend ();
+	ref_gl_R_PolyBlend ();
 }
 
 /*
 ================
-R_RenderView
+ref_gl_R_RenderView
 
 r_newrefdef must be set before the first call
 ================
@@ -816,7 +807,7 @@ void ref_gl_R_RenderView (refdef_t *fd)
 	r_newrefdef = *fd;
 
 	if (!r_worldmodel && !( r_newrefdef.rdflags & RDF_NOWORLDMODEL ) )
-		ri.Sys_Error (ERR_DROP, "R_RenderView: NULL worldmodel");
+		ri.Sys_Error (ERR_DROP, "ref_gl_R_RenderView: NULL worldmodel");
 
 	if (r_speeds->value)
 	{
@@ -824,30 +815,30 @@ void ref_gl_R_RenderView (refdef_t *fd)
 		c_alias_polys = 0;
 	}
 
-	R_PushDlights ();
+	ref_gl_R_PushDlights ();
 
 	if (gl_finish->value)
 		qglFinish ();
 
-	R_SetupFrame ();
+	ref_gl_R_SetupFrame ();
 
-	R_SetFrustum ();
+	ref_gl_R_SetFrustum ();
 
-	R_SetupGL ();
+	ref_gl_R_SetupGL ();
 
-	R_MarkLeaves ();	// done here so we know if we're in water
+	ref_gl_R_MarkLeaves ();	// done here so we know if we're in water
 
-	R_DrawWorld ();
+	ref_gl_R_DrawWorld ();
 
-	R_DrawEntitiesOnList ();
+	ref_gl_R_DrawEntitiesOnList ();
 
-	R_RenderDlights ();
+	ref_gl_R_RenderDlights ();
 
-	R_DrawParticles ();
+	ref_gl_R_DrawParticles ();
 
-	R_DrawAlphaSurfaces ();
+	ref_gl_R_DrawAlphaSurfaces ();
 
-	R_Flash();
+	ref_gl_R_Flash();
 
 	if (r_speeds->value)
 	{
@@ -917,13 +908,6 @@ static void GL_DrawStereoPattern( void )
 	}
 }
 
-
-/*
-====================
-R_SetLightLevel
-
-====================
-*/
 void ref_gl_R_SetLightLevel (void)
 {
 	vec3_t		shadelight;
@@ -932,8 +916,7 @@ void ref_gl_R_SetLightLevel (void)
 		return;
 
 	// save off light value for server to look at (BIG HACK!)
-
-	R_LightPoint (r_newrefdef.vieworg, shadelight);
+	ref_gl_R_LightPoint (r_newrefdef.vieworg, shadelight);
 
 	// pick the greatest component, which should be the same
 	// as the mono value returned by software
@@ -962,8 +945,8 @@ R_RenderFrame
 */
 void ref_gl_R_RenderFrame (refdef_t *fd)
 {
-	R_RenderView( fd );
-	R_SetLightLevel ();
+	ref_gl_R_RenderView( fd );
+	ref_gl_R_SetLightLevel ();
 	R_SetGL2D ();
 }
 
@@ -1048,7 +1031,7 @@ void ref_gl_R_Register( void )
 R_SetMode
 ==================
 */
-qboolean ref_gl_R_SetMode (void)
+qboolean R_SetMode (void)
 {
 	rserr_t err;
 	qboolean fullscreen;
@@ -1075,7 +1058,7 @@ qboolean ref_gl_R_SetMode (void)
 		{
 			ri.Cvar_SetValue( "vid_fullscreen", 0);
 			vid_fullscreen->modified = false;
-			ri.Con_Printf( PRINT_ALL, "ref_gl::R_SetMode() - fullscreen unavailable in this mode\n" );
+			ri.Con_Printf( PRINT_ALL, "R_SetMode() - fullscreen unavailable in this mode\n" );
 			if ( ( err = GLimp_SetMode( &vid.width, &vid.height, gl_mode->value, false ) ) == rserr_ok )
 				return true;
 		}
@@ -1083,13 +1066,13 @@ qboolean ref_gl_R_SetMode (void)
 		{
 			ri.Cvar_SetValue( "gl_mode", gl_state.prev_mode );
 			gl_mode->modified = false;
-			ri.Con_Printf( PRINT_ALL, "ref_gl::R_SetMode() - invalid mode\n" );
+			ri.Con_Printf( PRINT_ALL, "R_SetMode() - invalid mode\n" );
 		}
 
 		// try setting it back to something safe
 		if ( ( err = GLimp_SetMode( &vid.width, &vid.height, gl_state.prev_mode, false ) ) != rserr_ok )
 		{
-			ri.Con_Printf( PRINT_ALL, "ref_gl::R_SetMode() - could not revert to safe mode\n" );
+			ri.Con_Printf( PRINT_ALL, "R_SetMode() - could not revert to safe mode\n" );
 			return false;
 		}
 	}
@@ -1118,7 +1101,7 @@ int ref_gl_R_Init( void *hinstance, void *hWnd )
 
 	ref_gl_Draw_GetPalette ();
 
-	R_Register();
+	ref_gl_R_Register();
 
 	// initialize our QGL dynamic bindings
 	if ( !QGL_Init( gl_driver->string ) )
@@ -1331,11 +1314,10 @@ int ref_gl_R_Init( void *hinstance, void *hWnd )
 	GL_DrawStereoPattern();
 #endif
 
-	GL_InitImages ();
-	//TODO? which one?
-	reg_gl_Mod_Init ();
+	ref_gl_GL_InitImages ();
+	ref_gl_Mod_Init ();
 	R_InitParticleTexture ();
-	Draw_InitLocal ();
+	ref_gl_Draw_InitLocal ();
 
 	err = qglGetError();
 	if ( err != GL_NO_ERROR )
@@ -1354,9 +1336,9 @@ void ref_gl_R_Shutdown (void)
 	ri.Cmd_RemoveCommand ("imagelist");
 	ri.Cmd_RemoveCommand ("gl_strings");
 
-	Mod_FreeAll ();
+	ref_gl_Mod_FreeAll ();
 
-	GL_ShutdownImages ();
+	ref_gl_GL_ShutdownImages ();
 
 	/*
 	** shut down OS specific OpenGL stuff like contexts, etc.
@@ -1462,19 +1444,19 @@ void ref_gl_R_BeginFrame( float camera_separation )
 	*/
 	if ( gl_texturemode->modified )
 	{
-		GL_TextureMode( gl_texturemode->string );
+		ref_gl_GL_TextureMode( gl_texturemode->string );
 		gl_texturemode->modified = false;
 	}
 
 	if ( gl_texturealphamode->modified )
 	{
-		GL_TextureAlphaMode( gl_texturealphamode->string );
+		ref_gl_GL_TextureAlphaMode( gl_texturealphamode->string );
 		gl_texturealphamode->modified = false;
 	}
 
 	if ( gl_texturesolidmode->modified )
 	{
-		GL_TextureSolidMode( gl_texturesolidmode->string );
+		ref_gl_GL_TextureSolidMode( gl_texturesolidmode->string );
 		gl_texturesolidmode->modified = false;
 	}
 
@@ -1486,7 +1468,7 @@ void ref_gl_R_BeginFrame( float camera_separation )
 	//
 	// clear screen if desired
 	//
-	R_Clear ();
+	ref_gl_R_Clear ();
 }
 
 /*
@@ -1522,7 +1504,7 @@ void ref_gl_R_SetPalette ( const unsigned char *palette)
 			rp[i*4+3] = 0xff;
 		}
 	}
-	GL_SetTexturePalette( r_rawpalette );
+	ref_gl_GL_SetTexturePalette( r_rawpalette );
 
 	qglClearColor (0,0,0,0);
 	qglClear (GL_COLOR_BUFFER_BIT);

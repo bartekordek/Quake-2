@@ -18,8 +18,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 // sys_win.h
+#ifdef _WIN32
 
-#include "../qcommon/qcommon.h"
+#include "qcommon/qcommon.h"
 #include "winquake.h"
 #include "resource.h"
 #include <errno.h>
@@ -29,7 +30,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <direct.h>
 #include <io.h>
 #include <conio.h>
-#include "../win32/conproc.h"
+#include "win32/conproc.h"
 
 #define MINIMUM_WIN_MEMORY	0x0a00000
 #define MAXIMUM_WIN_MEMORY	0x1000000
@@ -64,7 +65,7 @@ SYSTEM IO
 */
 
 
-void Sys_Error (char *error, ...)
+void win32_Sys_Error(char *error, ...)
 {
 	va_list		argptr;
 	char		text[1024];
@@ -87,7 +88,7 @@ void Sys_Error (char *error, ...)
 	exit (1);
 }
 
-void Sys_Quit (void)
+void win32_Sys_Quit (void)
 {
 	timeEndPeriod( 1 );
 
@@ -104,7 +105,7 @@ void Sys_Quit (void)
 }
 
 
-void WinError (void)
+void win32_WinError (void)
 {
 	LPVOID lpMsgBuf;
 
@@ -134,7 +135,7 @@ Sys_ScanForCD
 
 ================
 */
-char *Sys_ScanForCD (void)
+char *win32_Sys_ScanForCD (void)
 {
 	static char	cddir[MAX_OSPATH];
 	static qboolean	done;
@@ -147,7 +148,7 @@ char *Sys_ScanForCD (void)
 		return cddir;
 
 	// no abort/retry/fail errors
-	SetErrorMode (SEM_FAILCRITICALERRORS);
+	win32_SetErrorMode (SEM_FAILCRITICALERRORS);
 
 	drive[0] = 'c';
 	drive[1] = ':';
@@ -183,12 +184,12 @@ Sys_CopyProtect
 
 ================
 */
-void	Sys_CopyProtect (void)
+void	win32_Sys_CopyProtect (void)
 {
 #ifndef DEMO
 	char	*cddir;
 
-	cddir = Sys_ScanForCD();
+	cddir = win32_Sys_ScanForCD();
 	if (!cddir[0])
 		Com_Error (ERR_FATAL, "You must have the Quake2 CD in the drive to play.");
 #endif
@@ -200,10 +201,10 @@ void	Sys_CopyProtect (void)
 
 /*
 ================
-Sys_Init
+win32_Sys_Init
 ================
 */
-void Sys_Init (void)
+void win32_Sys_Init (void)
 {
 	OSVERSIONINFO	vinfo;
 
@@ -232,19 +233,19 @@ void Sys_Init (void)
 	vinfo.dwOSVersionInfoSize = sizeof(vinfo);
 
 	if (!GetVersionEx (&vinfo))
-		Sys_Error ("Couldn't get OS info");
+		win32_Sys_Error ("Couldn't get OS info");
 
 	if (vinfo.dwMajorVersion < 4)
-		Sys_Error ("Quake2 requires windows version 4 or greater");
+		win32_Sys_Error ("Quake2 requires windows version 4 or greater");
 	if (vinfo.dwPlatformId == VER_PLATFORM_WIN32s)
-		Sys_Error ("Quake2 doesn't run on Win32s");
+		win32_Sys_Error ("Quake2 doesn't run on Win32s");
 	else if ( vinfo.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS )
 		s_win95 = true;
 
 	if (dedicated->value)
 	{
 		if (!AllocConsole ())
-			Sys_Error ("Couldn't create dedicated server console");
+			win32_Sys_Error ("Couldn't create dedicated server console");
 		hinput = GetStdHandle (STD_INPUT_HANDLE);
 		houtput = GetStdHandle (STD_OUTPUT_HANDLE);
 
@@ -259,10 +260,10 @@ static int	console_textlen;
 
 /*
 ================
-Sys_ConsoleInput
+win32_Sys_ConsoleInput
 ================
 */
-char *Sys_ConsoleInput (void)
+char *win32_Sys_ConsoleInput (void)
 {
 	INPUT_RECORD	recs[1024];
 	int		dummy;
@@ -275,16 +276,16 @@ char *Sys_ConsoleInput (void)
 	for ( ;; )
 	{
 		if (!GetNumberOfConsoleInputEvents (hinput, &numevents))
-			Sys_Error ("Error getting # of console events");
+			win32_Sys_Error ("Error getting # of console events");
 
 		if (numevents <= 0)
 			break;
 
 		if (!ReadConsoleInput(hinput, recs, 1, &numread))
-			Sys_Error ("Error reading console input");
+			win32_Sys_Error ("Error reading console input");
 
 		if (numread != 1)
-			Sys_Error ("Couldn't read console input");
+			win32_Sys_Error ("Couldn't read console input");
 
 		if (recs[0].EventType == KEY_EVENT)
 		{
@@ -342,7 +343,7 @@ Sys_ConsoleOutput
 Print text to the dedicated console
 ================
 */
-void Sys_ConsoleOutput (char *string)
+void win32_Sys_ConsoleOutput (char *string)
 {
 	int		dummy;
 	char	text[256];
@@ -368,19 +369,19 @@ void Sys_ConsoleOutput (char *string)
 
 /*
 ================
-Sys_SendKeyEvents
+win32_Sys_SendKeyEvents
 
 Send Key_Event calls
 ================
 */
-void Sys_SendKeyEvents (void)
+void win32_Sys_SendKeyEvents (void)
 {
     MSG        msg;
 
 	while (PeekMessage (&msg, NULL, 0, 0, PM_NOREMOVE))
 	{
 		if (!GetMessage (&msg, NULL, 0, 0))
-			Sys_Quit ();
+			win32_Sys_Quit ();
 		sys_msg_time = msg.time;
       	TranslateMessage (&msg);
       	DispatchMessage (&msg);
@@ -394,11 +395,11 @@ void Sys_SendKeyEvents (void)
 
 /*
 ================
-Sys_GetClipboardData
+win32_Sys_GetClipboardData
 
 ================
 */
-char *Sys_GetClipboardData( void )
+char *win32_Sys_GetClipboardData( void )
 {
 	char *data = NULL;
 	char *cliptext;
@@ -423,18 +424,12 @@ char *Sys_GetClipboardData( void )
 
 /*
 ==============================================================================
-
- WINDOWS CRAP
-
+WINDOWS CRAP
 ==============================================================================
 */
 
-/*
-=================
-Sys_AppActivate
-=================
-*/
-void Sys_AppActivate (void)
+
+void win32_Sys_AppActivate (void)
 {
 	ShowWindow ( cl_hwnd, SW_RESTORE);
 	SetForegroundWindow ( cl_hwnd );
@@ -442,9 +437,7 @@ void Sys_AppActivate (void)
 
 /*
 ========================================================================
-
 GAME DLL
-
 ========================================================================
 */
 
@@ -455,7 +448,7 @@ static HINSTANCE	game_library;
 Sys_UnloadGame
 =================
 */
-void Sys_UnloadGame (void)
+void win32_Sys_UnloadGame (void)
 {
 	if (!FreeLibrary (game_library))
 		Com_Error (ERR_FATAL, "FreeLibrary failed for game library");
@@ -496,7 +489,7 @@ void *Sys_GetGameAPI (void *parms)
 #endif
 
 	if (game_library)
-		Com_Error (ERR_FATAL, "Sys_GetGameAPI without Sys_UnloadingGame");
+		Com_Error (ERR_FATAL, "Sys_GetGameAPI without win32_Sys_UnloadingGame");
 
 	// check the current debug directory first for development purposes
 	_getcwd (cwd, sizeof(cwd));
@@ -606,7 +599,7 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 	ParseCommandLine (lpCmdLine);
 
 	// if we find the CD, add a +set cddir xxx command line
-	cddir = Sys_ScanForCD ();
+	cddir = win32_Sys_ScanForCD ();
 	if (cddir && argc < MAX_NUM_ARGVS - 3)
 	{
 		int		i;
@@ -624,7 +617,7 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 	}
 
 	Qcommon_Init (argc, argv);
-	oldtime = Sys_Milliseconds ();
+	oldtime = win32_Sys_Milliseconds ();
 
     /* main window message loop */
 	while (1)
@@ -646,7 +639,7 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 
 		do
 		{
-			newtime = Sys_Milliseconds ();
+			newtime = win32_Sys_Milliseconds ();
 			time = newtime - oldtime;
 		} while (time < 1);
 //			Con_Printf ("time:%5.2f - %5.2f = %5.2f\n", newtime, oldtime, time);
@@ -661,3 +654,4 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 	// never gets here
     return TRUE;
 }
+#endif // _WIN32

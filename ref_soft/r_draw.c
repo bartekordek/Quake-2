@@ -29,7 +29,7 @@ image_t		*draw_chars;				// 8*8 graphic characters
 
 /*
 ================
-Draw_FindPic
+ref_gl_Draw_FindPic
 ================
 */
 image_t *ref_soft_Draw_FindPic(char *name)
@@ -40,22 +40,17 @@ image_t *ref_soft_Draw_FindPic(char *name)
 	if (name[0] != '/' && name[0] != '\\')
 	{
 		Com_sprintf (fullname, sizeof(fullname), "pics/%s.pcx", name);
-		image = R_FindImage (fullname, it_pic);
+		image = ref_soft_R_FindImage (fullname, it_pic);
 	}
 	else
-		image = R_FindImage (name+1, it_pic);
+		image = ref_soft_R_FindImage (name+1, it_pic);
 
 	return image;
 }
 
-/*
-===============
-Draw_InitLocal
-===============
-*/
 void ref_soft_Draw_InitLocal (void)
 {
-	draw_chars = Draw_FindPic("conchars");
+	draw_chars = ref_gl_Draw_FindPic("conchars");
 }
 
 /*
@@ -141,7 +136,7 @@ void ref_soft_Draw_GetPicSize(int *w, int *h, char *pic)
 {
 	image_t *gl;
 
-	gl = Draw_FindPic(pic);
+	gl = ref_gl_Draw_FindPic(pic);
 	if (!gl)
 	{
 		*w = *h = -1;
@@ -217,7 +212,7 @@ void ref_soft_Draw_StretchPic(int x, int y, int w, int h, char *name)
 {
 	image_t	*pic;
 
-	pic = Draw_FindPic(name);
+	pic = ref_gl_Draw_FindPic(name);
 	if (!pic)
 	{
 		ri.Con_Printf (PRINT_ALL, "Can't find pic: %s\n", name);
@@ -254,7 +249,7 @@ void ref_soft_Draw_Pic(int x, int y, char *name)
 	int				tbyte;
 	int				height;
 
-	pic = Draw_FindPic(name);
+	pic = ref_gl_Draw_FindPic(name);
 	if (!pic)
 	{
 		ri.Con_Printf (PRINT_ALL, "Can't find pic: %s\n", name);
@@ -363,7 +358,7 @@ void ref_soft_Draw_TileClear(int x, int y, int w, int h, char *name)
 	if (w <= 0 || h <= 0)
 		return;
 
-	pic = Draw_FindPic(name);
+	pic = ref_gl_Draw_FindPic(name);
 	if (!pic)
 	{
 		ri.Con_Printf (PRINT_ALL, "Can't find pic: %s\n", name);

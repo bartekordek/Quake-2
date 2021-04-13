@@ -565,7 +565,7 @@ void R_DrawSkyBox (void)
 
 #if 0
 qglEnable (GL_BLEND);
-GL_TexEnv( GL_MODULATE );
+ref_gl_GL_TexEnv( GL_MODULATE );
 qglColor4f (1,1,1,0.5);
 qglDisable (GL_DEPTH_TEST);
 #endif
@@ -597,7 +597,7 @@ qglRotatef (r_newrefdef.time * skyrotate, skyaxis[0], skyaxis[1], skyaxis[2]);
 		|| skymins[1][i] >= skymaxs[1][i])
 			continue;
 
-		GL_Bind (sky_images[skytexorder[i]]->texnum);
+		ref_gl_GL_Bind (sky_images[skytexorder[i]]->texnum);
 
 		qglBegin (GL_QUADS);
 		MakeSkyVec (skymins[0][i], skymins[1][i], i);
@@ -615,15 +615,7 @@ glEnable (GL_DEPTH_TEST);
 #endif
 }
 
-
-/*
-============
-R_SetSky
-============
-*/
-
-
-void R_SetSky (char *name, float rotate, vec3_t axis)
+void ref_gl_R_SetSky(char *name, float rotate, vec3_t axis)
 {
 	int		i;
 	char	pathname[MAX_QPATH];
@@ -643,7 +635,7 @@ void R_SetSky (char *name, float rotate, vec3_t axis)
 		else
 			Com_sprintf (pathname, sizeof(pathname), "env/%s%s.tga", skyname, suf[i]);
 
-		sky_images[i] = GL_FindImage (pathname, it_sky);
+		sky_images[i] = ref_gl_GL_FindImage (pathname, it_sky);
 		if (!sky_images[i])
 			sky_images[i] = r_notexture;
 

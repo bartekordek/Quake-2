@@ -71,7 +71,7 @@ vec3_t	r_origin;
 //
 // screen size info
 //
-oldrefdef_t	rrefdef;
+oldrefdef_t	r_refdef;
 float		xcenter, ycenter;
 float		xscale, yscale;
 float		xscaleinv, yscaleinv;
@@ -301,7 +301,7 @@ qboolean ref_soft_R_Init( void *hInstance, void *wndProc )
 {
 	R_InitImages ();
 	ref_soft_Mod_Init ();
-	Draw_InitLocal ();
+	ref_soft_Draw_InitLocal ();
 	R_InitTextures ();
 
 	R_InitTurb ();
@@ -313,8 +313,8 @@ qboolean ref_soft_R_Init( void *hInstance, void *wndProc )
 	view_clipplanes[0].rightedge = view_clipplanes[2].rightedge =
 			view_clipplanes[3].rightedge = false;
 
-	rrefdef.xOrigin = XCENTERING;
-	rrefdef.yOrigin = YCENTERING;
+	r_refdef.xOrigin = XCENTERING;
+	r_refdef.yOrigin = YCENTERING;
 
 // TODO: collect 386-specific code in one place
 #if	id386
@@ -325,7 +325,7 @@ qboolean ref_soft_R_Init( void *hInstance, void *wndProc )
 
 	r_aliasuvscale = 1.0;
 
-	R_Register ();
+	ref_soft_R_Register ();
 	ref_soft_Draw_GetPalette ();
 	SWimp_Init( hInstance, wndProc );
 
@@ -534,14 +534,14 @@ void ref_soft_R_DrawEntitiesOnList (void)
 			modelorg[1] = -r_origin[1];
 			modelorg[2] = -r_origin[2];
 			VectorCopy( vec3_origin, r_entorigin );
-			R_DrawBeam( currententity );
+			ref_soft_R_DrawBeam( currententity );
 		}
 		else
 		{
 			currentmodel = currententity->model;
 			if (!currentmodel)
 			{
-				R_DrawNullModel();
+				ref_soft_R_DrawNullModel();
 				continue;
 			}
 			VectorCopy (currententity->origin, r_entorigin);
@@ -579,14 +579,14 @@ void ref_soft_R_DrawEntitiesOnList (void)
 			modelorg[1] = -r_origin[1];
 			modelorg[2] = -r_origin[2];
 			VectorCopy( vec3_origin, r_entorigin );
-			R_DrawBeam( currententity );
+			ref_soft_R_DrawBeam( currententity );
 		}
 		else
 		{
 			currentmodel = currententity->model;
 			if (!currentmodel)
 			{
-				R_DrawNullModel();
+				ref_soft_R_DrawNullModel();
 				continue;
 			}
 			VectorCopy (currententity->origin, r_entorigin);
@@ -977,7 +977,7 @@ void ref_soft_R_SetLightLevel (void)
 	}
 
 	// save off light value for server to look at (BIG HACK!)
-	R_LightPoint (r_newrefdef.vieworg, light);
+	ref_soft_R_LightPoint (r_newrefdef.vieworg, light);
 	r_lightlevel->value = 150.0 * light[0];
 }
 
@@ -993,10 +993,10 @@ void ref_soft_R_RenderFrame (refdef_t *fd)
 	r_newrefdef = *fd;
 
 	if (!r_worldmodel && !( r_newrefdef.rdflags & RDF_NOWORLDMODEL ) )
-		ri.Sys_Error (ERR_FATAL,"R_RenderView: NULL worldmodel");
+		ri.Sys_Error (ERR_FATAL,"ref_gl_R_RenderView: NULL worldmodel");
 
-	VectorCopy (fd->vieworg, rrefdef.vieworg);
-	VectorCopy (fd->viewangles, rrefdef.viewangles);
+	VectorCopy (fd->vieworg, r_refdef.vieworg);
+	VectorCopy (fd->viewangles, r_refdef.viewangles);
 
 	if (r_speeds->value || r_dspeeds->value)
 		r_time1 = Sys_Milliseconds ();
@@ -1028,9 +1028,9 @@ void ref_soft_R_RenderFrame (refdef_t *fd)
 	if (r_dspeeds->value)
 		dp_time2 = Sys_Milliseconds ();
 
-	R_DrawAlphaSurfaces();
+	ref_soft_R_DrawAlphaSurfaces();
 
-	R_SetLightLevel ();
+	ref_gl_R_SetLightLevel ();
 
 	if (r_dowarp)
 		D_WarpScreen ();
@@ -1286,11 +1286,6 @@ void ref_soft_R_DrawBeam( entity_t *e )
 
 //===================================================================
 
-/*
-============
-R_SetSky
-============
-*/
 // 3dstudio environment map names
 
 int	r_skysideimage[6] = {5, 2, 4, 1, 0, 3};
@@ -1330,7 +1325,7 @@ refexport_t ref_soft_GetRefAPI (refimport_t rimp)
 	re.BeginRegistration = ref_soft_R_BeginRegistration;
     re.RegisterModel = ref_soft_R_RegisterModel;
     re.RegisterSkin = ref_soft_R_RegisterSkin;
-	re.RegisterPic = Draw_FindPic;
+	re.RegisterPic = ref_gl_Draw_FindPic;
 	re.SetSky = ref_soft_R_SetSky;
 	re.EndRegistration = ref_soft_R_EndRegistration;
 

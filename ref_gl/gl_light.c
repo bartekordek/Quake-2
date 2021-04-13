@@ -103,17 +103,7 @@ void ref_gl_R_RenderDlights (void)
 
 
 /*
-=============================================================================
-
 DYNAMIC LIGHTS
-
-=============================================================================
-*/
-
-/*
-=============
-R_MarkLights
-=============
 */
 void ref_gl_R_MarkLights (dlight_t *light, int bit, mnode_t *node)
 {
@@ -292,7 +282,7 @@ int ref_gl_RecursiveLightPoint (mnode_t *node, vec3_t start, vec3_t end)
 
 /*
 ===============
-R_LightPoint
+ref_gl_R_LightPoint
 ===============
 */
 void ref_gl_R_LightPoint (vec3_t p, vec3_t color)
@@ -446,11 +436,7 @@ void ref_gl_R_SetCacheState( msurface_t *surf )
 }
 
 /*
-===============
-R_BuildLightMap
-
 Combine and scale multiple lightmaps into the floating format in blocklights
-===============
 */
 void ref_gl_R_BuildLightMap (msurface_t *surf, byte *dest, int stride)
 {
@@ -465,7 +451,7 @@ void ref_gl_R_BuildLightMap (msurface_t *surf, byte *dest, int stride)
     int monolightmap;
 
     if ( surf->texinfo->flags & (SURF_SKY|SURF_TRANS33|SURF_TRANS66|SURF_WARP) )
-        ri.Sys_Error (ERR_DROP, "R_BuildLightMap called for non-lit surface");
+        ri.Sys_Error (ERR_DROP, "ref_gl_R_BuildLightMap called for non-lit surface");
 
     smax = (surf->extents[0]>>4)+1;
     tmax = (surf->extents[1]>>4)+1;

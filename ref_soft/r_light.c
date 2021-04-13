@@ -26,16 +26,8 @@ int    r_dlightframecount;
 
 /*
 =============================================================================
-
 DYNAMIC LIGHTS
-
 =============================================================================
-*/
-
-/*
-=============
-R_MarkLights
-=============
 */
 void   ref_soft_R_MarkLights (dlight_t *light, int bit, mnode_t *node)
 {
@@ -218,10 +210,10 @@ int ref_soft_RecursiveLightPoint (mnode_t *node, vec3_t start, vec3_t end)
 
 /*
 ===============
-R_LightPoint
+ref_soft_R_LightPoint
 ===============
 */
-void   ref_soft_R_LightPoint (vec3_t p, vec3_t color)
+void ref_soft_R_LightPoint (vec3_t p, vec3_t color)
 {
     vec3_t        end;
     float        r;
@@ -375,8 +367,6 @@ void   ref_soft_R_AddDynamicLights (void)
 
 /*
 ===============
-R_BuildLightMap
-
 Combine and scale multiple lightmaps into the 8.8 format in blocklights
 ===============
 */

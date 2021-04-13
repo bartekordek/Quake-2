@@ -447,11 +447,6 @@ void R_DrawSubmodelPolygons (model_t *pmodel, int clipflags, mnode_t *topnode)
 
 int c_drawnode;
 
-/*
-================
-R_RecursiveWorldNode
-================
-*/
 void ref_soft_R_RecursiveWorldNode (mnode_t *node, int clipflags)
 {
 	int			i, c, side, *pindex;
@@ -561,7 +556,7 @@ c_drawnode++;
 			side = 1;
 
 	// recurse down the children, front side first
-		R_RecursiveWorldNode (node->children[side], clipflags);
+		ref_soft_R_RecursiveWorldNode (node->children[side], clipflags);
 
 	// draw stuff
 		c = node->numsurfaces;
@@ -602,7 +597,7 @@ c_drawnode++;
 		}
 
 	// recurse down the back side
-		R_RecursiveWorldNode (node->children[!side], clipflags);
+		ref_soft_R_RecursiveWorldNode (node->children[!side], clipflags);
 	}
 }
 
@@ -631,7 +626,7 @@ void R_RenderWorld (void)
 	currentmodel = r_worldmodel;
 	r_pcurrentvertbase = currentmodel->vertexes;
 
-	R_RecursiveWorldNode (currentmodel->nodes, 15);
+	ref_soft_R_RecursiveWorldNode (currentmodel->nodes, 15);
 }
 
 

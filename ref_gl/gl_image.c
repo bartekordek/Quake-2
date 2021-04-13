@@ -20,6 +20,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "gl_local.h"
 
+void GL_ResampleTexture (unsigned *in, int inwidth, int inheight, unsigned *out,  int outwidth, int outheight);
+void GL_MipMap (byte *in, int width, int height);
+void R_FloodFillSkin( byte *skin, int skinwidth, int skinheight );
+int Scrap_AllocBlock (int w, int h, int *x, int *y);
+image_t *GL_LoadWal (char *name);
+void LoadTGA (char *name, byte **pic, int *width, int *height);
+
 image_t		gltextures[MAX_GLTEXTURES];
 int			numgltextures;
 int			base_textureid;		// gltextures[i] = base_textureid+i
@@ -76,19 +83,19 @@ void ref_gl_GL_EnableMultitexture( qboolean enable )
 	{
 		GL_SelectTexture( GL_TEXTURE1_SGIS );
 		qglEnable( GL_TEXTURE_2D );
-		GL_TexEnv( GL_REPLACE );
+		ref_gl_GL_TexEnv( GL_REPLACE );
 	}
 	else
 	{
 		GL_SelectTexture( GL_TEXTURE1_SGIS );
 		qglDisable( GL_TEXTURE_2D );
-		GL_TexEnv( GL_REPLACE );
+		ref_gl_GL_TexEnv( GL_REPLACE );
 	}
 	GL_SelectTexture( GL_TEXTURE0_SGIS );
-	GL_TexEnv( GL_REPLACE );
+	ref_gl_GL_TexEnv( GL_REPLACE );
 }
 
-void ref_gl_GL_SelectTexture( GLenum texture )
+void GL_SelectTexture( GLenum texture )
 {
 	int tmu;
 
@@ -147,7 +154,7 @@ void ref_gl_GL_MBind( GLenum target, int texnum )
 		if ( gl_state.currenttextures[1] == texnum )
 			return;
 	}
-	GL_Bind( texnum );
+	ref_gl_GL_Bind( texnum );
 }
 
 typedef struct
@@ -198,11 +205,6 @@ gltmode_t gl_solid_modes[] = {
 
 #define NUM_GL_SOLID_MODES (sizeof(gl_solid_modes) / sizeof (gltmode_t))
 
-/*
-===============
-GL_TextureMode
-===============
-*/
 void ref_gl_GL_TextureMode( char *string )
 {
 	int		i;
@@ -228,18 +230,13 @@ void ref_gl_GL_TextureMode( char *string )
 	{
 		if (glt->type != it_pic && glt->type != it_sky )
 		{
-			GL_Bind (glt->texnum);
+			ref_gl_GL_Bind (glt->texnum);
 			qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter_min);
 			qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter_max);
 		}
 	}
 }
 
-/*
-===============
-GL_TextureAlphaMode
-===============
-*/
 void ref_gl_GL_TextureAlphaMode( char *string )
 {
 	int		i;
@@ -259,11 +256,6 @@ void ref_gl_GL_TextureAlphaMode( char *string )
 	gl_tex_alpha_format = gl_alpha_modes[i].mode;
 }
 
-/*
-===============
-GL_TextureSolidMode
-===============
-*/
 void ref_gl_GL_TextureSolidMode( char *string )
 {
 	int		i;
@@ -353,7 +345,7 @@ byte		scrap_texels[MAX_SCRAPS][BLOCK_WIDTH*BLOCK_HEIGHT];
 qboolean	scrap_dirty;
 
 // returns a texture number and the position inside it
-int ref_gl_Scrap_AllocBlock (int w, int h, int *x, int *y)
+int Scrap_AllocBlock (int w, int h, int *x, int *y)
 {
 	int		i, j;
 	int		best, best2;
@@ -399,7 +391,7 @@ int	scrap_uploads;
 void ref_gl_Scrap_Upload (void)
 {
 	scrap_uploads++;
-	GL_Bind(TEXNUM_SCRAPS);
+	ref_gl_GL_Bind(TEXNUM_SCRAPS);
 	GL_Upload8 (scrap_texels[0], BLOCK_WIDTH, BLOCK_HEIGHT, false, false );
 	scrap_dirty = false;
 }
@@ -415,7 +407,7 @@ PCX LOADING
 
 /*
 ==============
-LoadPCX
+ref_gl_LoadPCX
 ==============
 */
 void ref_gl_LoadPCX (char *filename, byte **pic, byte **palette, int *width, int *height)
@@ -536,7 +528,7 @@ typedef struct _TargaHeader {
 LoadTGA
 =============
 */
-void ref_gl_LoadTGA (char *name, byte **pic, int *width, int *height)
+void LoadTGA (char *name, byte **pic, int *width, int *height)
 {
 	int		columns, rows, numPixels;
 	byte	*pixbuf;
@@ -758,7 +750,7 @@ typedef struct
 	else if (pos[off] != 255) fdc = pos[off]; \
 }
 
-void ref_gl_R_FloodFillSkin( byte *skin, int skinwidth, int skinheight )
+void R_FloodFillSkin( byte *skin, int skinwidth, int skinheight )
 {
 	byte				fillcolor = *skin; // assume this is the pixel to fill
 	floodfill_t			fifo[FLOODFILL_FIFO_SIZE];
@@ -812,7 +804,7 @@ void ref_gl_R_FloodFillSkin( byte *skin, int skinwidth, int skinheight )
 GL_ResampleTexture
 ================
 */
-void ref_gl_GL_ResampleTexture (unsigned *in, int inwidth, int inheight, unsigned *out,  int outwidth, int outheight)
+void GL_ResampleTexture (unsigned *in, int inwidth, int inheight, unsigned *out,  int outwidth, int outheight)
 {
 	int		i, j;
 	unsigned	*inrow, *inrow2;
@@ -862,7 +854,7 @@ Scale up the pixel values in a texture to increase the
 lighting range
 ================
 */
-void ref_gl_GL_LightScaleTexture (unsigned *in, int inwidth, int inheight, qboolean only_gamma )
+void GL_LightScaleTexture (unsigned *in, int inwidth, int inheight, qboolean only_gamma )
 {
 	if ( only_gamma )
 	{
@@ -903,7 +895,7 @@ GL_MipMap
 Operates in place, quartering the size of the texture
 ================
 */
-void ref_gl_GL_MipMap (byte *in, int width, int height)
+void GL_MipMap (byte *in, int width, int height)
 {
 	int		i, j;
 	byte	*out;
@@ -930,7 +922,7 @@ GL_Upload32
 Returns has_alpha
 ===============
 */
-void ref_gl_GL_BuildPalettedTexture( unsigned char *paletted_texture, unsigned char *scaled, int scaled_width, int scaled_height )
+void GL_BuildPalettedTexture( unsigned char *paletted_texture, unsigned char *scaled, int scaled_width, int scaled_height )
 {
 	int i;
 
@@ -953,7 +945,7 @@ void ref_gl_GL_BuildPalettedTexture( unsigned char *paletted_texture, unsigned c
 int		upload_width, upload_height;
 qboolean uploaded_paletted;
 
-qboolean ref_gl_GL_Upload32 (unsigned *data, int width, int height,  qboolean mipmap)
+qboolean GL_Upload32 (unsigned *data, int width, int height,  qboolean mipmap)
 {
 	int			samples;
 	unsigned	scaled[256*256];
@@ -1162,7 +1154,7 @@ static qboolean IsPowerOf2( int value )
 }
 */
 
-qboolean ref_gl_GL_Upload8 (byte *data, int width, int height,  qboolean mipmap, qboolean is_sky )
+qboolean GL_Upload8 (byte *data, int width, int height,  qboolean mipmap, qboolean is_sky )
 {
 	unsigned	trans[512*256];
 	int			i, s;
@@ -1225,7 +1217,7 @@ qboolean ref_gl_GL_Upload8 (byte *data, int width, int height,  qboolean mipmap,
 
 /*
 ================
-GL_LoadPic
+ref_gl_GL_LoadPic
 
 This is also used as an entry point for the generated r_notexture
 ================
@@ -1292,7 +1284,7 @@ image_t *ref_gl_GL_LoadPic (char *name, byte *pic, int width, int height, imaget
 nonscrap:
 		image->scrap = false;
 		image->texnum = TEXNUM_IMAGES + (image - gltextures);
-		GL_Bind(image->texnum);
+		ref_gl_GL_Bind(image->texnum);
 		if (bits == 8)
 			image->has_alpha = GL_Upload8 (pic, width, height, (image->type != it_pic && image->type != it_sky), image->type == it_sky );
 		else
@@ -1315,7 +1307,7 @@ nonscrap:
 GL_LoadWal
 ================
 */
-image_t *ref_gl_GL_LoadWal (char *name)
+image_t *GL_LoadWal (char *name)
 {
 	miptex_t	*mt;
 	int			width, height, ofs;
@@ -1324,7 +1316,7 @@ image_t *ref_gl_GL_LoadWal (char *name)
 	ri.FS_LoadFile (name, (void **)&mt);
 	if (!mt)
 	{
-		ri.Con_Printf (PRINT_ALL, "GL_FindImage: can't load %s\n", name);
+		ri.Con_Printf (PRINT_ALL, "ref_gl_GL_FindImage: can't load %s\n", name);
 		return r_notexture;
 	}
 
@@ -1332,7 +1324,7 @@ image_t *ref_gl_GL_LoadWal (char *name)
 	height = LittleLong (mt->height);
 	ofs = LittleLong (mt->offsets[0]);
 
-	image = GL_LoadPic (name, (byte *)mt + ofs, width, height, it_wall, 8);
+	image = ref_gl_GL_LoadPic (name, (byte *)mt + ofs, width, height, it_wall, 8);
 
 	ri.FS_FreeFile ((void *)mt);
 
@@ -1341,12 +1333,12 @@ image_t *ref_gl_GL_LoadWal (char *name)
 
 /*
 ===============
-GL_FindImage
+ref_gl_GL_FindImage
 
 Finds or loads the given image
 ===============
 */
-image_t	*ref_gl_ref_gl_GL_FindImage (char *name, imagetype_t type)
+image_t	*ref_gl_GL_FindImage (char *name, imagetype_t type)
 {
 	image_t	*image;
 	int		i, len;
@@ -1354,10 +1346,10 @@ image_t	*ref_gl_ref_gl_GL_FindImage (char *name, imagetype_t type)
 	int		width, height;
 
 	if (!name)
-		return NULL;	//	ri.Sys_Error (ERR_DROP, "GL_FindImage: NULL name");
+		return NULL;	//	ri.Sys_Error (ERR_DROP, "ref_gl_GL_FindImage: NULL name");
 	len = strlen(name);
 	if (len<5)
-		return NULL;	//	ri.Sys_Error (ERR_DROP, "GL_FindImage: bad name: %s", name);
+		return NULL;	//	ri.Sys_Error (ERR_DROP, "ref_gl_GL_FindImage: bad name: %s", name);
 
 	// look for it
 	for (i=0, image=gltextures ; i<numgltextures ; i++,image++)
@@ -1376,10 +1368,10 @@ image_t	*ref_gl_ref_gl_GL_FindImage (char *name, imagetype_t type)
 	palette = NULL;
 	if (!strcmp(name+len-4, ".pcx"))
 	{
-		LoadPCX (name, &pic, &palette, &width, &height);
+		ref_gl_LoadPCX (name, &pic, &palette, &width, &height);
 		if (!pic)
-			return NULL; // ri.Sys_Error (ERR_DROP, "GL_FindImage: can't load %s", name);
-		image = GL_LoadPic (name, pic, width, height, type, 8);
+			return NULL; // ri.Sys_Error (ERR_DROP, "ref_gl_GL_FindImage: can't load %s", name);
+		image = ref_gl_GL_LoadPic (name, pic, width, height, type, 8);
 	}
 	else if (!strcmp(name+len-4, ".wal"))
 	{
@@ -1389,11 +1381,11 @@ image_t	*ref_gl_ref_gl_GL_FindImage (char *name, imagetype_t type)
 	{
 		LoadTGA (name, &pic, &width, &height);
 		if (!pic)
-			return NULL; // ri.Sys_Error (ERR_DROP, "GL_FindImage: can't load %s", name);
-		image = GL_LoadPic (name, pic, width, height, type, 32);
+			return NULL; // ri.Sys_Error (ERR_DROP, "ref_gl_GL_FindImage: can't load %s", name);
+		image = ref_gl_GL_LoadPic (name, pic, width, height, type, 32);
 	}
 	else
-		return NULL;	//	ri.Sys_Error (ERR_DROP, "GL_FindImage: bad extension on: %s", name);
+		return NULL;	//	ri.Sys_Error (ERR_DROP, "ref_gl_GL_FindImage: bad extension on: %s", name);
 
 
 	if (pic)
@@ -1419,7 +1411,7 @@ struct image_s *ref_gl_R_RegisterSkin (char *name)
 
 /*
 ================
-GL_FreeUnusedImages
+ref_gl_GL_FreeUnusedImages
 
 Any image that was not touched on this registration sequence
 will be freed.
@@ -1450,7 +1442,7 @@ void ref_gl_GL_FreeUnusedImages (void)
 
 /*
 ===============
-GL_InitImages
+ref_gl_GL_InitImages
 ===============
 */
 void ref_gl_GL_InitImages (void)
@@ -1510,11 +1502,6 @@ void ref_gl_GL_InitImages (void)
 	}
 }
 
-/*
-===============
-GL_ShutdownImages
-===============
-*/
 void ref_gl_GL_ShutdownImages (void)
 {
 	int		i;
@@ -1529,4 +1516,3 @@ void ref_gl_GL_ShutdownImages (void)
 		memset (image, 0, sizeof(*image));
 	}
 }
-

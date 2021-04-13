@@ -245,7 +245,7 @@ void Key_Console (int key)
 	{
 		char *cbd;
 
-		if ( ( cbd = Sys_GetClipboardData() ) != 0 )
+		if ( ( cbd = win32_Sys_GetClipboardData() ) != 0 )
 		{
 			int i;
 
@@ -936,7 +936,7 @@ int Key_GetKey (void)
 	key_waiting = -1;
 
 	while (key_waiting == -1)
-		Sys_SendKeyEvents ();
+		win32_Sys_SendKeyEvents ();
 
 	return key_waiting;
 }

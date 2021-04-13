@@ -187,7 +187,7 @@ void Com_Quit (void)
 		logfile = NULL;
 	}
 
-	Sys_Quit ();
+	win32_Sys_Quit();
 }
 
 
@@ -1409,7 +1409,7 @@ void Qcommon_Init (int argc, char **argv)
 	if (dedicated->value)
 		Cmd_AddCommand ("quit", Com_Quit);
 
-	Sys_Init ();
+	win32_Sys_Init ();
 
 	NET_Init ();
 	Netchan_Init ();
@@ -1494,7 +1494,7 @@ void Qcommon_Frame (int msec)
 
 	do
 	{
-		s = Sys_ConsoleInput ();
+		s = win32_Sys_ConsoleInput ();
 		if (s)
 			Cbuf_AddText (va("%s\n",s));
 	} while (s);

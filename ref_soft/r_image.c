@@ -198,7 +198,7 @@ typedef struct _TargaHeader {
 
 /*
 =============
-LoadTGA
+ref_soft_LoadTGA
 =============
 */
 void ref_soft_LoadTGA (char *name, byte **pic, int *width, int *height)
@@ -248,11 +248,11 @@ void ref_soft_LoadTGA (char *name, byte **pic, int *width, int *height)
 
 	if (targa_header.image_type!=2
 		&& targa_header.image_type!=10)
-		ri.Sys_Error (ERR_DROP, "LoadTGA: Only type 2 and 10 targa RGB images supported\n");
+		ri.Sys_Error (ERR_DROP, "ref_soft_LoadTGA: Only type 2 and 10 targa RGB images supported\n");
 
 	if (targa_header.colormap_type !=0
 		|| (targa_header.pixel_size!=32 && targa_header.pixel_size!=24))
-		ri.Sys_Error (ERR_DROP, "LoadTGA: Only 32 or 24 bit images supported (no colormaps)\n");
+		ri.Sys_Error (ERR_DROP, "ref_soft_LoadTGA: Only 32 or 24 bit images supported (no colormaps)\n");
 
 	columns = targa_header.width;
 	rows = targa_header.height;
@@ -407,7 +407,7 @@ image_t *ref_soft_R_FindFreeImage (void)
 
 /*
 ================
-GL_LoadPic
+ref_soft_GL_LoadPic
 
 ================
 */
@@ -482,11 +482,7 @@ image_t *ref_soft_R_LoadWal (char *name)
 
 
 /*
-===============
-R_FindImage
-
 Finds or loads the given image
-===============
 */
 image_t	*ref_soft_R_FindImage (char *name, imagetype_t type)
 {
@@ -496,10 +492,10 @@ image_t	*ref_soft_R_FindImage (char *name, imagetype_t type)
 	int		width, height;
 
 	if (!name)
-		return NULL;	// ri.Sys_Error (ERR_DROP, "R_FindImage: NULL name");
+		return NULL;	// ri.Sys_Error (ERR_DROP, "ref_soft_R_FindImage: NULL name");
 	len = strlen(name);
 	if (len<5)
-		return NULL;	// ri.Sys_Error (ERR_DROP, "R_FindImage: bad name: %s", name);
+		return NULL;	// ri.Sys_Error (ERR_DROP, "ref_soft_R_FindImage: bad name: %s", name);
 
 	// look for it
 	for (i=0, image=r_images ; i<numr_images ; i++,image++)
@@ -520,17 +516,17 @@ image_t	*ref_soft_R_FindImage (char *name, imagetype_t type)
 	{
 		LoadPCX (name, &pic, &palette, &width, &height);
 		if (!pic)
-			return NULL;	// ri.Sys_Error (ERR_DROP, "R_FindImage: can't load %s", name);
-		image = GL_LoadPic (name, pic, width, height, type);
+			return NULL;	// ri.Sys_Error (ERR_DROP, "ref_soft_R_FindImage: can't load %s", name);
+		image = ref_soft_GL_LoadPic (name, pic, width, height, type);
 	}
 	else if (!strcmp(name+len-4, ".wal"))
 	{
 		image = R_LoadWal (name);
 	}
 	else if (!strcmp(name+len-4, ".tga"))
-		return NULL;	// ri.Sys_Error (ERR_DROP, "R_FindImage: can't load %s in software renderer", name);
+		return NULL;	// ri.Sys_Error (ERR_DROP, "ref_soft_R_FindImage: can't load %s in software renderer", name);
 	else
-		return NULL;	// ri.Sys_Error (ERR_DROP, "R_FindImage: bad extension on: %s", name);
+		return NULL;	// ri.Sys_Error (ERR_DROP, "ref_soft_R_FindImage: bad extension on: %s", name);
 
 	if (pic)
 		free(pic);
@@ -549,7 +545,7 @@ R_RegisterSkin
 */
 struct image_s *ref_soft_R_RegisterSkin (char *name)
 {
-	return R_FindImage (name, it_skin);
+	return ref_soft_R_FindImage (name, it_skin);
 }
 
 

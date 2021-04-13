@@ -729,7 +729,7 @@ void    ref_soft_R_EndRegistration (void);
 
 void    ref_soft_R_RenderFrame (refdef_t *fd);
 
-struct image_s  *Draw_FindPic(char *name);
+struct image_s *ref_gl_Draw_FindPic(char *name);
 
 void    ref_soft_Draw_GetPicSize(int *w, int *h, char *name);
 void    ref_soft_Draw_Pic(int x, int y, char *name);
@@ -753,7 +753,7 @@ void LoadPCX (char *filename, byte **pic, byte **palette, int *width, int *heigh
 
 void    ref_soft_R_InitImages (void);
 void    ref_soft_R_ShutdownImages (void);
-image_t *R_FindImage (char *name, imagetype_t type);
+image_t *ref_soft_R_FindImage (char *name, imagetype_t type);
 void    ref_soft_R_FreeUnusedImages (void);
 
 void    ref_soft_R_GammaCorrectAndSetPalette( const unsigned char *pal );

@@ -609,7 +609,7 @@ void R_DrawAliasModel (entity_t *e)
 	}
 	else
 	{
-		R_LightPoint (currententity->origin, shadelight);
+		ref_gl_R_LightPoint (currententity->origin, shadelight);
 
 		// player lighting hack for communication back to server
 		// big hack!
@@ -724,7 +724,7 @@ void R_DrawAliasModel (entity_t *e)
 
     qglPushMatrix ();
 	e->angles[PITCH] = -e->angles[PITCH];	// sigh.
-	R_RotateForEntity (e);
+	ref_gl_R_RotateForEntity (e);
 	e->angles[PITCH] = -e->angles[PITCH];	// sigh.
 
 	// select skin
@@ -743,13 +743,13 @@ void R_DrawAliasModel (entity_t *e)
 	}
 	if (!skin)
 		skin = r_notexture;	// fallback...
-	GL_Bind(skin->texnum);
+	ref_gl_GL_TexEnv(skin->texnum);
 
 	// draw it
 
 	qglShadeModel (GL_SMOOTH);
 
-	GL_TexEnv( GL_MODULATE );
+	ref_gl_GL_TexEnv( GL_MODULATE );
 	if ( currententity->flags & RF_TRANSLUCENT )
 	{
 		qglEnable (GL_BLEND);
@@ -778,7 +778,7 @@ void R_DrawAliasModel (entity_t *e)
 		currententity->backlerp = 0;
 	GL_DrawAliasFrameLerp (paliashdr, currententity->backlerp);
 
-	GL_TexEnv( GL_REPLACE );
+	ref_gl_GL_TexEnv( GL_REPLACE );
 	qglShadeModel (GL_FLAT);
 
 	qglPopMatrix ();
@@ -818,7 +818,7 @@ void R_DrawAliasModel (entity_t *e)
 	if (gl_shadows->value && !(currententity->flags & (RF_TRANSLUCENT | RF_WEAPONMODEL)))
 	{
 		qglPushMatrix ();
-		R_RotateForEntity (e);
+		ref_gl_R_RotateForEntity (e);
 		qglDisable (GL_TEXTURE_2D);
 		qglEnable (GL_BLEND);
 		qglColor4f (0,0,0,0.5);

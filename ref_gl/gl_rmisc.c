@@ -56,7 +56,7 @@ void R_InitParticleTexture (void)
 			data[y][x][3] = dottexture[x][y]*255;
 		}
 	}
-	r_particletexture = GL_LoadPic ("***particle***", (byte *)data, 8, 8, it_sprite, 32);
+	r_particletexture = ref_gl_GL_LoadPic ("***particle***", (byte *)data, 8, 8, it_sprite, 32);
 
 	//
 	// also use this for bad textures, but without alpha
@@ -71,7 +71,7 @@ void R_InitParticleTexture (void)
 			data[y][x][3] = 255;
 		}
 	}
-	r_notexture = GL_LoadPic ("***r_notexture***", (byte *)data, 8, 8, it_wall, 32);
+	r_notexture = ref_gl_GL_LoadPic ("***r_notexture***", (byte *)data, 8, 8, it_wall, 32);
 }
 
 
@@ -94,10 +94,10 @@ typedef struct _TargaHeader {
 
 /*
 ==================
-GL_ScreenShot_f
+ref_gl_GL_ScreenShot_f
 ==================
 */
-void GL_ScreenShot_f (void)
+void ref_gl_GL_ScreenShot_f(void)
 {
 	byte		*buffer;
 	char		picname[80];
@@ -191,9 +191,9 @@ void GL_SetDefaultState( void )
 	qglPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
 	qglShadeModel (GL_FLAT);
 
-	GL_TextureMode( gl_texturemode->string );
-	GL_TextureAlphaMode( gl_texturealphamode->string );
-	GL_TextureSolidMode( gl_texturesolidmode->string );
+	ref_gl_GL_TextureMode( gl_texturemode->string );
+	ref_gl_GL_TextureAlphaMode( gl_texturealphamode->string );
+	ref_gl_GL_TextureSolidMode( gl_texturesolidmode->string );
 
 	qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter_min);
 	qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter_max);
@@ -203,7 +203,7 @@ void GL_SetDefaultState( void )
 
 	qglBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	GL_TexEnv( GL_REPLACE );
+	ref_gl_GL_TexEnv( GL_REPLACE );
 
 	if ( qglPointParameterfEXT )
 	{
@@ -223,7 +223,7 @@ void GL_SetDefaultState( void )
 	{
 		qglEnable( GL_SHARED_TEXTURE_PALETTE_EXT );
 
-		GL_SetTexturePalette( d_8to24table );
+		ref_gl_GL_SetTexturePalette( d_8to24table );
 	}
 
 	GL_UpdateSwapInterval();

@@ -220,13 +220,13 @@ extern    int        c_visible_textures;
 extern    float    r_world_matrix[16];
 
 void R_TranslatePlayerSkin (int playernum);
-void GL_Bind (int texnum);
-void GL_MBind( GLenum target, int texnum );
-void GL_TexEnv( GLenum value );
-void GL_EnableMultitexture( qboolean enable );
+void ref_gl_GL_Bind (int texnum);
+void ref_gl_GL_MBind( GLenum target, int texnum );
+void ref_gl_GL_TexEnv( GLenum value );
+void ref_gl_GL_EnableMultitexture( qboolean enable );
 void GL_SelectTexture( GLenum );
 
-void R_LightPoint (vec3_t p, vec3_t color);
+void ref_gl_R_LightPoint (vec3_t p, vec3_t color);
 void R_PushDlights (void);
 
 //====================================================================
@@ -267,6 +267,8 @@ void ref_gl_R_ClearSkyBox (void);
 void ref_gl_R_DrawSkyBox (void);
 void ref_gl_R_MarkLights (dlight_t *light, int bit, mnode_t *node);
 
+void ref_gl_Mod_Init(void);
+
 #if 0
 short LittleShort (short l);
 short BigShort (short l);
@@ -296,13 +298,13 @@ void ref_gl_GL_ResampleTexture (unsigned *in, int inwidth, int inheight, unsigne
 
 struct image_s* ref_gl_R_RegisterSkin (char *name);
 
-void LoadPCX (char *filename, byte **pic, byte **palette, int *width, int *height);
+void ref_gl_LoadPCX (char *filename, byte **pic, byte **palette, int *width, int *height);
 image_t *ref_gl_GL_LoadPic (char *name, byte *pic, int width, int height, imagetype_t type, int bits);
 image_t* ref_gl_GL_FindImage (char *name, imagetype_t type);
 void ref_gl_GL_TextureMode( char *string );
 void ref_gl_GL_ImageList_f (void);
 
-void GL_SetTexturePalette( unsigned palette[256] );
+void ref_gl_GL_SetTexturePalette( unsigned palette[256] );
 
 void ref_gl_GL_InitImages (void);
 void ref_gl_GL_ShutdownImages (void);

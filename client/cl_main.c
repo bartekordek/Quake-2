@@ -860,7 +860,9 @@ void CL_Skins_f (void)
 			continue;
 		Com_Printf_G ("client %i: %s\n", i, cl.configstrings[CS_PLAYERSKINS+i]);
 		SCR_UpdateScreen ();
-		Sys_SendKeyEvents ();	// pump message loop
+		#ifdef _WIN32
+		win32_Sys_SendKeyEvents ();	// pump message loop
+		#endif
 		CL_ParseClientinfo (i);
 	}
 }
@@ -919,7 +921,9 @@ void CL_ConnectionlessPacket (void)
 			Com_Printf_G ("Command packet from remote host.  Ignored.\n");
 			return;
 		}
-		Sys_AppActivate ();
+		#ifdef _WIN32
+		win32_Sys_AppActivate ();
+		#endif
 		s = MSG_ReadString (&net_message);
 		Cbuf_AddText (s);
 		Cbuf_AddText ("\n");
@@ -1645,8 +1649,9 @@ CL_SendCommand
 void CL_SendCommand (void)
 {
 	// get new key events
-	Sys_SendKeyEvents ();
-
+#ifdef _WIN32
+	win32_Sys_SendKeyEvents ();
+#endif
 	// allow mice or other external controllers to add commands
 	IN_Commands ();
 

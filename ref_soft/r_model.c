@@ -72,29 +72,29 @@ void ref_soft_Mod_Modellist_f (void)
 
 /*
 ===============
-ref_soft_ref_soft_Mod_Init
+ref_soft_Mod_Init
 ===============
 */
-void ref_soft_ref_soft_Mod_Init (void)
+void ref_soft_Mod_Init (void)
 {
     memset (mod_novis, 0xff, sizeof(mod_novis));
 }
 
 /*
 ==================
-ref_soft_ref_soft_Mod_ForName
+ref_soft_Mod_ForName
 
 Loads in a model for the given name
 ==================
 */
-model_t *ref_soft_ref_soft_Mod_ForName (char *name, qboolean crash)
+model_t *ref_soft_Mod_ForName (char *name, qboolean crash)
 {
     model_t    *mod;
     unsigned *buf;
     int        i;
 
     if (!name[0])
-        ri.Sys_Error (ERR_DROP,"ref_soft_ref_soft_Mod_ForName: NULL name");
+        ri.Sys_Error (ERR_DROP,"ref_soft_Mod_ForName: NULL name");
 
     //
     // inline models are grabbed only from worldmodel
@@ -182,17 +182,17 @@ model_t *ref_soft_ref_soft_Mod_ForName (char *name, qboolean crash)
 
 /*
 ===============
-ref_soft_ref_soft_Mod_PointInLeaf
+ref_soft_Mod_PointInLeaf
 ===============
 */
-mleaf_t *ref_soft_ref_soft_Mod_PointInLeaf (vec3_t p, model_t *model)
+mleaf_t *ref_soft_Mod_PointInLeaf (vec3_t p, model_t *model)
 {
     mnode_t        *node;
     float        d;
     plane_t    *plane;
 
     if (!model || !model->nodes)
-        ri.Sys_Error (ERR_DROP, "ref_soft_ref_soft_Mod_PointInLeaf: bad model");
+        ri.Sys_Error (ERR_DROP, "ref_soft_Mod_PointInLeaf: bad model");
 
     node = model->nodes;
     while (1)
@@ -510,7 +510,7 @@ void ref_soft_Mod_LoadTexinfo (lump_t *l)
             out->next = loadmodel->texinfo + next;
 
         Com_sprintf (name, sizeof(name), "textures/%s.wal", in->texture);
-        out->image = R_FindImage (name, it_wall);
+        out->image = ref_soft_R_FindImage (name, it_wall);
         if (!out->image)
         {
             out->image = r_notexture_mip; // texture not found
@@ -530,12 +530,12 @@ void ref_soft_Mod_LoadTexinfo (lump_t *l)
 
 /*
 ================
-CalcSurfaceExtents
+ref_soft_CalcSurfaceExtents
 
 Fills in s->texturemins[] and s->extents[]
 ================
 */
-void CalcSurfaceExtents (msurface_t *s)
+void ref_soft_CalcSurfaceExtents (msurface_t *s)
 {
     float    mins[2], maxs[2], val;
     int        i,j, e;
@@ -622,7 +622,7 @@ void ref_soft_Mod_LoadFaces (lump_t *l)
 
         out->texinfo = loadmodel->texinfo + LittleShort (in->texinfo);
 
-        CalcSurfaceExtents (out);
+        ref_soft_CalcSurfaceExtents (out);
 
     // lighting info is converted from 24 bit on disk to 8 bit
 
@@ -1058,7 +1058,7 @@ void ref_soft_Mod_LoadAliasModel (model_t *mod, void *buffer)
         pheader->num_skins*MAX_SKINNAME);
     for (i=0 ; i<pheader->num_skins ; i++)
     {
-        mod->skins[i] = R_FindImage ((char *)pheader + pheader->ofs_skins + i*MAX_SKINNAME, it_skin);
+        mod->skins[i] = ref_soft_R_FindImage ((char *)pheader + pheader->ofs_skins + i*MAX_SKINNAME, it_skin);
     }
 }
 
@@ -1103,7 +1103,7 @@ void ref_soft_Mod_LoadSpriteModel (model_t *mod, void *buffer)
         sprout->frames[i].origin_x = LittleLong (sprin->frames[i].origin_x);
         sprout->frames[i].origin_y = LittleLong (sprin->frames[i].origin_y);
         memcpy (sprout->frames[i].name, sprin->frames[i].name, MAX_SKINNAME);
-        mod->skins[i] = R_FindImage (sprout->frames[i].name, it_sprite);
+        mod->skins[i] = ref_soft_R_FindImage (sprout->frames[i].name, it_sprite);
     }
 
     mod->type = mod_sprite;
@@ -1133,17 +1133,10 @@ void R_BeginRegistration (char *model)
     flushmap = ri.Cvar_Get ("flushmap", "0", 0);
     if ( strcmp(mod_known[0].name, fullname) || flushmap->value)
         ref_soft_Mod_Free (&mod_known[0]);
-    r_worldmodel = R_RegisterModel (fullname);
+    r_worldmodel = ref_soft_R_RegisterModel (fullname);
     R_NewMap ();
 }
 
-
-/*
-@@@@@@@@@@@@@@@@@@@@@
-R_RegisterModel
-
-@@@@@@@@@@@@@@@@@@@@@
-*/
 struct model_s* ref_soft_R_RegisterModel (char *name)
 {
     model_t    *mod;
@@ -1151,7 +1144,7 @@ struct model_s* ref_soft_R_RegisterModel (char *name)
     dsprite_t    *sprout;
     dmdl_t        *pheader;
 
-    mod = ref_soft_ref_soft_Mod_ForName (name, false);
+    mod = ref_soft_Mod_ForName (name, false);
     if (mod)
     {
         mod->registration_sequence = registration_sequence;
@@ -1161,13 +1154,13 @@ struct model_s* ref_soft_R_RegisterModel (char *name)
         {
             sprout = (dsprite_t *)mod->extradata;
             for (i=0 ; i<sprout->numframes ; i++)
-                mod->skins[i] = R_FindImage (sprout->frames[i].name, it_sprite);
+                mod->skins[i] = ref_soft_R_FindImage (sprout->frames[i].name, it_sprite);
         }
         else if (mod->type == mod_alias)
         {
             pheader = (dmdl_t *)mod->extradata;
             for (i=0 ; i<pheader->num_skins ; i++)
-                mod->skins[i] = R_FindImage ((char *)pheader + pheader->ofs_skins + i*MAX_SKINNAME, it_skin);
+                mod->skins[i] = ref_soft_R_FindImage ((char *)pheader + pheader->ofs_skins + i*MAX_SKINNAME, it_skin);
 //PGM
             mod->numframes = pheader->num_frames;
 //PGM
@@ -1183,11 +1176,11 @@ struct model_s* ref_soft_R_RegisterModel (char *name)
 
 /*
 @@@@@@@@@@@@@@@@@@@@@
-R_EndRegistration
+ref_soft_R_EndRegistration
 
 @@@@@@@@@@@@@@@@@@@@@
 */
-void R_EndRegistration (void)
+void ref_soft_R_EndRegistration (void)
 {
     int        i;
     model_t    *mod;

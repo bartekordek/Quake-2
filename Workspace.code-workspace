@@ -19,7 +19,9 @@
 			"limits": "cpp",
 			"type_traits": "cpp",
 			"xutility": "cpp",
-			"gl_local.h": "c"
+			"gl_local.h": "c",
+			"conproc.h": "c",
+			"qcommon.h": "c"
 		}
 	}
 }
