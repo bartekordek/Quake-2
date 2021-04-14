@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -42,7 +42,7 @@ NULL will be returned if the end of the list is reached.
 
 =============
 */
-edict_t *G_Find (edict_t *from, int fieldofs, char *match)
+struct edict_s *G_Find (struct edict_s *from, int fieldofs, char *match)
 {
 	char	*s;
 
@@ -75,7 +75,7 @@ Returns entities that have origins within a spherical area
 findradius (origin, radius)
 =================
 */
-edict_t *findradius (edict_t *from, vec3_t org, float rad)
+struct edict_s *findradius (struct edict_s *from, vec3_t org, float rad)
 {
 	vec3_t	eorg;
 	int		j;
@@ -115,11 +115,11 @@ NULL will be returned if the end of the list is reached.
 */
 #define MAXCHOICES	8
 
-edict_t *G_PickTarget (char *targetname)
+struct edict_s *G_PickTarget (char *targetname)
 {
-	edict_t	*ent = NULL;
+	struct edict_s	*ent = NULL;
 	int		num_choices = 0;
-	edict_t	*choice[MAXCHOICES];
+	struct edict_s	*choice[MAXCHOICES];
 
 	if (!targetname)
 	{
@@ -148,7 +148,7 @@ edict_t *G_PickTarget (char *targetname)
 
 
 
-void Think_Delay (edict_t *ent)
+void Think_Delay (struct edict_s *ent)
 {
 	G_UseTargets (ent, ent->activator);
 	G_FreeEdict (ent);
@@ -170,9 +170,9 @@ match (string)self.target and call their .use function
 
 ==============================
 */
-void G_UseTargets (edict_t *ent, edict_t *activator)
+void G_UseTargets (struct edict_s *ent, struct edict_s *activator)
 {
-	edict_t		*t;
+	struct edict_s		*t;
 
 //
 // check for a delay
@@ -192,8 +192,8 @@ void G_UseTargets (edict_t *ent, edict_t *activator)
 		t->killtarget = ent->killtarget;
 		return;
 	}
-	
-	
+
+
 //
 // print the message
 //
@@ -335,8 +335,8 @@ void G_SetMovedir (vec3_t angles, vec3_t movedir)
 float vectoyaw (vec3_t vec)
 {
 	float	yaw;
-	
-	if (/* vec[YAW] == 0 && */ vec[PITCH] == 0) 
+
+	if (/* vec[YAW] == 0 && */ vec[PITCH] == 0)
 	{
 		yaw = 0;
 		if (vec[YAW] > 0)
@@ -359,7 +359,7 @@ void vectoangles (vec3_t value1, vec3_t angles)
 {
 	float	forward;
 	float	yaw, pitch;
-	
+
 	if (value1[1] == 0 && value1[0] == 0)
 	{
 		yaw = 0;
@@ -393,14 +393,14 @@ void vectoangles (vec3_t value1, vec3_t angles)
 char *G_CopyString (char *in)
 {
 	char	*out;
-	
+
 	out = gi.TagMalloc (strlen(in)+1, TAG_LEVEL);
 	strcpy (out, in);
 	return out;
 }
 
 
-void G_InitEdict (edict_t *e)
+void G_InitEdict (struct edict_s *e)
 {
 	e->inuse = true;
 	e->classname = "noclass";
@@ -419,10 +419,10 @@ instead of being removed and recreated, which can cause interpolated
 angles and bad trails.
 =================
 */
-edict_t *G_Spawn (void)
+struct edict_s *G_Spawn (void)
 {
 	int			i;
-	edict_t		*e;
+	struct edict_s		*e;
 
 	e = &g_edicts[(int)maxclients->value+1];
 	for ( i=maxclients->value+1 ; i<globals.num_edicts ; i++, e++)
@@ -435,10 +435,10 @@ edict_t *G_Spawn (void)
 			return e;
 		}
 	}
-	
+
 	if (i == game.maxentities)
 		gi.error ("ED_Alloc: no free edicts");
-		
+
 	globals.num_edicts++;
 	G_InitEdict (e);
 	return e;
@@ -451,7 +451,7 @@ G_FreeEdict
 Marks the edict as free
 =================
 */
-void G_FreeEdict (edict_t *ed)
+void G_FreeEdict (struct edict_s *ed)
 {
 	gi.unlinkentity (ed);		// unlink from world
 
@@ -474,10 +474,10 @@ G_TouchTriggers
 
 ============
 */
-void	G_TouchTriggers (edict_t *ent)
+void	G_TouchTriggers (struct edict_s *ent)
 {
 	int			i, num;
-	edict_t		*touch[MAX_EDICTS], *hit;
+	struct edict_s		*touch[MAX_EDICTS], *hit;
 
 	// dead things don't activate triggers!
 	if ((ent->client || (ent->svflags & SVF_MONSTER)) && (ent->health <= 0))
@@ -507,10 +507,10 @@ Call after linking a new trigger in during gameplay
 to force all entities it covers to immediately touch it
 ============
 */
-void	G_TouchSolids (edict_t *ent)
+void	G_TouchSolids (struct edict_s *ent)
 {
 	int			i, num;
-	edict_t		*touch[MAX_EDICTS], *hit;
+	struct edict_s		*touch[MAX_EDICTS], *hit;
 
 	num = gi.BoxEdicts (ent->absmin, ent->absmax, touch
 		, MAX_EDICTS, AREA_SOLID);
@@ -548,7 +548,7 @@ Kills all entities that would touch the proposed new positioning
 of ent.  Ent should be unlinked before calling this!
 =================
 */
-qboolean KillBox (edict_t *ent)
+qboolean KillBox (struct edict_s *ent)
 {
 	trace_t		tr;
 

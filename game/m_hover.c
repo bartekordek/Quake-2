@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -28,7 +28,7 @@ hover
 #include "g_local.h"
 #include "m_hover.h"
 
-qboolean visible (edict_t *self, edict_t *other);
+qboolean visible (struct edict_s *self, struct edict_s *other);
 
 
 static int	sound_pain1;
@@ -40,12 +40,12 @@ static int	sound_search1;
 static int	sound_search2;
 
 
-void hover_sight (edict_t *self, edict_t *other)
+void hover_sight (struct edict_s *self, struct edict_s *other)
 {
 	gi.sound (self, CHAN_VOICE, sound_sight, 1, ATTN_NORM, 0);
 }
 
-void hover_search (edict_t *self)
+void hover_search (struct edict_s *self)
 {
 	if (random() < 0.5)
 		gi.sound (self, CHAN_VOICE, sound_search1, 1, ATTN_NORM, 0);
@@ -54,13 +54,13 @@ void hover_search (edict_t *self)
 }
 
 
-void hover_run (edict_t *self);
-void hover_stand (edict_t *self);
-void hover_dead (edict_t *self);
-void hover_attack (edict_t *self);
-void hover_reattack (edict_t *self);
-void hover_fire_blaster (edict_t *self);
-void hover_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damage, vec3_t point);
+void hover_run (struct edict_s *self);
+void hover_stand (struct edict_s *self);
+void hover_dead (struct edict_s *self);
+void hover_attack (struct edict_s *self);
+void hover_reattack (struct edict_s *self);
+void hover_fire_blaster (struct edict_s *self);
+void hover_die (struct edict_s *self, struct edict_s *inflictor, struct edict_s *attacker, int damage, vec3_t point);
 
 mframe_t hover_frames_stand [] =
 {
@@ -418,11 +418,11 @@ mframe_t hover_frames_end_attack [] =
 };
 mmove_t hover_move_end_attack = {FRAME_attak107, FRAME_attak108, hover_frames_end_attack, hover_run};
 
-void hover_reattack (edict_t *self)
+void hover_reattack (struct edict_s *self)
 {
 	if (self->enemy->health > 0 )
 		if (visible (self, self->enemy) )
-			if (random() <= 0.6)		
+			if (random() <= 0.6)
 			{
 				self->monsterinfo.currentmove = &hover_move_attack1;
 				return;
@@ -431,7 +431,7 @@ void hover_reattack (edict_t *self)
 }
 
 
-void hover_fire_blaster (edict_t *self)
+void hover_fire_blaster (struct edict_s *self)
 {
 	vec3_t	start;
 	vec3_t	forward, right;
@@ -455,12 +455,12 @@ void hover_fire_blaster (edict_t *self)
 }
 
 
-void hover_stand (edict_t *self)
+void hover_stand (struct edict_s *self)
 {
 		self->monsterinfo.currentmove = &hover_move_stand;
 }
 
-void hover_run (edict_t *self)
+void hover_run (struct edict_s *self)
 {
 	if (self->monsterinfo.aiflags & AI_STAND_GROUND)
 		self->monsterinfo.currentmove = &hover_move_stand;
@@ -468,23 +468,23 @@ void hover_run (edict_t *self)
 		self->monsterinfo.currentmove = &hover_move_run;
 }
 
-void hover_walk (edict_t *self)
+void hover_walk (struct edict_s *self)
 {
 	self->monsterinfo.currentmove = &hover_move_walk;
 }
 
-void hover_start_attack (edict_t *self)
+void hover_start_attack (struct edict_s *self)
 {
 	self->monsterinfo.currentmove = &hover_move_start_attack;
 }
 
-void hover_attack(edict_t *self)
+void hover_attack(struct edict_s *self)
 {
 	self->monsterinfo.currentmove = &hover_move_attack1;
 }
 
 
-void hover_pain (edict_t *self, edict_t *other, float kick, int damage)
+void hover_pain (struct edict_s *self, struct edict_s *other, float kick, int damage)
 {
 	if (self->health < (self->max_health / 2))
 		self->s.skinnum = 1;
@@ -517,7 +517,7 @@ void hover_pain (edict_t *self, edict_t *other, float kick, int damage)
 	}
 }
 
-void hover_deadthink (edict_t *self)
+void hover_deadthink (struct edict_s *self)
 {
 	if (!self->groundentity && level.time < self->timestamp)
 	{
@@ -527,7 +527,7 @@ void hover_deadthink (edict_t *self)
 	BecomeExplosion1(self);
 }
 
-void hover_dead (edict_t *self)
+void hover_dead (struct edict_s *self)
 {
 	VectorSet (self->mins, -16, -16, -24);
 	VectorSet (self->maxs, 16, 16, -8);
@@ -538,7 +538,7 @@ void hover_dead (edict_t *self)
 	gi.linkentity (self);
 }
 
-void hover_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damage, vec3_t point)
+void hover_die (struct edict_s *self, struct edict_s *inflictor, struct edict_s *attacker, int damage, vec3_t point)
 {
 	int		n;
 
@@ -570,7 +570,7 @@ void hover_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damage
 
 /*QUAKED monster_hover (1 .5 0) (-16 -16 -24) (16 16 32) Ambush Trigger_Spawn Sight
 */
-void SP_monster_hover (edict_t *self)
+void SP_monster_hover (struct edict_s *self)
 {
 	if (deathmatch->value)
 	{
@@ -578,15 +578,15 @@ void SP_monster_hover (edict_t *self)
 		return;
 	}
 
-	sound_pain1 = gi.soundindex ("hover/hovpain1.wav");	
-	sound_pain2 = gi.soundindex ("hover/hovpain2.wav");	
-	sound_death1 = gi.soundindex ("hover/hovdeth1.wav");	
-	sound_death2 = gi.soundindex ("hover/hovdeth2.wav");	
-	sound_sight = gi.soundindex ("hover/hovsght1.wav");	
-	sound_search1 = gi.soundindex ("hover/hovsrch1.wav");	
-	sound_search2 = gi.soundindex ("hover/hovsrch2.wav");	
+	sound_pain1 = gi.soundindex ("hover/hovpain1.wav");
+	sound_pain2 = gi.soundindex ("hover/hovpain2.wav");
+	sound_death1 = gi.soundindex ("hover/hovdeth1.wav");
+	sound_death2 = gi.soundindex ("hover/hovdeth2.wav");
+	sound_sight = gi.soundindex ("hover/hovsght1.wav");
+	sound_search1 = gi.soundindex ("hover/hovsrch1.wav");
+	sound_search2 = gi.soundindex ("hover/hovsrch2.wav");
 
-	gi.soundindex ("hover/hovatck1.wav");	
+	gi.soundindex ("hover/hovatck1.wav");
 
 	self->s.sound = gi.soundindex ("hover/hovidle1.wav");
 
@@ -613,7 +613,7 @@ void SP_monster_hover (edict_t *self)
 
 	gi.linkentity (self);
 
-	self->monsterinfo.currentmove = &hover_move_stand;	
+	self->monsterinfo.currentmove = &hover_move_stand;
 	self->monsterinfo.scale = MODEL_SCALE;
 
 	flymonster_start (self);

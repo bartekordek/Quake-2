@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -29,7 +29,7 @@ INTERMISSION
 ======================================================================
 */
 
-void MoveClientToIntermission (edict_t *ent)
+void MoveClientToIntermission (struct edict_s *ent)
 {
 	if (deathmatch->value || coop->value)
 		ent->client->showscores = true;
@@ -70,10 +70,10 @@ void MoveClientToIntermission (edict_t *ent)
 
 }
 
-void BeginIntermission (edict_t *targ)
+void BeginIntermission (struct edict_s *targ)
 {
 	int		i, n;
-	edict_t	*ent, *client;
+	struct edict_s	*ent, *client;
 
 	if (level.intermissiontime)
 		return;		// allready activated
@@ -166,7 +166,7 @@ DeathmatchScoreboardMessage
 
 ==================
 */
-void DeathmatchScoreboardMessage (edict_t *ent, edict_t *killer)
+void DeathmatchScoreboardMessage (struct edict_s *ent, struct edict_s *killer)
 {
 	char	entry[1024];
 	char	string[1400];
@@ -178,7 +178,7 @@ void DeathmatchScoreboardMessage (edict_t *ent, edict_t *killer)
 	int		picnum;
 	int		x, y;
 	gclient_t	*cl;
-	edict_t		*cl_ent;
+	struct edict_s		*cl_ent;
 	char	*tag;
 
 //ZOID
@@ -271,7 +271,7 @@ Draw instead of help message.
 Note that it isn't that hard to overflow the 1400 byte message limit!
 ==================
 */
-void DeathmatchScoreboard (edict_t *ent)
+void DeathmatchScoreboard (struct edict_s *ent)
 {
 	DeathmatchScoreboardMessage (ent, ent->enemy);
 	gi.unicast (ent, true);
@@ -285,7 +285,7 @@ Cmd_Score_f
 Display the scoreboard
 ==================
 */
-void Cmd_Score_f (edict_t *ent)
+void Cmd_Score_f (struct edict_s *ent)
 {
 	ent->client->showinventory = false;
 	ent->client->showhelp = false;
@@ -317,7 +317,7 @@ HelpComputer
 Draw help computer.
 ==================
 */
-void HelpComputer (edict_t *ent)
+void HelpComputer (struct edict_s *ent)
 {
 	char	string[1024];
 	char	*sk;
@@ -339,12 +339,12 @@ void HelpComputer (edict_t *ent)
 		"xv 0 yv 54 cstring2 \"%s\" "		// help 1
 		"xv 0 yv 110 cstring2 \"%s\" "		// help 2
 		"xv 50 yv 164 string2 \" kills     goals    secrets\" "
-		"xv 50 yv 172 string2 \"%3i/%3i     %i/%i       %i/%i\" ", 
+		"xv 50 yv 172 string2 \"%3i/%3i     %i/%i       %i/%i\" ",
 		sk,
 		level.level_name,
 		game.helpmessage1,
 		game.helpmessage2,
-		level.killed_monsters, level.total_monsters, 
+		level.killed_monsters, level.total_monsters,
 		level.found_goals, level.total_goals,
 		level.found_secrets, level.total_secrets);
 
@@ -361,7 +361,7 @@ Cmd_Help_f
 Display the current help message
 ==================
 */
-void Cmd_Help_f (edict_t *ent)
+void Cmd_Help_f (struct edict_s *ent)
 {
 	// this is for backwards compatability
 	if (deathmatch->value)
@@ -392,7 +392,7 @@ void Cmd_Help_f (edict_t *ent)
 G_SetStats
 ===============
 */
-void G_SetStats (edict_t *ent)
+void G_SetStats (struct edict_s *ent)
 {
 	gitem_t		*item;
 	int			index, cells;
@@ -418,7 +418,7 @@ void G_SetStats (edict_t *ent)
 		ent->client->ps.stats[STAT_AMMO_ICON] = gi.imageindex (item->icon);
 		ent->client->ps.stats[STAT_AMMO] = ent->client->pers.inventory[ent->client->ammo_index];
 	}
-	
+
 	//
 	// armor
 	//

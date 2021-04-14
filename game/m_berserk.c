@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -36,18 +36,18 @@ static int sound_punch;
 static int sound_sight;
 static int sound_search;
 
-void berserk_sight (edict_t *self, edict_t *other)
+void berserk_sight (struct edict_s *self, struct edict_s *other)
 {
 	gi.sound (self, CHAN_VOICE, sound_sight, 1, ATTN_NORM, 0);
 }
 
-void berserk_search (edict_t *self)
+void berserk_search (struct edict_s *self)
 {
 	gi.sound (self, CHAN_VOICE, sound_search, 1, ATTN_NORM, 0);
 }
 
 
-void berserk_fidget (edict_t *self);
+void berserk_fidget (struct edict_s *self);
 mframe_t berserk_frames_stand [] =
 {
 	ai_stand, 0, berserk_fidget,
@@ -58,7 +58,7 @@ mframe_t berserk_frames_stand [] =
 };
 mmove_t berserk_move_stand = {FRAME_stand1, FRAME_stand5, berserk_frames_stand, NULL};
 
-void berserk_stand (edict_t *self)
+void berserk_stand (struct edict_s *self)
 {
 	self->monsterinfo.currentmove = &berserk_move_stand;
 }
@@ -88,7 +88,7 @@ mframe_t berserk_frames_stand_fidget [] =
 };
 mmove_t berserk_move_stand_fidget = {FRAME_standb1, FRAME_standb20, berserk_frames_stand_fidget, berserk_stand};
 
-void berserk_fidget (edict_t *self)
+void berserk_fidget (struct edict_s *self)
 {
 	if (self->monsterinfo.aiflags & AI_STAND_GROUND)
 		return;
@@ -117,7 +117,7 @@ mframe_t berserk_frames_walk [] =
 };
 mmove_t berserk_move_walk = {FRAME_walkc1, FRAME_walkc11, berserk_frames_walk, NULL};
 
-void berserk_walk (edict_t *self)
+void berserk_walk (struct edict_s *self)
 {
 	self->monsterinfo.currentmove = &berserk_move_walk;
 }
@@ -158,7 +158,7 @@ mframe_t berserk_frames_run1 [] =
 };
 mmove_t berserk_move_run1 = {FRAME_run1, FRAME_run6, berserk_frames_run1, NULL};
 
-void berserk_run (edict_t *self)
+void berserk_run (struct edict_s *self)
 {
 	if (self->monsterinfo.aiflags & AI_STAND_GROUND)
 		self->monsterinfo.currentmove = &berserk_move_stand;
@@ -167,14 +167,14 @@ void berserk_run (edict_t *self)
 }
 
 
-void berserk_attack_spike (edict_t *self)
+void berserk_attack_spike (struct edict_s *self)
 {
 	static	vec3_t	aim = {MELEE_DISTANCE, 0, -24};
 	fire_hit (self, aim, (15 + (rand() % 6)), 400);		//	Faster attack -- upwards and backwards
 }
 
 
-void berserk_swing (edict_t *self)
+void berserk_swing (struct edict_s *self)
 {
 	gi.sound (self, CHAN_WEAPON, sound_punch, 1, ATTN_NORM, 0);
 }
@@ -193,7 +193,7 @@ mframe_t berserk_frames_attack_spike [] =
 mmove_t berserk_move_attack_spike = {FRAME_att_c1, FRAME_att_c8, berserk_frames_attack_spike, berserk_run};
 
 
-void berserk_attack_club (edict_t *self)
+void berserk_attack_club (struct edict_s *self)
 {
 	vec3_t	aim;
 
@@ -202,7 +202,7 @@ void berserk_attack_club (edict_t *self)
 }
 
 mframe_t berserk_frames_attack_club [] =
-{	
+{
 	ai_charge, 0, NULL,
 	ai_charge, 0, NULL,
 	ai_charge, 0, NULL,
@@ -219,7 +219,7 @@ mframe_t berserk_frames_attack_club [] =
 mmove_t berserk_move_attack_club = {FRAME_att_c9, FRAME_att_c20, berserk_frames_attack_club, berserk_run};
 
 
-void berserk_strike (edict_t *self)
+void berserk_strike (struct edict_s *self)
 {
 	//FIXME play impact sound
 }
@@ -242,11 +242,11 @@ mframe_t berserk_frames_attack_strike [] =
 	ai_move, 9.7, NULL,
 	ai_move, 13.6, NULL
 };
-	
+
 mmove_t berserk_move_attack_strike = {FRAME_att_c21, FRAME_att_c34, berserk_frames_attack_strike, berserk_run};
 
 
-void berserk_melee (edict_t *self)
+void berserk_melee (struct edict_s *self)
 {
 	if ((rand() % 2) == 0)
 		self->monsterinfo.currentmove = &berserk_move_attack_spike;
@@ -312,7 +312,7 @@ mframe_t berserk_frames_pain2 [] =
 };
 mmove_t berserk_move_pain2 = {FRAME_painb1, FRAME_painb20, berserk_frames_pain2, berserk_run};
 
-void berserk_pain (edict_t *self, edict_t *other, float kick, int damage)
+void berserk_pain (struct edict_s *self, struct edict_s *other, float kick, int damage)
 {
 	if (self->health < (self->max_health / 2))
 		self->s.skinnum = 1;
@@ -333,7 +333,7 @@ void berserk_pain (edict_t *self, edict_t *other, float kick, int damage)
 }
 
 
-void berserk_dead (edict_t *self)
+void berserk_dead (struct edict_s *self)
 {
 	VectorSet (self->mins, -16, -16, -24);
 	VectorSet (self->maxs, 16, 16, -8);
@@ -359,7 +359,7 @@ mframe_t berserk_frames_death1 [] =
 	ai_move, 0, NULL,
 	ai_move, 0, NULL,
 	ai_move, 0, NULL
-	
+
 };
 mmove_t berserk_move_death1 = {FRAME_death1, FRAME_death13, berserk_frames_death1, berserk_dead};
 
@@ -378,7 +378,7 @@ mframe_t berserk_frames_death2 [] =
 mmove_t berserk_move_death2 = {FRAME_deathc1, FRAME_deathc8, berserk_frames_death2, berserk_dead};
 
 
-void berserk_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damage, vec3_t point)
+void berserk_die (struct edict_s *self, struct edict_s *inflictor, struct edict_s *attacker, int damage, vec3_t point)
 {
 	int		n;
 
@@ -410,7 +410,7 @@ void berserk_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int dama
 
 /*QUAKED monster_berserk (1 .5 0) (-16 -16 -24) (16 16 32) Ambush Trigger_Spawn Sight
 */
-void SP_monster_berserk (edict_t *self)
+void SP_monster_berserk (struct edict_s *self)
 {
 	if (deathmatch->value)
 	{

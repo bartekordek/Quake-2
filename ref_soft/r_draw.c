@@ -146,11 +146,6 @@ void ref_soft_Draw_GetPicSize(int *w, int *h, char *pic)
 	*h = gl->height;
 }
 
-/*
-=============
-Draw_StretchPicImplementation
-=============
-*/
 void ref_soft_Draw_StretchPicImplementation(int x, int y, int w, int h, image_t	*pic)
 {
 	byte			*dest, *source;
@@ -218,7 +213,7 @@ void ref_soft_Draw_StretchPic(int x, int y, int w, int h, char *name)
 		ri.Con_Printf (PRINT_ALL, "Can't find pic: %s\n", name);
 		return;
 	}
-	Draw_StretchPicImplementation (x, y, w, h, pic);
+	ref_soft_Draw_StretchPicImplementation (x, y, w, h, pic);
 }
 
 /*
@@ -233,7 +228,7 @@ void ref_soft_Draw_StretchRaw(int x, int y, int w, int h, int cols, int rows, by
 	pic.pixels[0] = data;
 	pic.width = cols;
 	pic.height = rows;
-	Draw_StretchPicImplementation (x, y, w, h, &pic);
+	ref_soft_Draw_StretchPicImplementation (x, y, w, h, &pic);
 }
 
 /*
@@ -374,13 +369,8 @@ void ref_soft_Draw_TileClear(int x, int y, int w, int h, char *name)
 	}
 }
 
-
 /*
-=============
-Draw_Fill
-
 Fills a box of pixels with a single color
-=============
 */
 void ref_soft_Draw_Fill(int x, int y, int w, int h, int c)
 {

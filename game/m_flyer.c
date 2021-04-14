@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -28,7 +28,7 @@ flyer
 #include "g_local.h"
 #include "m_flyer.h"
 
-qboolean visible (edict_t *self, edict_t *other);
+qboolean visible (struct edict_s *self, struct edict_s *other);
 
 static int	nextmove;			// Used for start/stop frames
 
@@ -41,25 +41,25 @@ static int	sound_sproing;
 static int	sound_die;
 
 
-void flyer_check_melee(edict_t *self);
-void flyer_loop_melee (edict_t *self);
-void flyer_melee (edict_t *self);
-void flyer_setstart (edict_t *self);
-void flyer_stand (edict_t *self);
-void flyer_nextmove (edict_t *self);
+void flyer_check_melee(struct edict_s *self);
+void flyer_loop_melee (struct edict_s *self);
+void flyer_melee (struct edict_s *self);
+void flyer_setstart (struct edict_s *self);
+void flyer_stand (struct edict_s *self);
+void flyer_nextmove (struct edict_s *self);
 
 
-void flyer_sight (edict_t *self, edict_t *other)
+void flyer_sight (struct edict_s *self, struct edict_s *other)
 {
 	gi.sound (self, CHAN_VOICE, sound_sight, 1, ATTN_NORM, 0);
 }
 
-void flyer_idle (edict_t *self)
+void flyer_idle (struct edict_s *self)
 {
 	gi.sound (self, CHAN_VOICE, sound_idle, 1, ATTN_IDLE, 0);
 }
 
-void flyer_pop_blades (edict_t *self)
+void flyer_pop_blades (struct edict_s *self)
 {
 	gi.sound (self, CHAN_VOICE, sound_sproing, 1, ATTN_NORM, 0);
 }
@@ -216,7 +216,7 @@ mframe_t flyer_frames_run [] =
 };
 mmove_t	flyer_move_run = {FRAME_stand01, FRAME_stand45, flyer_frames_run, NULL};
 
-void flyer_run (edict_t *self)
+void flyer_run (struct edict_s *self)
 {
 	if (self->monsterinfo.aiflags & AI_STAND_GROUND)
 		self->monsterinfo.currentmove = &flyer_move_stand;
@@ -224,12 +224,12 @@ void flyer_run (edict_t *self)
 		self->monsterinfo.currentmove = &flyer_move_run;
 }
 
-void flyer_walk (edict_t *self)
+void flyer_walk (struct edict_s *self)
 {
 	self->monsterinfo.currentmove = &flyer_move_walk;
 }
 
-void flyer_stand (edict_t *self)
+void flyer_stand (struct edict_s *self)
 {
 		self->monsterinfo.currentmove = &flyer_move_stand;
 }
@@ -257,12 +257,12 @@ mframe_t flyer_frames_stop [] =
 };
 mmove_t flyer_move_stop = {FRAME_stop01, FRAME_stop07, flyer_frames_stop, NULL};
 
-void flyer_stop (edict_t *self)
+void flyer_stop (struct edict_s *self)
 {
 		self->monsterinfo.currentmove = &flyer_move_stop;
 }
 
-void flyer_start (edict_t *self)
+void flyer_start (struct edict_s *self)
 {
 		self->monsterinfo.currentmove = &flyer_move_start;
 }
@@ -297,7 +297,7 @@ mframe_t flyer_frames_rollleft [] =
 mmove_t flyer_move_rollleft = {FRAME_rollf01, FRAME_rollf09, flyer_frames_rollleft, NULL};
 
 mframe_t flyer_frames_pain3 [] =
-{	
+{
 		ai_move, 0, NULL,
 		ai_move, 0, NULL,
 		ai_move, 0, NULL,
@@ -328,7 +328,7 @@ mframe_t flyer_frames_pain1 [] =
 };
 mmove_t flyer_move_pain1 = {FRAME_pain101, FRAME_pain109, flyer_frames_pain1, flyer_run};
 
-mframe_t flyer_frames_defense [] = 
+mframe_t flyer_frames_defense [] =
 {
 		ai_move, 0, NULL,
 		ai_move, 0, NULL,
@@ -361,10 +361,10 @@ mframe_t flyer_frames_bankleft [] =
 		ai_move, 0, NULL,
 		ai_move, 0, NULL
 };
-mmove_t flyer_move_bankleft = {FRAME_bankl01, FRAME_bankl07, flyer_frames_bankleft, NULL};		
+mmove_t flyer_move_bankleft = {FRAME_bankl01, FRAME_bankl07, flyer_frames_bankleft, NULL};
 
 
-void flyer_fire (edict_t *self, int flash_number)
+void flyer_fire (struct edict_s *self, int flash_number)
 {
 	vec3_t	start;
 	vec3_t	forward, right;
@@ -378,7 +378,7 @@ void flyer_fire (edict_t *self, int flash_number)
 		effect = 0;
 	AngleVectors (self->s.angles, forward, right, NULL);
 	G_ProjectSource (self->s.origin, monster_flash_offset[flash_number], forward, right, start);
-	
+
 	VectorCopy (self->enemy->s.origin, end);
 	end[2] += self->enemy->viewheight;
 	VectorSubtract (end, start, dir);
@@ -386,12 +386,12 @@ void flyer_fire (edict_t *self, int flash_number)
 	monster_fire_blaster (self, start, dir, 1, 1000, flash_number, effect);
 }
 
-void flyer_fireleft (edict_t *self)
+void flyer_fireleft (struct edict_s *self)
 {
 	flyer_fire (self, MZ2_FLYER_BLASTER_1);
 }
 
-void flyer_fireright (edict_t *self)
+void flyer_fireright (struct edict_s *self)
 {
 	flyer_fire (self, MZ2_FLYER_BLASTER_2);
 }
@@ -420,7 +420,7 @@ mframe_t flyer_frames_attack2 [] =
 mmove_t flyer_move_attack2 = {FRAME_attak201, FRAME_attak217, flyer_frames_attack2, flyer_run};
 
 
-void flyer_slash_left (edict_t *self)
+void flyer_slash_left (struct edict_s *self)
 {
 	vec3_t	aim;
 
@@ -429,7 +429,7 @@ void flyer_slash_left (edict_t *self)
 	gi.sound (self, CHAN_WEAPON, sound_slash, 1, ATTN_NORM, 0);
 }
 
-void flyer_slash_right (edict_t *self)
+void flyer_slash_right (struct edict_s *self)
 {
 	vec3_t	aim;
 
@@ -472,13 +472,13 @@ mframe_t flyer_frames_loop_melee [] =
 		ai_charge, 0, NULL,
 		ai_charge, 0, NULL,
 		ai_charge, 0, NULL		// Loop Ends
-		
+
 };
 mmove_t flyer_move_loop_melee = {FRAME_attak107, FRAME_attak118, flyer_frames_loop_melee, flyer_check_melee};
 
-void flyer_loop_melee (edict_t *self)
+void flyer_loop_melee (struct edict_s *self)
 {
-/*	if (random() <= 0.5)	
+/*	if (random() <= 0.5)
 		self->monsterinfo.currentmove = &flyer_move_attack1;
 	else */
 	self->monsterinfo.currentmove = &flyer_move_loop_melee;
@@ -486,21 +486,21 @@ void flyer_loop_melee (edict_t *self)
 
 
 
-void flyer_attack (edict_t *self)
+void flyer_attack (struct edict_s *self)
 {
-/*	if (random() <= 0.5)	
+/*	if (random() <= 0.5)
 		self->monsterinfo.currentmove = &flyer_move_attack1;
 	else */
 	self->monsterinfo.currentmove = &flyer_move_attack2;
 }
 
-void flyer_setstart (edict_t *self)
+void flyer_setstart (struct edict_s *self)
 {
 	nextmove = ACTION_run;
 	self->monsterinfo.currentmove = &flyer_move_start;
 }
 
-void flyer_nextmove (edict_t *self)
+void flyer_nextmove (struct edict_s *self)
 {
 	if (nextmove == ACTION_attack1)
 		self->monsterinfo.currentmove = &flyer_move_start_melee;
@@ -510,14 +510,14 @@ void flyer_nextmove (edict_t *self)
 		self->monsterinfo.currentmove = &flyer_move_run;
 }
 
-void flyer_melee (edict_t *self)
+void flyer_melee (struct edict_s *self)
 {
 //	flyer.nextmove = ACTION_attack1;
 //	self->monsterinfo.currentmove = &flyer_move_stop;
 	self->monsterinfo.currentmove = &flyer_move_start_melee;
 }
 
-void flyer_check_melee(edict_t *self)
+void flyer_check_melee(struct edict_s *self)
 {
 	if (range (self, self->enemy) == RANGE_MELEE)
 		if (random() <= 0.8)
@@ -528,7 +528,7 @@ void flyer_check_melee(edict_t *self)
 		self->monsterinfo.currentmove = &flyer_move_end_melee;
 }
 
-void flyer_pain (edict_t *self, edict_t *other, float kick, int damage)
+void flyer_pain (struct edict_s *self, struct edict_s *other, float kick, int damage)
 {
 	int		n;
 
@@ -561,16 +561,16 @@ void flyer_pain (edict_t *self, edict_t *other, float kick, int damage)
 }
 
 
-void flyer_die(edict_t *self, edict_t *inflictor, edict_t *attacker, int damage, vec3_t point)
+void flyer_die(struct edict_s *self, struct edict_s *inflictor, struct edict_s *attacker, int damage, vec3_t point)
 {
 	gi.sound (self, CHAN_VOICE, sound_die, 1, ATTN_NORM, 0);
 	BecomeExplosion1(self);
 }
-	
+
 
 /*QUAKED monster_flyer (1 .5 0) (-16 -16 -24) (16 16 32) Ambush Trigger_Spawn Sight
 */
-void SP_monster_flyer (edict_t *self)
+void SP_monster_flyer (struct edict_s *self)
 {
 	if (deathmatch->value)
 	{
@@ -619,7 +619,7 @@ void SP_monster_flyer (edict_t *self)
 
 	gi.linkentity (self);
 
-	self->monsterinfo.currentmove = &flyer_move_stand;	
+	self->monsterinfo.currentmove = &flyer_move_stand;
 	self->monsterinfo.scale = MODEL_SCALE;
 
 	flymonster_start (self);

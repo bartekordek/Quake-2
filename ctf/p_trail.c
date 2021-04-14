@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -38,7 +38,7 @@ the player has been recently.  It is used by monsters for pursuit.
 
 #define	TRAIL_LENGTH	8
 
-edict_t		*trail[TRAIL_LENGTH];
+struct edict_s		*trail[TRAIL_LENGTH];
 int			trail_head;
 qboolean	trail_active = false;
 
@@ -92,7 +92,7 @@ void PlayerTrail_New (vec3_t spot)
 }
 
 
-edict_t *PlayerTrail_PickFirst (edict_t *self)
+struct edict_s *PlayerTrail_PickFirst (struct edict_s *self)
 {
 	int		marker;
 	int		n;
@@ -121,7 +121,7 @@ edict_t *PlayerTrail_PickFirst (edict_t *self)
 	return trail[marker];
 }
 
-edict_t *PlayerTrail_PickNext (edict_t *self)
+struct edict_s *PlayerTrail_PickNext (struct edict_s *self)
 {
 	int		marker;
 	int		n;
@@ -140,7 +140,7 @@ edict_t *PlayerTrail_PickNext (edict_t *self)
 	return trail[marker];
 }
 
-edict_t *PlayerTrail_LastSpot (void)
+struct edict_s *PlayerTrail_LastSpot (void)
 {
 	return trail[PREV(trail_head)];
 }

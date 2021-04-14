@@ -33,11 +33,11 @@ Encode a client frame onto the network channel
 // because there can be a lot of projectiles, there is a special
 // network protocol for them
 #define	MAX_PROJECTILES		64
-edict_t	*projectiles[MAX_PROJECTILES];
+struct edict_s	*projectiles[MAX_PROJECTILES];
 int		numprojs;
 cvar_t  *sv_projectiles;
 
-qboolean SV_AddProjectileUpdate (edict_t *ent)
+qboolean SV_AddProjectileUpdate (struct edict_s *ent)
 {
 	if (!sv_projectiles)
 		sv_projectiles = Cvar_Get("sv_projectiles", "1", 0);
@@ -58,7 +58,7 @@ void SV_EmitProjectileUpdate (sizebuf_t *msg)
 {
 	byte	bits[16];	// [modelindex] [48 bits] xyz p y 12 12 12 8 8 [entitynum] [e2]
 	int		n, i;
-	edict_t	*ent;
+	struct edict_s	*ent;
 	int		x, y, z, p, yaw;
 	int len;
 
@@ -523,8 +523,8 @@ void SV_BuildClientFrame (client_t *client)
 {
 	int		e, i;
 	vec3_t	org;
-	edict_t	*ent;
-	edict_t	*clent;
+	struct edict_s	*ent;
+	struct edict_s	*clent;
 	client_frame_t	*frame;
 	entity_state_t	*state;
 	int		l;
@@ -680,7 +680,7 @@ Used for recording footage for merged or assembled demos
 void SV_RecordDemoMessage (void)
 {
 	int			e;
-	edict_t		*ent;
+	struct edict_s		*ent;
 	entity_state_t	nostate;
 	sizebuf_t	buf;
 	byte		buf_data[32768];

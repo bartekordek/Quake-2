@@ -147,7 +147,7 @@ void ref_gl_Mod_Modellist_f (void)
 
 	total = 0;
 	ri.Con_Printf (PRINT_ALL,"Loaded models:\n");
-	for (i=0, mod=mod_known ; i < mod_numknown ; i++, mod++)
+	for (i=0, mod=mod_known ; i < mod_numknown ; ++i, ++mod)
 	{
 		if (!mod->name[0])
 			continue;
@@ -157,6 +157,36 @@ void ref_gl_Mod_Modellist_f (void)
 	ri.Con_Printf (PRINT_ALL, "Total resident: %i\n", total);
 }
 
+int ref_gl_Draw_GetPalette (void)
+{
+	int		i;
+	int		r, g, b;
+	byte	*pic, *pal;
+	unsigned	v;
+	int		width, height;
+
+	// get the palette
+	ref_gl_LoadPCX ("pics/colormap.pcx", &pic, &pal, &width, &height);
+	if (!pal)
+		ri.Sys_Error (ERR_FATAL, "Couldn't load pics/colormap.pcx");
+
+	for (i=0 ; i<256 ; i++)
+	{
+		r = pal[i*3+0];
+		g = pal[i*3+1];
+		b = pal[i*3+2];
+
+		v = (255<<24) + (r<<0) + (g<<8) + (b<<16);
+		d_8to24table[i] = LittleLong(v);
+	}
+
+	d_8to24table[255] &= LittleLong(0xffffff);	// 255 is transparent
+
+	free (pic);
+	free (pal);
+
+	return 0;
+}
 
 void ref_gl_Mod_Init(void)
 {
@@ -1092,11 +1122,7 @@ void ref_gl_Mod_LoadSpriteModel (model_t *mod, void *buffer)
 //=============================================================================
 
 /*
-@@@@@@@@@@@@@@@@@@@@@
-ref_gl_R_BeginRegistration
-
 Specifies the model that will be used as the world
-@@@@@@@@@@@@@@@@@@@@@
 */
 void ref_gl_R_BeginRegistration (char *model)
 {

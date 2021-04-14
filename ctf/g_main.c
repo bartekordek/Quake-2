@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "g_local.h"
+#include "shared/edict.h"
 
 game_locals_t	game;
 level_locals_t	level;
@@ -30,7 +31,7 @@ int	sm_meat_index;
 int	snd_fry;
 int meansOfDeath;
 
-edict_t		*g_edicts;
+struct edict_s* g_edicts;
 
 cvar_t	*deathmatch;
 cvar_t	*coop;
@@ -72,13 +73,13 @@ cvar_t	*flood_waitdelay;
 cvar_t	*sv_maplist;
 
 void SpawnEntities (char *mapname, char *entities, char *spawnpoint);
-void ClientThink (edict_t *ent, usercmd_t *cmd);
-qboolean ClientConnect (edict_t *ent, char *userinfo);
-void ClientUserinfoChanged (edict_t *ent, char *userinfo);
-void ClientDisconnect (edict_t *ent);
-void ClientBegin (edict_t *ent);
-void ClientCommand (edict_t *ent);
-void RunEntity (edict_t *ent);
+void ClientThink (struct edict_s *ent, usercmd_t *cmd);
+qboolean ClientConnect (struct edict_s *ent, char *userinfo);
+void ClientUserinfoChanged (struct edict_s *ent, char *userinfo);
+void ClientDisconnect (struct edict_s *ent);
+void ClientBegin (struct edict_s *ent);
+void ClientCommand (struct edict_s *ent);
+void RunEntity (struct edict_s *ent);
 void WriteGame (char *filename, qboolean autosave);
 void ReadGame (char *filename);
 void WriteLevel (char *filename);
@@ -132,7 +133,7 @@ game_export_t *GetGameAPI (game_import_t *import)
 
 	globals.ServerCommand = ServerCommand;
 
-	globals.edict_size = sizeof(edict_t);
+	globals.edict_size = sizeof(struct edict_s);
 
 	return &globals;
 }
@@ -166,7 +167,7 @@ ClientEndServerFrames
 void ClientEndServerFrames (void)
 {
 	int		i;
-	edict_t	*ent;
+	struct edict_s	*ent;
 
 	// calc the player views now that all pushing
 	// and damage has been added
@@ -187,9 +188,9 @@ CreateTargetChangeLevel
 Returns the created target changelevel
 =================
 */
-edict_t *CreateTargetChangeLevel(char *map)
+struct edict_s *CreateTargetChangeLevel(char *map)
 {
-	edict_t *ent;
+	struct edict_s *ent;
 
 	ent = G_Spawn ();
 	ent->classname = "target_changelevel";
@@ -207,7 +208,7 @@ The timelimit or fraglimit has been exceeded
 */
 void EndDMLevel (void)
 {
-	edict_t		*ent;
+	struct edict_s		*ent;
 	char *s, *t, *f;
 	static const char *seps = " ,\n\r";
 
@@ -323,7 +324,7 @@ ExitLevel
 void ExitLevel (void)
 {
 	int		i;
-	edict_t	*ent;
+	struct edict_s	*ent;
 	char	command [256];
 
 	level.exitintermission = 0;
@@ -359,7 +360,7 @@ Advances the world by 0.1 seconds
 void G_RunFrame (void)
 {
 	int		i;
-	edict_t	*ent;
+	struct edict_s	*ent;
 
 	level.framenum++;
 	level.time = level.framenum*FRAMETIME;

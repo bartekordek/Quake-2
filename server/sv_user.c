@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "server.h"
 
-edict_t	*sv_player;
+struct edict_s	*sv_player;
 
 /*
 ============================================================
@@ -59,7 +59,7 @@ void SV_New_f (void)
 {
 	char		*gamedir;
 	int			playernum;
-	edict_t		*ent;
+	struct edict_s		*ent;
 
 	Com_DPrintf ("New() from %s\n", sv_client->name);
 

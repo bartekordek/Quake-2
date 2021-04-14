@@ -12,7 +12,15 @@
             },
             "problemMatcher": [
                 "$gradle"
-            ]
+            ],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "dedicated",
+                "showReuseMessage": true,
+                "clear": true
+            }
         },
         {
             "label": "[LINUX][CMAKE][CREATE]",
@@ -25,12 +33,20 @@
             "problemMatcher": [
                 "$gradle"
             ],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "dedicated",
+                "showReuseMessage": true,
+                "clear": true
+            },
             "dependsOn": "[UTILITY][FIX HEADEERS]"
         },
         {
             "label": "[LINUX][BUILD][DEBUG]",
             "type": "shell",
-            "command": "cmake --build Build-LINUX --target Quake-2 --config DEBUG -j10",
+            "command": "cmake --build Build-LINUX --target Quake-2 --config DEBUG -j1",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -41,24 +57,12 @@
             "presentation": {
                 "echo":false,
                 "reveal": "always",
-                "focus": true,
+                "focus": false,
                 "panel": "dedicated",
                 "showReuseMessage": true,
                 "clear": true
             },
             "dependsOn":"[LINUX][CMAKE][CREATE]"
-        }
-        {
-            "label": "[WINDOWS][CMD CLEAN]",
-            "type": "shell",
-            "command": "cls && cls",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "problemMatcher": [
-                "$gradle"
-            ]
         },
         {
             "label": "[WINDOWS][CMAKE][CREATE]",
@@ -71,6 +75,14 @@
             "problemMatcher": [
                 "$gradle"
             ],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": true
+            },
             "dependsOn": "[UTILITY][FIX HEADEERS]"
         },
         {
@@ -87,7 +99,7 @@
             "presentation": {
                 "echo":false,
                 "reveal": "always",
-                "focus": true,
+                "focus": false,
                 "panel": "dedicated",
                 "showReuseMessage": true,
                 "clear": true
@@ -109,10 +121,10 @@
             "presentation": {
                 "echo":false,
                 "reveal": "always",
-                "focus": true,
+                "focus": false,
                 "panel": "new",
                 "showReuseMessage": true,
-                "clear": true
+                "clear": false
             },
             "dependsOn":"[WINDOWS][CMAKE][CREATE]"
         }

@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -29,9 +29,9 @@ TANK
 #include "m_tank.h"
 
 
-void tank_refire_rocket (edict_t *self);
-void tank_doattack_rocket (edict_t *self);
-void tank_reattack_blaster (edict_t *self);
+void tank_refire_rocket (struct edict_s *self);
+void tank_doattack_rocket (struct edict_s *self);
+void tank_reattack_blaster (struct edict_s *self);
 
 static int	sound_thud;
 static int	sound_pain;
@@ -46,28 +46,28 @@ static int	sound_strike;
 // misc
 //
 
-void tank_sight (edict_t *self, edict_t *other)
+void tank_sight (struct edict_s *self, struct edict_s *other)
 {
 	gi.sound (self, CHAN_VOICE, sound_sight, 1, ATTN_NORM, 0);
 }
 
 
-void tank_footstep (edict_t *self)
+void tank_footstep (struct edict_s *self)
 {
 	gi.sound (self, CHAN_BODY, sound_step, 1, ATTN_NORM, 0);
 }
 
-void tank_thud (edict_t *self)
+void tank_thud (struct edict_s *self)
 {
 	gi.sound (self, CHAN_BODY, sound_thud, 1, ATTN_NORM, 0);
 }
 
-void tank_windup (edict_t *self)
+void tank_windup (struct edict_s *self)
 {
 	gi.sound (self, CHAN_WEAPON, sound_windup, 1, ATTN_NORM, 0);
 }
 
-void tank_idle (edict_t *self)
+void tank_idle (struct edict_s *self)
 {
 	gi.sound (self, CHAN_VOICE, sound_idle, 1, ATTN_IDLE, 0);
 }
@@ -111,8 +111,8 @@ mframe_t tank_frames_stand []=
 	ai_stand, 0, NULL
 };
 mmove_t	tank_move_stand = {FRAME_stand01, FRAME_stand30, tank_frames_stand, NULL};
-	
-void tank_stand (edict_t *self)
+
+void tank_stand (struct edict_s *self)
 {
 	self->monsterinfo.currentmove = &tank_move_stand;
 }
@@ -122,7 +122,7 @@ void tank_stand (edict_t *self)
 // walk
 //
 
-void tank_walk (edict_t *self);
+void tank_walk (struct edict_s *self);
 
 mframe_t tank_frames_start_walk [] =
 {
@@ -164,7 +164,7 @@ mframe_t tank_frames_stop_walk [] =
 };
 mmove_t	tank_move_stop_walk = {FRAME_walk21, FRAME_walk25, tank_frames_stop_walk, tank_stand};
 
-void tank_walk (edict_t *self)
+void tank_walk (struct edict_s *self)
 {
 		self->monsterinfo.currentmove = &tank_move_walk;
 }
@@ -174,7 +174,7 @@ void tank_walk (edict_t *self)
 // run
 //
 
-void tank_run (edict_t *self);
+void tank_run (struct edict_s *self);
 
 mframe_t tank_frames_start_run [] =
 {
@@ -216,7 +216,7 @@ mframe_t tank_frames_stop_run [] =
 };
 mmove_t	tank_move_stop_run = {FRAME_walk21, FRAME_walk25, tank_frames_stop_run, tank_walk};
 
-void tank_run (edict_t *self)
+void tank_run (struct edict_s *self)
 {
 	if (self->enemy && self->enemy->client)
 		self->monsterinfo.aiflags |= AI_BRUTAL;
@@ -285,7 +285,7 @@ mframe_t tank_frames_pain3 [] =
 mmove_t	tank_move_pain3 = {FRAME_pain301, FRAME_pain316, tank_frames_pain3, tank_run};
 
 
-void tank_pain (edict_t *self, edict_t *other, float kick, int damage)
+void tank_pain (struct edict_s *self, struct edict_s *other, float kick, int damage)
 {
 	if (self->health < (self->max_health / 2))
 			self->s.skinnum |= 1;
@@ -299,7 +299,7 @@ void tank_pain (edict_t *self, edict_t *other, float kick, int damage)
 	if (damage <= 30)
 		if (random() > 0.2)
 			return;
-	
+
 	// If hard or nightmare, don't go into pain while attacking
 	if ( skill->value >= 2)
 	{
@@ -328,7 +328,7 @@ void tank_pain (edict_t *self, edict_t *other, float kick, int damage)
 // attacks
 //
 
-void TankBlaster (edict_t *self)
+void TankBlaster (struct edict_s *self)
 {
 	vec3_t	forward, right;
 	vec3_t	start;
@@ -351,14 +351,14 @@ void TankBlaster (edict_t *self)
 	VectorSubtract (end, start, dir);
 
 	monster_fire_blaster (self, start, dir, 30, 800, flash_number, EF_BLASTER);
-}	
+}
 
-void TankStrike (edict_t *self)
+void TankStrike (struct edict_s *self)
 {
 	gi.sound (self, CHAN_WEAPON, sound_strike, 1, ATTN_NORM, 0);
-}	
+}
 
-void TankRocket (edict_t *self)
+void TankRocket (struct edict_s *self)
 {
 	vec3_t	forward, right;
 	vec3_t	start;
@@ -382,9 +382,9 @@ void TankRocket (edict_t *self)
 	VectorNormalize (dir);
 
 	monster_fire_rocket (self, start, dir, 50, 550, flash_number);
-}	
+}
 
-void TankMachineGun (edict_t *self)
+void TankMachineGun (struct edict_s *self)
 {
 	vec3_t	dir;
 	vec3_t	vec;
@@ -418,7 +418,7 @@ void TankMachineGun (edict_t *self)
 	AngleVectors (dir, forward, NULL, NULL);
 
 	monster_fire_bullet (self, start, forward, 20, 4, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, flash_number);
-}	
+}
 
 
 mframe_t tank_frames_attack_blast [] =
@@ -453,7 +453,7 @@ mframe_t tank_frames_reattack_blast [] =
 };
 mmove_t tank_move_reattack_blast = {FRAME_attak111, FRAME_attak116, tank_frames_reattack_blast, tank_reattack_blaster};
 
-mframe_t tank_frames_attack_post_blast [] =	
+mframe_t tank_frames_attack_post_blast [] =
 {
 	ai_move, 0,		NULL,				// 17
 	ai_move, 0,		NULL,
@@ -464,7 +464,7 @@ mframe_t tank_frames_attack_post_blast [] =
 };
 mmove_t tank_move_attack_post_blast = {FRAME_attak117, FRAME_attak122, tank_frames_attack_post_blast, tank_run};
 
-void tank_reattack_blaster (edict_t *self)
+void tank_reattack_blaster (struct edict_s *self)
 {
 	if (skill->value >= 2)
 		if (visible (self, self->enemy))
@@ -478,7 +478,7 @@ void tank_reattack_blaster (edict_t *self)
 }
 
 
-void tank_poststrike (edict_t *self)
+void tank_poststrike (struct edict_s *self)
 {
 	self->enemy = NULL;
 	tank_run (self);
@@ -557,7 +557,7 @@ mmove_t tank_move_attack_pre_rocket = {FRAME_attak301, FRAME_attak321, tank_fram
 
 mframe_t tank_frames_attack_fire_rocket [] =
 {
-	ai_charge, -3, NULL,			// Loop Start	22 
+	ai_charge, -3, NULL,			// Loop Start	22
 	ai_charge, 0,  NULL,
 	ai_charge, 0,  TankRocket,		// 24
 	ai_charge, 0,  NULL,
@@ -570,7 +570,7 @@ mframe_t tank_frames_attack_fire_rocket [] =
 mmove_t tank_move_attack_fire_rocket = {FRAME_attak322, FRAME_attak330, tank_frames_attack_fire_rocket, tank_refire_rocket};
 
 mframe_t tank_frames_attack_post_rocket [] =
-{	
+{
 	ai_charge, 0,  NULL,			// 31
 	ai_charge, -1, NULL,
 	ai_charge, -1, NULL,
@@ -633,7 +633,7 @@ mframe_t tank_frames_attack_chain [] =
 };
 mmove_t tank_move_attack_chain = {FRAME_attak401, FRAME_attak429, tank_frames_attack_chain, tank_run};
 
-void tank_refire_rocket (edict_t *self)
+void tank_refire_rocket (struct edict_s *self)
 {
 	// Only on hard or nightmare
 	if ( skill->value >= 2 )
@@ -647,12 +647,12 @@ void tank_refire_rocket (edict_t *self)
 	self->monsterinfo.currentmove = &tank_move_attack_post_rocket;
 }
 
-void tank_doattack_rocket (edict_t *self)
+void tank_doattack_rocket (struct edict_s *self)
 {
 	self->monsterinfo.currentmove = &tank_move_attack_fire_rocket;
 }
 
-void tank_attack(edict_t *self)
+void tank_attack(struct edict_s *self)
 {
 	vec3_t	vec;
 	float	range;
@@ -674,7 +674,7 @@ void tank_attack(edict_t *self)
 	{
 		if (r < 0.4)
 			self->monsterinfo.currentmove = &tank_move_attack_chain;
-		else 
+		else
 			self->monsterinfo.currentmove = &tank_move_attack_blast;
 	}
 	else if (range <= 250)
@@ -703,7 +703,7 @@ void tank_attack(edict_t *self)
 // death
 //
 
-void tank_dead (edict_t *self)
+void tank_dead (struct edict_s *self)
 {
 	VectorSet (self->mins, -16, -16, -16);
 	VectorSet (self->maxs, 16, 16, -0);
@@ -750,7 +750,7 @@ mframe_t tank_frames_death1 [] =
 };
 mmove_t	tank_move_death = {FRAME_death101, FRAME_death132, tank_frames_death1, tank_dead};
 
-void tank_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damage, vec3_t point)
+void tank_die (struct edict_s *self, struct edict_s *inflictor, struct edict_s *attacker, int damage, vec3_t point)
 {
 	int		n;
 
@@ -777,7 +777,7 @@ void tank_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damage,
 	self->takedamage = DAMAGE_YES;
 
 	self->monsterinfo.currentmove = &tank_move_death;
-	
+
 }
 
 
@@ -789,7 +789,7 @@ void tank_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damage,
 */
 /*QUAKED monster_tank_commander (1 .5 0) (-32 -32 -16) (32 32 72) Ambush Trigger_Spawn Sight
 */
-void SP_monster_tank (edict_t *self)
+void SP_monster_tank (struct edict_s *self)
 {
 	if (deathmatch->value)
 	{
@@ -845,7 +845,7 @@ void SP_monster_tank (edict_t *self)
 	self->monsterinfo.idle = tank_idle;
 
 	gi.linkentity (self);
-	
+
 	self->monsterinfo.currentmove = &tank_move_stand;
 	self->monsterinfo.scale = MODEL_SCALE;
 

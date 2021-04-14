@@ -22,16 +22,16 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "gl_local.h"
 
-image_t        *draw_chars;
+image_t* draw_chars;
 
-extern    qboolean    scrap_dirty;
-void ref_gl_GL_TexEnv (void);
+extern qboolean scrap_dirty;
+void Scrap_Upload (void);
 
 void ref_gl_Draw_InitLocal (void)
 {
     // load console characters (don't bilerp characters)
     draw_chars = ref_gl_GL_FindImage ("pics/conchars.pcx", it_pic);
-    ref_gl_GL_TexEnv( draw_chars->texnum );
+    ref_gl_GL_Bind( draw_chars->texnum );
     qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 }
@@ -67,7 +67,7 @@ void ref_gl_Draw_Char(int x, int y, int num)
     fcol = col*0.0625;
     size = 0.0625;
 
-    ref_gl_GL_TexEnv (draw_chars->texnum);
+    ref_gl_GL_Bind(draw_chars->texnum);
 
     qglBegin (GL_QUADS);
     qglTexCoord2f (fcol, frow);
@@ -138,12 +138,12 @@ void ref_gl_Draw_StretchPic (int x, int y, int w, int h, char *pic)
     }
 
     if (scrap_dirty)
-        ref_gl_GL_TexEnv ();
+        ref_gl_Scrap_Upload();
 
     if ( ( ( gl_config.renderer == GL_RENDERER_MCD ) || ( gl_config.renderer & GL_RENDERER_RENDITION ) ) && !gl->has_alpha)
         qglDisable (GL_ALPHA_TEST);
 
-    ref_gl_GL_TexEnv (gl->texnum);
+    ref_gl_GL_Bind(gl->texnum);
     qglBegin (GL_QUADS);
     qglTexCoord2f (gl->sl, gl->tl);
     qglVertex2f (x, y);
@@ -176,12 +176,12 @@ void ref_gl_Draw_Pic(int x, int y, char *pic)
         return;
     }
     if (scrap_dirty)
-        ref_gl_GL_TexEnv ();
+        ref_gl_Scrap_Upload();
 
     if ( ( ( gl_config.renderer == GL_RENDERER_MCD ) || ( gl_config.renderer & GL_RENDERER_RENDITION ) ) && !gl->has_alpha)
         qglDisable (GL_ALPHA_TEST);
 
-    ref_gl_GL_TexEnv (gl->texnum);
+    ref_gl_GL_Bind(gl->texnum);
     qglBegin (GL_QUADS);
     qglTexCoord2f (gl->sl, gl->tl);
     qglVertex2f (x, y);
@@ -207,7 +207,7 @@ refresh window.
 */
 void ref_gl_Draw_TileClear(int x, int y, int w, int h, char *pic)
 {
-    image_t    *image;
+    image_t* image;
 
     image = ref_gl_Draw_FindPic(pic);
     if (!image)
@@ -219,7 +219,7 @@ void ref_gl_Draw_TileClear(int x, int y, int w, int h, char *pic)
     if ( ( ( gl_config.renderer == GL_RENDERER_MCD ) || ( gl_config.renderer & GL_RENDERER_RENDITION ) )  && !image->has_alpha)
         qglDisable (GL_ALPHA_TEST);
 
-     ref_gl_GL_TexEnv (image->texnum);
+    ref_gl_GL_Bind (image->texnum);
     qglBegin (GL_QUADS);
     qglTexCoord2f (x/64.0, y/64.0);
     qglVertex2f (x, y);
@@ -235,13 +235,8 @@ void ref_gl_Draw_TileClear(int x, int y, int w, int h, char *pic)
         qglEnable (GL_ALPHA_TEST);
 }
 
-
 /*
-=============
-Draw_Fill
-
 Fills a box of pixels with a single color
-=============
 */
 void ref_gl_Draw_Fill(int x, int y, int w, int h, int c)
 {
@@ -308,7 +303,7 @@ void ref_gl_Draw_FadeScreen(void)
 Draw_StretchRaw
 =============
 */
-extern unsigned    r_rawpalette[256];
+extern unsigned r_rawpalette[256];
 
 void ref_gl_Draw_StretchRaw(int x, int y, int w, int h, int cols, int rows, byte *data)
 {
@@ -321,7 +316,7 @@ void ref_gl_Draw_StretchRaw(int x, int y, int w, int h, int cols, int rows, byte
     int            row;
     float        t;
 
-     ref_gl_GL_TexEnv (0);
+    ref_gl_GL_Bind (0);
 
     if (rows<=256)
     {

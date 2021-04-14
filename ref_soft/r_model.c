@@ -180,6 +180,33 @@ model_t *ref_soft_Mod_ForName (char *name, qboolean crash)
 }
 
 
+void ref_soft_Draw_GetPalette (void)
+{
+	int		i;
+	int		r, g, b;
+	byte	*pal, *out;
+
+	// get the palette and colormap
+	ref_soft_LoadPCX ("pics/colormap.pcx", &vid.colormap, &pal, NULL, NULL);
+	if (!vid.colormap)
+		ri.Sys_Error (ERR_FATAL, "Couldn't load pics/colormap.pcx");
+	vid.alphamap = vid.colormap + 64*256;
+
+	out = (byte *)d_8to24table;
+	for (i=0 ; i<256 ; i++, out+=4)
+	{
+		r = pal[i*3+0];
+		g = pal[i*3+1];
+		b = pal[i*3+2];
+
+        out[0] = r;
+        out[1] = g;
+        out[2] = b;
+	}
+
+	free (pal);
+}
+
 /*
 ===============
 ref_soft_Mod_PointInLeaf
@@ -1112,13 +1139,9 @@ void ref_soft_Mod_LoadSpriteModel (model_t *mod, void *buffer)
 //=============================================================================
 
 /*
-@@@@@@@@@@@@@@@@@@@@@
-R_BeginRegistration
-
 Specifies the model that will be used as the world
-@@@@@@@@@@@@@@@@@@@@@
 */
-void R_BeginRegistration (char *model)
+void ref_soft_R_BeginRegistration (char *model)
 {
     char    fullname[MAX_QPATH];
     cvar_t    *flushmap;
@@ -1134,7 +1157,7 @@ void R_BeginRegistration (char *model)
     if ( strcmp(mod_known[0].name, fullname) || flushmap->value)
         ref_soft_Mod_Free (&mod_known[0]);
     r_worldmodel = ref_soft_R_RegisterModel (fullname);
-    R_NewMap ();
+    ref_soft_R_NewMap ();
 }
 
 struct model_s* ref_soft_R_RegisterModel (char *name)
@@ -1200,7 +1223,7 @@ void ref_soft_R_EndRegistration (void)
         }
     }
 
-    R_FreeUnusedImages ();
+    ref_soft_R_FreeUnusedImages ();
 }
 
 

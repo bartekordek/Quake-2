@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 
 
-static	edict_t		*current_player;
+static	struct edict_s		*current_player;
 static	gclient_t	*current_client;
 
 static	vec3_t	forward, right, up;
@@ -44,20 +44,20 @@ float SV_CalcRoll (vec3_t angles, vec3_t velocity)
 	float	sign;
 	float	side;
 	float	value;
-	
+
 	side = DotProduct (velocity, right);
 	sign = side < 0 ? -1 : 1;
 	side = fabs(side);
-	
+
 	value = sv_rollangle->value;
 
 	if (side < sv_rollspeed->value)
 		side = side * value / sv_rollspeed->value;
 	else
 		side = value;
-	
+
 	return side*sign;
-	
+
 }
 
 
@@ -68,7 +68,7 @@ P_DamageFeedback
 Handles color blends and view kicks
 ===============
 */
-void P_DamageFeedback (edict_t *player)
+void P_DamageFeedback (struct edict_s *player)
 {
 	gclient_t	*client;
 	float	side;
@@ -181,10 +181,10 @@ void P_DamageFeedback (edict_t *player)
 
 		VectorSubtract (client->damage_from, player->s.origin, v);
 		VectorNormalize (v);
-		
+
 		side = DotProduct (v, right);
 		client->v_dmg_roll = kick*side*0.3;
-		
+
 		side = -DotProduct (v, forward);
 		client->v_dmg_pitch = kick*side*0.3;
 
@@ -213,13 +213,13 @@ Auto pitching on slopes?
   fall from 256: 580 = 336400
   fall from 384: 720 = 518400
   fall from 512: 800 = 640000
-  fall from 640: 960 = 
+  fall from 640: 960 =
 
   damage = deltavelocity*deltavelocity  * 0.0001
 
 ===============
 */
-void SV_CalcViewOffset (edict_t *ent)
+void SV_CalcViewOffset (struct edict_s *ent)
 {
 	float		*angles;
 	float		bob;
@@ -271,7 +271,7 @@ void SV_CalcViewOffset (edict_t *ent)
 
 		delta = DotProduct (ent->velocity, forward);
 		angles[PITCH] += delta*run_pitch->value;
-		
+
 		delta = DotProduct (ent->velocity, right);
 		angles[ROLL] += delta*run_roll->value;
 
@@ -342,7 +342,7 @@ void SV_CalcViewOffset (edict_t *ent)
 SV_CalcGunOffset
 ==============
 */
-void SV_CalcGunOffset (edict_t *ent)
+void SV_CalcGunOffset (struct edict_s *ent)
 {
 	int		i;
 	float	delta;
@@ -415,13 +415,13 @@ void SV_AddBlend (float r, float g, float b, float a, float *v_blend)
 SV_CalcBlend
 =============
 */
-void SV_CalcBlend (edict_t *ent)
+void SV_CalcBlend (struct edict_s *ent)
 {
 	int		contents;
 	vec3_t	vieworg;
 	int		remaining;
 
-	ent->client->ps.blend[0] = ent->client->ps.blend[1] = 
+	ent->client->ps.blend[0] = ent->client->ps.blend[1] =
 		ent->client->ps.blend[2] = ent->client->ps.blend[3] = 0;
 
 	// add for contents
@@ -498,7 +498,7 @@ void SV_CalcBlend (edict_t *ent)
 P_FallingDamage
 =================
 */
-void P_FallingDamage (edict_t *ent)
+void P_FallingDamage (struct edict_s *ent)
 {
 	float	delta;
 	int		damage;
@@ -525,7 +525,7 @@ void P_FallingDamage (edict_t *ent)
 //ZOID
 	// never take damage if just release grapple or on grapple
 	if (level.time - ent->client->ctf_grapplereleasetime <= FRAMETIME * 2 ||
-		(ent->client->ctf_grapple && 
+		(ent->client->ctf_grapple &&
 		ent->client->ctf_grapplestate > CTF_GRAPPLE_STATE_FLY))
 		return;
 //ZOID
@@ -680,7 +680,7 @@ void P_WorldEffects (void)
 		// if out of air, start drowning
 		if (current_player->air_finished < level.time)
 		{	// drown!
-			if (current_player->client->next_drown_time < level.time 
+			if (current_player->client->next_drown_time < level.time
 				&& current_player->health > 0)
 			{
 				current_player->client->next_drown_time = level.time + 1;
@@ -750,7 +750,7 @@ void P_WorldEffects (void)
 G_SetClientEffects
 ===============
 */
-void G_SetClientEffects (edict_t *ent)
+void G_SetClientEffects (struct edict_s *ent)
 {
 	int		pa_type;
 	int		remaining;
@@ -815,7 +815,7 @@ void G_SetClientEffects (edict_t *ent)
 G_SetClientEvent
 ===============
 */
-void G_SetClientEvent (edict_t *ent)
+void G_SetClientEvent (struct edict_s *ent)
 {
 	if (ent->s.event)
 		return;
@@ -832,7 +832,7 @@ void G_SetClientEvent (edict_t *ent)
 G_SetClientSound
 ===============
 */
-void G_SetClientSound (edict_t *ent)
+void G_SetClientSound (struct edict_s *ent)
 {
 	char	*weap;
 
@@ -872,7 +872,7 @@ void G_SetClientSound (edict_t *ent)
 G_SetClientFrame
 ===============
 */
-void G_SetClientFrame (edict_t *ent)
+void G_SetClientFrame (struct edict_s *ent)
 {
 	gclient_t	*client;
 	qboolean	duck, run;
@@ -983,7 +983,7 @@ Called for each player at the end of the server frame
 and right after spawning
 =================
 */
-void ClientEndServerFrame (edict_t *ent)
+void ClientEndServerFrame (struct edict_s *ent)
 {
 	float	bobtime;
 	int		i;
@@ -995,7 +995,7 @@ void ClientEndServerFrame (edict_t *ent)
 	// If the origin or velocity have changed since ClientThink(),
 	// update the pmove values.  This will happen when the client
 	// is pushed by a bmodel or kicked by an explosion.
-	// 
+	//
 	// If it wasn't updated here, the view position would lag a frame
 	// behind the body position when pushed -- "sinking into plats"
 	//
@@ -1055,7 +1055,7 @@ void ClientEndServerFrame (edict_t *ent)
 		else
 			bobmove = 0.0625;
 	}
-	
+
 	bobtime = (current_client->bobtime += bobmove);
 
 	if (current_client->ps.pmove.pm_flags & PMF_DUCKED)
@@ -1091,11 +1091,11 @@ void ClientEndServerFrame (edict_t *ent)
 //ZOID
 //update chasecam follower stats
 	for (i = 1; i <= maxclients->value; i++) {
-		edict_t *e = g_edicts + i;
+		struct edict_s *e = g_edicts + i;
 		if (!e->inuse || e->client->chase_target != ent)
 			continue;
-		memcpy(e->client->ps.stats, 
-			ent->client->ps.stats, 
+		memcpy(e->client->ps.stats,
+			ent->client->ps.stats,
 			sizeof(ent->client->ps.stats));
 		e->client->ps.stats[STAT_LAYOUTS] = 1;
 		break;

@@ -77,13 +77,7 @@ void   ref_soft_R_MarkLights (dlight_t *light, int bit, mnode_t *node)
       ref_soft_R_MarkLights (light, bit, node->children[1]);
 }
 
-
-/*
-=============
-R_PushDlights
-=============
-*/
-void   ref_soft_R_PushDlights (model_t *model)
+void ref_soft_R_PushDlights (model_t *model)
 {
     int        i;
     dlight_t    *l;

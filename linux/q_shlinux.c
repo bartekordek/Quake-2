@@ -22,7 +22,7 @@ void *Hunk_Begin (int maxsize)
 	// reserve a huge chunk of memory, but don't commit any yet
 	maxhunksize = maxsize + sizeof(int);
 	curhunksize = 0;
-	membase = mmap(0, maxhunksize, PROT_READ|PROT_WRITE, 
+	membase = mmap(0, maxhunksize, PROT_READ|PROT_WRITE,
 		MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
 	if (membase == NULL || membase == (byte *)-1)
 		Sys_Error("unable to virtual allocate %d bytes", maxsize);
@@ -53,7 +53,7 @@ int Hunk_End (void)
 	if (n != membase)
 		Sys_Error("Hunk_End:  Could not remap virtual block (%d)", errno);
 	*((int *)membase) = curhunksize + sizeof(int);
-	
+
 	return curhunksize;
 }
 
@@ -77,14 +77,14 @@ Sys_Milliseconds
 ================
 */
 int curtime;
-int Sys_Milliseconds (void)
+int Sys_MillisecondsxD (void)
 {
 	struct timeval tp;
 	struct timezone tzp;
 	static int		secbase;
 
 	gettimeofday(&tp, &tzp);
-	
+
 	if (!secbase)
 	{
 		secbase = tp.tv_sec;
@@ -92,7 +92,7 @@ int Sys_Milliseconds (void)
 	}
 
 	curtime = (tp.tv_sec - secbase)*1000 + tp.tv_usec/1000;
-	
+
 	return curtime;
 }
 
@@ -158,7 +158,7 @@ char *Sys_FindFirst (char *path, unsigned musthave, unsigned canhave)
 
 	if (strcmp(findpattern, "*.*") == 0)
 		strcpy(findpattern, "*");
-	
+
 	if ((fdir = opendir(findbase)) == NULL)
 		return NULL;
 	while ((d = readdir(fdir)) != NULL) {

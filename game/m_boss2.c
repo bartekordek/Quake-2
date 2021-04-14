@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -28,9 +28,9 @@ boss2
 #include "g_local.h"
 #include "m_boss2.h"
 
-void BossExplode (edict_t *self);
+void BossExplode (struct edict_s *self);
 
-qboolean infront (edict_t *self, edict_t *other);
+qboolean infront (struct edict_s *self, struct edict_s *other);
 
 static int	sound_pain1;
 static int	sound_pain2;
@@ -38,21 +38,21 @@ static int	sound_pain3;
 static int	sound_death;
 static int	sound_search1;
 
-void boss2_search (edict_t *self)
+void boss2_search (struct edict_s *self)
 {
 	if (random() < 0.5)
 		gi.sound (self, CHAN_VOICE, sound_search1, 1, ATTN_NONE, 0);
 }
 
-void boss2_run (edict_t *self);
-void boss2_stand (edict_t *self);
-void boss2_dead (edict_t *self);
-void boss2_attack (edict_t *self);
-void boss2_attack_mg (edict_t *self);
-void boss2_reattack_mg (edict_t *self);
-void boss2_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damage, vec3_t point);
+void boss2_run (struct edict_s *self);
+void boss2_stand (struct edict_s *self);
+void boss2_dead (struct edict_s *self);
+void boss2_attack (struct edict_s *self);
+void boss2_attack_mg (struct edict_s *self);
+void boss2_reattack_mg (struct edict_s *self);
+void boss2_die (struct edict_s *self, struct edict_s *inflictor, struct edict_s *attacker, int damage, vec3_t point);
 
-void Boss2Rocket (edict_t *self)
+void Boss2Rocket (struct edict_s *self)
 {
 	vec3_t	forward, right;
 	vec3_t	start;
@@ -92,9 +92,9 @@ void Boss2Rocket (edict_t *self)
 	VectorSubtract (vec, start, dir);
 	VectorNormalize (dir);
 	monster_fire_rocket (self, start, dir, 50, 500, MZ2_BOSS2_ROCKET_4);
-}	
+}
 
-void boss2_firebullet_right (edict_t *self)
+void boss2_firebullet_right (struct edict_s *self)
 {
 	vec3_t	forward, right, target;
 	vec3_t	start;
@@ -108,13 +108,13 @@ void boss2_firebullet_right (edict_t *self)
 	VectorNormalize (forward);
 
 	monster_fire_bullet (self, start, forward, 6, 4, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MZ2_BOSS2_MACHINEGUN_R1);
-}	
+}
 
-void boss2_firebullet_left (edict_t *self)
+void boss2_firebullet_left (struct edict_s *self)
 {
 	vec3_t	forward, right, target;
 	vec3_t	start;
-	
+
 	AngleVectors (self->s.angles, forward, right, NULL);
 	G_ProjectSource (self->s.origin, monster_flash_offset[MZ2_BOSS2_MACHINEGUN_L1], forward, right, start);
 
@@ -125,9 +125,9 @@ void boss2_firebullet_left (edict_t *self)
 	VectorNormalize (forward);
 
 	monster_fire_bullet (self, start, forward, 6, 4, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MZ2_BOSS2_MACHINEGUN_L1);
-}	
+}
 
-void Boss2MachineGun (edict_t *self)
+void Boss2MachineGun (struct edict_s *self)
 {
 /*	vec3_t	forward, right;
 	vec3_t	start;
@@ -148,7 +148,7 @@ void Boss2MachineGun (edict_t *self)
 */
 	boss2_firebullet_left(self);
 	boss2_firebullet_right(self);
-}	
+}
 
 
 mframe_t boss2_frames_stand [] =
@@ -411,12 +411,12 @@ mframe_t boss2_frames_death [] =
 };
 mmove_t boss2_move_death = {FRAME_death2, FRAME_death50, boss2_frames_death, boss2_dead};
 
-void boss2_stand (edict_t *self)
+void boss2_stand (struct edict_s *self)
 {
 		self->monsterinfo.currentmove = &boss2_move_stand;
 }
 
-void boss2_run (edict_t *self)
+void boss2_run (struct edict_s *self)
 {
 	if (self->monsterinfo.aiflags & AI_STAND_GROUND)
 		self->monsterinfo.currentmove = &boss2_move_stand;
@@ -424,24 +424,24 @@ void boss2_run (edict_t *self)
 		self->monsterinfo.currentmove = &boss2_move_run;
 }
 
-void boss2_walk (edict_t *self)
+void boss2_walk (struct edict_s *self)
 {
 	self->monsterinfo.currentmove = &boss2_move_walk;
 }
 
-void boss2_attack (edict_t *self)
+void boss2_attack (struct edict_s *self)
 {
 	vec3_t	vec;
 	float	range;
 
 	VectorSubtract (self->enemy->s.origin, self->s.origin, vec);
 	range = VectorLength (vec);
-	
+
 	if (range <= 125)
 	{
 		self->monsterinfo.currentmove = &boss2_move_attack_pre_mg;
 	}
-	else 
+	else
 	{
 		if (random() <= 0.6)
 			self->monsterinfo.currentmove = &boss2_move_attack_pre_mg;
@@ -450,12 +450,12 @@ void boss2_attack (edict_t *self)
 	}
 }
 
-void boss2_attack_mg (edict_t *self)
+void boss2_attack_mg (struct edict_s *self)
 {
 	self->monsterinfo.currentmove = &boss2_move_attack_mg;
 }
 
-void boss2_reattack_mg (edict_t *self)
+void boss2_reattack_mg (struct edict_s *self)
 {
 	if ( infront(self, self->enemy) )
 		if (random() <= 0.7)
@@ -467,7 +467,7 @@ void boss2_reattack_mg (edict_t *self)
 }
 
 
-void boss2_pain (edict_t *self, edict_t *other, float kick, int damage)
+void boss2_pain (struct edict_s *self, struct edict_s *other, float kick, int damage)
 {
 	if (self->health < (self->max_health / 2))
 		self->s.skinnum = 1;
@@ -487,14 +487,14 @@ void boss2_pain (edict_t *self, edict_t *other, float kick, int damage)
 		gi.sound (self, CHAN_VOICE, sound_pain1, 1, ATTN_NONE, 0);
 		self->monsterinfo.currentmove = &boss2_move_pain_light;
 	}
-	else 
+	else
 	{
 		gi.sound (self, CHAN_VOICE, sound_pain2, 1, ATTN_NONE, 0);
 		self->monsterinfo.currentmove = &boss2_move_pain_heavy;
 	}
 }
 
-void boss2_dead (edict_t *self)
+void boss2_dead (struct edict_s *self)
 {
 	VectorSet (self->mins, -56, -56, 0);
 	VectorSet (self->maxs, 56, 56, 80);
@@ -504,7 +504,7 @@ void boss2_dead (edict_t *self)
 	gi.linkentity (self);
 }
 
-void boss2_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damage, vec3_t point)
+void boss2_die (struct edict_s *self, struct edict_s *inflictor, struct edict_s *attacker, int damage, vec3_t point)
 {
 	gi.sound (self, CHAN_VOICE, sound_death, 1, ATTN_NONE, 0);
 	self->deadflag = DEAD_DEAD;
@@ -537,7 +537,7 @@ void boss2_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damage
 #endif
 }
 
-qboolean Boss2_CheckAttack (edict_t *self)
+qboolean Boss2_CheckAttack (struct edict_s *self)
 {
 	vec3_t	spot1, spot2;
 	vec3_t	temp;
@@ -561,7 +561,7 @@ qboolean Boss2_CheckAttack (edict_t *self)
 		if (tr.ent != self->enemy)
 			return false;
 	}
-	
+
 	enemy_infront = infront(self, self->enemy);
 	enemy_range = range(self, self->enemy);
 	VectorSubtract (self->enemy->s.origin, self->s.origin, temp);
@@ -579,14 +579,14 @@ qboolean Boss2_CheckAttack (edict_t *self)
 			self->monsterinfo.attack_state = AS_MISSILE;
 		return true;
 	}
-	
+
 // missile attack
 	if (!self->monsterinfo.attack)
 		return false;
-		
+
 	if (level.time < self->monsterinfo.attack_finished)
 		return false;
-		
+
 	if (enemy_range == RANGE_FAR)
 		return false;
 
@@ -633,7 +633,7 @@ qboolean Boss2_CheckAttack (edict_t *self)
 
 /*QUAKED monster_boss2 (1 .5 0) (-56 -56 0) (56 56 80) Ambush Trigger_Spawn Sight
 */
-void SP_monster_boss2 (edict_t *self)
+void SP_monster_boss2 (struct edict_s *self)
 {
 	if (deathmatch->value)
 	{
@@ -672,7 +672,7 @@ void SP_monster_boss2 (edict_t *self)
 	self->monsterinfo.checkattack = Boss2_CheckAttack;
 	gi.linkentity (self);
 
-	self->monsterinfo.currentmove = &boss2_move_stand;	
+	self->monsterinfo.currentmove = &boss2_move_stand;
 	self->monsterinfo.scale = MODEL_SCALE;
 
 	flymonster_start (self);

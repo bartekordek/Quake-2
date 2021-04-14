@@ -11,7 +11,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -34,7 +34,7 @@ typedef struct pmenuhnd_s {
 	void *arg;
 } pmenuhnd_t;
 
-typedef void (*SelectFunc_t)(edict_t *ent, pmenuhnd_t *hnd);
+typedef void (*SelectFunc_t)(struct edict_s *ent, pmenuhnd_t *hnd);
 
 typedef struct pmenu_s {
 	char *text;
@@ -42,13 +42,13 @@ typedef struct pmenu_s {
 	SelectFunc_t SelectFunc;
 } pmenu_t;
 
-pmenuhnd_t *PMenu_Open(edict_t *ent, pmenu_t *entries, int cur, int num, void *arg);
-void PMenu_Close(edict_t *ent);
+pmenuhnd_t *PMenu_Open(struct edict_s *ent, pmenu_t *entries, int cur, int num, void *arg);
+void PMenu_Close(struct edict_s *ent);
 void PMenu_UpdateEntry(pmenu_t *entry, const char *text, int align, SelectFunc_t SelectFunc);
-void PMenu_Do_Update(edict_t *ent);
-void PMenu_Update(edict_t *ent);
-void PMenu_Next(edict_t *ent);
-void PMenu_Prev(edict_t *ent);
-void PMenu_Select(edict_t *ent);
+void PMenu_Do_Update(struct edict_s *ent);
+void PMenu_Update(struct edict_s *ent);
+void PMenu_Next(struct edict_s *ent);
+void PMenu_Prev(struct edict_s *ent);
+void PMenu_Select(struct edict_s *ent);
 
 #endif // ____CTF_P_MENU_H__

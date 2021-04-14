@@ -30,6 +30,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "shared/viddef.h"
 #include "shared/enum_image_type.h"
+#include "client/client.h"
 
 #ifdef _WIN32
 #  include <windows.h>
@@ -222,12 +223,12 @@ extern    float    r_world_matrix[16];
 void R_TranslatePlayerSkin (int playernum);
 void ref_gl_GL_Bind (int texnum);
 void ref_gl_GL_MBind( GLenum target, int texnum );
-void ref_gl_GL_TexEnv( GLenum value );
+void ref_gl_GL_TexEnv();
 void ref_gl_GL_EnableMultitexture( qboolean enable );
 void GL_SelectTexture( GLenum );
 
 void ref_gl_R_LightPoint (vec3_t p, vec3_t color);
-void R_PushDlights (void);
+void ref_gl_R_PushDlights (void);
 
 //====================================================================
 
@@ -426,5 +427,6 @@ void        GLimp_AppActivate( qboolean active );
 void        GLimp_EnableLogging( qboolean enable );
 void        GLimp_LogNewFrame( void );
 
+refexport_t ref_gl_GetRefAPI( refimport_t rimp );
 
 #endif // ____REF_GL_GL_LOCAL_H__

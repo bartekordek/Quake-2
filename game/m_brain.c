@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -45,19 +45,19 @@ static int	sound_melee2;
 static int	sound_melee3;
 
 
-void brain_sight (edict_t *self, edict_t *other)
+void brain_sight (struct edict_s *self, struct edict_s *other)
 {
 	gi.sound (self, CHAN_VOICE, sound_sight, 1, ATTN_NORM, 0);
 }
 
-void brain_search (edict_t *self)
+void brain_search (struct edict_s *self)
 {
 	gi.sound (self, CHAN_VOICE, sound_search, 1, ATTN_NORM, 0);
 }
 
 
-void brain_run (edict_t *self);
-void brain_dead (edict_t *self);
+void brain_run (struct edict_s *self);
+void brain_dead (struct edict_s *self);
 
 
 //
@@ -101,7 +101,7 @@ mframe_t brain_frames_stand [] =
 };
 mmove_t brain_move_stand = {FRAME_stand01, FRAME_stand30, brain_frames_stand, NULL};
 
-void brain_stand (edict_t *self)
+void brain_stand (struct edict_s *self)
 {
 	self->monsterinfo.currentmove = &brain_move_stand;
 }
@@ -148,7 +148,7 @@ mframe_t brain_frames_idle [] =
 };
 mmove_t brain_move_idle = {FRAME_stand31, FRAME_stand60, brain_frames_idle, brain_stand};
 
-void brain_idle (edict_t *self)
+void brain_idle (struct edict_s *self)
 {
 	gi.sound (self, CHAN_AUTO, sound_idle3, 1, ATTN_IDLE, 0);
 	self->monsterinfo.currentmove = &brain_move_idle;
@@ -176,7 +176,7 @@ mmove_t brain_move_walk1 = {FRAME_walk101, FRAME_walk111, brain_frames_walk1, NU
 
 // walk2 is FUBAR, do not use
 #if 0
-void brain_walk2_cycle (edict_t *self)
+void brain_walk2_cycle (struct edict_s *self)
 {
 	if (random() > 0.1)
 		self->monsterinfo.nextframe = FRAME_walk220;
@@ -220,7 +220,7 @@ mframe_t brain_frames_walk2 [] =
 	ai_walk,	4,	brain_walk2_cycle,
 	ai_walk,	-1,	NULL,
 	ai_walk,	-1,	NULL,
-	ai_walk,	-8,	NULL,		
+	ai_walk,	-8,	NULL,
 	ai_walk,	0,	NULL,
 	ai_walk,	1,	NULL,
 	ai_walk,	5,	NULL,
@@ -231,7 +231,7 @@ mframe_t brain_frames_walk2 [] =
 mmove_t brain_move_walk2 = {FRAME_walk201, FRAME_walk240, brain_frames_walk2, NULL};
 #endif
 
-void brain_walk (edict_t *self)
+void brain_walk (struct edict_s *self)
 {
 //	if (random() <= 0.5)
 		self->monsterinfo.currentmove = &brain_move_walk1;
@@ -310,7 +310,7 @@ mmove_t brain_move_pain1 = {FRAME_pain101, FRAME_pain121, brain_frames_pain1, br
 // DUCK
 //
 
-void brain_duck_down (edict_t *self)
+void brain_duck_down (struct edict_s *self)
 {
 	if (self->monsterinfo.aiflags & AI_DUCKED)
 		return;
@@ -320,7 +320,7 @@ void brain_duck_down (edict_t *self)
 	gi.linkentity (self);
 }
 
-void brain_duck_hold (edict_t *self)
+void brain_duck_hold (struct edict_s *self)
 {
 	if (level.time >= self->monsterinfo.pausetime)
 		self->monsterinfo.aiflags &= ~AI_HOLD_FRAME;
@@ -328,7 +328,7 @@ void brain_duck_hold (edict_t *self)
 		self->monsterinfo.aiflags |= AI_HOLD_FRAME;
 }
 
-void brain_duck_up (edict_t *self)
+void brain_duck_up (struct edict_s *self)
 {
 	self->monsterinfo.aiflags &= ~AI_DUCKED;
 	self->maxs[2] += 32;
@@ -349,7 +349,7 @@ mframe_t brain_frames_duck [] =
 };
 mmove_t brain_move_duck = {FRAME_duck01, FRAME_duck08, brain_frames_duck, brain_run};
 
-void brain_dodge (edict_t *self, edict_t *attacker, float eta)
+void brain_dodge (struct edict_s *self, struct edict_s *attacker, float eta)
 {
 	if (random() > 0.25)
 		return;
@@ -400,12 +400,12 @@ mmove_t brain_move_death1 = {FRAME_death101, FRAME_death118, brain_frames_death1
 // MELEE
 //
 
-void brain_swing_right (edict_t *self)
+void brain_swing_right (struct edict_s *self)
 {
 	gi.sound (self, CHAN_BODY, sound_melee1, 1, ATTN_NORM, 0);
 }
 
-void brain_hit_right (edict_t *self)
+void brain_hit_right (struct edict_s *self)
 {
 	vec3_t	aim;
 
@@ -414,12 +414,12 @@ void brain_hit_right (edict_t *self)
 		gi.sound (self, CHAN_WEAPON, sound_melee3, 1, ATTN_NORM, 0);
 }
 
-void brain_swing_left (edict_t *self)
+void brain_swing_left (struct edict_s *self)
 {
 	gi.sound (self, CHAN_BODY, sound_melee2, 1, ATTN_NORM, 0);
 }
 
-void brain_hit_left (edict_t *self)
+void brain_hit_left (struct edict_s *self)
 {
 	vec3_t	aim;
 
@@ -451,14 +451,14 @@ mframe_t brain_frames_attack1 [] =
 };
 mmove_t brain_move_attack1 = {FRAME_attak101, FRAME_attak118, brain_frames_attack1, brain_run};
 
-void brain_chest_open (edict_t *self)
+void brain_chest_open (struct edict_s *self)
 {
 	self->spawnflags &= ~65536;
 	self->monsterinfo.power_armor_type = POWER_ARMOR_NONE;
 	gi.sound (self, CHAN_BODY, sound_chest_open, 1, ATTN_NORM, 0);
 }
 
-void brain_tentacle_attack (edict_t *self)
+void brain_tentacle_attack (struct edict_s *self)
 {
 	vec3_t	aim;
 
@@ -468,7 +468,7 @@ void brain_tentacle_attack (edict_t *self)
 	gi.sound (self, CHAN_WEAPON, sound_tentacles_retract, 1, ATTN_NORM, 0);
 }
 
-void brain_chest_closed (edict_t *self)
+void brain_chest_closed (struct edict_s *self)
 {
 	self->monsterinfo.power_armor_type = POWER_ARMOR_SCREEN;
 	if (self->spawnflags & 65536)
@@ -500,7 +500,7 @@ mframe_t brain_frames_attack2 [] =
 };
 mmove_t brain_move_attack2 = {FRAME_attak201, FRAME_attak217, brain_frames_attack2, brain_run};
 
-void brain_melee(edict_t *self)
+void brain_melee(struct edict_s *self)
 {
 	if (random() <= 0.5)
 		self->monsterinfo.currentmove = &brain_move_attack1;
@@ -529,7 +529,7 @@ mframe_t brain_frames_run [] =
 };
 mmove_t brain_move_run = {FRAME_walk101, FRAME_walk111, brain_frames_run, NULL};
 
-void brain_run (edict_t *self)
+void brain_run (struct edict_s *self)
 {
 	self->monsterinfo.power_armor_type = POWER_ARMOR_SCREEN;
 	if (self->monsterinfo.aiflags & AI_STAND_GROUND)
@@ -539,7 +539,7 @@ void brain_run (edict_t *self)
 }
 
 
-void brain_pain (edict_t *self, edict_t *other, float kick, int damage)
+void brain_pain (struct edict_s *self, struct edict_s *other, float kick, int damage)
 {
 	float	r;
 
@@ -571,7 +571,7 @@ void brain_pain (edict_t *self, edict_t *other, float kick, int damage)
 	}
 }
 
-void brain_dead (edict_t *self)
+void brain_dead (struct edict_s *self)
 {
 	VectorSet (self->mins, -16, -16, -24);
 	VectorSet (self->maxs, 16, 16, -8);
@@ -583,7 +583,7 @@ void brain_dead (edict_t *self)
 
 
 
-void brain_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damage, vec3_t point)
+void brain_die (struct edict_s *self, struct edict_s *inflictor, struct edict_s *attacker, int damage, vec3_t point)
 {
 	int		n;
 
@@ -618,7 +618,7 @@ void brain_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damage
 
 /*QUAKED monster_brain (1 .5 0) (-16 -16 -24) (16 16 32) Ambush Trigger_Spawn Sight
 */
-void SP_monster_brain (edict_t *self)
+void SP_monster_brain (struct edict_s *self)
 {
 	if (deathmatch->value)
 	{
@@ -669,7 +669,7 @@ void SP_monster_brain (edict_t *self)
 
 	gi.linkentity (self);
 
-	self->monsterinfo.currentmove = &brain_move_stand;	
+	self->monsterinfo.currentmove = &brain_move_stand;
 	self->monsterinfo.scale = MODEL_SCALE;
 
 	walkmonster_start (self);

@@ -88,7 +88,7 @@ baseline will be transmitted
 */
 void SV_CreateBaseline (void)
 {
-	edict_t			*svent;
+	struct edict_s			*svent;
 	int				entnum;
 
 	for (entnum = 1; entnum < ge->num_edicts ; entnum++)
@@ -289,7 +289,7 @@ A brand new game has been started
 void SV_InitGame (void)
 {
 	int		i;
-	edict_t	*ent;
+	struct edict_s	*ent;
 	char	idmaster[32];
 
 	if (svs.initialized)

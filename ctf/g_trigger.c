@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "g_local.h"
 
 
-void InitTrigger (edict_t *self)
+void InitTrigger (struct edict_s *self)
 {
 	if (!VectorCompare (self->s.angles, vec3_origin))
 		G_SetMovedir (self->s.angles, self->movedir);
@@ -33,7 +33,7 @@ void InitTrigger (edict_t *self)
 
 
 // the wait time has passed, so set back up for another activation
-void multi_wait (edict_t *ent)
+void multi_wait (struct edict_s *ent)
 {
 	ent->nextthink = 0;
 }
@@ -42,7 +42,7 @@ void multi_wait (edict_t *ent)
 // the trigger was just activated
 // ent->activator should be set to the activator so it can be held through a delay
 // so wait for the delay time before firing
-void multi_trigger (edict_t *ent)
+void multi_trigger (struct edict_s *ent)
 {
 	if (ent->nextthink)
 		return;		// already been triggered
@@ -63,13 +63,13 @@ void multi_trigger (edict_t *ent)
 	}
 }
 
-void Use_Multi (edict_t *ent, edict_t *other, edict_t *activator)
+void Use_Multi (struct edict_s *ent, struct edict_s *other, struct edict_s *activator)
 {
 	ent->activator = activator;
 	multi_trigger (ent);
 }
 
-void Touch_Multi (edict_t *self, edict_t *other, plane_t *plane, csurface_t *surf)
+void Touch_Multi (struct edict_s *self, struct edict_s *other, plane_t *plane, csurface_t *surf)
 {
 	if(other->client)
 	{
@@ -108,14 +108,14 @@ sounds
 4)
 set "message" to text string
 */
-void trigger_enable (edict_t *self, edict_t *other, edict_t *activator)
+void trigger_enable (struct edict_s *self, struct edict_s *other, struct edict_s *activator)
 {
 	self->solid = SOLID_TRIGGER;
 	self->use = Use_Multi;
 	gi.linkentity (self);
 }
 
-void SP_trigger_multiple (edict_t *ent)
+void SP_trigger_multiple (struct edict_s *ent)
 {
 	if (ent->sounds == 1)
 		ent->noise_index = gi.soundindex ("misc/secret.wav");
@@ -165,7 +165,7 @@ sounds
 "message"	string to be displayed when triggered
 */
 
-void SP_trigger_once(edict_t *ent)
+void SP_trigger_once(struct edict_s *ent)
 {
 	// make old maps work because I messed up on flag assignments here
 	// triggered was on bit 1 when it should have been on bit 4
@@ -186,12 +186,12 @@ void SP_trigger_once(edict_t *ent)
 /*QUAKED trigger_relay (.5 .5 .5) (-8 -8 -8) (8 8 8)
 This fixed size trigger cannot be touched, it can only be fired by other events.
 */
-void trigger_relay_use (edict_t *self, edict_t *other, edict_t *activator)
+void trigger_relay_use (struct edict_s *self, struct edict_s *other, struct edict_s *activator)
 {
 	G_UseTargets (self, activator);
 }
 
-void SP_trigger_relay (edict_t *self)
+void SP_trigger_relay (struct edict_s *self)
 {
 	self->use = trigger_relay_use;
 }
@@ -209,7 +209,7 @@ trigger_key
 A relay trigger that only fires it's targets if player has the proper key.
 Use "item" to specify the required key, for example "key_data_cd"
 */
-void trigger_key_use (edict_t *self, edict_t *other, edict_t *activator)
+void trigger_key_use (struct edict_s *self, struct edict_s *other, struct edict_s *activator)
 {
 	int			index;
 
@@ -233,7 +233,7 @@ void trigger_key_use (edict_t *self, edict_t *other, edict_t *activator)
 	if (coop->value)
 	{
 		int		player;
-		edict_t	*ent;
+		struct edict_s	*ent;
 
 		if (strcmp(self->item->classname, "key_power_cube") == 0)
 		{
@@ -279,7 +279,7 @@ void trigger_key_use (edict_t *self, edict_t *other, edict_t *activator)
 	self->use = NULL;
 }
 
-void SP_trigger_key (edict_t *self)
+void SP_trigger_key (struct edict_s *self)
 {
 	if (!st.item)
 	{
@@ -323,7 +323,7 @@ If nomessage is not set, t will print "1 more.. " etc when triggered and "sequen
 After the counter has been triggered "count" times (default 2), it will fire all of it's targets and remove itself.
 */
 
-void trigger_counter_use(edict_t *self, edict_t *other, edict_t *activator)
+void trigger_counter_use(struct edict_s *self, struct edict_s *other, struct edict_s *activator)
 {
 	if (self->count == 0)
 		return;
@@ -349,7 +349,7 @@ void trigger_counter_use(edict_t *self, edict_t *other, edict_t *activator)
 	multi_trigger (self);
 }
 
-void SP_trigger_counter (edict_t *self)
+void SP_trigger_counter (struct edict_s *self)
 {
 	self->wait = -1;
 	if (!self->count)
@@ -370,7 +370,7 @@ trigger_always
 /*QUAKED trigger_always (.5 .5 .5) (-8 -8 -8) (8 8 8)
 This trigger will always fire.  It is activated by the world.
 */
-void SP_trigger_always (edict_t *ent)
+void SP_trigger_always (struct edict_s *ent)
 {
 	// we must have some delay to make sure our use targets are present
 	if (ent->delay < 0.2)
@@ -391,7 +391,7 @@ trigger_push
 
 static int windsound;
 
-void trigger_push_touch (edict_t *self, edict_t *other, plane_t *plane, csurface_t *surf)
+void trigger_push_touch (struct edict_s *self, struct edict_s *other, plane_t *plane, csurface_t *surf)
 {
 	if (strcmp(other->classname, "grenade") == 0)
 	{
@@ -421,7 +421,7 @@ void trigger_push_touch (edict_t *self, edict_t *other, plane_t *plane, csurface
 Pushes the player
 "speed"		defaults to 1000
 */
-void SP_trigger_push (edict_t *self)
+void SP_trigger_push (struct edict_s *self)
 {
 	InitTrigger (self);
 	windsound = gi.soundindex ("misc/windfly.wav");
@@ -452,7 +452,7 @@ NO_PROTECTION	*nothing* stops the damage
 "dmg"			default 5 (whole numbers only)
 
 */
-void hurt_use (edict_t *self, edict_t *other, edict_t *activator)
+void hurt_use (struct edict_s *self, struct edict_s *other, struct edict_s *activator)
 {
 	if (self->solid == SOLID_NOT)
 		self->solid = SOLID_TRIGGER;
@@ -465,7 +465,7 @@ void hurt_use (edict_t *self, edict_t *other, edict_t *activator)
 }
 
 
-void hurt_touch (edict_t *self, edict_t *other, plane_t *plane, csurface_t *surf)
+void hurt_touch (struct edict_s *self, struct edict_s *other, plane_t *plane, csurface_t *surf)
 {
 	int		dflags;
 
@@ -493,7 +493,7 @@ void hurt_touch (edict_t *self, edict_t *other, plane_t *plane, csurface_t *surf
 	T_Damage (other, self, self, vec3_origin, other->s.origin, vec3_origin, self->dmg, self->dmg, dflags, MOD_TRIGGER_HURT);
 }
 
-void SP_trigger_hurt (edict_t *self)
+void SP_trigger_hurt (struct edict_s *self)
 {
 	InitTrigger (self);
 
@@ -529,12 +529,12 @@ the value of "gravity".  1.0 is standard
 gravity for the level.
 */
 
-void trigger_gravity_touch (edict_t *self, edict_t *other, plane_t *plane, csurface_t *surf)
+void trigger_gravity_touch (struct edict_s *self, struct edict_s *other, plane_t *plane, csurface_t *surf)
 {
 	other->gravity = self->gravity;
 }
 
-void SP_trigger_gravity (edict_t *self)
+void SP_trigger_gravity (struct edict_s *self)
 {
 	if (st.gravity == 0)
 	{
@@ -563,7 +563,7 @@ Walking monsters that touch this will jump in the direction of the trigger's ang
 "height" default to 200, the speed thrown upwards
 */
 
-void trigger_monsterjump_touch (edict_t *self, edict_t *other, plane_t *plane, csurface_t *surf)
+void trigger_monsterjump_touch (struct edict_s *self, struct edict_s *other, plane_t *plane, csurface_t *surf)
 {
 	if (other->flags & (FL_FLY | FL_SWIM) )
 		return;
@@ -583,7 +583,7 @@ void trigger_monsterjump_touch (edict_t *self, edict_t *other, plane_t *plane, c
 	other->velocity[2] = self->movedir[2];
 }
 
-void SP_trigger_monsterjump (edict_t *self)
+void SP_trigger_monsterjump (struct edict_s *self)
 {
 	if (!self->speed)
 		self->speed = 200;

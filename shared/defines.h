@@ -90,4 +90,28 @@ typedef enum {mod_bad, mod_brush, mod_sprite, mod_alias } modtype_t;
 // 3dstudio environment map names
 extern char *suf[6];
 
+#define MAX_ENT_CLUSTERS 16
+
+//
+// key / value info strings
+//
+#define MAX_INFO_KEY 64
+#define MAX_INFO_VALUE 64
+#define MAX_INFO_STRING 512
+
+typedef enum
+{
+    WEAPON_READY,
+    WEAPON_ACTIVATING,
+    WEAPON_DROPPING,
+    WEAPON_FIRING
+} weaponstate_t;
+
+typedef enum
+{
+    DAMAGE_NO,
+    DAMAGE_YES,            // will take damage if hit
+    DAMAGE_AIM            // auto targeting recognizes this
+} damage_t;
+
 #endif // ____SHARED_DEFINES_H__

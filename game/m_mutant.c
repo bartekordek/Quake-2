@@ -47,7 +47,7 @@ static int	sound_thud;
 // SOUNDS
 //
 
-void mutant_step (edict_t *self)
+void mutant_step (struct edict_s *self)
 {
 	int		n;
 	n = (rand() + 1) % 3;
@@ -59,17 +59,17 @@ void mutant_step (edict_t *self)
 		gi.sound (self, CHAN_VOICE, sound_step3, 1, ATTN_NORM, 0);
 }
 
-void mutant_sight (edict_t *self, edict_t *other)
+void mutant_sight (struct edict_s *self, struct edict_s *other)
 {
 	gi.sound (self, CHAN_VOICE, sound_sight, 1, ATTN_NORM, 0);
 }
 
-void mutant_search (edict_t *self)
+void mutant_search (struct edict_s *self)
 {
 	gi.sound (self, CHAN_VOICE, sound_search, 1, ATTN_NORM, 0);
 }
 
-void mutant_swing (edict_t *self)
+void mutant_swing (struct edict_s *self)
 {
 	gi.sound (self, CHAN_VOICE, sound_swing, 1, ATTN_NORM, 0);
 }
@@ -140,7 +140,7 @@ mframe_t mutant_frames_stand [] =
 };
 mmove_t mutant_move_stand = {FRAME_stand101, FRAME_stand151, mutant_frames_stand, NULL};
 
-void mutant_stand (edict_t *self)
+void mutant_stand (struct edict_s *self)
 {
 	self->monsterinfo.currentmove = &mutant_move_stand;
 }
@@ -150,7 +150,7 @@ void mutant_stand (edict_t *self)
 // IDLE
 //
 
-void mutant_idle_loop (edict_t *self)
+void mutant_idle_loop (struct edict_s *self)
 {
 	if (random() < 0.75)
 		self->monsterinfo.nextframe = FRAME_stand155;
@@ -174,7 +174,7 @@ mframe_t mutant_frames_idle [] =
 };
 mmove_t mutant_move_idle = {FRAME_stand152, FRAME_stand164, mutant_frames_idle, mutant_stand};
 
-void mutant_idle (edict_t *self)
+void mutant_idle (struct edict_s *self)
 {
 	self->monsterinfo.currentmove = &mutant_move_idle;
 	gi.sound (self, CHAN_VOICE, sound_idle, 1, ATTN_IDLE, 0);
@@ -185,7 +185,7 @@ void mutant_idle (edict_t *self)
 // WALK
 //
 
-void mutant_walk (edict_t *self);
+void mutant_walk (struct edict_s *self);
 
 mframe_t mutant_frames_walk [] =
 {
@@ -204,7 +204,7 @@ mframe_t mutant_frames_walk [] =
 };
 mmove_t mutant_move_walk = {FRAME_walk05, FRAME_walk16, mutant_frames_walk, NULL};
 
-void mutant_walk_loop (edict_t *self)
+void mutant_walk_loop (struct edict_s *self)
 {
 	self->monsterinfo.currentmove = &mutant_move_walk;
 }
@@ -218,7 +218,7 @@ mframe_t mutant_frames_start_walk [] =
 };
 mmove_t mutant_move_start_walk = {FRAME_walk01, FRAME_walk04, mutant_frames_start_walk, mutant_walk_loop};
 
-void mutant_walk (edict_t *self)
+void mutant_walk (struct edict_s *self)
 {
 	self->monsterinfo.currentmove = &mutant_move_start_walk;
 }
@@ -239,7 +239,7 @@ mframe_t mutant_frames_run [] =
 };
 mmove_t mutant_move_run = {FRAME_run03, FRAME_run08, mutant_frames_run, NULL};
 
-void mutant_run (edict_t *self)
+void mutant_run (struct edict_s *self)
 {
 	if (self->monsterinfo.aiflags & AI_STAND_GROUND)
 		self->monsterinfo.currentmove = &mutant_move_stand;
@@ -252,7 +252,7 @@ void mutant_run (edict_t *self)
 // MELEE
 //
 
-void mutant_hit_left (edict_t *self)
+void mutant_hit_left (struct edict_s *self)
 {
 	vec3_t	aim;
 
@@ -263,7 +263,7 @@ void mutant_hit_left (edict_t *self)
 		gi.sound (self, CHAN_WEAPON, sound_swing, 1, ATTN_NORM, 0);
 }
 
-void mutant_hit_right (edict_t *self)
+void mutant_hit_right (struct edict_s *self)
 {
 	vec3_t	aim;
 
@@ -274,7 +274,7 @@ void mutant_hit_right (edict_t *self)
 		gi.sound (self, CHAN_WEAPON, sound_swing, 1, ATTN_NORM, 0);
 }
 
-void mutant_check_refire (edict_t *self)
+void mutant_check_refire (struct edict_s *self)
 {
 	if (!self->enemy || !self->enemy->inuse || self->enemy->health <= 0)
 		return;
@@ -295,7 +295,7 @@ mframe_t mutant_frames_attack [] =
 };
 mmove_t mutant_move_attack = {FRAME_attack09, FRAME_attack15, mutant_frames_attack, mutant_run};
 
-void mutant_melee (edict_t *self)
+void mutant_melee (struct edict_s *self)
 {
 	self->monsterinfo.currentmove = &mutant_move_attack;
 }
@@ -305,7 +305,7 @@ void mutant_melee (edict_t *self)
 // ATTACK
 //
 
-void mutant_jump_touch (edict_t *self, edict_t *other, plane_t *plane, csurface_t *surf)
+void mutant_jump_touch (struct edict_s *self, struct edict_s *other, plane_t *plane, csurface_t *surf)
 {
 	if (self->health <= 0)
 	{
@@ -342,7 +342,7 @@ void mutant_jump_touch (edict_t *self, edict_t *other, plane_t *plane, csurface_
 	self->touch = NULL;
 }
 
-void mutant_jump_takeoff (edict_t *self)
+void mutant_jump_takeoff (struct edict_s *self)
 {
 	vec3_t	forward;
 
@@ -357,7 +357,7 @@ void mutant_jump_takeoff (edict_t *self)
 	self->touch = mutant_jump_touch;
 }
 
-void mutant_check_landing (edict_t *self)
+void mutant_check_landing (struct edict_s *self)
 {
 	if (self->groundentity)
 	{
@@ -386,7 +386,7 @@ mframe_t mutant_frames_jump [] =
 };
 mmove_t mutant_move_jump = {FRAME_attack01, FRAME_attack08, mutant_frames_jump, mutant_run};
 
-void mutant_jump (edict_t *self)
+void mutant_jump (struct edict_s *self)
 {
 	self->monsterinfo.currentmove = &mutant_move_jump;
 }
@@ -396,14 +396,14 @@ void mutant_jump (edict_t *self)
 // CHECKATTACK
 //
 
-qboolean mutant_check_melee (edict_t *self)
+qboolean mutant_check_melee (struct edict_s *self)
 {
 	if (range (self, self->enemy) == RANGE_MELEE)
 		return true;
 	return false;
 }
 
-qboolean mutant_check_jump (edict_t *self)
+qboolean mutant_check_jump (struct edict_s *self)
 {
 	vec3_t	v;
 	float	distance;
@@ -430,7 +430,7 @@ qboolean mutant_check_jump (edict_t *self)
 	return true;
 }
 
-qboolean mutant_checkattack (edict_t *self)
+qboolean mutant_checkattack (struct edict_s *self)
 {
 	if (!self->enemy || self->enemy->health <= 0)
 		return false;
@@ -493,7 +493,7 @@ mframe_t mutant_frames_pain3 [] =
 };
 mmove_t mutant_move_pain3 = {FRAME_pain301, FRAME_pain311, mutant_frames_pain3, mutant_run};
 
-void mutant_pain (edict_t *self, edict_t *other, float kick, int damage)
+void mutant_pain (struct edict_s *self, struct edict_s *other, float kick, int damage)
 {
 	float	r;
 
@@ -531,7 +531,7 @@ void mutant_pain (edict_t *self, edict_t *other, float kick, int damage)
 // DEATH
 //
 
-void mutant_dead (edict_t *self)
+void mutant_dead (struct edict_s *self)
 {
 	VectorSet (self->mins, -16, -16, -24);
 	VectorSet (self->maxs, 16, 16, -8);
@@ -571,7 +571,7 @@ mframe_t mutant_frames_death2 [] =
 };
 mmove_t mutant_move_death2 = {FRAME_death201, FRAME_death210, mutant_frames_death2, mutant_dead};
 
-void mutant_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damage, vec3_t point)
+void mutant_die (struct edict_s *self, struct edict_s *inflictor, struct edict_s *attacker, int damage, vec3_t point)
 {
 	int		n;
 
@@ -608,7 +608,7 @@ void mutant_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damag
 
 /*QUAKED monster_mutant (1 .5 0) (-32 -32 -24) (32 32 32) Ambush Trigger_Spawn Sight
 */
-void SP_monster_mutant (edict_t *self)
+void SP_monster_mutant (struct edict_s *self)
 {
 	if (deathmatch->value)
 	{

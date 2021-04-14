@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -39,16 +39,16 @@ static int	sound_search;
 static int	sound_sight;
 
 
-void flipper_stand (edict_t *self);
+void flipper_stand (struct edict_s *self);
 
 mframe_t flipper_frames_stand [] =
 {
 	ai_stand, 0, NULL
 };
-	
+
 mmove_t	flipper_move_stand = {FRAME_flphor01, FRAME_flphor01, flipper_frames_stand, NULL};
 
-void flipper_stand (edict_t *self)
+void flipper_stand (struct edict_s *self)
 {
 		self->monsterinfo.currentmove = &flipper_move_stand;
 }
@@ -86,7 +86,7 @@ mframe_t flipper_frames_run [] =
 };
 mmove_t flipper_move_run_loop = {FRAME_flpver06, FRAME_flpver29, flipper_frames_run, NULL};
 
-void flipper_run_loop (edict_t *self)
+void flipper_run_loop (struct edict_s *self)
 {
 	self->monsterinfo.currentmove = &flipper_move_run_loop;
 }
@@ -102,12 +102,12 @@ mframe_t flipper_frames_run_start [] =
 };
 mmove_t flipper_move_run_start = {FRAME_flpver01, FRAME_flpver06, flipper_frames_run_start, flipper_run_loop};
 
-void flipper_run (edict_t *self)
+void flipper_run (struct edict_s *self)
 {
 	self->monsterinfo.currentmove = &flipper_move_run_start;
 }
 
-/* Standard Swimming */ 
+/* Standard Swimming */
 mframe_t flipper_frames_walk [] =
 {
 	ai_walk, 4, NULL,
@@ -137,7 +137,7 @@ mframe_t flipper_frames_walk [] =
 };
 mmove_t flipper_move_walk = {FRAME_flphor01, FRAME_flphor24, flipper_frames_walk, NULL};
 
-void flipper_walk (edict_t *self)
+void flipper_walk (struct edict_s *self)
 {
 	self->monsterinfo.currentmove = &flipper_move_walk;
 }
@@ -152,7 +152,7 @@ mframe_t flipper_frames_start_run [] =
 };
 mmove_t flipper_move_start_run = {FRAME_flphor01, FRAME_flphor05, flipper_frames_start_run, NULL};
 
-void flipper_start_run (edict_t *self)
+void flipper_start_run (struct edict_s *self)
 {
 	self->monsterinfo.currentmove = &flipper_move_start_run;
 }
@@ -177,7 +177,7 @@ mframe_t flipper_frames_pain1 [] =
 };
 mmove_t flipper_move_pain1 = {FRAME_flppn201, FRAME_flppn205, flipper_frames_pain1, flipper_run};
 
-void flipper_bite (edict_t *self)
+void flipper_bite (struct edict_s *self)
 {
 	vec3_t	aim;
 
@@ -185,7 +185,7 @@ void flipper_bite (edict_t *self)
 	fire_hit (self, aim, 5, 0);
 }
 
-void flipper_preattack (edict_t *self)
+void flipper_preattack (struct edict_s *self)
 {
 	gi.sound (self, CHAN_WEAPON, sound_chomp, 1, ATTN_NORM, 0);
 }
@@ -215,12 +215,12 @@ mframe_t flipper_frames_attack [] =
 };
 mmove_t flipper_move_attack = {FRAME_flpbit01, FRAME_flpbit20, flipper_frames_attack, flipper_run};
 
-void flipper_melee(edict_t *self)
+void flipper_melee(struct edict_s *self)
 {
 	self->monsterinfo.currentmove = &flipper_move_attack;
 }
 
-void flipper_pain (edict_t *self, edict_t *other, float kick, int damage)
+void flipper_pain (struct edict_s *self, struct edict_s *other, float kick, int damage)
 {
 	int		n;
 
@@ -231,7 +231,7 @@ void flipper_pain (edict_t *self, edict_t *other, float kick, int damage)
 		return;
 
 	self->pain_debounce_time = level.time + 3;
-	
+
 	if (skill->value == 3)
 		return;		// no pain anims in nightmare
 
@@ -248,7 +248,7 @@ void flipper_pain (edict_t *self, edict_t *other, float kick, int damage)
 	}
 }
 
-void flipper_dead (edict_t *self)
+void flipper_dead (struct edict_s *self)
 {
 	VectorSet (self->mins, -16, -16, -24);
 	VectorSet (self->maxs, 16, 16, -8);
@@ -324,12 +324,12 @@ mframe_t flipper_frames_death [] =
 };
 mmove_t flipper_move_death = {FRAME_flpdth01, FRAME_flpdth56, flipper_frames_death, flipper_dead};
 
-void flipper_sight (edict_t *self, edict_t *other)
+void flipper_sight (struct edict_s *self, struct edict_s *other)
 {
 	gi.sound (self, CHAN_VOICE, sound_sight, 1, ATTN_NORM, 0);
 }
 
-void flipper_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damage, vec3_t point)
+void flipper_die (struct edict_s *self, struct edict_s *inflictor, struct edict_s *attacker, int damage, vec3_t point)
 {
 	int		n;
 
@@ -358,7 +358,7 @@ void flipper_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int dama
 
 /*QUAKED monster_flipper (1 .5 0) (-16 -16 -24) (16 16 32) Ambush Trigger_Spawn Sight
 */
-void SP_monster_flipper (edict_t *self)
+void SP_monster_flipper (struct edict_s *self)
 {
 	if (deathmatch->value)
 	{
@@ -366,9 +366,9 @@ void SP_monster_flipper (edict_t *self)
 		return;
 	}
 
-	sound_pain1		= gi.soundindex ("flipper/flppain1.wav");	
-	sound_pain2		= gi.soundindex ("flipper/flppain2.wav");	
-	sound_death		= gi.soundindex ("flipper/flpdeth1.wav");	
+	sound_pain1		= gi.soundindex ("flipper/flppain1.wav");
+	sound_pain2		= gi.soundindex ("flipper/flppain2.wav");
+	sound_death		= gi.soundindex ("flipper/flpdeth1.wav");
 	sound_chomp		= gi.soundindex ("flipper/flpatck1.wav");
 	sound_attack	= gi.soundindex ("flipper/flpatck2.wav");
 	sound_idle		= gi.soundindex ("flipper/flpidle1.wav");
@@ -396,7 +396,7 @@ void SP_monster_flipper (edict_t *self)
 
 	gi.linkentity (self);
 
-	self->monsterinfo.currentmove = &flipper_move_stand;	
+	self->monsterinfo.currentmove = &flipper_move_stand;
 	self->monsterinfo.scale = MODEL_SCALE;
 
 	swimmonster_start (self);

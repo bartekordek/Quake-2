@@ -497,7 +497,7 @@ pack_t *FS_LoadPackFile (char *packfile)
 	pack->numfiles = numpackfiles;
 	pack->files = newfiles;
 
-	Com_Printf_G ("Added packfile %s (%i files)\n", packfile, numpackfiles);
+	Com_Printf_C("Added packfile %s (%i files)\n", packfile, numpackfiles);
 	return pack;
 }
 

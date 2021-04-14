@@ -749,7 +749,7 @@ extern unsigned d_8to24table[256]; // base
 void    Sys_MakeCodeWriteable (unsigned long startaddr, unsigned long length);
 void    Sys_SetFPCW (void);
 
-void LoadPCX (char *filename, byte **pic, byte **palette, int *width, int *height);
+void ref_soft_LoadPCX(char *filename, byte **pic, byte **palette, int *width, int *height);
 
 void    ref_soft_R_InitImages (void);
 void    ref_soft_R_ShutdownImages (void);

@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "m_player.h"
 
 
-char *ClientTeam (edict_t *ent)
+char *ClientTeam (struct edict_s *ent)
 {
 	char		*p;
 	static char	value[512];
@@ -46,7 +46,7 @@ char *ClientTeam (edict_t *ent)
 	return ++p;
 }
 
-qboolean OnSameTeam (edict_t *ent1, edict_t *ent2)
+qboolean OnSameTeam (struct edict_s *ent1, struct edict_s *ent2)
 {
 	char	ent1Team [512];
 	char	ent2Team [512];
@@ -63,7 +63,7 @@ qboolean OnSameTeam (edict_t *ent1, edict_t *ent2)
 }
 
 
-void SelectNextItem (edict_t *ent, int itflags)
+void SelectNextItem (struct edict_s *ent, int itflags)
 {
 	gclient_t	*cl;
 	int			i, index;
@@ -100,7 +100,7 @@ void SelectNextItem (edict_t *ent, int itflags)
 	cl->pers.selected_item = -1;
 }
 
-void SelectPrevItem (edict_t *ent, int itflags)
+void SelectPrevItem (struct edict_s *ent, int itflags)
 {
 	gclient_t	*cl;
 	int			i, index;
@@ -137,7 +137,7 @@ void SelectPrevItem (edict_t *ent, int itflags)
 	cl->pers.selected_item = -1;
 }
 
-void ValidateSelectedItem (edict_t *ent)
+void ValidateSelectedItem (struct edict_s *ent)
 {
 	gclient_t	*cl;
 
@@ -159,14 +159,14 @@ Cmd_Give_f
 Give items to a client
 ==================
 */
-void Cmd_Give_f (edict_t *ent)
+void Cmd_Give_f (struct edict_s *ent)
 {
 	char		*name;
 	gitem_t		*it;
 	int			index;
 	int			i;
 	qboolean	give_all;
-	edict_t		*it_ent;
+	struct edict_s		*it_ent;
 
 	if (deathmatch->value && !sv_cheats->value)
 	{
@@ -315,7 +315,7 @@ Sets client to godmode
 argv(0) god
 ==================
 */
-void Cmd_God_f (edict_t *ent)
+void Cmd_God_f (struct edict_s *ent)
 {
 	char	*msg;
 
@@ -344,7 +344,7 @@ Sets client to notarget
 argv(0) notarget
 ==================
 */
-void Cmd_Notarget_f (edict_t *ent)
+void Cmd_Notarget_f (struct edict_s *ent)
 {
 	char	*msg;
 
@@ -371,7 +371,7 @@ Cmd_Noclip_f
 argv(0) noclip
 ==================
 */
-void Cmd_Noclip_f (edict_t *ent)
+void Cmd_Noclip_f (struct edict_s *ent)
 {
 	char	*msg;
 
@@ -403,7 +403,7 @@ Cmd_Use_f
 Use an inventory item
 ==================
 */
-void Cmd_Use_f (edict_t *ent)
+void Cmd_Use_f (struct edict_s *ent)
 {
 	int			index;
 	gitem_t		*it;
@@ -439,7 +439,7 @@ Cmd_Drop_f
 Drop an inventory item
 ==================
 */
-void Cmd_Drop_f (edict_t *ent)
+void Cmd_Drop_f (struct edict_s *ent)
 {
 	int			index;
 	gitem_t		*it;
@@ -480,7 +480,7 @@ void Cmd_Drop_f (edict_t *ent)
 Cmd_Inven_f
 =================
 */
-void Cmd_Inven_f (edict_t *ent)
+void Cmd_Inven_f (struct edict_s *ent)
 {
 	int			i;
 	gclient_t	*cl;
@@ -526,7 +526,7 @@ void Cmd_Inven_f (edict_t *ent)
 Cmd_InvUse_f
 =================
 */
-void Cmd_InvUse_f (edict_t *ent)
+void Cmd_InvUse_f (struct edict_s *ent)
 {
 	gitem_t		*it;
 
@@ -560,7 +560,7 @@ void Cmd_InvUse_f (edict_t *ent)
 Cmd_LastWeap_f
 =================
 */
-void Cmd_LastWeap_f (edict_t *ent)
+void Cmd_LastWeap_f (struct edict_s *ent)
 {
 	gclient_t	*cl;
 
@@ -578,7 +578,7 @@ void Cmd_LastWeap_f (edict_t *ent)
 Cmd_WeapPrev_f
 =================
 */
-void Cmd_WeapPrev_f (edict_t *ent)
+void Cmd_WeapPrev_f (struct edict_s *ent)
 {
 	gclient_t	*cl;
 	int			i, index;
@@ -614,7 +614,7 @@ void Cmd_WeapPrev_f (edict_t *ent)
 Cmd_WeapNext_f
 =================
 */
-void Cmd_WeapNext_f (edict_t *ent)
+void Cmd_WeapNext_f (struct edict_s *ent)
 {
 	gclient_t	*cl;
 	int			i, index;
@@ -650,7 +650,7 @@ void Cmd_WeapNext_f (edict_t *ent)
 Cmd_WeapLast_f
 =================
 */
-void Cmd_WeapLast_f (edict_t *ent)
+void Cmd_WeapLast_f (struct edict_s *ent)
 {
 	gclient_t	*cl;
 	int			index;
@@ -677,7 +677,7 @@ void Cmd_WeapLast_f (edict_t *ent)
 Cmd_InvDrop_f
 =================
 */
-void Cmd_InvDrop_f (edict_t *ent)
+void Cmd_InvDrop_f (struct edict_s *ent)
 {
 	gitem_t		*it;
 
@@ -703,7 +703,7 @@ void Cmd_InvDrop_f (edict_t *ent)
 Cmd_Kill_f
 =================
 */
-void Cmd_Kill_f (edict_t *ent)
+void Cmd_Kill_f (struct edict_s *ent)
 {
 //ZOID
 	if (ent->solid == SOLID_NOT)
@@ -723,7 +723,7 @@ void Cmd_Kill_f (edict_t *ent)
 Cmd_PutAway_f
 =================
 */
-void Cmd_PutAway_f (edict_t *ent)
+void Cmd_PutAway_f (struct edict_s *ent)
 {
 	ent->client->showscores = false;
 	ent->client->showhelp = false;
@@ -758,7 +758,7 @@ int PlayerSort (void const *a, void const *b)
 Cmd_Players_f
 =================
 */
-void Cmd_Players_f (edict_t *ent)
+void Cmd_Players_f (struct edict_s *ent)
 {
 	int		i;
 	int		count;
@@ -801,7 +801,7 @@ void Cmd_Players_f (edict_t *ent)
 Cmd_Wave_f
 =================
 */
-void Cmd_Wave_f (edict_t *ent)
+void Cmd_Wave_f (struct edict_s *ent)
 {
 	int		i;
 
@@ -847,7 +847,7 @@ void Cmd_Wave_f (edict_t *ent)
 	}
 }
 
-qboolean CheckFlood(edict_t *ent)
+qboolean CheckFlood(struct edict_s *ent)
 {
 	int		i;
 	gclient_t *cl;
@@ -863,7 +863,7 @@ qboolean CheckFlood(edict_t *ent)
         i = cl->flood_whenhead - flood_msgs->value + 1;
         if (i < 0)
             i = (sizeof(cl->flood_when)/sizeof(cl->flood_when[0])) + i;
-		if (cl->flood_when[i] && 
+		if (cl->flood_when[i] &&
 			level.time - cl->flood_when[i] < flood_persecond->value) {
 			cl->flood_locktill = level.time + flood_waitdelay->value;
 			gi.cprintf(ent, PRINT_CHAT, "Flood protection:  You can't talk for %d seconds.\n",
@@ -882,10 +882,10 @@ qboolean CheckFlood(edict_t *ent)
 Cmd_Say_f
 ==================
 */
-void Cmd_Say_f (edict_t *ent, qboolean team, qboolean arg0)
+void Cmd_Say_f (struct edict_s *ent, qboolean team, qboolean arg0)
 {
 	int		j;
-	edict_t	*other;
+	struct edict_s	*other;
 	char	*p;
 	char	text[2048];
 
@@ -951,7 +951,7 @@ void Cmd_Say_f (edict_t *ent, qboolean team, qboolean arg0)
 ClientCommand
 =================
 */
-void ClientCommand (edict_t *ent)
+void ClientCommand (struct edict_s *ent)
 {
 	char	*cmd;
 

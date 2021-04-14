@@ -360,7 +360,7 @@ qboolean	NET_GetPacket (netsrc_t sock, netadr_t *net_from, sizebuf_t *net_messag
 			if (err == WSAEWOULDBLOCK)
 				continue;
 			if (dedicated->value)	// let dedicated servers continue after errors
-				Com_Printf_G ("NET_GetPacket: %s", NET_ErrorString());
+				Com_Printf_C ("NET_GetPacket: %s", NET_ErrorString());
 			else
 				Com_Error (ERR_DROP, "NET_GetPacket: %s", NET_ErrorString());
 			continue;
@@ -370,7 +370,7 @@ qboolean	NET_GetPacket (netsrc_t sock, netadr_t *net_from, sizebuf_t *net_messag
 
 		if (ret == net_message->maxsize)
 		{
-			Com_Printf_G ("Oversize packet from %s\n", NET_AdrToString (*net_from));
+			Com_Printf_C ("Oversize packet from %s\n", NET_AdrToString (*net_from));
 			continue;
 		}
 
@@ -439,7 +439,7 @@ void NET_SendPacket (netsrc_t sock, int length, void *data, netadr_t to)
 
 		if (dedicated->value)	// let dedicated servers continue after errors
 		{
-			Com_Printf_G ("NET_SendPacket ERROR: %s\n", NET_ErrorString());
+			Com_Printf_C ("NET_SendPacket ERROR: %s\n", NET_ErrorString());
 		}
 		else
 		{
@@ -476,21 +476,21 @@ int NET_IPSocket (char *net_interface, int port)
 	{
 		err = WSAGetLastError();
 		if (err != WSAEAFNOSUPPORT)
-			Com_Printf_G ("WARNING: UDP_OpenSocket: socket: %s", NET_ErrorString());
+			Com_Printf_C ("WARNING: UDP_OpenSocket: socket: %s", NET_ErrorString());
 		return 0;
 	}
 
 	// make it non-blocking
 	if (ioctlsocket (newsocket, FIONBIO, &_true) == -1)
 	{
-		Com_Printf_G ("WARNING: UDP_OpenSocket: ioctl FIONBIO: %s\n", NET_ErrorString());
+		Com_Printf_C ("WARNING: UDP_OpenSocket: ioctl FIONBIO: %s\n", NET_ErrorString());
 		return 0;
 	}
 
 	// make it broadcast capable
 	if (setsockopt(newsocket, SOL_SOCKET, SO_BROADCAST, (char *)&i, sizeof(i)) == -1)
 	{
-		Com_Printf_G ("WARNING: UDP_OpenSocket: setsockopt SO_BROADCAST: %s\n", NET_ErrorString());
+		Com_Printf_C ("WARNING: UDP_OpenSocket: setsockopt SO_BROADCAST: %s\n", NET_ErrorString());
 		return 0;
 	}
 
@@ -508,7 +508,7 @@ int NET_IPSocket (char *net_interface, int port)
 
 	if( bind (newsocket, (void *)&address, sizeof(address)) == -1)
 	{
-		Com_Printf_G ("WARNING: UDP_OpenSocket: bind: %s\n", NET_ErrorString());
+		Com_Printf_C ("WARNING: UDP_OpenSocket: bind: %s\n", NET_ErrorString());
 		closesocket (newsocket);
 		return 0;
 	}
@@ -585,21 +585,21 @@ int NET_IPXSocket (int port)
 	{
 		err = WSAGetLastError();
 		if (err != WSAEAFNOSUPPORT)
-			Com_Printf_G ("WARNING: IPX_Socket: socket: %s\n", NET_ErrorString());
+			Com_Printf_C ("WARNING: IPX_Socket: socket: %s\n", NET_ErrorString());
 		return 0;
 	}
 
 	// make it non-blocking
 	if (ioctlsocket (newsocket, FIONBIO, &_true) == -1)
 	{
-		Com_Printf_G ("WARNING: IPX_Socket: ioctl FIONBIO: %s\n", NET_ErrorString());
+		Com_Printf_C ("WARNING: IPX_Socket: ioctl FIONBIO: %s\n", NET_ErrorString());
 		return 0;
 	}
 
 	// make it broadcast capable
 	if (setsockopt(newsocket, SOL_SOCKET, SO_BROADCAST, (char *)&_true, sizeof(_true)) == -1)
 	{
-		Com_Printf_G ("WARNING: IPX_Socket: setsockopt SO_BROADCAST: %s\n", NET_ErrorString());
+		Com_Printf_C ("WARNING: IPX_Socket: setsockopt SO_BROADCAST: %s\n", NET_ErrorString());
 		return 0;
 	}
 
@@ -613,7 +613,7 @@ int NET_IPXSocket (int port)
 
 	if( bind (newsocket, (void *)&address, sizeof(address)) == -1)
 	{
-		Com_Printf_G ("WARNING: IPX_Socket: bind: %s\n", NET_ErrorString());
+		Com_Printf_C ("WARNING: IPX_Socket: bind: %s\n", NET_ErrorString());
 		closesocket (newsocket);
 		return 0;
 	}
@@ -759,7 +759,7 @@ void NET_Init (void)
 	if (r)
 		Com_Error (ERR_FATAL,"Winsock initialization failed.");
 
-	Com_Printf_G("Winsock Initialized\n");
+	Com_Printf_C("Winsock Initialized\n");
 
 	noudp = Cvar_Get ("noudp", "0", CVAR_NOSET);
 	noipx = Cvar_Get ("noipx", "0", CVAR_NOSET);

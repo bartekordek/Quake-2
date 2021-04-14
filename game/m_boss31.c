@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -28,8 +28,8 @@ jorg
 #include "g_local.h"
 #include "m_boss31.h"
 
-extern SP_monster_makron (edict_t *self);
-qboolean visible (edict_t *self, edict_t *other);
+extern SP_monster_makron (struct edict_s *self);
+qboolean visible (struct edict_s *self, struct edict_s *other);
 
 static int	sound_pain1;
 static int	sound_pain2;
@@ -46,11 +46,11 @@ static int	sound_step_left;
 static int	sound_step_right;
 static int	sound_death_hit;
 
-void BossExplode (edict_t *self);
-void MakronToss (edict_t *self);
+void BossExplode (struct edict_s *self);
+void MakronToss (struct edict_s *self);
 
 
-void jorg_search (edict_t *self)
+void jorg_search (struct edict_s *self)
 {
 	float r;
 
@@ -65,16 +65,16 @@ void jorg_search (edict_t *self)
 }
 
 
-void jorg_dead (edict_t *self);
-void jorgBFG (edict_t *self);
-void jorgMachineGun (edict_t *self);
-void jorg_firebullet (edict_t *self);
-void jorg_reattack1(edict_t *self);
-void jorg_attack1(edict_t *self);
-void jorg_idle(edict_t *self);
-void jorg_step_left(edict_t *self);
-void jorg_step_right(edict_t *self);
-void jorg_death_hit(edict_t *self);
+void jorg_dead (struct edict_s *self);
+void jorgBFG (struct edict_s *self);
+void jorgMachineGun (struct edict_s *self);
+void jorg_firebullet (struct edict_s *self);
+void jorg_reattack1(struct edict_s *self);
+void jorg_attack1(struct edict_s *self);
+void jorg_idle(struct edict_s *self);
+void jorg_step_left(struct edict_s *self);
+void jorg_step_right(struct edict_s *self);
+void jorg_death_hit(struct edict_s *self);
 
 //
 // stand
@@ -136,29 +136,29 @@ mframe_t jorg_frames_stand []=
 };
 mmove_t	jorg_move_stand = {FRAME_stand01, FRAME_stand51, jorg_frames_stand, NULL};
 
-void jorg_idle (edict_t *self)
+void jorg_idle (struct edict_s *self)
 {
 	gi.sound (self, CHAN_VOICE, sound_idle, 1, ATTN_NORM,0);
 }
 
-void jorg_death_hit (edict_t *self)
+void jorg_death_hit (struct edict_s *self)
 {
 	gi.sound (self, CHAN_BODY, sound_death_hit, 1, ATTN_NORM,0);
 }
 
 
-void jorg_step_left (edict_t *self)
+void jorg_step_left (struct edict_s *self)
 {
 	gi.sound (self, CHAN_BODY, sound_step_left, 1, ATTN_NORM,0);
 }
 
-void jorg_step_right (edict_t *self)
+void jorg_step_right (struct edict_s *self)
 {
 	gi.sound (self, CHAN_BODY, sound_step_right, 1, ATTN_NORM,0);
 }
 
 
-void jorg_stand (edict_t *self)
+void jorg_stand (struct edict_s *self)
 {
 	self->monsterinfo.currentmove = &jorg_move_stand;
 }
@@ -226,12 +226,12 @@ mframe_t jorg_frames_end_walk [] =
 };
 mmove_t jorg_move_end_walk = {FRAME_walk20, FRAME_walk25, jorg_frames_end_walk, NULL};
 
-void jorg_walk (edict_t *self)
+void jorg_walk (struct edict_s *self)
 {
 		self->monsterinfo.currentmove = &jorg_move_walk;
 }
 
-void jorg_run (edict_t *self)
+void jorg_run (struct edict_s *self)
 {
 	if (self->monsterinfo.aiflags & AI_STAND_GROUND)
 		self->monsterinfo.currentmove = &jorg_move_stand;
@@ -310,10 +310,10 @@ mframe_t jorg_frames_death1 [] =
 	ai_move,	0,	NULL,
 	ai_move,	0,	NULL,
 	ai_move,	0,	NULL,
-	ai_move,	0,	NULL,			
 	ai_move,	0,	NULL,
 	ai_move,	0,	NULL,
-	ai_move,	0,	NULL,			
+	ai_move,	0,	NULL,
+	ai_move,	0,	NULL,
 	ai_move,	0,	NULL,
 	ai_move,	0,	NULL,
 	ai_move,	0,	NULL,		// 30
@@ -330,10 +330,10 @@ mframe_t jorg_frames_death1 [] =
 	ai_move,	0,	NULL,
 	ai_move,	0,	NULL,
 	ai_move,	0,	NULL,
-	ai_move,	0,	NULL,			
 	ai_move,	0,	NULL,
 	ai_move,	0,	NULL,
-	ai_move,	0,	NULL,			
+	ai_move,	0,	NULL,
+	ai_move,	0,	NULL,
 	ai_move,	0,	NULL,
 	ai_move,	0,	MakronToss,
 	ai_move,	0,	BossExplode		// 50
@@ -348,7 +348,7 @@ mframe_t jorg_frames_attack2 []=
 	ai_charge,	0,	NULL,
 	ai_charge,	0,	NULL,
 	ai_charge,	0,	NULL,
-	ai_charge,	0,	jorgBFG,		
+	ai_charge,	0,	jorgBFG,
 	ai_move,	0,	NULL,
 	ai_move,	0,	NULL,
 	ai_move,	0,	NULL,
@@ -391,7 +391,7 @@ mframe_t jorg_frames_end_attack1[]=
 };
 mmove_t jorg_move_end_attack1 = {FRAME_attak115, FRAME_attak118, jorg_frames_end_attack1, jorg_run};
 
-void jorg_reattack1(edict_t *self)
+void jorg_reattack1(struct edict_s *self)
 {
 	if (visible(self, self->enemy))
 		if (random() < 0.9)
@@ -399,26 +399,26 @@ void jorg_reattack1(edict_t *self)
 		else
 		{
 			self->s.sound = 0;
-			self->monsterinfo.currentmove = &jorg_move_end_attack1;	
+			self->monsterinfo.currentmove = &jorg_move_end_attack1;
 		}
 	else
 	{
 		self->s.sound = 0;
-		self->monsterinfo.currentmove = &jorg_move_end_attack1;	
+		self->monsterinfo.currentmove = &jorg_move_end_attack1;
 	}
 }
 
-void jorg_attack1(edict_t *self)
+void jorg_attack1(struct edict_s *self)
 {
 	self->monsterinfo.currentmove = &jorg_move_attack1;
 }
 
-void jorg_pain (edict_t *self, edict_t *other, float kick, int damage)
+void jorg_pain (struct edict_s *self, struct edict_s *other, float kick, int damage)
 {
 
 	if (self->health < (self->max_health / 2))
 			self->s.skinnum = 1;
-	
+
 	self->s.sound = 0;
 
 	if (level.time < self->pain_debounce_time)
@@ -429,11 +429,11 @@ void jorg_pain (edict_t *self, edict_t *other, float kick, int damage)
 		if (random()<=0.6)
 			return;
 
-	/* 
+	/*
 	If he's entering his attack1 or using attack1, lessen the chance of him
 	going into pain
 	*/
-	
+
 	if ( (self->s.frame >= FRAME_attak101) && (self->s.frame <= FRAME_attak108) )
 		if (random() <= 0.005)
 			return;
@@ -472,7 +472,7 @@ void jorg_pain (edict_t *self, edict_t *other, float kick, int damage)
 	}
 };
 
-void jorgBFG (edict_t *self)
+void jorgBFG (struct edict_s *self)
 {
 	vec3_t	forward, right;
 	vec3_t	start;
@@ -487,18 +487,18 @@ void jorgBFG (edict_t *self)
 	VectorSubtract (vec, start, dir);
 	VectorNormalize (dir);
 	gi.sound (self, CHAN_VOICE, sound_attack2, 1, ATTN_NORM, 0);
-	/*void monster_fire_bfg (edict_t *self, 
-							 vec3_t start, 
-							 vec3_t aimdir, 
-							 int damage, 
-							 int speed, 
-							 int kick, 
-							 float damage_radius, 
+	/*void monster_fire_bfg (struct edict_s *self,
+							 vec3_t start,
+							 vec3_t aimdir,
+							 int damage,
+							 int speed,
+							 int kick,
+							 float damage_radius,
 							 int flashtype)*/
 	monster_fire_bfg (self, start, dir, 50, 300, 100, 200, MZ2_JORG_BFG_1);
-}	
+}
 
-void jorg_firebullet_right (edict_t *self)
+void jorg_firebullet_right (struct edict_s *self)
 {
 	vec3_t	forward, right, target;
 	vec3_t	start;
@@ -512,9 +512,9 @@ void jorg_firebullet_right (edict_t *self)
 	VectorNormalize (forward);
 
 	monster_fire_bullet (self, start, forward, 6, 4, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MZ2_JORG_MACHINEGUN_R1);
-}	
+}
 
-void jorg_firebullet_left (edict_t *self)
+void jorg_firebullet_left (struct edict_s *self)
 {
 	vec3_t	forward, right, target;
 	vec3_t	start;
@@ -528,19 +528,19 @@ void jorg_firebullet_left (edict_t *self)
 	VectorNormalize (forward);
 
 	monster_fire_bullet (self, start, forward, 6, 4, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MZ2_JORG_MACHINEGUN_L1);
-}	
+}
 
-void jorg_firebullet (edict_t *self)
+void jorg_firebullet (struct edict_s *self)
 {
 	jorg_firebullet_left(self);
 	jorg_firebullet_right(self);
 };
 
-void jorg_attack(edict_t *self)
+void jorg_attack(struct edict_s *self)
 {
 	vec3_t	vec;
 	float	range;
-	
+
 	VectorSubtract (self->enemy->s.origin, self->s.origin, vec);
 	range = VectorLength (vec);
 
@@ -557,15 +557,15 @@ void jorg_attack(edict_t *self)
 	}
 }
 
-void jorg_dead (edict_t *self)
+void jorg_dead (struct edict_s *self)
 {
 #if 0
-	edict_t	*tempent;
+	struct edict_s	*tempent;
 	/*
 	VectorSet (self->mins, -16, -16, -24);
 	VectorSet (self->maxs, 16, 16, -8);
 	*/
-	
+
 	// Jorg is on modelindex2. Do not clear him.
 	VectorSet (self->mins, -60, -60, 0);
 	VectorSet (self->maxs, 60, 60, 72);
@@ -586,7 +586,7 @@ void jorg_dead (edict_t *self)
 }
 
 
-void jorg_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damage, vec3_t point)
+void jorg_die (struct edict_s *self, struct edict_s *inflictor, struct edict_s *attacker, int damage, vec3_t point)
 {
 	gi.sound (self, CHAN_VOICE, sound_death, 1, ATTN_NORM, 0);
 	self->deadflag = DEAD_DEAD;
@@ -596,7 +596,7 @@ void jorg_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damage,
 	self->monsterinfo.currentmove = &jorg_move_death;
 }
 
-qboolean Jorg_CheckAttack (edict_t *self)
+qboolean Jorg_CheckAttack (struct edict_s *self)
 {
 	vec3_t	spot1, spot2;
 	vec3_t	temp;
@@ -620,7 +620,7 @@ qboolean Jorg_CheckAttack (edict_t *self)
 		if (tr.ent != self->enemy)
 			return false;
 	}
-	
+
 	enemy_infront = infront(self, self->enemy);
 	enemy_range = range(self, self->enemy);
 	VectorSubtract (self->enemy->s.origin, self->s.origin, temp);
@@ -638,14 +638,14 @@ qboolean Jorg_CheckAttack (edict_t *self)
 			self->monsterinfo.attack_state = AS_MISSILE;
 		return true;
 	}
-	
+
 // missile attack
 	if (!self->monsterinfo.attack)
 		return false;
-		
+
 	if (level.time < self->monsterinfo.attack_finished)
 		return false;
-		
+
 	if (enemy_range == RANGE_FAR)
 		return false;
 
@@ -693,7 +693,7 @@ void MakronPrecache (void);
 
 /*QUAKED monster_jorg (1 .5 0) (-80 -80 0) (90 90 140) Ambush Trigger_Spawn Sight
 */
-void SP_monster_jorg (edict_t *self)
+void SP_monster_jorg (struct edict_s *self)
 {
 	if (deathmatch->value)
 	{
@@ -741,7 +741,7 @@ void SP_monster_jorg (edict_t *self)
 	self->monsterinfo.sight = NULL;
 	self->monsterinfo.checkattack = Jorg_CheckAttack;
 	gi.linkentity (self);
-	
+
 	self->monsterinfo.currentmove = &jorg_move_stand;
 	self->monsterinfo.scale = MODEL_SCALE;
 

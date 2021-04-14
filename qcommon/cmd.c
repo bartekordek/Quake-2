@@ -382,10 +382,10 @@ void Cmd_Exec_f (void)
 	len = FS_LoadFile (Cmd_Argv(1), (void **)&f);
 	if (!f)
 	{
-		Com_Printf_G ("couldn't exec %s\n",Cmd_Argv(1));
+		Com_Printf_C("couldn't exec %s\n",Cmd_Argv(1));
 		return;
 	}
-	Com_Printf_G ("execing %s\n",Cmd_Argv(1));
+	Com_Printf_C("execing %s\n",Cmd_Argv(1));
 
 	// the file doesn't have a trailing 0, so we need to copy it off
 	f2 = Z_Malloc(len+1);

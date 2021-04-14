@@ -24,21 +24,21 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "g_local.h"
 
 
-qboolean	Pickup_Weapon (edict_t *ent, edict_t *other);
-void		Use_Weapon (edict_t *ent, gitem_t *inv);
-void		Drop_Weapon (edict_t *ent, gitem_t *inv);
+qboolean	Pickup_Weapon (struct edict_s *ent, struct edict_s *other);
+void		Use_Weapon (struct edict_s *ent, gitem_t *inv);
+void		Drop_Weapon (struct edict_s *ent, gitem_t *inv);
 
-void Weapon_Blaster (edict_t *ent);
-void Weapon_Shotgun (edict_t *ent);
-void Weapon_SuperShotgun (edict_t *ent);
-void Weapon_Machinegun (edict_t *ent);
-void Weapon_Chaingun (edict_t *ent);
-void Weapon_HyperBlaster (edict_t *ent);
-void Weapon_RocketLauncher (edict_t *ent);
-void Weapon_Grenade (edict_t *ent);
-void Weapon_GrenadeLauncher (edict_t *ent);
-void Weapon_Railgun (edict_t *ent);
-void Weapon_BFG (edict_t *ent);
+void Weapon_Blaster (struct edict_s *ent);
+void Weapon_Shotgun (struct edict_s *ent);
+void Weapon_SuperShotgun (struct edict_s *ent);
+void Weapon_Machinegun (struct edict_s *ent);
+void Weapon_Chaingun (struct edict_s *ent);
+void Weapon_HyperBlaster (struct edict_s *ent);
+void Weapon_RocketLauncher (struct edict_s *ent);
+void Weapon_Grenade (struct edict_s *ent);
+void Weapon_GrenadeLauncher (struct edict_s *ent);
+void Weapon_Railgun (struct edict_s *ent);
+void Weapon_BFG (struct edict_s *ent);
 
 gitem_armor_t jacketarmor_info	= { 25,  50, .30, .00, ARMOR_JACKET};
 gitem_armor_t combatarmor_info	= { 50, 100, .60, .30, ARMOR_COMBAT};
@@ -53,7 +53,7 @@ static int	power_shield_index;
 #define HEALTH_IGNORE_MAX	1
 #define HEALTH_TIMED		2
 
-void Use_Quad (edict_t *ent, gitem_t *item);
+void Use_Quad (struct edict_s *ent, gitem_t *item);
 static int	quad_drop_timeout_hack;
 
 //======================================================================
@@ -120,11 +120,11 @@ gitem_t	*FindItem (char *pickup_name)
 
 //======================================================================
 
-void DoRespawn (edict_t *ent)
+void DoRespawn (struct edict_s *ent)
 {
 	if (ent->team)
 	{
-		edict_t	*master;
+		struct edict_s	*master;
 		int	count;
 		int choice;
 
@@ -158,7 +158,7 @@ void DoRespawn (edict_t *ent)
 	ent->s.event = EV_ITEM_RESPAWN;
 }
 
-void SetRespawn (edict_t *ent, float delay)
+void SetRespawn (struct edict_s *ent, float delay)
 {
 	ent->flags |= FL_RESPAWN;
 	ent->svflags |= SVF_NOCLIENT;
@@ -171,7 +171,7 @@ void SetRespawn (edict_t *ent, float delay)
 
 //======================================================================
 
-qboolean Pickup_Powerup (edict_t *ent, edict_t *other)
+qboolean Pickup_Powerup (struct edict_s *ent, struct edict_s *other)
 {
 	int		quantity;
 
@@ -199,7 +199,7 @@ qboolean Pickup_Powerup (edict_t *ent, edict_t *other)
 	return true;
 }
 
-void Drop_General (edict_t *ent, gitem_t *item)
+void Drop_General (struct edict_s *ent, gitem_t *item)
 {
 	Drop_Item (ent, item);
 	ent->client->pers.inventory[ITEM_INDEX(item)]--;
@@ -209,7 +209,7 @@ void Drop_General (edict_t *ent, gitem_t *item)
 
 //======================================================================
 
-qboolean Pickup_Adrenaline (edict_t *ent, edict_t *other)
+qboolean Pickup_Adrenaline (struct edict_s *ent, struct edict_s *other)
 {
 	if (!deathmatch->value)
 		other->max_health += 1;
@@ -223,7 +223,7 @@ qboolean Pickup_Adrenaline (edict_t *ent, edict_t *other)
 	return true;
 }
 
-qboolean Pickup_AncientHead (edict_t *ent, edict_t *other)
+qboolean Pickup_AncientHead (struct edict_s *ent, struct edict_s *other)
 {
 	other->max_health += 2;
 
@@ -233,7 +233,7 @@ qboolean Pickup_AncientHead (edict_t *ent, edict_t *other)
 	return true;
 }
 
-qboolean Pickup_Bandolier (edict_t *ent, edict_t *other)
+qboolean Pickup_Bandolier (struct edict_s *ent, struct edict_s *other)
 {
 	gitem_t	*item;
 	int		index;
@@ -271,7 +271,7 @@ qboolean Pickup_Bandolier (edict_t *ent, edict_t *other)
 	return true;
 }
 
-qboolean Pickup_Pack (edict_t *ent, edict_t *other)
+qboolean Pickup_Pack (struct edict_s *ent, struct edict_s *other)
 {
 	gitem_t	*item;
 	int		index;
@@ -351,7 +351,7 @@ qboolean Pickup_Pack (edict_t *ent, edict_t *other)
 
 //======================================================================
 
-void Use_Quad (edict_t *ent, gitem_t *item)
+void Use_Quad (struct edict_s *ent, gitem_t *item)
 {
 	int		timeout;
 
@@ -378,7 +378,7 @@ void Use_Quad (edict_t *ent, gitem_t *item)
 
 //======================================================================
 
-void Use_Breather (edict_t *ent, gitem_t *item)
+void Use_Breather (struct edict_s *ent, gitem_t *item)
 {
 	ent->client->pers.inventory[ITEM_INDEX(item)]--;
 	ValidateSelectedItem (ent);
@@ -393,7 +393,7 @@ void Use_Breather (edict_t *ent, gitem_t *item)
 
 //======================================================================
 
-void Use_Envirosuit (edict_t *ent, gitem_t *item)
+void Use_Envirosuit (struct edict_s *ent, gitem_t *item)
 {
 	ent->client->pers.inventory[ITEM_INDEX(item)]--;
 	ValidateSelectedItem (ent);
@@ -408,7 +408,7 @@ void Use_Envirosuit (edict_t *ent, gitem_t *item)
 
 //======================================================================
 
-void	Use_Invulnerability (edict_t *ent, gitem_t *item)
+void	Use_Invulnerability (struct edict_s *ent, gitem_t *item)
 {
 	ent->client->pers.inventory[ITEM_INDEX(item)]--;
 	ValidateSelectedItem (ent);
@@ -423,7 +423,7 @@ void	Use_Invulnerability (edict_t *ent, gitem_t *item)
 
 //======================================================================
 
-void	Use_Silencer (edict_t *ent, gitem_t *item)
+void	Use_Silencer (struct edict_s *ent, gitem_t *item)
 {
 	ent->client->pers.inventory[ITEM_INDEX(item)]--;
 	ValidateSelectedItem (ent);
@@ -434,7 +434,7 @@ void	Use_Silencer (edict_t *ent, gitem_t *item)
 
 //======================================================================
 
-qboolean Pickup_Key (edict_t *ent, edict_t *other)
+qboolean Pickup_Key (struct edict_s *ent, struct edict_s *other)
 {
 	if (coop->value)
 	{
@@ -459,7 +459,7 @@ qboolean Pickup_Key (edict_t *ent, edict_t *other)
 
 //======================================================================
 
-qboolean Add_Ammo (edict_t *ent, gitem_t *item, int count)
+qboolean Add_Ammo (struct edict_s *ent, gitem_t *item, int count)
 {
 	int			index;
 	int			max;
@@ -495,7 +495,7 @@ qboolean Add_Ammo (edict_t *ent, gitem_t *item, int count)
 	return true;
 }
 
-qboolean Pickup_Ammo (edict_t *ent, edict_t *other)
+qboolean Pickup_Ammo (struct edict_s *ent, struct edict_s *other)
 {
 	int			oldcount;
 	int			count;
@@ -525,9 +525,9 @@ qboolean Pickup_Ammo (edict_t *ent, edict_t *other)
 	return true;
 }
 
-void Drop_Ammo (edict_t *ent, gitem_t *item)
+void Drop_Ammo (struct edict_s *ent, gitem_t *item)
 {
-	edict_t	*dropped;
+	struct edict_s	*dropped;
 	int		index;
 
 	index = ITEM_INDEX(item);
@@ -543,7 +543,7 @@ void Drop_Ammo (edict_t *ent, gitem_t *item)
 
 //======================================================================
 
-void MegaHealth_think (edict_t *self)
+void MegaHealth_think (struct edict_s *self)
 {
 	if (self->owner->health > self->owner->max_health
 //ZOID
@@ -562,7 +562,7 @@ void MegaHealth_think (edict_t *self)
 		G_FreeEdict (self);
 }
 
-qboolean Pickup_Health (edict_t *ent, edict_t *other)
+qboolean Pickup_Health (struct edict_s *ent, struct edict_s *other)
 {
 	if (!(ent->style & HEALTH_IGNORE_MAX))
 		if (other->health >= other->max_health)
@@ -610,7 +610,7 @@ qboolean Pickup_Health (edict_t *ent, edict_t *other)
 
 //======================================================================
 
-int ArmorIndex (edict_t *ent)
+int ArmorIndex (struct edict_s *ent)
 {
 	if (!ent->client)
 		return 0;
@@ -627,7 +627,7 @@ int ArmorIndex (edict_t *ent)
 	return 0;
 }
 
-qboolean Pickup_Armor (edict_t *ent, edict_t *other)
+qboolean Pickup_Armor (struct edict_s *ent, struct edict_s *other)
 {
 	int				old_armor_index;
 	gitem_armor_t	*oldinfo;
@@ -708,7 +708,7 @@ qboolean Pickup_Armor (edict_t *ent, edict_t *other)
 
 //======================================================================
 
-int PowerArmorType (edict_t *ent)
+int PowerArmorType (struct edict_s *ent)
 {
 	if (!ent->client)
 		return POWER_ARMOR_NONE;
@@ -725,7 +725,7 @@ int PowerArmorType (edict_t *ent)
 	return POWER_ARMOR_NONE;
 }
 
-void Use_PowerArmor (edict_t *ent, gitem_t *item)
+void Use_PowerArmor (struct edict_s *ent, gitem_t *item)
 {
 	int		index;
 
@@ -747,7 +747,7 @@ void Use_PowerArmor (edict_t *ent, gitem_t *item)
 	}
 }
 
-qboolean Pickup_PowerArmor (edict_t *ent, edict_t *other)
+qboolean Pickup_PowerArmor (struct edict_s *ent, struct edict_s *other)
 {
 	int		quantity;
 
@@ -767,7 +767,7 @@ qboolean Pickup_PowerArmor (edict_t *ent, edict_t *other)
 	return true;
 }
 
-void Drop_PowerArmor (edict_t *ent, gitem_t *item)
+void Drop_PowerArmor (struct edict_s *ent, gitem_t *item)
 {
 	if ((ent->flags & FL_POWER_ARMOR) && (ent->client->pers.inventory[ITEM_INDEX(item)] == 1))
 		Use_PowerArmor (ent, item);
@@ -781,7 +781,7 @@ void Drop_PowerArmor (edict_t *ent, gitem_t *item)
 Touch_Item
 ===============
 */
-void Touch_Item (edict_t *ent, edict_t *other, plane_t *plane, csurface_t *surf)
+void Touch_Item (struct edict_s *ent, struct edict_s *other, plane_t *plane, csurface_t *surf)
 {
 	qboolean	taken;
 
@@ -848,7 +848,7 @@ void Touch_Item (edict_t *ent, edict_t *other, plane_t *plane, csurface_t *surf)
 
 //======================================================================
 
-static void drop_temp_touch (edict_t *ent, edict_t *other, plane_t *plane, csurface_t *surf)
+static void drop_temp_touch (struct edict_s *ent, struct edict_s *other, plane_t *plane, csurface_t *surf)
 {
 	if (other == ent->owner)
 		return;
@@ -856,7 +856,7 @@ static void drop_temp_touch (edict_t *ent, edict_t *other, plane_t *plane, csurf
 	Touch_Item (ent, other, plane, surf);
 }
 
-static void drop_make_touchable (edict_t *ent)
+static void drop_make_touchable (struct edict_s *ent)
 {
 	ent->touch = Touch_Item;
 	if (deathmatch->value)
@@ -866,9 +866,9 @@ static void drop_make_touchable (edict_t *ent)
 	}
 }
 
-edict_t *Drop_Item (edict_t *ent, gitem_t *item)
+struct edict_s *Drop_Item (struct edict_s *ent, gitem_t *item)
 {
-	edict_t	*dropped;
+	struct edict_s	*dropped;
 	vec3_t	forward, right;
 	vec3_t	offset;
 
@@ -915,7 +915,7 @@ edict_t *Drop_Item (edict_t *ent, gitem_t *item)
 	return dropped;
 }
 
-void Use_Item (edict_t *ent, edict_t *other, edict_t *activator)
+void Use_Item (struct edict_s *ent, struct edict_s *other, struct edict_s *activator)
 {
 	ent->svflags &= ~SVF_NOCLIENT;
 	ent->use = NULL;
@@ -941,7 +941,7 @@ void Use_Item (edict_t *ent, edict_t *other, edict_t *activator)
 droptofloor
 ================
 */
-void droptofloor (edict_t *ent)
+void droptofloor (struct edict_s *ent)
 {
 	trace_t		tr;
 	vec3_t		dest;
@@ -1084,7 +1084,7 @@ Items can't be immediately dropped to floor, because they might
 be on an entity that hasn't spawned yet.
 ============
 */
-void SpawnItem (edict_t *ent, gitem_t *item)
+void SpawnItem (struct edict_s *ent, gitem_t *item)
 {
 	PrecacheItem (item);
 
@@ -2352,7 +2352,7 @@ tank commander's head
 
 /*QUAKED item_health (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
-void SP_item_health (edict_t *self)
+void SP_item_health (struct edict_s *self)
 {
 	if ( deathmatch->value && ((int)dmflags->value & DF_NO_HEALTH) )
 	{
@@ -2368,7 +2368,7 @@ void SP_item_health (edict_t *self)
 
 /*QUAKED item_health_small (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
-void SP_item_health_small (edict_t *self)
+void SP_item_health_small (struct edict_s *self)
 {
 	if ( deathmatch->value && ((int)dmflags->value & DF_NO_HEALTH) )
 	{
@@ -2385,7 +2385,7 @@ void SP_item_health_small (edict_t *self)
 
 /*QUAKED item_health_large (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
-void SP_item_health_large (edict_t *self)
+void SP_item_health_large (struct edict_s *self)
 {
 	if ( deathmatch->value && ((int)dmflags->value & DF_NO_HEALTH) )
 	{
@@ -2401,7 +2401,7 @@ void SP_item_health_large (edict_t *self)
 
 /*QUAKED item_health_mega (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
-void SP_item_health_mega (edict_t *self)
+void SP_item_health_mega (struct edict_s *self)
 {
 	if ( deathmatch->value && ((int)dmflags->value & DF_NO_HEALTH) )
 	{

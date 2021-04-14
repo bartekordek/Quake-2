@@ -305,11 +305,6 @@ void ref_gl_R_DrawNullModel (void)
 	qglEnable (GL_TEXTURE_2D);
 }
 
-/*
-=============
-R_DrawEntitiesOnList
-=============
-*/
 void ref_gl_R_DrawEntitiesOnList (void)
 {
 	int		i;
@@ -1351,16 +1346,8 @@ void ref_gl_R_Shutdown (void)
 	QGL_Shutdown();
 }
 
-
-
-/*
-@@@@@@@@@@@@@@@@@@@@@
-R_BeginFrame
-@@@@@@@@@@@@@@@@@@@@@
-*/
 void ref_gl_R_BeginFrame( float camera_separation )
 {
-
 	gl_state.camera_separation = camera_separation;
 
 	/*
@@ -1605,7 +1592,7 @@ GetRefAPI
 
 @@@@@@@@@@@@@@@@@@@@@
 */
-refexport_t ref_gl_GetRefAPI (refimport_t rimp )
+refexport_t ref_gl_GetRefAPI(refimport_t rimp )
 {
 	refexport_t	re;
 

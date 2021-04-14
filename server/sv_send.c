@@ -254,7 +254,7 @@ If origin is NULL, the origin is determined from the entity origin
 or the midpoint of the entity box for bmodels.
 ==================
 */
-void SV_StartSound (vec3_t origin, edict_t *entity, int channel,
+void SV_StartSound (vec3_t origin, struct edict_s *entity, int channel,
 					int soundindex, float volume,
 					float attenuation, float timeofs)
 {

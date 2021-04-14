@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -41,22 +41,22 @@ static int	sound_search;
 static int	sound_sight;
 
 
-void gladiator_idle (edict_t *self)
+void gladiator_idle (struct edict_s *self)
 {
 	gi.sound (self, CHAN_VOICE, sound_idle, 1, ATTN_IDLE, 0);
 }
 
-void gladiator_sight (edict_t *self, edict_t *other)
+void gladiator_sight (struct edict_s *self, struct edict_s *other)
 {
 	gi.sound (self, CHAN_VOICE, sound_sight, 1, ATTN_NORM, 0);
 }
 
-void gladiator_search (edict_t *self)
+void gladiator_search (struct edict_s *self)
 {
 	gi.sound (self, CHAN_VOICE, sound_search, 1, ATTN_NORM, 0);
 }
 
-void gladiator_cleaver_swing (edict_t *self)
+void gladiator_cleaver_swing (struct edict_s *self)
 {
 	gi.sound (self, CHAN_WEAPON, sound_cleaver_swing, 1, ATTN_NORM, 0);
 }
@@ -73,7 +73,7 @@ mframe_t gladiator_frames_stand [] =
 };
 mmove_t gladiator_move_stand = {FRAME_stand1, FRAME_stand7, gladiator_frames_stand, NULL};
 
-void gladiator_stand (edict_t *self)
+void gladiator_stand (struct edict_s *self)
 {
 	self->monsterinfo.currentmove = &gladiator_move_stand;
 }
@@ -100,7 +100,7 @@ mframe_t gladiator_frames_walk [] =
 };
 mmove_t gladiator_move_walk = {FRAME_walk1, FRAME_walk16, gladiator_frames_walk, NULL};
 
-void gladiator_walk (edict_t *self)
+void gladiator_walk (struct edict_s *self)
 {
 	self->monsterinfo.currentmove = &gladiator_move_walk;
 }
@@ -117,7 +117,7 @@ mframe_t gladiator_frames_run [] =
 };
 mmove_t gladiator_move_run = {FRAME_run1, FRAME_run6, gladiator_frames_run, NULL};
 
-void gladiator_run (edict_t *self)
+void gladiator_run (struct edict_s *self)
 {
 	if (self->monsterinfo.aiflags & AI_STAND_GROUND)
 		self->monsterinfo.currentmove = &gladiator_move_stand;
@@ -126,7 +126,7 @@ void gladiator_run (edict_t *self)
 }
 
 
-void GaldiatorMelee (edict_t *self)
+void GaldiatorMelee (struct edict_s *self)
 {
 	vec3_t	aim;
 
@@ -159,13 +159,13 @@ mframe_t gladiator_frames_attack_melee [] =
 };
 mmove_t gladiator_move_attack_melee = {FRAME_melee1, FRAME_melee17, gladiator_frames_attack_melee, gladiator_run};
 
-void gladiator_melee(edict_t *self)
+void gladiator_melee(struct edict_s *self)
 {
 	self->monsterinfo.currentmove = &gladiator_move_attack_melee;
 }
 
 
-void GladiatorGun (edict_t *self)
+void GladiatorGun (struct edict_s *self)
 {
 	vec3_t	start;
 	vec3_t	dir;
@@ -195,7 +195,7 @@ mframe_t gladiator_frames_attack_gun [] =
 };
 mmove_t gladiator_move_attack_gun = {FRAME_attack1, FRAME_attack9, gladiator_frames_attack_gun, gladiator_run};
 
-void gladiator_attack(edict_t *self)
+void gladiator_attack(struct edict_s *self)
 {
 	float	range;
 	vec3_t	v;
@@ -237,7 +237,7 @@ mframe_t gladiator_frames_pain_air [] =
 };
 mmove_t gladiator_move_pain_air = {FRAME_painup1, FRAME_painup7, gladiator_frames_pain_air, gladiator_run};
 
-void gladiator_pain (edict_t *self, edict_t *other, float kick, int damage)
+void gladiator_pain (struct edict_s *self, struct edict_s *other, float kick, int damage)
 {
 
 	if (self->health < (self->max_health / 2))
@@ -264,11 +264,11 @@ void gladiator_pain (edict_t *self, edict_t *other, float kick, int damage)
 		self->monsterinfo.currentmove = &gladiator_move_pain_air;
 	else
 		self->monsterinfo.currentmove = &gladiator_move_pain;
-	
+
 }
 
 
-void gladiator_dead (edict_t *self)
+void gladiator_dead (struct edict_s *self)
 {
 	VectorSet (self->mins, -16, -16, -24);
 	VectorSet (self->maxs, 16, 16, -8);
@@ -305,7 +305,7 @@ mframe_t gladiator_frames_death [] =
 };
 mmove_t gladiator_move_death = {FRAME_death1, FRAME_death22, gladiator_frames_death, gladiator_dead};
 
-void gladiator_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damage, vec3_t point)
+void gladiator_die (struct edict_s *self, struct edict_s *inflictor, struct edict_s *attacker, int damage, vec3_t point)
 {
 	int		n;
 
@@ -336,7 +336,7 @@ void gladiator_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int da
 
 /*QUAKED monster_gladiator (1 .5 0) (-32 -32 -24) (32 32 64) Ambush Trigger_Spawn Sight
 */
-void SP_monster_gladiator (edict_t *self)
+void SP_monster_gladiator (struct edict_s *self)
 {
 	if (deathmatch->value)
 	{
@@ -345,9 +345,9 @@ void SP_monster_gladiator (edict_t *self)
 	}
 
 
-	sound_pain1 = gi.soundindex ("gladiator/pain.wav");	
-	sound_pain2 = gi.soundindex ("gladiator/gldpain2.wav");	
-	sound_die = gi.soundindex ("gladiator/glddeth2.wav");	
+	sound_pain1 = gi.soundindex ("gladiator/pain.wav");
+	sound_pain2 = gi.soundindex ("gladiator/gldpain2.wav");
+	sound_die = gi.soundindex ("gladiator/glddeth2.wav");
 	sound_gun = gi.soundindex ("gladiator/railgun.wav");
 	sound_cleaver_swing = gi.soundindex ("gladiator/melee1.wav");
 	sound_cleaver_hit = gi.soundindex ("gladiator/melee2.wav");

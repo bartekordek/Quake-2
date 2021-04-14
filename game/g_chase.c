@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -18,11 +18,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 #include "g_local.h"
+#include "shared/g_client.h"
+#include "shared/edict.h"
 
-void UpdateChaseCam(edict_t *ent)
+void UpdateChaseCam(struct edict_s *ent)
 {
 	vec3_t o, ownerv, goal;
-	edict_t *targ;
+	struct edict_s *targ;
 	vec3_t forward, right;
 	trace_t trace;
 	int i;
@@ -32,7 +34,7 @@ void UpdateChaseCam(edict_t *ent)
 	// is our chase target gone?
 	if (!ent->client->chase_target->inuse
 		|| ent->client->chase_target->client->resp.spectator) {
-		edict_t *old = ent->client->chase_target;
+		struct edict_s *old = ent->client->chase_target;
 		ChaseNext(ent);
 		if (ent->client->chase_target == old) {
 			ent->client->chase_target = NULL;
@@ -108,10 +110,10 @@ void UpdateChaseCam(edict_t *ent)
 	gi.linkentity(ent);
 }
 
-void ChaseNext(edict_t *ent)
+void ChaseNext(struct edict_s *ent)
 {
 	int i;
-	edict_t *e;
+	struct edict_s *e;
 
 	if (!ent->client->chase_target)
 		return;
@@ -132,10 +134,10 @@ void ChaseNext(edict_t *ent)
 	ent->client->update_chase = true;
 }
 
-void ChasePrev(edict_t *ent)
+void ChasePrev(struct edict_s *ent)
 {
 	int i;
-	edict_t *e;
+	struct edict_s *e;
 
 	if (!ent->client->chase_target)
 		return;
@@ -156,10 +158,10 @@ void ChasePrev(edict_t *ent)
 	ent->client->update_chase = true;
 }
 
-void GetChaseTarget(edict_t *ent)
+void GetChaseTarget(struct edict_s *ent)
 {
 	int i;
-	edict_t *other;
+	struct edict_s *other;
 
 	for (i = 1; i <= maxclients->value; i++) {
 		other = g_edicts + i;

@@ -16,7 +16,7 @@ void Sys_Error (char *error, ...)
 {
 	va_list		argptr;
 
-	printf ("Sys_Error: ");	
+	printf ("Sys_Error: ");
 	va_start (argptr,error);
 	vprintf (error,argptr);
 	va_end (argptr);
@@ -84,7 +84,7 @@ int		Hunk_End (void)
 	return 0;
 }
 
-int		Sys_Milliseconds (void)
+int		sSys_Milliseconds (void)
 {
 	return 0;
 }

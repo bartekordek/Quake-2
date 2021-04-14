@@ -21,7 +21,10 @@
 			"xutility": "cpp",
 			"gl_local.h": "c",
 			"conproc.h": "c",
-			"qcommon.h": "c"
+			"qcommon.h": "c",
+			"g_local.h": "c",
+			"g_client.h": "c",
+			"edict.h": "c"
 		}
 	}
 }

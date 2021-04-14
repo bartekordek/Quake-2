@@ -35,7 +35,7 @@ FIXME: this use of "area" is different from the bsp file use
 // FIXME: remove this mess!
 #define	STRUCT_FROM_LINK(l,t,m) ((t *)((byte *)l - (int)&(((t *)0)->m)))
 
-#define	EDICT_FROM_AREA(l) STRUCT_FROM_LINK(l,edict_t,area)
+#define	EDICT_FROM_AREA(l) STRUCT_FROM_LINK(l,struct edict_s,area)
 
 typedef struct areanode_s
 {
@@ -53,11 +53,11 @@ areanode_t	sv_areanodes[AREA_NODES];
 int			sv_numareanodes;
 
 float	*area_mins, *area_maxs;
-edict_t	**area_list;
+struct edict_s	**area_list;
 int		area_count, area_maxcount;
 int		area_type;
 
-int SV_HullForEntity (edict_t *ent);
+int SV_HullForEntity (struct edict_s *ent);
 
 
 // ClearLink is used for new headnodes
@@ -146,7 +146,7 @@ SV_UnlinkEdict
 
 ===============
 */
-void SV_UnlinkEdict (edict_t *ent)
+void SV_UnlinkEdict (struct edict_s *ent)
 {
 	if (!ent->area.prev)
 		return;		// not linked in anywhere
@@ -162,7 +162,7 @@ SV_LinkEdict
 ===============
 */
 #define MAX_TOTAL_ENT_LEAFS		128
-void SV_LinkEdict (edict_t *ent)
+void SV_LinkEdict (struct edict_s *ent)
 {
 	areanode_t	*node;
 	int			leafs[MAX_TOTAL_ENT_LEAFS];
@@ -354,7 +354,7 @@ SV_AreaEdicts_r
 void SV_AreaEdicts_r (areanode_t *node)
 {
 	link_t		*l, *next, *start;
-	edict_t		*check;
+	struct edict_s		*check;
 	int			count;
 
 	count = 0;
@@ -405,7 +405,7 @@ void SV_AreaEdicts_r (areanode_t *node)
 SV_AreaEdicts
 ================
 */
-int SV_AreaEdicts (vec3_t mins, vec3_t maxs, edict_t **list,
+int SV_AreaEdicts (vec3_t mins, vec3_t maxs, struct edict_s **list,
 	int maxcount, int areatype)
 {
 	area_mins = mins;
@@ -430,7 +430,7 @@ SV_PointContents
 */
 int SV_PointContents (vec3_t p)
 {
-	edict_t		*touch[MAX_EDICTS], *hit;
+	struct edict_s		*touch[MAX_EDICTS], *hit;
 	int			i, num;
 	int			contents, c2;
 	int			headnode;
@@ -469,7 +469,7 @@ typedef struct
 	vec3_t		mins2, maxs2;	// size when clipping against mosnters
 	float		*start, *end;
 	trace_t		trace;
-	edict_t		*passedict;
+	struct edict_s		*passedict;
 	int			contentmask;
 } moveclip_t;
 
@@ -485,7 +485,7 @@ Offset is filled in to contain the adjustment that must be added to the
 testing object's origin to get a point to use with the returned hull.
 ================
 */
-int SV_HullForEntity (edict_t *ent)
+int SV_HullForEntity (struct edict_s *ent)
 {
 	cmodel_t	*model;
 
@@ -517,7 +517,7 @@ SV_ClipMoveToEntities
 void SV_ClipMoveToEntities ( moveclip_t *clip )
 {
 	int			i, num;
-	edict_t		*touchlist[MAX_EDICTS], *touch;
+	struct edict_s		*touchlist[MAX_EDICTS], *touch;
 	trace_t		trace;
 	int			headnode;
 	float		*angles;
@@ -621,7 +621,7 @@ Passedict and edicts owned by passedict are explicitly not checked.
 
 ==================
 */
-trace_t SV_Trace (vec3_t start, vec3_t mins, vec3_t maxs, vec3_t end, edict_t *passedict, int contentmask)
+trace_t SV_Trace (vec3_t start, vec3_t mins, vec3_t maxs, vec3_t end, struct edict_s *passedict, int contentmask)
 {
 	moveclip_t	clip;
 

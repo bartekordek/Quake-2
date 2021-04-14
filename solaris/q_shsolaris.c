@@ -49,13 +49,13 @@ int Hunk_End (void)
 	n = realloc(membase, curhunksize);
 	if (n != membase)
 		Sys_Error(ERR_FATAL, "Hunk_End:  Could not remap virtual block (%d)", errno);
-	
+
 	return curhunksize;
 }
 
 void Hunk_Free (void *base)
 {
-	if (base) 
+	if (base)
 		free(base);
 }
 
@@ -68,14 +68,14 @@ Sys_Milliseconds
 ================
 */
 int curtime;
-int Sys_Milliseconds (void)
+int Sys_Milliseconds2 (void)
 {
 	struct timeval tp;
 	struct timezone tzp;
 	static int		secbase;
 
 	gettimeofday(&tp, &tzp);
-	
+
 	if (!secbase)
 	{
 		secbase = tp.tv_sec;
@@ -83,7 +83,7 @@ int Sys_Milliseconds (void)
 	}
 
 	curtime = (tp.tv_sec - secbase)*1000 + tp.tv_usec/1000;
-	
+
 	return curtime;
 }
 
@@ -140,7 +140,7 @@ char *Sys_FindFirst (char *path, unsigned musthave, unsigned canhave)
 
 //	COM_FilePath (path, findbase);
 	strcpy(findbase, path);
-	
+
 	if ((p = strrchr(findbase, '/')) != NULL) {
 		*p = 0;
 		strcpy(findpattern, p + 1);
@@ -149,7 +149,7 @@ char *Sys_FindFirst (char *path, unsigned musthave, unsigned canhave)
 
 	if (strcmp(findpattern, "*.*") == 0)
 		strcpy(findpattern, "*");
-	
+
 	if ((fdir = opendir(path)) == NULL)
 		return NULL;
 	while ((d = readdir(fdir)) != NULL) {

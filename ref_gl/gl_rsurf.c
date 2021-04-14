@@ -1233,14 +1233,9 @@ void ref_gl_R_DrawWorld (void)
 	ref_gl_R_DrawTriangleOutlines ();
 }
 
-
 /*
-===============
-R_MarkLeaves
-
 Mark the leaves and nodes that are in the PVS for the current
 cluster
-===============
 */
 void ref_gl_R_MarkLeaves (void)
 {

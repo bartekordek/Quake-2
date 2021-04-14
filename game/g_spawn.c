@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -23,126 +23,126 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 typedef struct
 {
 	char	*name;
-	void	(*spawn)(edict_t *ent);
+	void	(*spawn)(struct edict_s *ent);
 } spawn_t;
 
 
-void SP_item_health (edict_t *self);
-void SP_item_health_small (edict_t *self);
-void SP_item_health_large (edict_t *self);
-void SP_item_health_mega (edict_t *self);
+void SP_item_health (struct edict_s *self);
+void SP_item_health_small (struct edict_s *self);
+void SP_item_health_large (struct edict_s *self);
+void SP_item_health_mega (struct edict_s *self);
 
-void SP_info_player_start (edict_t *ent);
-void SP_info_player_deathmatch (edict_t *ent);
-void SP_info_player_coop (edict_t *ent);
-void SP_info_player_intermission (edict_t *ent);
+void SP_info_player_start (struct edict_s *ent);
+void SP_info_player_deathmatch (struct edict_s *ent);
+void SP_info_player_coop (struct edict_s *ent);
+void SP_info_player_intermission (struct edict_s *ent);
 
-void SP_func_plat (edict_t *ent);
-void SP_func_rotating (edict_t *ent);
-void SP_func_button (edict_t *ent);
-void SP_func_door (edict_t *ent);
-void SP_func_door_secret (edict_t *ent);
-void SP_func_door_rotating (edict_t *ent);
-void SP_func_water (edict_t *ent);
-void SP_func_train (edict_t *ent);
-void SP_func_conveyor (edict_t *self);
-void SP_func_wall (edict_t *self);
-void SP_func_object (edict_t *self);
-void SP_func_explosive (edict_t *self);
-void SP_func_timer (edict_t *self);
-void SP_func_areaportal (edict_t *ent);
-void SP_func_clock (edict_t *ent);
-void SP_func_killbox (edict_t *ent);
+void SP_func_plat (struct edict_s *ent);
+void SP_func_rotating (struct edict_s *ent);
+void SP_func_button (struct edict_s *ent);
+void SP_func_door (struct edict_s *ent);
+void SP_func_door_secret (struct edict_s *ent);
+void SP_func_door_rotating (struct edict_s *ent);
+void SP_func_water (struct edict_s *ent);
+void SP_func_train (struct edict_s *ent);
+void SP_func_conveyor (struct edict_s *self);
+void SP_func_wall (struct edict_s *self);
+void SP_func_object (struct edict_s *self);
+void SP_func_explosive (struct edict_s *self);
+void SP_func_timer (struct edict_s *self);
+void SP_func_areaportal (struct edict_s *ent);
+void SP_func_clock (struct edict_s *ent);
+void SP_func_killbox (struct edict_s *ent);
 
-void SP_trigger_always (edict_t *ent);
-void SP_trigger_once (edict_t *ent);
-void SP_trigger_multiple (edict_t *ent);
-void SP_trigger_relay (edict_t *ent);
-void SP_trigger_push (edict_t *ent);
-void SP_trigger_hurt (edict_t *ent);
-void SP_trigger_key (edict_t *ent);
-void SP_trigger_counter (edict_t *ent);
-void SP_trigger_elevator (edict_t *ent);
-void SP_trigger_gravity (edict_t *ent);
-void SP_trigger_monsterjump (edict_t *ent);
+void SP_trigger_always (struct edict_s *ent);
+void SP_trigger_once (struct edict_s *ent);
+void SP_trigger_multiple (struct edict_s *ent);
+void SP_trigger_relay (struct edict_s *ent);
+void SP_trigger_push (struct edict_s *ent);
+void SP_trigger_hurt (struct edict_s *ent);
+void SP_trigger_key (struct edict_s *ent);
+void SP_trigger_counter (struct edict_s *ent);
+void SP_trigger_elevator (struct edict_s *ent);
+void SP_trigger_gravity (struct edict_s *ent);
+void SP_trigger_monsterjump (struct edict_s *ent);
 
-void SP_target_temp_entity (edict_t *ent);
-void SP_target_speaker (edict_t *ent);
-void SP_target_explosion (edict_t *ent);
-void SP_target_changelevel (edict_t *ent);
-void SP_target_secret (edict_t *ent);
-void SP_target_goal (edict_t *ent);
-void SP_target_splash (edict_t *ent);
-void SP_target_spawner (edict_t *ent);
-void SP_target_blaster (edict_t *ent);
-void SP_target_crosslevel_trigger (edict_t *ent);
-void SP_target_crosslevel_target (edict_t *ent);
-void SP_target_laser (edict_t *self);
-void SP_target_help (edict_t *ent);
-void SP_target_actor (edict_t *ent);
-void SP_target_lightramp (edict_t *self);
-void SP_target_earthquake (edict_t *ent);
-void SP_target_character (edict_t *ent);
-void SP_target_string (edict_t *ent);
+void SP_target_temp_entity (struct edict_s *ent);
+void SP_target_speaker (struct edict_s *ent);
+void SP_target_explosion (struct edict_s *ent);
+void SP_target_changelevel (struct edict_s *ent);
+void SP_target_secret (struct edict_s *ent);
+void SP_target_goal (struct edict_s *ent);
+void SP_target_splash (struct edict_s *ent);
+void SP_target_spawner (struct edict_s *ent);
+void SP_target_blaster (struct edict_s *ent);
+void SP_target_crosslevel_trigger (struct edict_s *ent);
+void SP_target_crosslevel_target (struct edict_s *ent);
+void SP_target_laser (struct edict_s *self);
+void SP_target_help (struct edict_s *ent);
+void SP_target_actor (struct edict_s *ent);
+void SP_target_lightramp (struct edict_s *self);
+void SP_target_earthquake (struct edict_s *ent);
+void SP_target_character (struct edict_s *ent);
+void SP_target_string (struct edict_s *ent);
 
-void SP_worldspawn (edict_t *ent);
-void SP_viewthing (edict_t *ent);
+void SP_worldspawn (struct edict_s *ent);
+void SP_viewthing (struct edict_s *ent);
 
-void SP_light (edict_t *self);
-void SP_light_mine1 (edict_t *ent);
-void SP_light_mine2 (edict_t *ent);
-void SP_info_null (edict_t *self);
-void SP_info_notnull (edict_t *self);
-void SP_path_corner (edict_t *self);
-void SP_point_combat (edict_t *self);
+void SP_light (struct edict_s *self);
+void SP_light_mine1 (struct edict_s *ent);
+void SP_light_mine2 (struct edict_s *ent);
+void SP_info_null (struct edict_s *self);
+void SP_info_notnull (struct edict_s *self);
+void SP_path_corner (struct edict_s *self);
+void SP_point_combat (struct edict_s *self);
 
-void SP_misc_explobox (edict_t *self);
-void SP_misc_banner (edict_t *self);
-void SP_misc_satellite_dish (edict_t *self);
-void SP_misc_actor (edict_t *self);
-void SP_misc_gib_arm (edict_t *self);
-void SP_misc_gib_leg (edict_t *self);
-void SP_misc_gib_head (edict_t *self);
-void SP_misc_insane (edict_t *self);
-void SP_misc_deadsoldier (edict_t *self);
-void SP_misc_viper (edict_t *self);
-void SP_misc_viper_bomb (edict_t *self);
-void SP_misc_bigviper (edict_t *self);
-void SP_misc_strogg_ship (edict_t *self);
-void SP_misc_teleporter (edict_t *self);
-void SP_misc_teleporter_dest (edict_t *self);
-void SP_misc_blackhole (edict_t *self);
-void SP_misc_eastertank (edict_t *self);
-void SP_misc_easterchick (edict_t *self);
-void SP_misc_easterchick2 (edict_t *self);
+void SP_misc_explobox (struct edict_s *self);
+void SP_misc_banner (struct edict_s *self);
+void SP_misc_satellite_dish (struct edict_s *self);
+void SP_misc_actor (struct edict_s *self);
+void SP_misc_gib_arm (struct edict_s *self);
+void SP_misc_gib_leg (struct edict_s *self);
+void SP_misc_gib_head (struct edict_s *self);
+void SP_misc_insane (struct edict_s *self);
+void SP_misc_deadsoldier (struct edict_s *self);
+void SP_misc_viper (struct edict_s *self);
+void SP_misc_viper_bomb (struct edict_s *self);
+void SP_misc_bigviper (struct edict_s *self);
+void SP_misc_strogg_ship (struct edict_s *self);
+void SP_misc_teleporter (struct edict_s *self);
+void SP_misc_teleporter_dest (struct edict_s *self);
+void SP_misc_blackhole (struct edict_s *self);
+void SP_misc_eastertank (struct edict_s *self);
+void SP_misc_easterchick (struct edict_s *self);
+void SP_misc_easterchick2 (struct edict_s *self);
 
-void SP_monster_berserk (edict_t *self);
-void SP_monster_gladiator (edict_t *self);
-void SP_monster_gunner (edict_t *self);
-void SP_monster_infantry (edict_t *self);
-void SP_monster_soldier_light (edict_t *self);
-void SP_monster_soldier (edict_t *self);
-void SP_monster_soldier_ss (edict_t *self);
-void SP_monster_tank (edict_t *self);
-void SP_monster_medic (edict_t *self);
-void SP_monster_flipper (edict_t *self);
-void SP_monster_chick (edict_t *self);
-void SP_monster_parasite (edict_t *self);
-void SP_monster_flyer (edict_t *self);
-void SP_monster_brain (edict_t *self);
-void SP_monster_floater (edict_t *self);
-void SP_monster_hover (edict_t *self);
-void SP_monster_mutant (edict_t *self);
-void SP_monster_supertank (edict_t *self);
-void SP_monster_boss2 (edict_t *self);
-void SP_monster_jorg (edict_t *self);
-void SP_monster_boss3_stand (edict_t *self);
+void SP_monster_berserk (struct edict_s *self);
+void SP_monster_gladiator (struct edict_s *self);
+void SP_monster_gunner (struct edict_s *self);
+void SP_monster_infantry (struct edict_s *self);
+void SP_monster_soldier_light (struct edict_s *self);
+void SP_monster_soldier (struct edict_s *self);
+void SP_monster_soldier_ss (struct edict_s *self);
+void SP_monster_tank (struct edict_s *self);
+void SP_monster_medic (struct edict_s *self);
+void SP_monster_flipper (struct edict_s *self);
+void SP_monster_chick (struct edict_s *self);
+void SP_monster_parasite (struct edict_s *self);
+void SP_monster_flyer (struct edict_s *self);
+void SP_monster_brain (struct edict_s *self);
+void SP_monster_floater (struct edict_s *self);
+void SP_monster_hover (struct edict_s *self);
+void SP_monster_mutant (struct edict_s *self);
+void SP_monster_supertank (struct edict_s *self);
+void SP_monster_boss2 (struct edict_s *self);
+void SP_monster_jorg (struct edict_s *self);
+void SP_monster_boss3_stand (struct edict_s *self);
 
-void SP_monster_commander_body (edict_t *self);
+void SP_monster_commander_body (struct edict_s *self);
 
-void SP_turret_breach (edict_t *self);
-void SP_turret_base (edict_t *self);
-void SP_turret_driver (edict_t *self);
+void SP_turret_breach (struct edict_s *self);
+void SP_turret_base (struct edict_s *self);
+void SP_turret_driver (struct edict_s *self);
 
 
 spawn_t	spawns[] = {
@@ -275,7 +275,7 @@ ED_CallSpawn
 Finds the spawn function for the entity and calls it
 ===============
 */
-void ED_CallSpawn (edict_t *ent)
+void ED_CallSpawn (struct edict_s *ent)
 {
 	spawn_t	*s;
 	gitem_t	*item;
@@ -320,7 +320,7 @@ char *ED_NewString (char *string)
 {
 	char	*newb, *new_p;
 	int		i,l;
-	
+
 	l = strlen(string) + 1;
 
 	newb = gi.TagMalloc (l, TAG_LEVEL);
@@ -340,7 +340,7 @@ char *ED_NewString (char *string)
 		else
 			*new_p++ = string[i];
 	}
-	
+
 	return newb;
 }
 
@@ -355,7 +355,7 @@ Takes a key/value pair and sets the binary values
 in an edict
 ===============
 */
-void ED_ParseField (char *key, char *value, edict_t *ent)
+void ED_ParseField (char *key, char *value, struct edict_s *ent)
 {
 	field_t	*f;
 	byte	*b;
@@ -411,7 +411,7 @@ Parses an edict out of the given string, returning the new position
 ed should be a properly initialized empty edict.
 ====================
 */
-char *ED_ParseEdict (char *data, edict_t *ent)
+char *ED_ParseEdict (char *data, struct edict_s *ent)
 {
 	qboolean	init;
 	char		keyname[256];
@@ -422,7 +422,7 @@ char *ED_ParseEdict (char *data, edict_t *ent)
 
 // go through all the dictionary pairs
 	while (1)
-	{	
+	{
 	// parse key
 		com_token = COM_Parse (&data);
 		if (com_token[0] == '}')
@@ -431,8 +431,8 @@ char *ED_ParseEdict (char *data, edict_t *ent)
 			gi.error ("ED_ParseEntity: EOF without closing brace");
 
 		strncpy (keyname, com_token, sizeof(keyname)-1);
-		
-	// parse value	
+
+	// parse value
 		com_token = COM_Parse (&data);
 		if (!data)
 			gi.error ("ED_ParseEntity: EOF without closing brace");
@@ -440,7 +440,7 @@ char *ED_ParseEdict (char *data, edict_t *ent)
 		if (com_token[0] == '}')
 			gi.error ("ED_ParseEntity: closing brace without data");
 
-		init = true;	
+		init = true;
 
 	// keynames with a leading underscore are used for utility comments,
 	// and are immediately discarded by quake
@@ -469,7 +469,7 @@ All but the last will have the teamchain field set to the next one
 */
 void G_FindTeams (void)
 {
-	edict_t	*e, *e2, *chain;
+	struct edict_s	*e, *e2, *chain;
 	int		i, j;
 	int		c, c2;
 
@@ -519,7 +519,7 @@ parsing textual entity definitions out of an ent file.
 */
 void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 {
-	edict_t		*ent;
+	struct edict_s		*ent;
 	int			inhibit;
 	char		*com_token;
 	int			i;
@@ -553,7 +553,7 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 // parse ents
 	while (1)
 	{
-		// parse the opening brace	
+		// parse the opening brace
 		com_token = COM_Parse (&entities);
 		if (!entities)
 			break;
@@ -577,7 +577,7 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 			{
 				if ( ent->spawnflags & SPAWNFLAG_NOT_DEATHMATCH )
 				{
-					G_FreeEdict (ent);	
+					G_FreeEdict (ent);
 					inhibit++;
 					continue;
 				}
@@ -590,7 +590,7 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 					(((skill->value == 2) || (skill->value == 3)) && (ent->spawnflags & SPAWNFLAG_NOT_HARD))
 					)
 					{
-						G_FreeEdict (ent);	
+						G_FreeEdict (ent);
 						inhibit++;
 						continue;
 					}
@@ -600,7 +600,7 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 		}
 
 		ED_CallSpawn (ent);
-	}	
+	}
 
 	gi.dprintf ("%i entities inhibited\n", inhibit);
 
@@ -645,7 +645,7 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 
 #endif
 
-char *single_statusbar = 
+char *single_statusbar =
 "yb	-24 "
 
 // health
@@ -696,7 +696,7 @@ char *single_statusbar =
 "	pic	9 "
 "endif "
 
-//  help / weapon icon 
+//  help / weapon icon
 "if 11 "
 "	xv	148 "
 "	pic	11 "
@@ -754,7 +754,7 @@ char *dm_statusbar =
 "	pic	9 "
 "endif "
 
-//  help / weapon icon 
+//  help / weapon icon
 "if 11 "
 "	xv	148 "
 "	pic	11 "
@@ -793,7 +793,7 @@ Only used for the world.
 "gravity"	800 is default gravity
 "message"	text to print at user logon
 */
-void SP_worldspawn (edict_t *ent)
+void SP_worldspawn (struct edict_s *ent)
 {
 	ent->movetype = MOVETYPE_PUSH;
 	ent->solid = SOLID_BSP;
@@ -876,9 +876,9 @@ void SP_worldspawn (edict_t *ent)
 	gi.soundindex ("*death3.wav");
 	gi.soundindex ("*death4.wav");
 	gi.soundindex ("*fall1.wav");
-	gi.soundindex ("*fall2.wav");	
+	gi.soundindex ("*fall2.wav");
 	gi.soundindex ("*gurp1.wav");		// drowning damage
-	gi.soundindex ("*gurp2.wav");	
+	gi.soundindex ("*gurp2.wav");
 	gi.soundindex ("*jump1.wav");		// player jump
 	gi.soundindex ("*pain25_1.wav");
 	gi.soundindex ("*pain25_2.wav");
@@ -913,7 +913,7 @@ void SP_worldspawn (edict_t *ent)
 	gi.soundindex ("player/watr_out.wav");	// feet leaving water
 
 	gi.soundindex ("player/watr_un.wav");	// head going underwater
-	
+
 	gi.soundindex ("player/u_breath1.wav");
 	gi.soundindex ("player/u_breath2.wav");
 
@@ -942,40 +942,40 @@ void SP_worldspawn (edict_t *ent)
 
 	// 0 normal
 	gi.configstring(CS_LIGHTS+0, "m");
-	
+
 	// 1 FLICKER (first variety)
 	gi.configstring(CS_LIGHTS+1, "mmnmmommommnonmmonqnmmo");
-	
+
 	// 2 SLOW STRONG PULSE
 	gi.configstring(CS_LIGHTS+2, "abcdefghijklmnopqrstuvwxyzyxwvutsrqponmlkjihgfedcba");
-	
+
 	// 3 CANDLE (first variety)
 	gi.configstring(CS_LIGHTS+3, "mmmmmaaaaammmmmaaaaaabcdefgabcdefg");
-	
+
 	// 4 FAST STROBE
 	gi.configstring(CS_LIGHTS+4, "mamamamamama");
-	
+
 	// 5 GENTLE PULSE 1
 	gi.configstring(CS_LIGHTS+5,"jklmnopqrstuvwxyzyxwvutsrqponmlkj");
-	
+
 	// 6 FLICKER (second variety)
 	gi.configstring(CS_LIGHTS+6, "nmonqnmomnmomomno");
-	
+
 	// 7 CANDLE (second variety)
 	gi.configstring(CS_LIGHTS+7, "mmmaaaabcdefgmmmmaaaammmaamm");
-	
+
 	// 8 CANDLE (third variety)
 	gi.configstring(CS_LIGHTS+8, "mmmaaammmaaammmabcdefaaaammmmabcdefmmmaaaa");
-	
+
 	// 9 SLOW STROBE (fourth variety)
 	gi.configstring(CS_LIGHTS+9, "aaaaaaaazzzzzzzz");
-	
+
 	// 10 FLUORESCENT FLICKER
 	gi.configstring(CS_LIGHTS+10, "mmamammmmammamamaaamammma");
 
 	// 11 SLOW PULSE NOT FADE TO BLACK
 	gi.configstring(CS_LIGHTS+11, "abcdefghijklmnopqrrqponmlkjihgfedcba");
-	
+
 	// styles 32-62 are assigned by the light program for switchable lights
 
 	// 63 testing

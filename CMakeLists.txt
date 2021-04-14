@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
 
 get_filename_component( basename ${CMAKE_CURRENT_SOURCE_DIR} NAME )
-project( ${basename} LANGUAGES C  )
+project( ${basename} LANGUAGES C )
 set( EXEC ${basename} )
 
 file(MAKE_DIRECTORY Build-Windows)
@@ -10,7 +10,7 @@ file(MAKE_DIRECTORY Build-Linux)
 if( MSVC )
     # Disable warnings for time being. W4 to turn them on.
     add_compile_options( /W0 )
-    add_compile_options( /MP )
+    #add_compile_options( /MP )
 else()
     #add_compile_options( -Wall -Wextra -pedantic -Werror )
     #add_definitions( -Wfatal-errors )
@@ -58,4 +58,8 @@ if( MSVC )
     target_link_libraries( ${EXEC} ${DEPENDENCIES} )
 else()
     target_link_libraries( ${EXEC} ${DEPENDENCIES} stdc++fs glut  )
+endif()
+
+if (MSVC)
+    set_target_properties( ${EXEC} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/runDir )
 endif()

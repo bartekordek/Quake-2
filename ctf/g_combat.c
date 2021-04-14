@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -29,7 +29,7 @@ Returns true if the inflictor can directly damage the target.  Used for
 explosions and melee attacks.
 ============
 */
-qboolean CanDamage (edict_t *targ, edict_t *inflictor)
+qboolean CanDamage (struct edict_s *targ, struct edict_s *inflictor)
 {
 	vec3_t	dest;
 	trace_t	trace;
@@ -46,7 +46,7 @@ qboolean CanDamage (edict_t *targ, edict_t *inflictor)
 			return true;
 		return false;
 	}
-	
+
 	trace = gi.trace (inflictor->s.origin, vec3_origin, vec3_origin, targ->s.origin, inflictor, MASK_SOLID);
 	if (trace.fraction == 1.0)
 		return true;
@@ -89,7 +89,7 @@ qboolean CanDamage (edict_t *targ, edict_t *inflictor)
 Killed
 ============
 */
-void Killed (edict_t *targ, edict_t *inflictor, edict_t *attacker, int damage, vec3_t point)
+void Killed (struct edict_s *targ, struct edict_s *inflictor, struct edict_s *attacker, int damage, vec3_t point)
 {
 	if (targ->health < -999)
 		targ->health = -999;
@@ -168,7 +168,7 @@ dflags		these flags are used to control how T_Damage works
 	DAMAGE_NO_PROTECTION	kills godmode, armor, everything
 ============
 */
-static int CheckPowerArmor (edict_t *ent, vec3_t point, vec3_t normal, int damage, int dflags)
+static int CheckPowerArmor (struct edict_s *ent, vec3_t point, vec3_t normal, int damage, int dflags)
 {
 	gclient_t	*client;
 	int			save;
@@ -252,7 +252,7 @@ static int CheckPowerArmor (edict_t *ent, vec3_t point, vec3_t normal, int damag
 	return save;
 }
 
-static int CheckArmor (edict_t *ent, vec3_t point, vec3_t normal, int damage, int te_sparks, int dflags)
+static int CheckArmor (struct edict_s *ent, vec3_t point, vec3_t normal, int damage, int te_sparks, int dflags)
 {
 	gclient_t	*client;
 	int			save;
@@ -292,7 +292,7 @@ static int CheckArmor (edict_t *ent, vec3_t point, vec3_t normal, int damage, in
 	return save;
 }
 
-void M_ReactToDamage (edict_t *targ, edict_t *attacker)
+void M_ReactToDamage (struct edict_s *targ, struct edict_s *attacker)
 {
 	if (!(attacker->client) && !(attacker->svflags & SVF_MONSTER))
 		return;
@@ -357,7 +357,7 @@ void M_ReactToDamage (edict_t *targ, edict_t *attacker)
 	}
 }
 
-qboolean CheckTeamDamage (edict_t *targ, edict_t *attacker)
+qboolean CheckTeamDamage (struct edict_s *targ, struct edict_s *attacker)
 {
 //ZOID
 	if (ctf->value && targ->client && attacker->client)
@@ -371,7 +371,7 @@ qboolean CheckTeamDamage (edict_t *targ, edict_t *attacker)
 	return false;
 }
 
-void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir, vec3_t point, vec3_t normal, int damage, int knockback, int dflags, int mod)
+void T_Damage (struct edict_s *targ, struct edict_s *inflictor, struct edict_s *attacker, vec3_t dir, vec3_t point, vec3_t normal, int damage, int knockback, int dflags, int mod)
 {
 	gclient_t	*client;
 	int			take;
@@ -482,7 +482,7 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 //ZOID
 		psave = CheckPowerArmor (targ, point, normal, take, dflags);
 		take -= psave;
-	
+
 		asave = CheckArmor (targ, point, normal, take, te_sparks, dflags);
 		take -= asave;
 	}
@@ -513,7 +513,7 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 
 		if (!CTFMatchSetup())
 			targ->health = targ->health - take;
-			
+
 		if (targ->health <= 0)
 		{
 			if ((targ->svflags & SVF_MONSTER) || (client))
@@ -564,10 +564,10 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 T_RadiusDamage
 ============
 */
-void T_RadiusDamage (edict_t *inflictor, edict_t *attacker, float damage, edict_t *ignore, float radius, int mod)
+void T_RadiusDamage (struct edict_s *inflictor, struct edict_s *attacker, float damage, struct edict_s *ignore, float radius, int mod)
 {
 	float	points;
-	edict_t	*ent = NULL;
+	struct edict_s	*ent = NULL;
 	vec3_t	v;
 	vec3_t	dir;
 

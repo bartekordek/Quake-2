@@ -10,8 +10,8 @@
 #include "server/server.h"
 #include "qcommon/qcommon.h"
 
-extern refimport_t	ri;
-extern game_import_t	gi;
+extern refimport_t ri;
+extern game_import_t gi;
 extern FILE	*logfile;
 extern cvar_t	*logfile_active;
 extern char	*rd_buffer;

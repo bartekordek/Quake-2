@@ -246,7 +246,7 @@ rserr_t SWimp_SetMode( int *pwidth, int *pheight, int mode, qboolean fullscreen 
 		}
 	}
 #endif
-	R_GammaCorrectAndSetPalette( ( const unsigned char * ) d_8to24table );
+	ref_soft_R_GammaCorrectAndSetPalette( ( const unsigned char * ) d_8to24table );
 	sww_state.initializing = true;
 
 	return retval;

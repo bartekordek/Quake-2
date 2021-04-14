@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -122,7 +122,7 @@ field_t fields[] = {
 field_t		levelfields[] =
 {
 	{"changemap", LLOFS(changemap), F_LSTRING},
-                   
+
 	{"sight_client", LLOFS(sight_client), F_EDICT},
 	{"sight_entity", LLOFS(sight_entity), F_EDICT},
 	{"sound_entity", LLOFS(sound_entity), F_EDICT},
@@ -251,10 +251,10 @@ void WriteField1 (FILE *f, field_t *field, byte *base)
 		*(int *)p = len;
 		break;
 	case F_EDICT:
-		if ( *(edict_t **)p == NULL)
+		if ( *(struct edict_s **)p == NULL)
 			index = -1;
 		else
-			index = *(edict_t **)p - g_edicts;
+			index = *(struct edict_s **)p - g_edicts;
 		*(int *)p = index;
 		break;
 	case F_CLIENT:
@@ -265,7 +265,7 @@ void WriteField1 (FILE *f, field_t *field, byte *base)
 		*(int *)p = index;
 		break;
 	case F_ITEM:
-		if ( *(edict_t **)p == NULL)
+		if ( *(struct edict_s **)p == NULL)
 			index = -1;
 		else
 			index = *(gitem_t **)p - itemlist;
@@ -349,9 +349,9 @@ void ReadField (FILE *f, field_t *field, byte *base)
 	case F_EDICT:
 		index = *(int *)p;
 		if ( index == -1 )
-			*(edict_t **)p = NULL;
+			*(struct edict_s **)p = NULL;
 		else
-			*(edict_t **)p = &g_edicts[index];
+			*(struct edict_s **)p = &g_edicts[index];
 		break;
 	case F_CLIENT:
 		index = *(int *)p;
@@ -404,7 +404,7 @@ void WriteClient (FILE *f, gclient_t *client)
 {
 	field_t		*field;
 	gclient_t	temp;
-	
+
 	// all of the ints, floats, and vectors stay as they are
 	temp = *client;
 
@@ -524,10 +524,10 @@ WriteEdict
 All pointer variables (except function pointers) must be handled specially.
 ==============
 */
-void WriteEdict (FILE *f, edict_t *ent)
+void WriteEdict (FILE *f, struct edict_s *ent)
 {
 	field_t		*field;
-	edict_t		temp;
+	struct edict_s		temp;
 
 	// all of the ints, floats, and vectors stay as they are
 	temp = *ent;
@@ -588,7 +588,7 @@ ReadEdict
 All pointer variables (except function pointers) must be handled specially.
 ==============
 */
-void ReadEdict (FILE *f, edict_t *ent)
+void ReadEdict (FILE *f, struct edict_s *ent)
 {
 	field_t		*field;
 
@@ -628,7 +628,7 @@ WriteLevel
 void WriteLevel (char *filename)
 {
 	int		i;
-	edict_t	*ent;
+	struct edict_s	*ent;
 	FILE	*f;
 	void	*base;
 
@@ -637,7 +637,7 @@ void WriteLevel (char *filename)
 		gi.error ("Couldn't open %s", filename);
 
 	// write out edict size for checking
-	i = sizeof(edict_t);
+	i = sizeof(struct edict_s);
 	fwrite (&i, sizeof(i), 1, f);
 
 	// write out a function pointer for checking
@@ -685,7 +685,7 @@ void ReadLevel (char *filename)
 	FILE	*f;
 	int		i;
 	void	*base;
-	edict_t	*ent;
+	struct edict_s	*ent;
 
 	f = fopen (filename, "rb");
 	if (!f)
@@ -701,7 +701,7 @@ void ReadLevel (char *filename)
 
 	// check edict size
 	fread (&i, sizeof(i), 1, f);
-	if (i != sizeof(edict_t))
+	if (i != sizeof(struct edict_s))
 	{
 		fclose (f);
 		gi.error ("ReadLevel: mismatched edict size");

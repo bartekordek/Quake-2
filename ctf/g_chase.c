@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -20,10 +20,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "g_local.h"
 
 
-void UpdateChaseCam(edict_t *ent)
+void UpdateChaseCam(struct edict_s *ent)
 {
 	vec3_t o, ownerv, goal;
-	edict_t *targ;
+	struct edict_s *targ;
 	vec3_t forward, right;
 	trace_t trace;
 	int i;
@@ -108,10 +108,10 @@ void UpdateChaseCam(edict_t *ent)
 
 }
 
-void ChaseNext(edict_t *ent)
+void ChaseNext(struct edict_s *ent)
 {
 	int i;
-	edict_t *e;
+	struct edict_s *e;
 
 	if (!ent->client->chase_target)
 		return;
@@ -132,10 +132,10 @@ void ChaseNext(edict_t *ent)
 	ent->client->update_chase = true;
 }
 
-void ChasePrev(edict_t *ent)
+void ChasePrev(struct edict_s *ent)
 {
 	int i;
-	edict_t *e;
+	struct edict_s *e;
 
 	if (!ent->client->chase_target)
 		return;

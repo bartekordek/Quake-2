@@ -260,9 +260,8 @@ SYSTEM SPECIFIC
 ==============================================================
 */
 
-extern    int    curtime;        // time returned by last Sys_Milliseconds
+extern    int    curtime;        // time returned by last win32_Sys_Milliseconds
 
-int        Sys_Milliseconds (void);
 void    Sys_Mkdir (char *path);
 
 // large block stack allocation routines
@@ -1131,37 +1130,6 @@ typedef struct entity_state_s
 } entity_state_t;
 
 //==============================================
-
-
-// player_state_t is the information needed in addition to pmove_state_t
-// to rendered a view.  There will only be 10 player_state_t sent each second,
-// but the number of pmove_state_t changes will be reletive to client
-// frame rates
-typedef struct
-{
-    pmove_state_t    pmove;        // for prediction
-
-    // these fields do not need to be communicated bit-precise
-
-    vec3_t        viewangles;        // for fixed views
-    vec3_t        viewoffset;        // add to pmovestate->origin
-    vec3_t        kick_angles;    // add to view direction to get render angles
-                                // set by weapon kicks, pain effects, etc
-
-    vec3_t        gunangles;
-    vec3_t        gunoffset;
-    int            gunindex;
-    int            gunframe;
-
-    float        blend[4];        // rgba full screen effect
-
-    float        fov;            // horizontal field of view
-
-    int            rdflags;        // refdef flags
-
-    short        stats[MAX_STATS];        // fast status bar updates
-} player_state_t;
-
 
 // ==================
 // PGM

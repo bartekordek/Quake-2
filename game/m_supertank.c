@@ -29,7 +29,7 @@ SUPERTANK
 #include "m_supertank.h"
 #include "shared/defines.h"
 
-qboolean visible (edict_t *self, edict_t *other);
+qboolean visible (struct edict_s *self, struct edict_s *other);
 
 static int	sound_pain1;
 static int	sound_pain2;
@@ -40,14 +40,14 @@ static int	sound_search2;
 
 static	int	tread_sound;
 
-void BossExplode (edict_t *self);
+void BossExplode (struct edict_s *self);
 
-void TreadSound (edict_t *self)
+void TreadSound (struct edict_s *self)
 {
 	gi.sound (self, CHAN_VOICE, tread_sound, 1, ATTN_NORM, 0);
 }
 
-void supertank_search (edict_t *self)
+void supertank_search (struct edict_s *self)
 {
 	if (random() < 0.5)
 		gi.sound (self, CHAN_VOICE, sound_search1, 1, ATTN_NORM, 0);
@@ -56,10 +56,10 @@ void supertank_search (edict_t *self)
 }
 
 
-void supertank_dead (edict_t *self);
-void supertankRocket (edict_t *self);
-void supertankMachineGun (edict_t *self);
-void supertank_reattack1(edict_t *self);
+void supertank_dead (struct edict_s *self);
+void supertankRocket (struct edict_s *self);
+void supertankMachineGun (struct edict_s *self);
+void supertank_reattack1(struct edict_s *self);
 
 
 //
@@ -131,7 +131,7 @@ mframe_t supertank_frames_stand []=
 };
 mmove_t	supertank_move_stand = {FRAME_stand_1, FRAME_stand_60, supertank_frames_stand, NULL};
 
-void supertank_stand (edict_t *self)
+void supertank_stand (struct edict_s *self)
 {
 	self->monsterinfo.currentmove = &supertank_move_stand;
 }
@@ -188,17 +188,17 @@ mframe_t supertank_frames_forward [] =
 };
 mmove_t	supertank_move_forward = {FRAME_forwrd_1, FRAME_forwrd_18, supertank_frames_forward, NULL};
 
-void supertank_forward (edict_t *self)
+void supertank_forward (struct edict_s *self)
 {
 		self->monsterinfo.currentmove = &supertank_move_forward;
 }
 
-void supertank_walk (edict_t *self)
+void supertank_walk (struct edict_s *self)
 {
 		self->monsterinfo.currentmove = &supertank_move_forward;
 }
 
-void supertank_run (edict_t *self)
+void supertank_run (struct edict_s *self)
 {
 	if (self->monsterinfo.aiflags & AI_STAND_GROUND)
 		self->monsterinfo.currentmove = &supertank_move_stand;
@@ -439,7 +439,7 @@ mframe_t supertank_frames_end_attack1[]=
 mmove_t supertank_move_end_attack1 = {FRAME_attak1_7, FRAME_attak1_20, supertank_frames_end_attack1, supertank_run};
 
 
-void supertank_reattack1(edict_t *self)
+void supertank_reattack1(struct edict_s *self)
 {
 	if (visible(self, self->enemy))
 		if (random() < 0.9)
@@ -450,7 +450,7 @@ void supertank_reattack1(edict_t *self)
 		self->monsterinfo.currentmove = &supertank_move_end_attack1;
 }
 
-void supertank_pain (edict_t *self, edict_t *other, float kick, int damage)
+void supertank_pain (struct edict_s *self, struct edict_s *other, float kick, int damage)
 {
 
 	if (self->health < (self->max_health / 2))
@@ -492,7 +492,7 @@ void supertank_pain (edict_t *self, edict_t *other, float kick, int damage)
 };
 
 
-void supertankRocket (edict_t *self)
+void supertankRocket (struct edict_s *self)
 {
 	vec3_t	forward, right;
 	vec3_t	start;
@@ -518,7 +518,7 @@ void supertankRocket (edict_t *self)
 	monster_fire_rocket (self, start, dir, 50, 500, flash_number);
 }
 
-void supertankMachineGun (edict_t *self)
+void supertankMachineGun (struct edict_s *self)
 {
 	vec3_t	dir;
 	vec3_t	vec;
@@ -549,7 +549,7 @@ void supertankMachineGun (edict_t *self)
 }
 
 
-void supertank_attack(edict_t *self)
+void supertank_attack(struct edict_s *self)
 {
 	vec3_t	vec;
 	float	range;
@@ -581,7 +581,7 @@ void supertank_attack(edict_t *self)
 // death
 //
 
-void supertank_dead (edict_t *self)
+void supertank_dead (struct edict_s *self)
 {
 	VectorSet (self->mins, -60, -60, 0);
 	VectorSet (self->maxs, 60, 60, 72);
@@ -592,7 +592,7 @@ void supertank_dead (edict_t *self)
 }
 
 
-void BossExplode (edict_t *self)
+void BossExplode (struct edict_s *self)
 {
 	vec3_t	org;
 	int		n;
@@ -655,7 +655,7 @@ void BossExplode (edict_t *self)
 }
 
 
-void supertank_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damage, vec3_t point)
+void supertank_die (struct edict_s *self, struct edict_s *inflictor, struct edict_s *attacker, int damage, vec3_t point)
 {
 	gi.sound (self, CHAN_VOICE, sound_death, 1, ATTN_NORM, 0);
 	self->deadflag = DEAD_DEAD;
@@ -670,7 +670,7 @@ void supertank_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int da
 
 /*QUAKED monster_supertank (1 .5 0) (-64 -64 0) (64 64 72) Ambush Trigger_Spawn Sight
 */
-void SP_monster_supertank (edict_t *self)
+void SP_monster_supertank (struct edict_s *self)
 {
 	if (deathmatch->value)
 	{

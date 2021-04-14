@@ -11,7 +11,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -59,7 +59,7 @@ typedef struct link_s
 #define	MAX_ENT_CLUSTERS	16
 
 
-typedef struct edict_s edict_t;
+typedef struct edict_s struct edict_s;
 typedef struct gclient_s gclient_t;
 
 
@@ -83,7 +83,7 @@ struct edict_s
 
 	// FIXME: move these fields to a server private sv_entity_t
 	link_t		area;				// linked to a division node or leaf
-	
+
 	int			num_clusters;		// if -1, use headnode instead
 	int			clusternums[MAX_ENT_CLUSTERS];
 	int			headnode;			// unused if num_clusters != -1
@@ -96,7 +96,7 @@ struct edict_s
 	vec3_t		absmin, absmax, size;
 	solid_t		solid;
 	int			clipmask;
-	edict_t		*owner;
+	struct edict_s		*owner;
 
 	// the game dll can add anything it wants after
 	// this point in the structure
@@ -114,10 +114,10 @@ typedef struct
 	// special messages
 	void	(*bprintf) (int printlevel, char *fmt, ...);
 	void	(*dprintf) (char *fmt, ...);
-	void	(*cprintf) (edict_t *ent, int printlevel, char *fmt, ...);
-	void	(*centerprintf) (edict_t *ent, char *fmt, ...);
-	void	(*sound) (edict_t *ent, int channel, int soundindex, float volume, float attenuation, float timeofs);
-	void	(*positioned_sound) (vec3_t origin, edict_t *ent, int channel, int soundinedex, float volume, float attenuation, float timeofs);
+	void	(*cprintf) (struct edict_s *ent, int printlevel, char *fmt, ...);
+	void	(*centerprintf) (struct edict_s *ent, char *fmt, ...);
+	void	(*sound) (struct edict_s *ent, int channel, int soundindex, float volume, float attenuation, float timeofs);
+	void	(*positioned_sound) (vec3_t origin, struct edict_s *ent, int channel, int soundinedex, float volume, float attenuation, float timeofs);
 
 	// config strings hold all the index strings, the lightstyles,
 	// and misc data like the sky definition and cdtrack.
@@ -132,10 +132,10 @@ typedef struct
 	int		(*soundindex) (char *name);
 	int		(*imageindex) (char *name);
 
-	void	(*setmodel) (edict_t *ent, char *name);
+	void	(*setmodel) (struct edict_s *ent, char *name);
 
 	// collision detection
-	trace_t	(*trace) (vec3_t start, vec3_t mins, vec3_t maxs, vec3_t end, edict_t *passent, int contentmask);
+	trace_t	(*trace) (vec3_t start, vec3_t mins, vec3_t maxs, vec3_t end, struct edict_s *passent, int contentmask);
 	int		(*pointcontents) (vec3_t point);
 	qboolean	(*inPVS) (vec3_t p1, vec3_t p2);
 	qboolean	(*inPHS) (vec3_t p1, vec3_t p2);
@@ -145,14 +145,14 @@ typedef struct
 	// an entity will never be sent to a client or used for collision
 	// if it is not passed to linkentity.  If the size, position, or
 	// solidity changes, it must be relinked.
-	void	(*linkentity) (edict_t *ent);
-	void	(*unlinkentity) (edict_t *ent);		// call before removing an interactive edict
-	int		(*BoxEdicts) (vec3_t mins, vec3_t maxs, edict_t **list,	int maxcount, int areatype);
+	void	(*linkentity) (struct edict_s *ent);
+	void	(*unlinkentity) (struct edict_s *ent);		// call before removing an interactive edict
+	int		(*BoxEdicts) (vec3_t mins, vec3_t maxs, struct edict_s **list,	int maxcount, int areatype);
 	void	(*Pmove) (pmove_t *pmove);		// player movement code common with client prediction
 
 	// network messaging
 	void	(*multicast) (vec3_t origin, multicast_t to);
-	void	(*unicast) (edict_t *ent, qboolean reliable);
+	void	(*unicast) (struct edict_s *ent, qboolean reliable);
 	void	(*WriteChar) (int c);
 	void	(*WriteByte) (int c);
 	void	(*WriteShort) (int c);
@@ -213,12 +213,12 @@ typedef struct
 	void		(*WriteLevel) (char *filename);
 	void		(*ReadLevel) (char *filename);
 
-	qboolean	(*ClientConnect) (edict_t *ent, char *userinfo);
-	void		(*ClientBegin) (edict_t *ent);
-	void		(*ClientUserinfoChanged) (edict_t *ent, char *userinfo);
-	void		(*ClientDisconnect) (edict_t *ent);
-	void		(*ClientCommand) (edict_t *ent);
-	void		(*ClientThink) (edict_t *ent, usercmd_t *cmd);
+	qboolean	(*ClientConnect) (struct edict_s *ent, char *userinfo);
+	void		(*ClientBegin) (struct edict_s *ent);
+	void		(*ClientUserinfoChanged) (struct edict_s *ent, char *userinfo);
+	void		(*ClientDisconnect) (struct edict_s *ent);
+	void		(*ClientCommand) (struct edict_s *ent);
+	void		(*ClientThink) (struct edict_s *ent, usercmd_t *cmd);
 
 	void		(*RunFrame) (void);
 
@@ -234,7 +234,7 @@ typedef struct
 
 	// The edict array is allocated in the game dll so it
 	// can vary in size from one game to another.
-	// 
+	//
 	// The size will be fixed when ge->Init() is called
 	struct edict_s	*edicts;
 	int			edict_size;

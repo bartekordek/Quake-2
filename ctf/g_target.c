@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 Fire an origin based temp entity event to the clients.
 "style"		type byte
 */
-void Use_Target_Tent (edict_t *ent, edict_t *other, edict_t *activator)
+void Use_Target_Tent (struct edict_s *ent, struct edict_s *other, struct edict_s *activator)
 {
 	gi.WriteByte (svc_temp_entity);
 	gi.WriteByte (ent->style);
@@ -31,7 +31,7 @@ void Use_Target_Tent (edict_t *ent, edict_t *other, edict_t *activator)
 	gi.multicast (ent->s.origin, MULTICAST_PVS);
 }
 
-void SP_target_temp_entity (edict_t *ent)
+void SP_target_temp_entity (struct edict_s *ent)
 {
 	ent->use = Use_Target_Tent;
 }
@@ -55,7 +55,7 @@ Normal sounds play each time the target is used.  The reliable flag can be set f
 Looped sounds are allways atten 3 / vol 1, and the use function toggles it on/off.
 Multiple identical looping sounds will just increase volume without any speed cost.
 */
-void Use_Target_Speaker (edict_t *ent, edict_t *other, edict_t *activator)
+void Use_Target_Speaker (struct edict_s *ent, struct edict_s *other, struct edict_s *activator)
 {
 	int		chan;
 
@@ -78,7 +78,7 @@ void Use_Target_Speaker (edict_t *ent, edict_t *other, edict_t *activator)
 	}
 }
 
-void SP_target_speaker (edict_t *ent)
+void SP_target_speaker (struct edict_s *ent)
 {
 	char	buffer[MAX_QPATH];
 
@@ -115,7 +115,7 @@ void SP_target_speaker (edict_t *ent)
 
 //==========================================================
 
-void Use_Target_Help (edict_t *ent, edict_t *other, edict_t *activator)
+void Use_Target_Help (struct edict_s *ent, struct edict_s *other, struct edict_s *activator)
 {
 	if (ent->spawnflags & 1)
 		strncpy (game.helpmessage1, ent->message, sizeof(game.helpmessage2)-1);
@@ -128,7 +128,7 @@ void Use_Target_Help (edict_t *ent, edict_t *other, edict_t *activator)
 /*QUAKED target_help (1 0 1) (-16 -16 -24) (16 16 24) help1
 When fired, the "message" key becomes the current personal computer string, and the message light will be set on all clients status bars.
 */
-void SP_target_help(edict_t *ent)
+void SP_target_help(struct edict_s *ent)
 {
 	if (deathmatch->value)
 	{	// auto-remove for deathmatch
@@ -151,7 +151,7 @@ void SP_target_help(edict_t *ent)
 Counts a secret found.
 These are single use targets.
 */
-void use_target_secret (edict_t *ent, edict_t *other, edict_t *activator)
+void use_target_secret (struct edict_s *ent, struct edict_s *other, struct edict_s *activator)
 {
 	gi.sound (ent, CHAN_VOICE, ent->noise_index, 1, ATTN_NORM, 0);
 
@@ -161,7 +161,7 @@ void use_target_secret (edict_t *ent, edict_t *other, edict_t *activator)
 	G_FreeEdict (ent);
 }
 
-void SP_target_secret (edict_t *ent)
+void SP_target_secret (struct edict_s *ent)
 {
 	if (deathmatch->value)
 	{	// auto-remove for deathmatch
@@ -186,7 +186,7 @@ void SP_target_secret (edict_t *ent)
 Counts a goal completed.
 These are single use targets.
 */
-void use_target_goal (edict_t *ent, edict_t *other, edict_t *activator)
+void use_target_goal (struct edict_s *ent, struct edict_s *other, struct edict_s *activator)
 {
 	gi.sound (ent, CHAN_VOICE, ent->noise_index, 1, ATTN_NORM, 0);
 
@@ -199,7 +199,7 @@ void use_target_goal (edict_t *ent, edict_t *other, edict_t *activator)
 	G_FreeEdict (ent);
 }
 
-void SP_target_goal (edict_t *ent)
+void SP_target_goal (struct edict_s *ent)
 {
 	if (deathmatch->value)
 	{	// auto-remove for deathmatch
@@ -224,7 +224,7 @@ Spawns an explosion temporary entity when used.
 "delay"		wait this long before going off
 "dmg"		how much radius damage should be done, defaults to 0
 */
-void target_explosion_explode (edict_t *self)
+void target_explosion_explode (struct edict_s *self)
 {
 	float		save;
 
@@ -241,7 +241,7 @@ void target_explosion_explode (edict_t *self)
 	self->delay = save;
 }
 
-void use_target_explosion (edict_t *self, edict_t *other, edict_t *activator)
+void use_target_explosion (struct edict_s *self, struct edict_s *other, struct edict_s *activator)
 {
 	self->activator = activator;
 
@@ -255,7 +255,7 @@ void use_target_explosion (edict_t *self, edict_t *other, edict_t *activator)
 	self->nextthink = level.time + self->delay;
 }
 
-void SP_target_explosion (edict_t *ent)
+void SP_target_explosion (struct edict_s *ent)
 {
 	ent->use = use_target_explosion;
 	ent->svflags = SVF_NOCLIENT;
@@ -267,7 +267,7 @@ void SP_target_explosion (edict_t *ent)
 /*QUAKED target_changelevel (1 0 0) (-8 -8 -8) (8 8 8)
 Changes level to "map" when fired
 */
-void use_target_changelevel (edict_t *self, edict_t *other, edict_t *activator)
+void use_target_changelevel (struct edict_s *self, struct edict_s *other, struct edict_s *activator)
 {
 	if (level.intermissiontime)
 		return;		// allready activated
@@ -293,13 +293,13 @@ void use_target_changelevel (edict_t *self, edict_t *other, edict_t *activator)
 	}
 
 	// if going to a new unit, clear cross triggers
-	if (strstr(self->map, "*"))	
+	if (strstr(self->map, "*"))
 		game.serverflags &= ~(SFL_CROSS_TRIGGER_MASK);
 
 	BeginIntermission (self);
 }
 
-void SP_target_changelevel (edict_t *ent)
+void SP_target_changelevel (struct edict_s *ent)
 {
 	if (!ent->map)
 	{
@@ -335,7 +335,7 @@ Set "sounds" to one of the following:
 		useful for lava/sparks
 */
 
-void use_target_splash (edict_t *self, edict_t *other, edict_t *activator)
+void use_target_splash (struct edict_s *self, struct edict_s *other, struct edict_s *activator)
 {
 	gi.WriteByte (svc_temp_entity);
 	gi.WriteByte (TE_SPLASH);
@@ -349,7 +349,7 @@ void use_target_splash (edict_t *self, edict_t *other, edict_t *activator)
 		T_RadiusDamage (self, activator, self->dmg, NULL, self->dmg+40, MOD_SPLASH);
 }
 
-void SP_target_splash (edict_t *self)
+void SP_target_splash (struct edict_s *self)
 {
 	self->use = use_target_splash;
 	G_SetMovedir (self->s.angles, self->movedir);
@@ -375,11 +375,11 @@ For gibs:
 	speed how fast it should be moving otherwise it
 	will just be dropped
 */
-void ED_CallSpawn (edict_t *ent);
+void ED_CallSpawn (struct edict_s *ent);
 
-void use_target_spawner (edict_t *self, edict_t *other, edict_t *activator)
+void use_target_spawner (struct edict_s *self, struct edict_s *other, struct edict_s *activator)
 {
-	edict_t	*ent;
+	struct edict_s	*ent;
 
 	ent = G_Spawn();
 	ent->classname = self->target;
@@ -393,7 +393,7 @@ void use_target_spawner (edict_t *self, edict_t *other, edict_t *activator)
 		VectorCopy (self->movedir, ent->velocity);
 }
 
-void SP_target_spawner (edict_t *self)
+void SP_target_spawner (struct edict_s *self)
 {
 	self->use = use_target_spawner;
 	self->svflags = SVF_NOCLIENT;
@@ -413,7 +413,7 @@ dmg		default is 15
 speed	default is 1000
 */
 
-void use_target_blaster (edict_t *self, edict_t *other, edict_t *activator)
+void use_target_blaster (struct edict_s *self, struct edict_s *other, struct edict_s *activator)
 {
 	int effect;
 
@@ -428,7 +428,7 @@ void use_target_blaster (edict_t *self, edict_t *other, edict_t *activator)
 	gi.sound (self, CHAN_VOICE, self->noise_index, 1, ATTN_NORM, 0);
 }
 
-void SP_target_blaster (edict_t *self)
+void SP_target_blaster (struct edict_s *self)
 {
 	self->use = use_target_blaster;
 	G_SetMovedir (self->s.angles, self->movedir);
@@ -448,13 +448,13 @@ void SP_target_blaster (edict_t *self)
 /*QUAKED target_crosslevel_trigger (.5 .5 .5) (-8 -8 -8) (8 8 8) trigger1 trigger2 trigger3 trigger4 trigger5 trigger6 trigger7 trigger8
 Once this trigger is touched/used, any trigger_crosslevel_target with the same trigger number is automatically used when a level is started within the same unit.  It is OK to check multiple triggers.  Message, delay, target, and killtarget also work.
 */
-void trigger_crosslevel_trigger_use (edict_t *self, edict_t *other, edict_t *activator)
+void trigger_crosslevel_trigger_use (struct edict_s *self, struct edict_s *other, struct edict_s *activator)
 {
 	game.serverflags |= self->spawnflags;
 	G_FreeEdict (self);
 }
 
-void SP_target_crosslevel_trigger (edict_t *self)
+void SP_target_crosslevel_trigger (struct edict_s *self)
 {
 	self->svflags = SVF_NOCLIENT;
 	self->use = trigger_crosslevel_trigger_use;
@@ -466,7 +466,7 @@ killtarget also work.
 
 "delay"		delay before using targets if the trigger has been activated (default 1)
 */
-void target_crosslevel_target_think (edict_t *self)
+void target_crosslevel_target_think (struct edict_s *self)
 {
 	if (self->spawnflags == (game.serverflags & SFL_CROSS_TRIGGER_MASK & self->spawnflags))
 	{
@@ -475,7 +475,7 @@ void target_crosslevel_target_think (edict_t *self)
 	}
 }
 
-void SP_target_crosslevel_target (edict_t *self)
+void SP_target_crosslevel_target (struct edict_s *self)
 {
 	if (! self->delay)
 		self->delay = 1;
@@ -492,9 +492,9 @@ When triggered, fires a laser.  You can either set a target
 or a direction.
 */
 
-void target_laser_think (edict_t *self)
+void target_laser_think (struct edict_s *self)
 {
-	edict_t	*ignore;
+	struct edict_s	*ignore;
 	vec3_t	start;
 	vec3_t	end;
 	trace_t	tr;
@@ -557,7 +557,7 @@ void target_laser_think (edict_t *self)
 	self->nextthink = level.time + FRAMETIME;
 }
 
-void target_laser_on (edict_t *self)
+void target_laser_on (struct edict_s *self)
 {
 	if (!self->activator)
 		self->activator = self;
@@ -566,14 +566,14 @@ void target_laser_on (edict_t *self)
 	target_laser_think (self);
 }
 
-void target_laser_off (edict_t *self)
+void target_laser_off (struct edict_s *self)
 {
 	self->spawnflags &= ~1;
 	self->svflags |= SVF_NOCLIENT;
 	self->nextthink = 0;
 }
 
-void target_laser_use (edict_t *self, edict_t *other, edict_t *activator)
+void target_laser_use (struct edict_s *self, struct edict_s *other, struct edict_s *activator)
 {
 	self->activator = activator;
 	if (self->spawnflags & 1)
@@ -582,9 +582,9 @@ void target_laser_use (edict_t *self, edict_t *other, edict_t *activator)
 		target_laser_on (self);
 }
 
-void target_laser_start (edict_t *self)
+void target_laser_start (struct edict_s *self)
 {
-	edict_t *ent;
+	struct edict_s *ent;
 
 	self->movetype = MOVETYPE_NONE;
 	self->solid = SOLID_NOT;
@@ -639,7 +639,7 @@ void target_laser_start (edict_t *self)
 		target_laser_off (self);
 }
 
-void SP_target_laser (edict_t *self)
+void SP_target_laser (struct edict_s *self)
 {
 	// let everything else get spawned before we start firing
 	self->think = target_laser_start;
@@ -653,7 +653,7 @@ speed		How many seconds the ramping will take
 message		two letters; starting lightlevel and ending lightlevel
 */
 
-void target_lightramp_think (edict_t *self)
+void target_lightramp_think (struct edict_s *self)
 {
 	char	style[2];
 
@@ -676,11 +676,11 @@ void target_lightramp_think (edict_t *self)
 	}
 }
 
-void target_lightramp_use (edict_t *self, edict_t *other, edict_t *activator)
+void target_lightramp_use (struct edict_s *self, struct edict_s *other, struct edict_s *activator)
 {
 	if (!self->enemy)
 	{
-		edict_t		*e;
+		struct edict_s		*e;
 
 		// check all the targets
 		e = NULL;
@@ -712,7 +712,7 @@ void target_lightramp_use (edict_t *self, edict_t *other, edict_t *activator)
 	target_lightramp_think (self);
 }
 
-void SP_target_lightramp (edict_t *self)
+void SP_target_lightramp (struct edict_s *self)
 {
 	if (!self->message || strlen(self->message) != 2 || self->message[0] < 'a' || self->message[0] > 'z' || self->message[1] < 'a' || self->message[1] > 'z' || self->message[0] == self->message[1])
 	{
@@ -752,10 +752,10 @@ All players and monsters are affected.
 "count"		duration of the quake (default:5)
 */
 
-void target_earthquake_think (edict_t *self)
+void target_earthquake_think (struct edict_s *self)
 {
 	int		i;
-	edict_t	*e;
+	struct edict_s	*e;
 
 	if (self->last_move_time < level.time)
 	{
@@ -782,7 +782,7 @@ void target_earthquake_think (edict_t *self)
 		self->nextthink = level.time + FRAMETIME;
 }
 
-void target_earthquake_use (edict_t *self, edict_t *other, edict_t *activator)
+void target_earthquake_use (struct edict_s *self, struct edict_s *other, struct edict_s *activator)
 {
 	self->timestamp = level.time + self->count;
 	self->nextthink = level.time + FRAMETIME;
@@ -790,7 +790,7 @@ void target_earthquake_use (edict_t *self, edict_t *other, edict_t *activator)
 	self->last_move_time = 0;
 }
 
-void SP_target_earthquake (edict_t *self)
+void SP_target_earthquake (struct edict_s *self)
 {
 	if (!self->targetname)
 		gi.dprintf("untargeted %s at %s\n", self->classname, vtos(self->s.origin));

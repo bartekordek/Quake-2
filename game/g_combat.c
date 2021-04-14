@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "g_local.h"
 #include "shared/defines.h"
+#include "shared/g_client.h"
 
 /*
 ============
@@ -30,7 +31,7 @@ Returns true if the inflictor can directly damage the target.  Used for
 explosions and melee attacks.
 ============
 */
-qboolean CanDamage (edict_t *targ, edict_t *inflictor)
+qboolean CanDamage (struct edict_s *targ, struct edict_s *inflictor)
 {
 	vec3_t	dest;
 	trace_t	trace;
@@ -90,7 +91,7 @@ qboolean CanDamage (edict_t *targ, edict_t *inflictor)
 Killed
 ============
 */
-void Killed (edict_t *targ, edict_t *inflictor, edict_t *attacker, int damage, vec3_t point)
+void Killed (struct edict_s *targ, struct edict_s *inflictor, struct edict_s *attacker, int damage, vec3_t point)
 {
 	if (targ->health < -999)
 		targ->health = -999;
@@ -169,7 +170,7 @@ dflags		these flags are used to control how T_Damage works
 	DAMAGE_NO_PROTECTION	kills godmode, armor, everything
 ============
 */
-static int CheckPowerArmor (edict_t *ent, vec3_t point, vec3_t normal, int damage, int dflags)
+static int CheckPowerArmor (struct edict_s *ent, vec3_t point, vec3_t normal, int damage, int dflags)
 {
 	gclient_t	*client;
 	int			save;
@@ -253,7 +254,7 @@ static int CheckPowerArmor (edict_t *ent, vec3_t point, vec3_t normal, int damag
 	return save;
 }
 
-static int CheckArmor (edict_t *ent, vec3_t point, vec3_t normal, int damage, int te_sparks, int dflags)
+static int CheckArmor (struct edict_s *ent, vec3_t point, vec3_t normal, int damage, int te_sparks, int dflags)
 {
 	gclient_t	*client;
 	int			save;
@@ -293,7 +294,7 @@ static int CheckArmor (edict_t *ent, vec3_t point, vec3_t normal, int damage, in
 	return save;
 }
 
-void M_ReactToDamage (edict_t *targ, edict_t *attacker)
+void M_ReactToDamage (struct edict_s *targ, struct edict_s *attacker)
 {
 	if (!(attacker->client) && !(attacker->svflags & SVF_MONSTER))
 		return;
@@ -368,14 +369,14 @@ void M_ReactToDamage (edict_t *targ, edict_t *attacker)
 	}
 }
 
-qboolean CheckTeamDamage (edict_t *targ, edict_t *attacker)
+qboolean CheckTeamDamage (struct edict_s *targ, struct edict_s *attacker)
 {
 		//FIXME make the next line real and uncomment this block
 		// if ((ability to damage a teammate == OFF) && (targ's team == attacker's team))
 	return false;
 }
 
-void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir, vec3_t point, vec3_t normal, int damage, int knockback, int dflags, int mod)
+void T_Damage (struct edict_s *targ, struct edict_s *inflictor, struct edict_s *attacker, vec3_t dir, vec3_t point, vec3_t normal, int damage, int knockback, int dflags, int mod)
 {
 	gclient_t	*client;
 	int			take;
@@ -545,10 +546,10 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 T_RadiusDamage
 ============
 */
-void T_RadiusDamage (edict_t *inflictor, edict_t *attacker, float damage, edict_t *ignore, float radius, int mod)
+void T_RadiusDamage (struct edict_s *inflictor, struct edict_s *attacker, float damage, struct edict_s *ignore, float radius, int mod)
 {
 	float	points;
-	edict_t	*ent = NULL;
+	struct edict_s	*ent = NULL;
 	vec3_t	v;
 	vec3_t	dir;
 

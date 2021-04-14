@@ -29,7 +29,7 @@ INTERMISSION
 ======================================================================
 */
 
-void MoveClientToIntermission (edict_t *ent)
+void MoveClientToIntermission (struct edict_s *ent)
 {
 	if (deathmatch->value || coop->value)
 		ent->client->showscores = true;
@@ -70,10 +70,10 @@ void MoveClientToIntermission (edict_t *ent)
 
 }
 
-void BeginIntermission (edict_t *targ)
+void BeginIntermission (struct edict_s *targ)
 {
 	int		i, n;
-	edict_t	*ent, *client;
+	struct edict_s	*ent, *client;
 
 	if (level.intermissiontime)
 		return;		// already activated
@@ -161,7 +161,7 @@ DeathmatchScoreboardMessage
 
 ==================
 */
-void DeathmatchScoreboardMessage (edict_t *ent, edict_t *killer)
+void DeathmatchScoreboardMessage (struct edict_s *ent, struct edict_s *killer)
 {
 	char	entry[1024];
 	char	string[1400];
@@ -173,7 +173,7 @@ void DeathmatchScoreboardMessage (edict_t *ent, edict_t *killer)
 	int		picnum;
 	int		x, y;
 	gclient_t	*cl;
-	edict_t		*cl_ent;
+	struct edict_s		*cl_ent;
 	char	*tag;
 
 	// sort the clients by score
@@ -259,7 +259,7 @@ Draw instead of help message.
 Note that it isn't that hard to overflow the 1400 byte message limit!
 ==================
 */
-void DeathmatchScoreboard (edict_t *ent)
+void DeathmatchScoreboard (struct edict_s *ent)
 {
 	DeathmatchScoreboardMessage (ent, ent->enemy);
 	gi.unicast (ent, true);
@@ -273,7 +273,7 @@ Cmd_Score_f
 Display the scoreboard
 ==================
 */
-void Cmd_Score_f (edict_t *ent)
+void Cmd_Score_f (struct edict_s *ent)
 {
 	ent->client->showinventory = false;
 	ent->client->showhelp = false;
@@ -299,7 +299,7 @@ HelpComputer
 Draw help computer.
 ==================
 */
-void HelpComputer (edict_t *ent)
+void HelpComputer (struct edict_s *ent)
 {
 	char	string[1024];
 	char	*sk;
@@ -343,7 +343,7 @@ Cmd_Help_f
 Display the current help message
 ==================
 */
-void Cmd_Help_f (edict_t *ent)
+void Cmd_Help_f (struct edict_s *ent)
 {
 	// this is for backwards compatability
 	if (deathmatch->value)
@@ -374,7 +374,7 @@ void Cmd_Help_f (edict_t *ent)
 G_SetStats
 ===============
 */
-void G_SetStats (edict_t *ent)
+void G_SetStats (struct edict_s *ent)
 {
 	gitem_t		*item;
 	int			index, cells;
@@ -527,7 +527,7 @@ void G_SetStats (edict_t *ent)
 G_CheckChaseStats
 ===============
 */
-void G_CheckChaseStats (edict_t *ent)
+void G_CheckChaseStats (struct edict_s *ent)
 {
 	int i;
 	gclient_t *cl;
@@ -546,7 +546,7 @@ void G_CheckChaseStats (edict_t *ent)
 G_SetSpectatorStats
 ===============
 */
-void G_SetSpectatorStats (edict_t *ent)
+void G_SetSpectatorStats (struct edict_s *ent)
 {
 	gclient_t *cl = ent->client;
 

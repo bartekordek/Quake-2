@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -27,7 +27,7 @@ static qboolean	is_quad;
 static byte		is_silenced;
 
 
-void weapon_grenade_fire (edict_t *ent, qboolean held);
+void weapon_grenade_fire (struct edict_s *ent, qboolean held);
 
 
 void P_ProjectSource (gclient_t *client, vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t result)
@@ -55,9 +55,9 @@ Monsters that don't directly see the player can move
 to a noise in hopes of seeing the player from there.
 ===============
 */
-void PlayerNoise(edict_t *who, vec3_t where, int type)
+void PlayerNoise(struct edict_s *who, vec3_t where, int type)
 {
-	edict_t		*noise;
+	struct edict_s		*noise;
 
 	if (type == PNOISE_WEAPON)
 	{
@@ -115,14 +115,14 @@ void PlayerNoise(edict_t *who, vec3_t where, int type)
 }
 
 
-qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
+qboolean Pickup_Weapon (struct edict_s *ent, struct edict_s *other)
 {
 	int			index;
 	gitem_t		*ammo;
 
 	index = ITEM_INDEX(ent->item);
 
-	if ( ( ((int)(dmflags->value) & DF_WEAPONS_STAY) || coop->value) 
+	if ( ( ((int)(dmflags->value) & DF_WEAPONS_STAY) || coop->value)
 		&& other->client->pers.inventory[index])
 	{
 		if (!(ent->spawnflags & (DROPPED_ITEM | DROPPED_PLAYER_ITEM) ) )
@@ -154,7 +154,7 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 		}
 	}
 
-	if (other->client->pers.weapon != ent->item && 
+	if (other->client->pers.weapon != ent->item &&
 		(other->client->pers.inventory[index] == 1) &&
 		( !deathmatch->value || other->client->pers.weapon == FindItem("blaster") ) )
 		other->client->newweapon = ent->item;
@@ -171,7 +171,7 @@ The old weapon has been dropped all the way, so make the new one
 current
 ===============
 */
-void ChangeWeapon (edict_t *ent)
+void ChangeWeapon (struct edict_s *ent)
 {
 	int i;
 
@@ -222,7 +222,7 @@ void ChangeWeapon (edict_t *ent)
 	{
 			ent->s.frame = FRAME_pain301;
 			ent->client->anim_end = FRAME_pain304;
-			
+
 	}
 }
 
@@ -231,7 +231,7 @@ void ChangeWeapon (edict_t *ent)
 NoAmmoWeaponChange
 =================
 */
-void NoAmmoWeaponChange (edict_t *ent)
+void NoAmmoWeaponChange (struct edict_s *ent)
 {
 	if ( ent->client->pers.inventory[ITEM_INDEX(FindItem("slugs"))]
 		&&  ent->client->pers.inventory[ITEM_INDEX(FindItem("railgun"))] )
@@ -279,7 +279,7 @@ Think_Weapon
 Called by ClientBeginServerFrame and ClientThink
 =================
 */
-void Think_Weapon (edict_t *ent)
+void Think_Weapon (struct edict_s *ent)
 {
 	// if just died, put the weapon away
 	if (ent->health < 1)
@@ -308,7 +308,7 @@ Use_Weapon
 Make the weapon ready if there is ammo
 ================
 */
-void Use_Weapon (edict_t *ent, gitem_t *item)
+void Use_Weapon (struct edict_s *ent, gitem_t *item)
 {
 	int			ammo_index;
 	gitem_t		*ammo_item;
@@ -346,7 +346,7 @@ void Use_Weapon (edict_t *ent, gitem_t *item)
 Drop_Weapon
 ================
 */
-void Drop_Weapon (edict_t *ent, gitem_t *item)
+void Drop_Weapon (struct edict_s *ent, gitem_t *item)
 {
 	int		index;
 
@@ -377,7 +377,7 @@ A generic function to handle the basics of weapon thinking
 #define FRAME_IDLE_FIRST		(FRAME_FIRE_LAST + 1)
 #define FRAME_DEACTIVATE_FIRST	(FRAME_IDLE_LAST + 1)
 
-static void Weapon_Generic2 (edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST, int FRAME_IDLE_LAST, int FRAME_DEACTIVATE_LAST, int *pause_frames, int *fire_frames, void (*fire)(edict_t *ent))
+static void Weapon_Generic2 (struct edict_s *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST, int FRAME_IDLE_LAST, int FRAME_DEACTIVATE_LAST, int *pause_frames, int *fire_frames, void (*fire)(struct edict_s *ent))
 {
 	int		n;
 
@@ -405,7 +405,7 @@ static void Weapon_Generic2 (edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FI
 			{
 				ent->s.frame = FRAME_pain304+1;
 				ent->client->anim_end = FRAME_pain301;
-				
+
 			}
 		}
 
@@ -420,8 +420,8 @@ static void Weapon_Generic2 (edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FI
 			ent->client->weaponstate = WEAPON_READY;
 			ent->client->ps.gunframe = FRAME_IDLE_FIRST;
 			// we go recursive here to instant ready the weapon
-			Weapon_Generic2 (ent, FRAME_ACTIVATE_LAST, FRAME_FIRE_LAST, 
-				FRAME_IDLE_LAST, FRAME_DEACTIVATE_LAST, pause_frames, 
+			Weapon_Generic2 (ent, FRAME_ACTIVATE_LAST, FRAME_FIRE_LAST,
+				FRAME_IDLE_LAST, FRAME_DEACTIVATE_LAST, pause_frames,
 				fire_frames, fire);
 			return;
 		}
@@ -451,7 +451,7 @@ static void Weapon_Generic2 (edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FI
 			{
 				ent->s.frame = FRAME_pain304+1;
 				ent->client->anim_end = FRAME_pain301;
-				
+
 			}
 		}
 		return;
@@ -462,7 +462,7 @@ static void Weapon_Generic2 (edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FI
 		if ( ((ent->client->latched_buttons|ent->client->buttons) & BUTTON_ATTACK) )
 		{
 			ent->client->latched_buttons &= ~BUTTON_ATTACK;
-			if ((!ent->client->ammo_index) || 
+			if ((!ent->client->ammo_index) ||
 				( ent->client->pers.inventory[ent->client->ammo_index] >= ent->client->pers.weapon->quantity))
 			{
 				ent->client->ps.gunframe = FRAME_FIRE_FIRST;
@@ -545,12 +545,12 @@ static void Weapon_Generic2 (edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FI
 }
 
 //ZOID
-void Weapon_Generic (edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST, int FRAME_IDLE_LAST, int FRAME_DEACTIVATE_LAST, int *pause_frames, int *fire_frames, void (*fire)(edict_t *ent))
+void Weapon_Generic (struct edict_s *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST, int FRAME_IDLE_LAST, int FRAME_DEACTIVATE_LAST, int *pause_frames, int *fire_frames, void (*fire)(struct edict_s *ent))
 {
 	int oldstate = ent->client->weaponstate;
 
-	Weapon_Generic2 (ent, FRAME_ACTIVATE_LAST, FRAME_FIRE_LAST, 
-		FRAME_IDLE_LAST, FRAME_DEACTIVATE_LAST, pause_frames, 
+	Weapon_Generic2 (ent, FRAME_ACTIVATE_LAST, FRAME_FIRE_LAST,
+		FRAME_IDLE_LAST, FRAME_DEACTIVATE_LAST, pause_frames,
 		fire_frames, fire);
 
 	// run the weapon frame again if hasted
@@ -562,8 +562,8 @@ void Weapon_Generic (edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST,
 		(Q_stricmp(ent->client->pers.weapon->pickup_name, "Grapple") == 0 &&
 		ent->client->weaponstate != WEAPON_FIRING))
 		&& oldstate == ent->client->weaponstate) {
-		Weapon_Generic2 (ent, FRAME_ACTIVATE_LAST, FRAME_FIRE_LAST, 
-			FRAME_IDLE_LAST, FRAME_DEACTIVATE_LAST, pause_frames, 
+		Weapon_Generic2 (ent, FRAME_ACTIVATE_LAST, FRAME_FIRE_LAST,
+			FRAME_IDLE_LAST, FRAME_DEACTIVATE_LAST, pause_frames,
 			fire_frames, fire);
 	}
 }
@@ -581,7 +581,7 @@ GRENADE
 #define GRENADE_MINSPEED	400
 #define GRENADE_MAXSPEED	800
 
-void weapon_grenade_fire (edict_t *ent, qboolean held)
+void weapon_grenade_fire (struct edict_s *ent, qboolean held)
 {
 	vec3_t	offset;
 	vec3_t	forward, right;
@@ -627,7 +627,7 @@ void weapon_grenade_fire (edict_t *ent, qboolean held)
 	}
 }
 
-void Weapon_Grenade (edict_t *ent)
+void Weapon_Grenade (struct edict_s *ent)
 {
 	if ((ent->client->newweapon) && (ent->client->weaponstate == WEAPON_READY))
 	{
@@ -741,7 +741,7 @@ GRENADE LAUNCHER
 ======================================================================
 */
 
-void weapon_grenadelauncher_fire (edict_t *ent)
+void weapon_grenadelauncher_fire (struct edict_s *ent)
 {
 	vec3_t	offset;
 	vec3_t	forward, right;
@@ -775,7 +775,7 @@ void weapon_grenadelauncher_fire (edict_t *ent)
 		ent->client->pers.inventory[ent->client->ammo_index]--;
 }
 
-void Weapon_GrenadeLauncher (edict_t *ent)
+void Weapon_GrenadeLauncher (struct edict_s *ent)
 {
 	static int	pause_frames[]	= {34, 51, 59, 0};
 	static int	fire_frames[]	= {6, 0};
@@ -791,7 +791,7 @@ ROCKET
 ======================================================================
 */
 
-void Weapon_RocketLauncher_Fire (edict_t *ent)
+void Weapon_RocketLauncher_Fire (struct edict_s *ent)
 {
 	vec3_t	offset, start;
 	vec3_t	forward, right;
@@ -831,7 +831,7 @@ void Weapon_RocketLauncher_Fire (edict_t *ent)
 		ent->client->pers.inventory[ent->client->ammo_index]--;
 }
 
-void Weapon_RocketLauncher (edict_t *ent)
+void Weapon_RocketLauncher (struct edict_s *ent)
 {
 	static int	pause_frames[]	= {25, 33, 42, 50, 0};
 	static int	fire_frames[]	= {5, 0};
@@ -848,7 +848,7 @@ BLASTER / HYPERBLASTER
 ======================================================================
 */
 
-void Blaster_Fire (edict_t *ent, vec3_t g_offset, int damage, qboolean hyper, int effect)
+void Blaster_Fire (struct edict_s *ent, vec3_t g_offset, int damage, qboolean hyper, int effect)
 {
 	vec3_t	forward, right;
 	vec3_t	start;
@@ -879,7 +879,7 @@ void Blaster_Fire (edict_t *ent, vec3_t g_offset, int damage, qboolean hyper, in
 }
 
 
-void Weapon_Blaster_Fire (edict_t *ent)
+void Weapon_Blaster_Fire (struct edict_s *ent)
 {
 	int		damage;
 
@@ -891,7 +891,7 @@ void Weapon_Blaster_Fire (edict_t *ent)
 	ent->client->ps.gunframe++;
 }
 
-void Weapon_Blaster (edict_t *ent)
+void Weapon_Blaster (struct edict_s *ent)
 {
 	static int	pause_frames[]	= {19, 32, 0};
 	static int	fire_frames[]	= {5, 0};
@@ -900,7 +900,7 @@ void Weapon_Blaster (edict_t *ent)
 }
 
 
-void Weapon_HyperBlaster_Fire (edict_t *ent)
+void Weapon_HyperBlaster_Fire (struct edict_s *ent)
 {
 	float	rotation;
 	vec3_t	offset;
@@ -969,7 +969,7 @@ void Weapon_HyperBlaster_Fire (edict_t *ent)
 
 }
 
-void Weapon_HyperBlaster (edict_t *ent)
+void Weapon_HyperBlaster (struct edict_s *ent)
 {
 	static int	pause_frames[]	= {0};
 	static int	fire_frames[]	= {6, 7, 8, 9, 10, 11, 0};
@@ -985,7 +985,7 @@ MACHINEGUN / CHAINGUN
 ======================================================================
 */
 
-void Machinegun_Fire (edict_t *ent)
+void Machinegun_Fire (struct edict_s *ent)
 {
 	int	i;
 	vec3_t		start;
@@ -1071,7 +1071,7 @@ void Machinegun_Fire (edict_t *ent)
 	}
 }
 
-void Weapon_Machinegun (edict_t *ent)
+void Weapon_Machinegun (struct edict_s *ent)
 {
 	static int	pause_frames[]	= {23, 45, 0};
 	static int	fire_frames[]	= {4, 5, 0};
@@ -1079,7 +1079,7 @@ void Weapon_Machinegun (edict_t *ent)
 	Weapon_Generic (ent, 3, 5, 45, 49, pause_frames, fire_frames, Machinegun_Fire);
 }
 
-void Chaingun_Fire (edict_t *ent)
+void Chaingun_Fire (struct edict_s *ent)
 {
 	int			i;
 	int			shots;
@@ -1199,7 +1199,7 @@ void Chaingun_Fire (edict_t *ent)
 }
 
 
-void Weapon_Chaingun (edict_t *ent)
+void Weapon_Chaingun (struct edict_s *ent)
 {
 	static int	pause_frames[]	= {38, 43, 51, 61, 0};
 	static int	fire_frames[]	= {5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 0};
@@ -1216,7 +1216,7 @@ SHOTGUN / SUPERSHOTGUN
 ======================================================================
 */
 
-void weapon_shotgun_fire (edict_t *ent)
+void weapon_shotgun_fire (struct edict_s *ent)
 {
 	vec3_t		start;
 	vec3_t		forward, right;
@@ -1262,7 +1262,7 @@ void weapon_shotgun_fire (edict_t *ent)
 		ent->client->pers.inventory[ent->client->ammo_index]--;
 }
 
-void Weapon_Shotgun (edict_t *ent)
+void Weapon_Shotgun (struct edict_s *ent)
 {
 	static int	pause_frames[]	= {22, 28, 34, 0};
 	static int	fire_frames[]	= {8, 9, 0};
@@ -1271,7 +1271,7 @@ void Weapon_Shotgun (edict_t *ent)
 }
 
 
-void weapon_supershotgun_fire (edict_t *ent)
+void weapon_supershotgun_fire (struct edict_s *ent)
 {
 	vec3_t		start;
 	vec3_t		forward, right;
@@ -1316,7 +1316,7 @@ void weapon_supershotgun_fire (edict_t *ent)
 		ent->client->pers.inventory[ent->client->ammo_index] -= 2;
 }
 
-void Weapon_SuperShotgun (edict_t *ent)
+void Weapon_SuperShotgun (struct edict_s *ent)
 {
 	static int	pause_frames[]	= {29, 42, 57, 0};
 	static int	fire_frames[]	= {7, 0};
@@ -1334,7 +1334,7 @@ RAILGUN
 ======================================================================
 */
 
-void weapon_railgun_fire (edict_t *ent)
+void weapon_railgun_fire (struct edict_s *ent)
 {
 	vec3_t		start;
 	vec3_t		forward, right;
@@ -1382,7 +1382,7 @@ void weapon_railgun_fire (edict_t *ent)
 }
 
 
-void Weapon_Railgun (edict_t *ent)
+void Weapon_Railgun (struct edict_s *ent)
 {
 	static int	pause_frames[]	= {56, 0};
 	static int	fire_frames[]	= {4, 0};
@@ -1399,7 +1399,7 @@ BFG10K
 ======================================================================
 */
 
-void weapon_bfg_fire (edict_t *ent)
+void weapon_bfg_fire (struct edict_s *ent)
 {
 	vec3_t	offset, start;
 	vec3_t	forward, right;
@@ -1457,7 +1457,7 @@ void weapon_bfg_fire (edict_t *ent)
 		ent->client->pers.inventory[ent->client->ammo_index] -= 50;
 }
 
-void Weapon_BFG (edict_t *ent)
+void Weapon_BFG (struct edict_s *ent)
 {
 	static int	pause_frames[]	= {39, 45, 50, 55, 0};
 	static int	fire_frames[]	= {9, 17, 0};

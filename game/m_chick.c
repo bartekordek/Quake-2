@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -28,13 +28,13 @@ chick
 #include "g_local.h"
 #include "m_chick.h"
 
-qboolean visible (edict_t *self, edict_t *other);
+qboolean visible (struct edict_s *self, struct edict_s *other);
 
-void chick_stand (edict_t *self);
-void chick_run (edict_t *self);
-void chick_reslash(edict_t *self);
-void chick_rerocket(edict_t *self);
-void chick_attack1(edict_t *self);
+void chick_stand (struct edict_s *self);
+void chick_run (struct edict_s *self);
+void chick_reslash(struct edict_s *self);
+void chick_rerocket(struct edict_s *self);
+void chick_attack1(struct edict_s *self);
 
 static int	sound_missile_prelaunch;
 static int	sound_missile_launch;
@@ -53,7 +53,7 @@ static int	sound_sight;
 static int	sound_search;
 
 
-void ChickMoan (edict_t *self)
+void ChickMoan (struct edict_s *self)
 {
 	if (random() < 0.5)
 		gi.sound (self, CHAN_VOICE, sound_idle1, 1, ATTN_IDLE, 0);
@@ -96,7 +96,7 @@ mframe_t chick_frames_fidget [] =
 };
 mmove_t chick_move_fidget = {FRAME_stand201, FRAME_stand230, chick_frames_fidget, chick_stand};
 
-void chick_fidget (edict_t *self)
+void chick_fidget (struct edict_s *self)
 {
 	if (self->monsterinfo.aiflags & AI_STAND_GROUND)
 		return;
@@ -140,7 +140,7 @@ mframe_t chick_frames_stand [] =
 };
 mmove_t chick_move_stand = {FRAME_stand101, FRAME_stand130, chick_frames_stand, NULL};
 
-void chick_stand (edict_t *self)
+void chick_stand (struct edict_s *self)
 {
 	self->monsterinfo.currentmove = &chick_move_stand;
 }
@@ -150,8 +150,8 @@ mframe_t chick_frames_start_run [] =
 	ai_run, 1,  NULL,
 	ai_run, 0,  NULL,
 	ai_run, 0,	 NULL,
-	ai_run, -1, NULL, 
-	ai_run, -1, NULL, 
+	ai_run, -1, NULL,
+	ai_run, -1, NULL,
 	ai_run, 0,  NULL,
 	ai_run, 1,  NULL,
 	ai_run, 3,  NULL,
@@ -193,12 +193,12 @@ mframe_t chick_frames_walk [] =
 
 mmove_t chick_move_walk = {FRAME_walk11, FRAME_walk20, chick_frames_walk, NULL};
 
-void chick_walk (edict_t *self)
+void chick_walk (struct edict_s *self)
 {
 	self->monsterinfo.currentmove = &chick_move_walk;
 }
 
-void chick_run (edict_t *self)
+void chick_run (struct edict_s *self)
 {
 	if (self->monsterinfo.aiflags & AI_STAND_GROUND)
 	{
@@ -263,7 +263,7 @@ mframe_t chick_frames_pain3 [] =
 };
 mmove_t chick_move_pain3 = {FRAME_pain301, FRAME_pain321, chick_frames_pain3, chick_run};
 
-void chick_pain (edict_t *self, edict_t *other, float kick, int damage)
+void chick_pain (struct edict_s *self, struct edict_s *other, float kick, int damage)
 {
 	float	r;
 
@@ -294,7 +294,7 @@ void chick_pain (edict_t *self, edict_t *other, float kick, int damage)
 		self->monsterinfo.currentmove = &chick_move_pain3;
 }
 
-void chick_dead (edict_t *self)
+void chick_dead (struct edict_s *self)
 {
 	VectorSet (self->mins, -16, -16, 0);
 	VectorSet (self->maxs, 16, 16, 16);
@@ -346,11 +346,11 @@ mframe_t chick_frames_death1 [] =
 	ai_move, 0,  NULL,
 	ai_move, 0,  NULL,
 	ai_move, 0,  NULL
-	
+
 };
 mmove_t chick_move_death1 = {FRAME_death101, FRAME_death112, chick_frames_death1, chick_dead};
 
-void chick_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damage, vec3_t point)
+void chick_die (struct edict_s *self, struct edict_s *inflictor, struct edict_s *attacker, int damage, vec3_t point)
 {
 	int		n;
 
@@ -388,7 +388,7 @@ void chick_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damage
 }
 
 
-void chick_duck_down (edict_t *self)
+void chick_duck_down (struct edict_s *self)
 {
 	if (self->monsterinfo.aiflags & AI_DUCKED)
 		return;
@@ -399,7 +399,7 @@ void chick_duck_down (edict_t *self)
 	gi.linkentity (self);
 }
 
-void chick_duck_hold (edict_t *self)
+void chick_duck_hold (struct edict_s *self)
 {
 	if (level.time >= self->monsterinfo.pausetime)
 		self->monsterinfo.aiflags &= ~AI_HOLD_FRAME;
@@ -407,7 +407,7 @@ void chick_duck_hold (edict_t *self)
 		self->monsterinfo.aiflags |= AI_HOLD_FRAME;
 }
 
-void chick_duck_up (edict_t *self)
+void chick_duck_up (struct edict_s *self)
 {
 	self->monsterinfo.aiflags &= ~AI_DUCKED;
 	self->maxs[2] += 32;
@@ -427,7 +427,7 @@ mframe_t chick_frames_duck [] =
 };
 mmove_t chick_move_duck = {FRAME_duck01, FRAME_duck07, chick_frames_duck, chick_run};
 
-void chick_dodge (edict_t *self, edict_t *attacker, float eta)
+void chick_dodge (struct edict_s *self, struct edict_s *attacker, float eta)
 {
 	if (random() > 0.25)
 		return;
@@ -438,7 +438,7 @@ void chick_dodge (edict_t *self, edict_t *attacker, float eta)
 	self->monsterinfo.currentmove = &chick_move_duck;
 }
 
-void ChickSlash (edict_t *self)
+void ChickSlash (struct edict_s *self)
 {
 	vec3_t	aim;
 
@@ -448,7 +448,7 @@ void ChickSlash (edict_t *self)
 }
 
 
-void ChickRocket (edict_t *self)
+void ChickRocket (struct edict_s *self)
 {
 	vec3_t	forward, right;
 	vec3_t	start;
@@ -464,14 +464,14 @@ void ChickRocket (edict_t *self)
 	VectorNormalize (dir);
 
 	monster_fire_rocket (self, start, dir, 50, 500, MZ2_CHICK_ROCKET_1);
-}	
+}
 
-void Chick_PreAttack1 (edict_t *self)
+void Chick_PreAttack1 (struct edict_s *self)
 {
 	gi.sound (self, CHAN_VOICE, sound_missile_prelaunch, 1, ATTN_NORM, 0);
 }
 
-void ChickReload (edict_t *self)
+void ChickReload (struct edict_s *self)
 {
 	gi.sound (self, CHAN_VOICE, sound_missile_reload, 1, ATTN_NORM, 0);
 }
@@ -526,7 +526,7 @@ mframe_t chick_frames_end_attack1 [] =
 };
 mmove_t chick_move_end_attack1 = {FRAME_attak128, FRAME_attak132, chick_frames_end_attack1, chick_run};
 
-void chick_rerocket(edict_t *self)
+void chick_rerocket(struct edict_s *self)
 {
 	if (self->enemy->health > 0)
 	{
@@ -537,11 +537,11 @@ void chick_rerocket(edict_t *self)
 					self->monsterinfo.currentmove = &chick_move_attack1;
 					return;
 				}
-	}	
+	}
 	self->monsterinfo.currentmove = &chick_move_end_attack1;
 }
 
-void chick_attack1(edict_t *self)
+void chick_attack1(struct edict_s *self)
 {
 	self->monsterinfo.currentmove = &chick_move_attack1;
 }
@@ -570,13 +570,13 @@ mframe_t chick_frames_end_slash [] =
 mmove_t chick_move_end_slash = {FRAME_attak213, FRAME_attak216, chick_frames_end_slash, chick_run};
 
 
-void chick_reslash(edict_t *self)
+void chick_reslash(struct edict_s *self)
 {
 	if (self->enemy->health > 0)
 	{
 		if (range (self, self->enemy) == RANGE_MELEE)
 			if (random() <= 0.9)
-			{				
+			{
 				self->monsterinfo.currentmove = &chick_move_slash;
 				return;
 			}
@@ -589,14 +589,14 @@ void chick_reslash(edict_t *self)
 	self->monsterinfo.currentmove = &chick_move_end_slash;
 }
 
-void chick_slash(edict_t *self)
+void chick_slash(struct edict_s *self)
 {
 	self->monsterinfo.currentmove = &chick_move_slash;
 }
 
 
 mframe_t chick_frames_start_slash [] =
-{	
+{
 	ai_charge, 1,	NULL,
 	ai_charge, 8,	NULL,
 	ai_charge, 3,	NULL
@@ -605,25 +605,25 @@ mmove_t chick_move_start_slash = {FRAME_attak201, FRAME_attak203, chick_frames_s
 
 
 
-void chick_melee(edict_t *self)
+void chick_melee(struct edict_s *self)
 {
 	self->monsterinfo.currentmove = &chick_move_start_slash;
 }
 
 
-void chick_attack(edict_t *self)
+void chick_attack(struct edict_s *self)
 {
 	self->monsterinfo.currentmove = &chick_move_start_attack1;
 }
 
-void chick_sight(edict_t *self, edict_t *other)
+void chick_sight(struct edict_s *self, struct edict_s *other)
 {
 	gi.sound (self, CHAN_VOICE, sound_sight, 1, ATTN_NORM, 0);
 }
 
 /*QUAKED monster_chick (1 .5 0) (-16 -16 -24) (16 16 32) Ambush Trigger_Spawn Sight
 */
-void SP_monster_chick (edict_t *self)
+void SP_monster_chick (struct edict_s *self)
 {
 	if (deathmatch->value)
 	{
@@ -631,21 +631,21 @@ void SP_monster_chick (edict_t *self)
 		return;
 	}
 
-	sound_missile_prelaunch	= gi.soundindex ("chick/chkatck1.wav");	
-	sound_missile_launch	= gi.soundindex ("chick/chkatck2.wav");	
-	sound_melee_swing		= gi.soundindex ("chick/chkatck3.wav");	
-	sound_melee_hit			= gi.soundindex ("chick/chkatck4.wav");	
-	sound_missile_reload	= gi.soundindex ("chick/chkatck5.wav");	
-	sound_death1			= gi.soundindex ("chick/chkdeth1.wav");	
-	sound_death2			= gi.soundindex ("chick/chkdeth2.wav");	
-	sound_fall_down			= gi.soundindex ("chick/chkfall1.wav");	
-	sound_idle1				= gi.soundindex ("chick/chkidle1.wav");	
-	sound_idle2				= gi.soundindex ("chick/chkidle2.wav");	
-	sound_pain1				= gi.soundindex ("chick/chkpain1.wav");	
-	sound_pain2				= gi.soundindex ("chick/chkpain2.wav");	
-	sound_pain3				= gi.soundindex ("chick/chkpain3.wav");	
-	sound_sight				= gi.soundindex ("chick/chksght1.wav");	
-	sound_search			= gi.soundindex ("chick/chksrch1.wav");	
+	sound_missile_prelaunch	= gi.soundindex ("chick/chkatck1.wav");
+	sound_missile_launch	= gi.soundindex ("chick/chkatck2.wav");
+	sound_melee_swing		= gi.soundindex ("chick/chkatck3.wav");
+	sound_melee_hit			= gi.soundindex ("chick/chkatck4.wav");
+	sound_missile_reload	= gi.soundindex ("chick/chkatck5.wav");
+	sound_death1			= gi.soundindex ("chick/chkdeth1.wav");
+	sound_death2			= gi.soundindex ("chick/chkdeth2.wav");
+	sound_fall_down			= gi.soundindex ("chick/chkfall1.wav");
+	sound_idle1				= gi.soundindex ("chick/chkidle1.wav");
+	sound_idle2				= gi.soundindex ("chick/chkidle2.wav");
+	sound_pain1				= gi.soundindex ("chick/chkpain1.wav");
+	sound_pain2				= gi.soundindex ("chick/chkpain2.wav");
+	sound_pain3				= gi.soundindex ("chick/chkpain3.wav");
+	sound_sight				= gi.soundindex ("chick/chksght1.wav");
+	sound_search			= gi.soundindex ("chick/chksrch1.wav");
 
 	self->movetype = MOVETYPE_STEP;
 	self->solid = SOLID_BBOX;
