@@ -23,10 +23,9 @@
             "name": "Python: Current File",
             "type": "python",
             "request": "launch",
-            "program": "FixHeaders.py",
+            "program": "CtoCPP.py",
             "console": "integratedTerminal",
-            "cwd": "${workspaceFolder}",
-            "args": ["win32/winquake.h"]
+            "cwd": "${workspaceFolder}"
         }
     ]
 }

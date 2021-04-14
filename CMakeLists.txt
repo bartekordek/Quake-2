@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
 
 get_filename_component( basename ${CMAKE_CURRENT_SOURCE_DIR} NAME )
-project( ${basename} LANGUAGES C )
+project( ${basename} LANGUAGES CXX )
+set(CMAKE_CXX_STANDARD 17)
+
 set( EXEC ${basename} )
 
 file(MAKE_DIRECTORY Build-Windows)
@@ -35,7 +37,7 @@ endif()
 
 set( SOURCES "" )
 foreach(DIR ${DIRECTORIES_LIST})
-    file( GLOB_RECURSE SOURCES_FROM_DIR ${DIR}/*.h ${DIR}/*.c )
+    file( GLOB_RECURSE SOURCES_FROM_DIR ${DIR}/*.hpp ${DIR}/*.cpp )
     source_group( TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SOURCES_FROM_DIR} )
     list( APPEND SOURCES ${SOURCES_FROM_DIR} )
 endforeach()

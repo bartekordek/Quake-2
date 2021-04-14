@@ -24,7 +24,26 @@
 			"qcommon.h": "c",
 			"g_local.h": "c",
 			"g_client.h": "c",
-			"edict.h": "c"
+			"edict.h": "c",
+			"cctype": "cpp",
+			"cmath": "cpp",
+			"concepts": "cpp",
+			"cstdint": "cpp",
+			"cstdio": "cpp",
+			"cstdlib": "cpp",
+			"cstring": "cpp",
+			"cwchar": "cpp",
+			"exception": "cpp",
+			"initializer_list": "cpp",
+			"iosfwd": "cpp",
+			"new": "cpp",
+			"string": "cpp",
+			"tuple": "cpp",
+			"utility": "cpp",
+			"xmemory": "cpp",
+			"xstddef": "cpp",
+			"xstring": "cpp",
+			"xtr1common": "cpp"
 		}
 	}
 }

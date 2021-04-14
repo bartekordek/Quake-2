@@ -52,7 +52,7 @@
                 "isDefault": true
             },
             "problemMatcher": [
-                "$gradle"
+                "$gcc"
             ],
             "presentation": {
                 "echo":false,
@@ -94,7 +94,7 @@
                 "isDefault": true
             },
             "problemMatcher": [
-                "$gradle"
+                "$msCompile"
             ],
             "presentation": {
                 "echo":false,
