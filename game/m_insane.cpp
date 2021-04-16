@@ -34,35 +34,35 @@ static int	sound_shake;
 static int	sound_moan;
 static int	sound_scream[8];
 
-void insane_fist (struct edict_s *self)
+void insane_fist (edict *self)
 {
 	gi.sound (self, CHAN_VOICE, sound_fist, 1, ATTN_IDLE, 0);
 }
 
-void insane_shake (struct edict_s *self)
+void insane_shake (edict *self)
 {
 	gi.sound (self, CHAN_VOICE, sound_shake, 1, ATTN_IDLE, 0);
 }
 
-void insane_moan (struct edict_s *self)
+void insane_moan (edict *self)
 {
 	gi.sound (self, CHAN_VOICE, sound_moan, 1, ATTN_IDLE, 0);
 }
 
-void insane_scream (struct edict_s *self)
+void insane_scream (edict *self)
 {
 	gi.sound (self, CHAN_VOICE, sound_scream[rand()%8], 1, ATTN_IDLE, 0);
 }
 
 
-void insane_stand (struct edict_s *self);
-void insane_dead (struct edict_s *self);
-void insane_cross (struct edict_s *self);
-void insane_walk (struct edict_s *self);
-void insane_run (struct edict_s *self);
-void insane_checkdown (struct edict_s *self);
-void insane_checkup (struct edict_s *self);
-void insane_onground (struct edict_s *self);
+void insane_stand (edict *self);
+void insane_dead (edict *self);
+void insane_cross (edict *self);
+void insane_walk (edict *self);
+void insane_run (edict *self);
+void insane_checkdown (edict *self);
+void insane_checkup (edict *self);
+void insane_onground (edict *self);
 
 
 mframe_t insane_frames_stand_normal [] =
@@ -431,7 +431,7 @@ mframe_t insane_frames_struggle_cross [] =
 };
 mmove_t insane_move_struggle_cross = {FRAME_cross16, FRAME_cross30, insane_frames_struggle_cross, insane_cross};
 
-void insane_cross (struct edict_s *self)
+void insane_cross (edict *self)
 {
 	if (random() < 0.8)
 		self->monsterinfo.currentmove = &insane_move_cross;
@@ -439,7 +439,7 @@ void insane_cross (struct edict_s *self)
 		self->monsterinfo.currentmove = &insane_move_struggle_cross;
 }
 
-void insane_walk (struct edict_s *self)
+void insane_walk (edict *self)
 {
 	if ( self->spawnflags & 16 )			// Hold Ground?
 		if (self->s.frame == FRAME_cr_pain10)
@@ -456,7 +456,7 @@ void insane_walk (struct edict_s *self)
 			self->monsterinfo.currentmove = &insane_move_walk_insane;
 }
 
-void insane_run (struct edict_s *self)
+void insane_run (edict *self)
 {
 	if ( self->spawnflags & 16 )			// Hold Ground?
 		if (self->s.frame == FRAME_cr_pain10)
@@ -474,7 +474,7 @@ void insane_run (struct edict_s *self)
 }
 
 
-void insane_pain (struct edict_s *self, struct edict_s *other, float kick, int damage)
+void insane_pain (edict *self, edict *other, float kick, int damage)
 {
 	int	l,r;
 
@@ -516,12 +516,12 @@ void insane_pain (struct edict_s *self, struct edict_s *other, float kick, int d
 
 }
 
-void insane_onground (struct edict_s *self)
+void insane_onground (edict *self)
 {
 	self->monsterinfo.currentmove = &insane_move_down;
 }
 
-void insane_checkdown (struct edict_s *self)
+void insane_checkdown (edict *self)
 {
 //	if ( (self->s.frame == FRAME_stand94) || (self->s.frame == FRAME_stand65) )
 	if (self->spawnflags & 32)				// Always stand
@@ -533,7 +533,7 @@ void insane_checkdown (struct edict_s *self)
 			self->monsterinfo.currentmove = &insane_move_jumpdown;
 }
 
-void insane_checkup (struct edict_s *self)
+void insane_checkup (edict *self)
 {
 	// If Hold_Ground and Crawl are set
 	if ( (self->spawnflags & 4) && (self->spawnflags & 16) )
@@ -543,7 +543,7 @@ void insane_checkup (struct edict_s *self)
 
 }
 
-void insane_stand (struct edict_s *self)
+void insane_stand (edict *self)
 {
 	if (self->spawnflags & 8)			// If crucified
 	{
@@ -560,7 +560,7 @@ void insane_stand (struct edict_s *self)
 			self->monsterinfo.currentmove = &insane_move_stand_insane;
 }
 
-void insane_dead (struct edict_s *self)
+void insane_dead (edict *self)
 {
 	if (self->spawnflags & 8)
 	{
@@ -578,7 +578,7 @@ void insane_dead (struct edict_s *self)
 }
 
 
-void insane_die (struct edict_s *self, struct edict_s *inflictor, struct edict_s *attacker, int damage, vec3_t point)
+void insane_die (edict *self, edict *inflictor, edict *attacker, int damage, vec3_t point)
 {
 	int		n;
 
@@ -618,7 +618,7 @@ void insane_die (struct edict_s *self, struct edict_s *inflictor, struct edict_s
 
 /*QUAKED misc_insane (1 .5 0) (-16 -16 -24) (16 16 32) Ambush Trigger_Spawn CRAWL CRUCIFIED STAND_GROUND ALWAYS_STAND
 */
-void SP_misc_insane (struct edict_s *self)
+void SP_misc_insane (edict *self)
 {
 //	static int skin = 0;	//@@
 

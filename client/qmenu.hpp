@@ -82,16 +82,16 @@ typedef struct
     void (*cursordraw)( void *self );
 } menucommon_s;
 
-typedef struct
+struct menufield_s
 {
     menucommon_s generic;
 
-    char        buffer[80];
+    std::string buffer;
     int            cursor;
     int            length;
     int            visible_length;
     int            visible_offset;
-} menufield_s;
+};
 
 typedef struct
 {
@@ -129,7 +129,7 @@ void    Menu_AddItem( menuframework_s *menu, void *item );
 void    Menu_AdjustCursor( menuframework_s *menu, int dir );
 void    Menu_Center( menuframework_s *menu );
 void    Menu_Draw( menuframework_s *menu );
-void    *Menu_ItemAtCursor( menuframework_s *m );
+void* Menu_ItemAtCursor( menuframework_s *m );
 bool Menu_SelectItem( menuframework_s *s );
 void    Menu_SetStatusBar( menuframework_s *s, const char *string );
 void    Menu_SlideItem( menuframework_s *s, int dir );

@@ -19,7 +19,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 // g_phys.c
 
-#include "g_local.hpp"
+#include "game/g_local.hpp"
+#include "shared/g_client.hpp"
 
 /*
 
@@ -46,7 +47,7 @@ SV_TestEntityPosition
 
 ============
 */
-struct edict_s	*SV_TestEntityPosition (struct edict_s *ent)
+edict	*SV_TestEntityPosition (edict *ent)
 {
 	trace_t	trace;
 	int		mask;
@@ -69,7 +70,7 @@ struct edict_s	*SV_TestEntityPosition (struct edict_s *ent)
 SV_CheckVelocity
 ================
 */
-void SV_CheckVelocity (struct edict_s *ent)
+void SV_CheckVelocity (edict *ent)
 {
 	int		i;
 
@@ -92,7 +93,7 @@ SV_RunThink
 Runs thinking code for this frame if necessary
 =============
 */
-bool SV_RunThink (struct edict_s *ent)
+bool SV_RunThink (edict *ent)
 {
 	float	thinktime;
 
@@ -117,9 +118,9 @@ SV_Impact
 Two entities have touched, so run their touch functions
 ==================
 */
-void SV_Impact (struct edict_s *e1, trace_t *trace)
+void SV_Impact (edict *e1, trace_t *trace)
 {
-	struct edict_s		*e2;
+	edict		*e2;
 //	plane_t	backplane;
 
 	e2 = trace->ent;
@@ -180,9 +181,9 @@ Returns the clipflags if the velocity was modified (hit something solid)
 ============
 */
 #define	MAX_CLIP_PLANES	5
-int SV_FlyMove (struct edict_s *ent, float time, int mask)
+int SV_FlyMove (edict *ent, float time, int mask)
 {
-	struct edict_s		*hit;
+	edict		*hit;
 	int			bumpcount, numbumps;
 	vec3_t		dir;
 	float		d;
@@ -319,7 +320,7 @@ SV_AddGravity
 
 ============
 */
-void SV_AddGravity (struct edict_s *ent)
+void SV_AddGravity (edict *ent)
 {
 	ent->velocity[2] -= ent->gravity * sv_gravity->value * FRAMETIME;
 }
@@ -339,7 +340,7 @@ SV_PushEntity
 Does not change the entities velocity at all
 ============
 */
-trace_t SV_PushEntity (struct edict_s *ent, vec3_t push)
+trace_t SV_PushEntity (edict *ent, vec3_t push)
 {
 	trace_t	trace;
 	vec3_t	start;
@@ -383,14 +384,14 @@ retry:
 
 typedef struct
 {
-	struct edict_s	*ent;
+	edict	*ent;
 	vec3_t	origin;
 	vec3_t	angles;
 	float	deltayaw;
 } pushed_t;
 pushed_t	pushed[MAX_EDICTS], *pushed_p;
 
-struct edict_s	*obstacle;
+edict	*obstacle;
 
 /*
 ============
@@ -400,10 +401,10 @@ Objects need to be moved back on a failed push,
 otherwise riders would continue to slide.
 ============
 */
-bool SV_Push (struct edict_s *pusher, vec3_t move, vec3_t amove)
+bool SV_Push (edict *pusher, vec3_t move, vec3_t amove)
 {
 	int			i, e;
-	struct edict_s		*check, *block;
+	edict		*check, *block;
 	vec3_t		mins, maxs;
 	pushed_t	*p;
 	vec3_t		org, org2, move2, forward, right, up;
@@ -559,10 +560,10 @@ Bmodel objects don't interact with each other, but
 push all box objects
 ================
 */
-void SV_Physics_Pusher (struct edict_s *ent)
+void SV_Physics_Pusher (edict *ent)
 {
 	vec3_t		move, amove;
-	struct edict_s		*part, *mv;
+	edict		*part, *mv;
 
 	// if not a team captain, so movement will be handled elsewhere
 	if ( ent->flags & FL_TEAMSLAVE)
@@ -627,7 +628,7 @@ SV_Physics_None
 Non moving objects can only think
 =============
 */
-void SV_Physics_None (struct edict_s *ent)
+void SV_Physics_None (edict *ent)
 {
 // regular thinking
 	SV_RunThink (ent);
@@ -640,7 +641,7 @@ SV_Physics_Noclip
 A moving object that doesn't obey physics
 =============
 */
-void SV_Physics_Noclip (struct edict_s *ent)
+void SV_Physics_Noclip (edict *ent)
 {
 // regular thinking
 	if (!SV_RunThink (ent))
@@ -667,12 +668,12 @@ SV_Physics_Toss
 Toss, bounce, and fly movement.  When onground, do nothing.
 =============
 */
-void SV_Physics_Toss (struct edict_s *ent)
+void SV_Physics_Toss (edict *ent)
 {
 	trace_t		trace;
 	vec3_t		move;
 	float		backoff;
-	struct edict_s		*slave;
+	edict		*slave;
 	bool	wasinwater;
 	bool	isinwater;
 	vec3_t		old_origin;
@@ -788,7 +789,7 @@ FIXME: is this true?
 #define sv_friction			6
 #define sv_waterfriction	1
 
-void SV_AddRotationalFriction (struct edict_s *ent)
+void SV_AddRotationalFriction (edict *ent)
 {
 	int		n;
 	float	adjustment;
@@ -812,14 +813,14 @@ void SV_AddRotationalFriction (struct edict_s *ent)
 	}
 }
 
-void SV_Physics_Step (struct edict_s *ent)
+void SV_Physics_Step (edict *ent)
 {
 	bool	wasonground;
 	bool	hitsound = false;
 	float		*vel;
 	float		speed, newspeed, control;
 	float		friction;
-	struct edict_s		*groundentity;
+	edict		*groundentity;
 	int			mask;
 
 	// airborn monsters should always check for ground
@@ -929,7 +930,7 @@ G_RunEntity
 
 ================
 */
-void G_RunEntity (struct edict_s *ent)
+void G_RunEntity (edict *ent)
 {
 	if (ent->prethink)
 		ent->prethink (ent);

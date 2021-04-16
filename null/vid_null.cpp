@@ -3,9 +3,9 @@
 
 #include "../client/client.h"
 
-viddef_t	viddef;				// global video state
+viddef_t    viddef;				// global video state
 
-refexport_t	re;
+refexport_t    re;
 
 refexport_t GetRefAPI (refimport_t rimp);
 
@@ -19,8 +19,8 @@ DIRECT LINK GLUE
 
 void VID_Printf (int print_level, char *fmt, ...)
 {
-        va_list		argptr;
-        char		msg[MAXPRINTMSG];
+        va_list	    argptr;
+        char	    msg[MAXPRINTMSG];
 
         va_start (argptr,fmt);
         vsprintf (msg,fmt,argptr);
@@ -34,14 +34,14 @@ void VID_Printf (int print_level, char *fmt, ...)
 
 void VID_Error (int err_level, char *fmt, ...)
 {
-        va_list		argptr;
-        char		msg[MAXPRINTMSG];
+        va_list	    argptr;
+        char	    msg[MAXPRINTMSG];
 
         va_start (argptr,fmt);
         vsprintf (msg,fmt,argptr);
         va_end (argptr);
 
-		Com_Error (err_level, "%s", msg);
+	    Com_Error (err_level, "%s", msg);
 }
 
 void VID_NewWindow (int width, int height)
@@ -80,16 +80,16 @@ qboolean VID_GetModeInfo( int *width, int *height, int mode )
     if ( mode < 0 || mode >= VID_NUM_MODES )
         return false;
 
-    *width  = vid_modes[mode].width;
-    *height = vid_modes[mode].height;
+* width  = vid_modes[mode].width;
+* height = vid_modes[mode].height;
 
     return true;
 }
 
 
-void	VID_Init (void)
+void    VID_Init (void)
 {
-    refimport_t	ri;
+    refimport_t    ri;
 
     viddef.width = 320;
     viddef.height = 240;
@@ -104,7 +104,7 @@ void	VID_Init (void)
     ri.FS_LoadFile = FS_LoadFile;
     ri.FS_FreeFile = FS_FreeFile;
     ri.FS_Gamedir = FS_Gamedir;
-	ri.Vid_NewWindow = VID_NewWindow;
+    ri.Vid_NewWindow = VID_NewWindow;
     ri.Cvar_Get = Cvar_Get;
     ri.Cvar_Set = Cvar_Set;
     ri.Cvar_SetValue = Cvar_SetValue;
@@ -117,28 +117,28 @@ void	VID_Init (void)
 
         // call the init function
     if (re.Init (NULL, NULL) == -1)
-		Com_Error (ERR_FATAL, "Couldn't start refresh");
+	    Com_Error (ERR_FATAL, "Couldn't start refresh");
 }
 
-void	VID_Shutdown (void)
+void    VID_Shutdown (void)
 {
     if (re.Shutdown)
 	    re.Shutdown ();
 }
 
-void	VID_CheckChanges (void)
+void    VID_CheckChanges (void)
 {
 }
 
-void	VID_MenuInit (void)
+void    VID_MenuInit (void)
 {
 }
 
-void	VID_MenuDraw (void)
+void    VID_MenuDraw (void)
 {
 }
 
 const char *VID_MenuKey( int k)
 {
-	return NULL;
+    return NULL;
 }

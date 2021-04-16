@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "client.hpp"
 
-cvar_t	*cl_nodelta;
+cvar	*cl_nodelta;
 
 extern	unsigned	sys_frame_time;
 unsigned	frame_msec;
@@ -219,16 +219,16 @@ float CL_KeyState (kbutton_t *key)
 
 //==========================================================================
 
-cvar_t	*cl_upspeed;
-cvar_t	*cl_forwardspeed;
-cvar_t	*cl_sidespeed;
+cvar	*cl_upspeed;
+cvar	*cl_forwardspeed;
+cvar	*cl_sidespeed;
 
-cvar_t	*cl_yawspeed;
-cvar_t	*cl_pitchspeed;
+cvar	*cl_yawspeed;
+cvar	*cl_pitchspeed;
 
-cvar_t	*cl_run;
+cvar	*cl_run;
 
-cvar_t	*cl_anglespeedkey;
+cvar	*cl_anglespeedkey;
 
 
 /*

@@ -3,7 +3,7 @@
 
 #include "shared/defines.hpp"
 
-typedef struct
+struct moveinfo
 {
     // fixed data
     vec3_t        start_origin;
@@ -30,7 +30,7 @@ typedef struct
     float        next_speed;
     float        remaining_distance;
     float        decel_distance;
-    void        (*endfunc)(struct edict_s *);
-} moveinfo_t;
+    void        (*endfunc)( struct edict *);
+};
 
 #endif // ____SHARED_MOVEINFO_H__

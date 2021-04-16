@@ -44,12 +44,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 //=============================================================================
 
-extern    cvar_t *allow_download;
-extern    cvar_t *allow_download_players;
-extern    cvar_t *allow_download_models;
-extern    cvar_t *allow_download_sounds;
-extern    cvar_t *allow_download_maps;
-extern cvar_t *sw_mode;
+extern    cvar *allow_download;
+extern    cvar *allow_download_players;
+extern    cvar *allow_download_models;
+extern    cvar *allow_download_sounds;
+extern    cvar *allow_download_maps;
+extern cvar *sw_mode;
 typedef struct
 {
     bool        valid;            // cleared if delta parsing was invalid
@@ -57,16 +57,16 @@ typedef struct
     int                servertime;        // server time the message is valid for (in msec)
     int                deltaframe;
     byte            areabits[MAX_MAP_AREAS/8];        // portalarea visibility bits
-    player_state_t    playerstate;
+    player_state    playerstate;
     int                num_entities;
     int                parse_entities;    // non-masked index into cl_parse_entities array
 } frame_t;
 
 typedef struct
 {
-    entity_state_t    baseline;        // delta from this if not from a previous frame
-    entity_state_t    current;
-    entity_state_t    prev;            // will always be valid, but might just be a copy of current
+    entity_state    baseline;        // delta from this if not from a previous frame
+    entity_state    current;
+    entity_state    prev;            // will always be valid, but might just be a copy of current
 
     int            serverframe;        // if not current, this ent isn't in the frame
 
@@ -82,11 +82,11 @@ typedef struct
 {
     char    name[MAX_QPATH];
     char    cinfo[MAX_QPATH];
-    struct image_s    *skin;
-    struct image_s    *icon;
+    struct image_s* skin;
+    struct image_s* icon;
     char    iconname[MAX_QPATH];
-    struct model_s    *model;
-    struct model_s    *weaponmodel[MAX_CLIENTWEAPONMODELS];
+    struct model_s* model;
+    struct model_s* weaponmodel[MAX_CLIENTWEAPONMODELS];
 } clientinfo_t;
 
 extern char cl_weaponmodels[MAX_CLIENTWEAPONMODELS][MAX_QPATH];
@@ -151,7 +151,7 @@ typedef struct
     //
     // non-gameserver infornamtion
     // FIXME: move this cinematic stuff into the cin_t structure
-    FILE        *cinematic_file;
+    FILE    * cinematic_file;
     int            cinematictime;        // cls.realtime for first cinematic frame
     int            cinematicframe;
     unsigned char        cinematicpalette[768];
@@ -170,11 +170,11 @@ typedef struct
     //
     // locally derived information from server state
     //
-    struct model_s    *model_draw[MAX_MODELS];
-    struct cmodel_s    *model_clip[MAX_MODELS];
+    struct model_s* model_draw[MAX_MODELS];
+    struct cmodel_s* model_clip[MAX_MODELS];
 
-    struct sfx_s    *sound_precache[MAX_SOUNDS];
-    struct image_s    *image_precache[MAX_IMAGES];
+    struct sfx_s* sound_precache[MAX_SOUNDS];
+    struct image_s* image_precache[MAX_IMAGES];
 
     clientinfo_t    clientinfo[MAX_CLIENTS];
     clientinfo_t    baseclientinfo;
@@ -236,7 +236,7 @@ typedef struct
 
     int            challenge;            // from the server to use for connecting
 
-    FILE        *download;            // file transfer from server
+    FILE    * download;            // file transfer from server
     char        downloadtempname[MAX_OSPATH];
     char        downloadname[MAX_OSPATH];
     int            downloadnumber;
@@ -246,7 +246,7 @@ typedef struct
 // demo recording info must be here, so it isn't cleared on level change
     bool    demorecording;
     bool    demowaiting;    // don't record until a non-delta message is received
-    FILE        *demofile;
+    FILE    * demofile;
 } client_static_t;
 
 extern client_static_t    cls;
@@ -256,51 +256,51 @@ extern client_static_t    cls;
 //
 // cvars
 //
-extern    cvar_t    *cl_stereo_separation;
-extern    cvar_t    *cl_stereo;
+extern    cvar* cl_stereo_separation;
+extern    cvar* cl_stereo;
 
-extern    cvar_t    *cl_gun;
-extern    cvar_t    *cl_add_blend;
-extern    cvar_t    *cl_add_lights;
-extern    cvar_t    *cl_add_particles;
-extern    cvar_t    *cl_add_entities;
-extern    cvar_t    *cl_predict;
-extern    cvar_t    *cl_footsteps;
-extern    cvar_t    *cl_noskins;
-extern    cvar_t    *cl_autoskins;
+extern    cvar* cl_gun;
+extern    cvar* cl_add_blend;
+extern    cvar* cl_add_lights;
+extern    cvar* cl_add_particles;
+extern    cvar* cl_add_entities;
+extern    cvar* cl_predict;
+extern    cvar* cl_footsteps;
+extern    cvar* cl_noskins;
+extern    cvar* cl_autoskins;
 
-extern    cvar_t    *cl_upspeed;
-extern    cvar_t    *cl_forwardspeed;
-extern    cvar_t    *cl_sidespeed;
+extern    cvar* cl_upspeed;
+extern    cvar* cl_forwardspeed;
+extern    cvar* cl_sidespeed;
 
-extern    cvar_t    *cl_yawspeed;
-extern    cvar_t    *cl_pitchspeed;
+extern    cvar* cl_yawspeed;
+extern    cvar* cl_pitchspeed;
 
-extern    cvar_t    *cl_run;
+extern    cvar* cl_run;
 
-extern    cvar_t    *cl_anglespeedkey;
+extern    cvar* cl_anglespeedkey;
 
-extern    cvar_t    *cl_shownet;
-extern    cvar_t    *cl_showmiss;
-extern    cvar_t    *cl_showclamp;
+extern    cvar* cl_shownet;
+extern    cvar* cl_showmiss;
+extern    cvar* cl_showclamp;
 
-extern    cvar_t    *lookspring;
-extern    cvar_t    *lookstrafe;
-extern    cvar_t    *sensitivity;
+extern    cvar* lookspring;
+extern    cvar* lookstrafe;
+extern    cvar* sensitivity;
 
-extern    cvar_t    *m_pitch;
-extern    cvar_t    *m_yaw;
-extern    cvar_t    *m_forward;
-extern    cvar_t    *m_side;
+extern    cvar* m_pitch;
+extern    cvar* m_yaw;
+extern    cvar* m_forward;
+extern    cvar* m_side;
 
-extern    cvar_t    *freelook;
+extern    cvar* freelook;
 
-extern    cvar_t    *cl_lightlevel;    // FIXME HACK
+extern    cvar* cl_lightlevel;    // FIXME HACK
 
-extern    cvar_t    *cl_paused;
-extern    cvar_t    *cl_timedemo;
+extern    cvar* cl_paused;
+extern    cvar* cl_timedemo;
 
-extern    cvar_t    *cl_vwep;
+extern    cvar* cl_vwep;
 
 typedef struct
 {
@@ -320,7 +320,7 @@ extern    cdlight_t    cl_dlights[MAX_DLIGHTS];
 // entities, so that when a delta compressed message arives from the server
 // it can be un-deltad from the original
 #define    MAX_PARSE_ENTITIES    1024
-extern    entity_state_t    cl_parse_entities[MAX_PARSE_ENTITIES];
+extern    entity_state    cl_parse_entities[MAX_PARSE_ENTITIES];
 
 //=============================================================================
 
@@ -352,7 +352,7 @@ typedef struct cl_sustain
 #define MAX_SUSTAINS        32
 void CL_ParticleSteamEffect2(cl_sustain_t *self);
 
-void CL_TeleporterParticles (entity_state_t *ent);
+void CL_TeleporterParticles (entity_state *ent);
 void CL_ParticleEffect (vec3_t org, vec3_t dir, int color, int count);
 void CL_ParticleEffect2 (vec3_t org, vec3_t dir, int color, int count);
 
@@ -366,7 +366,7 @@ void CL_ParticleEffect3 (vec3_t org, vec3_t dir, int color, int count);
 // PGM
 typedef struct particle_s
 {
-    struct particle_s    *next;
+    struct particle_s* next;
 
     float        time;
 
@@ -426,7 +426,7 @@ void CL_WidowSplash (vec3_t org);
 // ========
 
 int CL_ParseEntityBits (unsigned *bits);
-void CL_ParseDelta (entity_state_t *from, entity_state_t *to, int number, unsigned bits);
+void CL_ParseDelta (entity_state *from, entity_state *to, int number, unsigned bits);
 void CL_ParseFrame (void);
 
 void CL_ParseTEnt (void);
@@ -527,7 +527,7 @@ void CL_Download_f (void);
 // cl_view.c
 //
 extern    int            gun_frame;
-extern    struct model_s    *gun_model;
+extern    struct model_s* gun_model;
 
 void V_Init (void);
 void V_RenderView( float stereo_separation );
@@ -561,7 +561,7 @@ void CL_DiminishingTrail (vec3_t start, vec3_t end, centity_t *old, int flags);
 void CL_FlyEffect (centity_t *ent, vec3_t origin);
 void CL_BfgParticles (entity_t *ent);
 void CL_AddParticles (void);
-void CL_EntityEvent (entity_state_t *ent);
+void CL_EntityEvent (entity_state *ent);
 // RAFAEL
 void CL_TrapParticles (entity_t *ent);
 

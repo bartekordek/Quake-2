@@ -643,7 +643,7 @@ static void M_UnbindCommand (char *command)
 {
     int        j;
     int        l;
-    char    *b;
+    char* b;
 
     l = strlen(command);
 
@@ -662,7 +662,7 @@ static void M_FindKeysForCommand (char *command, int *twokeys)
     int        count;
     int        j;
     int        l;
-    char    *b;
+    char* b;
 
     twokeys[0] = twokeys[1] = -1;
     l = strlen(command);
@@ -1014,8 +1014,8 @@ CONTROLS MENU
 
 =======================================================================
 */
-static cvar_t *win_noalttab;
-extern cvar_t *in_joystick;
+static cvar *win_noalttab;
+extern cvar *in_joystick;
 
 static menuframework_s    s_options_menu;
 static menuaction_s        s_options_defaults_action;
@@ -1150,8 +1150,8 @@ static void UpdateCDVolumeFunc( void *unused )
 static void ConsoleFunc( void *unused )
 {
     /*
-    ** the proper way to do this is probably to have ToggleConsole_f accept a parameter
-    */
+* * the proper way to do this is probably to have ToggleConsole_f accept a parameter
+*/
     extern void Key_ClearTyping( void );
 
     if ( cl.attractloop )
@@ -1230,8 +1230,8 @@ void Options_MenuInit( void )
     win_noalttab = Cvar_Get( "win_noalttab", "0", CVAR_ARCHIVE );
 
     /*
-    ** configure controls menu and menu items
-    */
+* * configure controls menu and menu items
+*/
     s_options_menu.x = viddef.width / 2;
     s_options_menu.y = viddef.height / 2 - 58;
     s_options_menu.nitems = 0;
@@ -1765,8 +1765,8 @@ void M_Credits_MenuDraw( void )
     int i, y;
 
     /*
-    ** draw the credits
-    */
+* * draw the credits
+*/
     for ( i = 0, y = viddef.height - ( ( cls.realtime - credits_start_time ) / 40.0F ); credits[i] && y < viddef.height; y += 10, i++ )
     {
         int j, stringoffset = 0;
@@ -1824,7 +1824,7 @@ void M_Menu_Credits_f( void )
 {
     int        n;
     int        count;
-    char    *p;
+    char* p;
     int        isdeveloper = 0;
 
     creditsBuffer = NULL;
@@ -1843,11 +1843,11 @@ void M_Menu_Credits_f( void )
             }
             if (*p == '\r')
             {
-                *p++ = 0;
+            * p++ = 0;
                 if (--count == 0)
                     break;
             }
-            *p++ = 0;
+        * p++ = 0;
             if (--count == 0)
                 break;
         }
@@ -2048,7 +2048,7 @@ bool    m_savevalid[MAX_SAVEGAMES];
 void Create_Savestrings (void)
 {
     int        i;
-    FILE    *f;
+    FILE* f;
     char    name[MAX_OSPATH];
 
     for (i=0 ; i<MAX_SAVEGAMES ; i++)
@@ -2408,8 +2408,13 @@ void RulesChangeFunc ( void *self )
     else if(s_rules_box.curvalue == 1)        // coop                // PGM
     {
         s_maxclients_field.generic.statusbar = "4 maximum for cooperative";
-        if (atoi(s_maxclients_field.buffer) > 4)
-            strcpy( s_maxclients_field.buffer, "4" );
+        if(
+            std::stoi( s_maxclients_field.buffer ) > 4 )
+        {
+            s_maxclients_field.buffer = "4";
+            //strcpy( s_maxclients_field.buffer, "4" );
+        }
+
         s_startserver_dmoptions_action.generic.statusbar = "N/A for cooperative";
     }
 //=====
@@ -2437,16 +2442,13 @@ void RulesChangeFunc ( void *self )
 void StartServerActionFunc( void *self )
 {
     char    startmap[1024];
-    int        timelimit;
-    int        fraglimit;
-    int        maxclients;
-    char    *spot;
+    char* spot;
 
     strcpy( startmap, strchr( mapnames[s_startmap_list.curvalue], '\n' ) + 1 );
 
-    maxclients  = atoi( s_maxclients_field.buffer );
-    timelimit    = atoi( s_timelimit_field.buffer );
-    fraglimit    = atoi( s_fraglimit_field.buffer );
+    int maxclients  = std::stoi( s_maxclients_field.buffer );
+    int timelimit    = std::stoi( s_timelimit_field.buffer );
+    int fraglimit    = std::stoi( s_fraglimit_field.buffer );
 
     Cvar_SetValue( "maxclients", ClampCvar( 0, maxclients, maxclients ) );
     Cvar_SetValue ("timelimit", ClampCvar( 0, timelimit, timelimit ) );
@@ -2533,8 +2535,8 @@ void StartServer_MenuInit( void )
     FILE *fp;
 
     /*
-    ** load the list of map names
-    */
+* * load the list of map names
+*/
     //Com_sprintf( mapsname, sizeof( mapsname ), "%s/maps.lst", FS_Gamedir() );
     if ( ( fp = fopen( mapsname, "rb" ) ) == 0 )
     {
@@ -2604,8 +2606,8 @@ void StartServer_MenuInit( void )
     }
 
     /*
-    ** initialize the menu stuff
-    */
+* * initialize the menu stuff
+*/
     s_startserver_menu.x = viddef.width * 0.50;
     s_startserver_menu.nitems = 0;
 
@@ -2641,7 +2643,7 @@ void StartServer_MenuInit( void )
     s_timelimit_field.generic.statusbar = "0 = no limit";
     s_timelimit_field.length = 3;
     s_timelimit_field.visible_length = 3;
-    strcpy( s_timelimit_field.buffer, Cvar_VariableString("timelimit") );
+    strcpy( toChar( s_timelimit_field.buffer), Cvar_VariableString("timelimit") );
 
     s_fraglimit_field.generic.type = MTYPE_FIELD;
     s_fraglimit_field.generic.name = "frag limit";
@@ -2651,14 +2653,14 @@ void StartServer_MenuInit( void )
     s_fraglimit_field.generic.statusbar = "0 = no limit";
     s_fraglimit_field.length = 3;
     s_fraglimit_field.visible_length = 3;
-    strcpy( s_fraglimit_field.buffer, Cvar_VariableString("fraglimit") );
+    strcpy(  toChar(s_fraglimit_field.buffer), Cvar_VariableString("fraglimit") );
 
     /*
-    ** maxclients determines the maximum number of players that can join
-    ** the game.  If maxclients is only "1" then we should default the menu
-    ** option to 8 players, otherwise use whatever its current value is.
-    ** Clamping will be done when the server is actually started.
-    */
+* * maxclients determines the maximum number of players that can join
+* * the game.  If maxclients is only "1" then we should default the menu
+* * option to 8 players, otherwise use whatever its current value is.
+* * Clamping will be done when the server is actually started.
+*/
     s_maxclients_field.generic.type = MTYPE_FIELD;
     s_maxclients_field.generic.name = "max players";
     s_maxclients_field.generic.flags = QMF_NUMBERSONLY;
@@ -2667,10 +2669,10 @@ void StartServer_MenuInit( void )
     s_maxclients_field.generic.statusbar = NULL;
     s_maxclients_field.length = 3;
     s_maxclients_field.visible_length = 3;
-    if ( Cvar_VariableValue( "maxclients" ) == 1 )
-        strcpy( s_maxclients_field.buffer, "8" );
+    if( Cvar_VariableValue( "maxclients" ) == 1 )
+        s_maxclients_field.buffer = "8";
     else
-        strcpy( s_maxclients_field.buffer, Cvar_VariableString("maxclients") );
+        s_maxclients_field.buffer = Cvar_VariableString( "maxclients" );
 
     s_hostname_field.generic.type = MTYPE_FIELD;
     s_hostname_field.generic.name = "hostname";
@@ -2680,7 +2682,7 @@ void StartServer_MenuInit( void )
     s_hostname_field.generic.statusbar = NULL;
     s_hostname_field.length = 12;
     s_hostname_field.visible_length = 12;
-    strcpy( s_hostname_field.buffer, Cvar_VariableString("hostname") );
+    s_hostname_field.buffer = Cvar_VariableString( "hostname" );
 
     s_startserver_dmoptions_action.generic.type = MTYPE_ACTION;
     s_startserver_dmoptions_action.generic.name    = " deathmatch flags";
@@ -3298,7 +3300,7 @@ void AddressBook_MenuInit( void )
 
     for ( i = 0; i < NUM_ADDRESSBOOK_ENTRIES; i++ )
     {
-        cvar_t *adr;
+        cvar *adr;
         char buffer[20];
 
         //Com_sprintf( buffer, sizeof( buffer ), "adr%d", i );
@@ -3314,8 +3316,7 @@ void AddressBook_MenuInit( void )
         s_addressbook_fields[i].cursor            = 0;
         s_addressbook_fields[i].length            = 60;
         s_addressbook_fields[i].visible_length    = 30;
-
-        strcpy( s_addressbook_fields[i].buffer, adr->string );
+        s_addressbook_fields[i].buffer = adr->string;
 
         Menu_AddItem( &s_addressbook_menu, &s_addressbook_fields[i] );
     }
@@ -3374,7 +3375,7 @@ static menuaction_s        s_player_download_action;
 typedef struct
 {
     int        nskins;
-    char    **skindisplaynames;
+    char* *skindisplaynames;
     char    displayname[MAX_DISPLAYNAME];
     char    directory[MAX_QPATH];
 } playermodelinfo_s;
@@ -3430,7 +3431,7 @@ static bool IconOfSkinExists( char *skin, char **pcxfiles, int npcxfiles )
     char scratch[1024];
 
     strcpy( scratch, skin );
-    *strrchr( scratch, '.' ) = 0;
+* strrchr( scratch, '.' ) = 0;
     strcat( scratch, "_i.pcx" );
 
     for ( i = 0; i < npcxfiles; i++ )
@@ -3456,8 +3457,8 @@ static bool PlayerConfig_ScanDirectories( void )
     s_numplayermodels = 0;
 
     /*
-    ** get a list of directories
-    */
+* * get a list of directories
+*/
     do
     {
         path = FS_NextPath( path );
@@ -3471,8 +3472,8 @@ static bool PlayerConfig_ScanDirectories( void )
         return false;
 
     /*
-    ** go through the subdirectories
-    */
+* * go through the subdirectories
+*/
     npms = ndirs;
     if ( npms > MAX_PLAYERMODELS )
         npms = MAX_PLAYERMODELS;
@@ -3550,7 +3551,7 @@ static bool PlayerConfig_ScanDirectories( void )
                     strcpy( scratch, c + 1 );
 
                     if ( strrchr( scratch, '.' ) )
-                        *strrchr( scratch, '.' ) = 0;
+                    * strrchr( scratch, '.' ) = 0;
 
                     skinnames[s] = strdup( scratch );
                     s++;
@@ -3588,8 +3589,8 @@ static int pmicmpfnc( const void *_a, const void *_b )
     const playermodelinfo_s *b = ( const playermodelinfo_s * ) _b;
 
     /*
-    ** sort by male, female, then alphabetical
-    */
+* * sort by male, female, then alphabetical
+*/
     if ( strcmp( a->directory, "male" ) == 0 )
         return -1;
     else if ( strcmp( b->directory, "male" ) == 0 )
@@ -3606,17 +3607,17 @@ static int pmicmpfnc( const void *_a, const void *_b )
 
 bool PlayerConfig_MenuInit( void )
 {
-    extern cvar_t *name;
-    extern cvar_t *team;
-    extern cvar_t *skin;
-    char currentdirectory[1024];
-    char currentskin[1024];
+    extern cvar *name;
+    extern cvar *team;
+    extern cvar *skin;
+    char* currentdirectory;
+    char* currentskin;
     int i = 0;
 
     int currentdirectoryindex = 0;
     int currentskinindex = 0;
 
-    cvar_t *hand = Cvar_Get( "hand", "0", CVAR_USERINFO | CVAR_ARCHIVE );
+    cvar *hand = Cvar_Get( "hand", "0", CVAR_USERINFO | CVAR_ARCHIVE );
 
     static char *handedness[] = { "right", "left", "center", 0 };
 
@@ -3628,9 +3629,9 @@ bool PlayerConfig_MenuInit( void )
     if ( hand->value < 0 || hand->value > 2 )
         Cvar_SetValue( "hand", 0 );
 
-    strcpy( currentdirectory, skin->string );
+    currentdirectory = toChar( skin->string );
 
-    if ( strchr( currentdirectory, '/' ) )
+    if( strchr( currentdirectory, '/' ) != 0 )
     {
         strcpy( currentskin, strchr( currentdirectory, '/' ) + 1 );
         *strchr( currentdirectory, '/' ) = 0;
@@ -3638,7 +3639,7 @@ bool PlayerConfig_MenuInit( void )
     else if ( strchr( currentdirectory, '\\' ) )
     {
         strcpy( currentskin, strchr( currentdirectory, '\\' ) + 1 );
-        *strchr( currentdirectory, '\\' ) = 0;
+    * strchr( currentdirectory, '\\' ) = 0;
     }
     else
     {
@@ -3680,8 +3681,8 @@ bool PlayerConfig_MenuInit( void )
     s_player_name_field.generic.y        = 0;
     s_player_name_field.length    = 20;
     s_player_name_field.visible_length = 20;
-    strcpy( s_player_name_field.buffer, name->string );
-    s_player_name_field.cursor = strlen( name->string );
+    s_player_name_field.buffer = name->string;
+    s_player_name_field.cursor = name->string.length();
 
     s_player_model_title.generic.type = MTYPE_SEPARATOR;
     s_player_model_title.generic.name = "model";

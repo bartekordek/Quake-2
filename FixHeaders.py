@@ -13,29 +13,44 @@ def line_prepender(filename, line):
         f.seek(0, 0)
         f.write(line.rstrip('\r\n') + '\n' + content)
 
-def FixHeaderFile( filePath ):
-    guard = filePath.replace( ".", "_" )
+def FixHeaderFile( filePath, isCpp ):
+    if isCpp:
+        filePathC = filePath.replace( ".hpp",".h" )
+    guard = filePathC.replace( ".", "_" )
     guard = guard.replace( "/", "_" )
     guard = guard.replace( "\\", "_" )
     guard = guard.upper()
     guard = "__" + guard + "__"
 
     with open(filePath) as f:
+        fileContent = f.read()
         firstLine = "#ifndef " + guard
-        secondLine = "#define " + guard
-        if firstLine in f.read():
-            print("Guard exists in " + filePath)
+        if isCpp:
+            firstLineCPP = "#pragma once"
+            if firstLine in fileContent or firstLineCPP in fileContent:
+                print("Guard exists in " + filePath)
+            else:
+                print( "There is no guard in " + filePath + ", adding." )
+                line_prepender( filePath, firstLineCPP )
+                line_prepender( filePath, "\n" )
         else:
-            print( "There is no guard in " + filePath + ", adding." )
-            line_prepender( filePath, "\n" )
-            line_prepender( filePath, secondLine )
-            line_prepender( filePath, firstLine )
+            secondLine = "#define " + guard
+            if firstLine in f.read():
+                print("Guard exists in " + filePath)
+            else:
+                print( "There is no guard in " + filePath + ", adding." )
+                line_prepender( filePath, "\n" )
+                line_prepender( filePath, secondLine )
+                line_prepender( filePath, firstLine )
 
-            with open(filePath, "a") as file:
-                file.write("\n\n#endif // " + guard)
+                with open(filePath, "a") as file:
+                    file.write("\n\n#endif // " + guard)
 
 for root, dirs, files in os.walk("."):
     for file in files:
         if file.endswith(".h"):
             headerPath = os.path.join(root, file)
             FixHeaderFile( headerPath )
+        elif file.endswith(".hpp"):
+            headerPath = os.path.join(root, file)
+            FixHeaderFile( headerPath, True )

@@ -6,11 +6,11 @@
 
 typedef enum
 {
-	it_skin,
-	it_sprite,
-	it_wall,
-	it_pic,
-	it_sky
+    it_skin,
+    it_sprite,
+    it_wall,
+    it_pic,
+    it_sky
 } imagetype_t;
 
 #endif // ____SHARED_IMAGETYPEENUM_H__

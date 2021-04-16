@@ -36,6 +36,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "shared/plane.hpp"
 #include "shared/surface.hpp"
+#include "shared/edict.hpp"
 
 #include <assert.h>
 #include <math.h>
@@ -73,19 +74,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 
 #define    MAX_OSPATH            128        // max length of a filesystem pathname
-
-//
-// per-level limits
-//
-#define    MAX_CLIENTS            256        // absolute limit
-#define    MAX_EDICTS            1024    // must change protocol to increase more
-#define    MAX_LIGHTSTYLES        256
-#define    MAX_MODELS            256        // these are sent over the net as bytes
-#define    MAX_SOUNDS            256        // so they cannot be blindly increased
-#define    MAX_IMAGES            256
-#define    MAX_ITEMS            256
-#define MAX_GENERAL            (MAX_CLIENTS*2)    // general config strings
-
 
 // game print flags
 #define    PRINT_LOW            0        // pickup messages
@@ -236,7 +224,7 @@ float    BigFloat (float l);
 float    LittleFloat (float l);
 
 void    Swap_Init (void);
-char    *va(char *format, ...);
+char* va(char *format, ...);
 
 //=============================================
 
@@ -249,7 +237,7 @@ char    *va(char *format, ...);
 
 char *Info_ValueForKey (char *s, char *key);
 void Info_RemoveKey (char *s, char *key);
-void Info_SetValueForKey (char *s, char *key, char *value);
+void Info_SetValueForKey (const std::string& s, const std::string& key, const std::string& value);
 bool Info_Validate (char *s);
 
 /*
@@ -265,8 +253,8 @@ extern    int    curtime;        // time returned by last win32_Sys_Milliseconds
 void    Sys_Mkdir (char *path);
 
 // large block stack allocation routines
-void    *Hunk_Begin (int maxsize);
-void    *Hunk_Alloc (int size);
+void* Hunk_Begin (int maxsize);
+void* Hunk_Alloc (int size);
 void    Hunk_Free (void *buf);
 int        Hunk_End (void);
 
@@ -280,8 +268,8 @@ int        Hunk_End (void);
 /*
 ** pass in an attribute mask of things you wish to REJECT
 */
-char    *Sys_FindFirst (char *path, unsigned musthave, unsigned canthave );
-char    *Sys_FindNext ( unsigned musthave, unsigned canthave );
+char* Sys_FindFirst (char *path, unsigned musthave, unsigned canthave );
+char* Sys_FindNext ( unsigned musthave, unsigned canthave );
 void    Sys_FindClose (void);
 
 
@@ -303,18 +291,6 @@ CVARS (console variables)
 #define    CVAR_NOSET        8    // don't allow change from console at all,
                             // but can be set from the command line
 #define    CVAR_LATCH        16    // save changes until server restart
-
-// nothing outside the Cvar_*() functions should modify these fields!
-typedef struct cvar_s
-{
-    char        *name;
-    char        *string;
-    char        *latched_string;    // for CVAR_LATCH vars
-    int            flags;
-    bool    modified;    // set each time the cvar is changed
-    float        value;
-    struct cvar_s *next;
-} cvar_t;
 
 #endif        // CVAR
 
@@ -424,23 +400,8 @@ typedef struct
     plane_t plane;        // surface normal at impact
     csurface_t *surface;    // surface hit
     int contents;    // contents on other side of surface hit
-    struct edict_s *ent;        // not set by CM_*() functions
+    edict *ent;        // not set by CM_*() functions
 } trace_t;
-
-
-
-// pmove_state_t is the information necessary for client side movement
-// prediction
-enum class pmtype_t: short
-{
-    // can accelerate and turn
-    PM_NORMAL,
-    PM_SPECTATOR,
-    // no acceleration or turning
-    PM_DEAD,
-    PM_GIB,        // different bounding box
-    PM_FREEZE
-};
 
 // pmove->pm_flags
 #define    PMF_DUCKED            1
@@ -450,25 +411,6 @@ enum class pmtype_t: short
 #define    PMF_TIME_LAND        16    // pm_time is time before rejump
 #define    PMF_TIME_TELEPORT    32    // pm_time is non-moving time
 #define PMF_NO_PREDICTION    64    // temporarily disables prediction (used for grappling hook)
-
-// this structure needs to be communicated bit-accurate
-// from the server to the client to guarantee that
-// prediction stays in sync, so no floats are used.
-// if any part of the game code modifies this struct, it
-// will result in a prediction error of some degree.
-typedef struct
-{
-    pmtype_t    pm_type;
-
-    short        origin[3];        // 12.3
-    short        velocity[3];    // 12.3
-    byte        pm_flags;        // ducked, jump_held, etc
-    byte        pm_time;        // each unit = 8 ms
-    short        gravity;
-    short        delta_angles[3];    // add to command angles to get view direction
-                                    // changed by spawns, rotating objects, and teleporters
-} pmove_state_t;
-
 
 //
 // button bits
@@ -494,7 +436,7 @@ typedef struct usercmd_s
 typedef struct
 {
     // state (in / out)
-    pmove_state_t    s;
+    pmove_state    s;
 
     // command (in)
     usercmd_t        cmd;
@@ -502,14 +444,14 @@ typedef struct
 
     // results (out)
     int            numtouch;
-    struct edict_s    *touchents[MAXTOUCH];
+    edict* touchents[MAXTOUCH];
 
     vec3_t        viewangles;            // clamped
     float        viewheight;
 
     vec3_t        mins, maxs;            // bounding box size
 
-    struct edict_s    *groundentity;
+    edict* groundentity;
     int            watertype;
     int            waterlevel;
 
@@ -519,7 +461,7 @@ typedef struct
 } pmove_t;
 
 
-// entity_state_t->effects
+// entity_state->effects
 // Effects are things handled on the client side (lights, particles, frame animations)
 // that happen constantly on the given entity.
 // An entity that has effects will be sent to the client
@@ -560,7 +502,7 @@ typedef struct
 #define EF_TRACKERTRAIL        0x80000000
 //ROGUE
 
-// entity_state_t->renderfx flags
+// entity_state->renderfx flags
 #define    RF_MINLIGHT            1        // allways have some light (viewmodel)
 #define    RF_VIEWERMODEL        2        // don't draw through eyes, only mirrors
 #define    RF_WEAPONMODEL        4        // only draw through eyes
@@ -582,7 +524,7 @@ typedef struct
 #define RF_USE_DISGUISE        0x00040000
 //ROGUE
 
-// player_state_t->refdef flags
+// player_state->refdef flags
 #define    RDF_UNDERWATER        1        // warp the screen as apropriate
 #define RDF_NOWORLDMODEL    2        // used for player configuration screen
 
@@ -1087,7 +1029,7 @@ ROGUE - VERSIONS
 //==============================================
 
 
-// entity_state_t->event values
+// entity_state->event values
 // ertity events are for effects that take place reletive
 // to an existing entities origin.  Very network efficient.
 // All muzzle flashes really should be converted to events...
@@ -1103,31 +1045,6 @@ typedef enum
     EV_OTHER_TELEPORT
 } entity_event_t;
 
-
-// entity_state_t is the information conveyed from the server
-// in an update message about entities that the client will
-// need to render in some way
-typedef struct entity_state_s
-{
-    int        number;            // edict index
-
-    vec3_t    origin;
-    vec3_t    angles;
-    vec3_t    old_origin;        // for lerping
-    int        modelindex;
-    int        modelindex2, modelindex3, modelindex4;    // weapons, CTF flags, etc
-    int        frame;
-    int        skinnum;
-    unsigned int        effects;        // PGM - we're filling it, so it needs to be unsigned
-    int        renderfx;
-    int        solid;            // for client side prediction, 8*(bits 0-4) is x/y radius
-                            // 8*(bits 5-9) is z down distance, 8(bits10-15) is z up
-                            // gi.linkentity sets this properly
-    int        sound;            // for looping sounds, to guarantee shutoff
-    int        event;            // impulse events -- muzzle flashes, footsteps, etc
-                            // events only go out for a single frame, they
-                            // are automatically cleared each frame
-} entity_state_t;
 
 //==============================================
 

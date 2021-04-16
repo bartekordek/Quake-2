@@ -20,56 +20,56 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "g_local.hpp"
 
-field_t fields[] = {
-	{"classname", FOFS(classname), F_LSTRING},
-	{"origin", FOFS(s.origin), F_VECTOR},
-	{"model", FOFS(model), F_LSTRING},
-	{"spawnflags", FOFS(spawnflags), F_INT},
-	{"speed", FOFS(speed), F_FLOAT},
-	{"accel", FOFS(accel), F_FLOAT},
-	{"decel", FOFS(decel), F_FLOAT},
-	{"target", FOFS(target), F_LSTRING},
-	{"targetname", FOFS(targetname), F_LSTRING},
-	{"pathtarget", FOFS(pathtarget), F_LSTRING},
-	{"deathtarget", FOFS(deathtarget), F_LSTRING},
-	{"killtarget", FOFS(killtarget), F_LSTRING},
-	{"combattarget", FOFS(combattarget), F_LSTRING},
-	{"message", FOFS(message), F_LSTRING},
-	{"team", FOFS(team), F_LSTRING},
-	{"wait", FOFS(wait), F_FLOAT},
-	{"delay", FOFS(delay), F_FLOAT},
-	{"random", FOFS(random), F_FLOAT},
-	{"move_origin", FOFS(move_origin), F_VECTOR},
-	{"move_angles", FOFS(move_angles), F_VECTOR},
-	{"style", FOFS(style), F_INT},
-	{"count", FOFS(count), F_INT},
-	{"health", FOFS(health), F_INT},
-	{"sounds", FOFS(sounds), F_INT},
-	{"light", 0, F_IGNORE},
-	{"dmg", FOFS(dmg), F_INT},
-	{"angles", FOFS(s.angles), F_VECTOR},
-	{"angle", FOFS(s.angles), F_ANGLEHACK},
-	{"mass", FOFS(mass), F_INT},
-	{"volume", FOFS(volume), F_FLOAT},
-	{"attenuation", FOFS(attenuation), F_FLOAT},
-	{"map", FOFS(map), F_LSTRING},
+field fields[] = {
+	{"classname", FOFS(classname), fieldtype_t::F_LSTRING},
+	{"origin", FOFS(s.origin), fieldtype_t::F_VECTOR},
+	{"model", FOFS(model), fieldtype_t::F_LSTRING},
+	{"spawnflags", FOFS(spawnflags), fieldtype_t::F_INT},
+	{"speed", FOFS(speed), fieldtype_t::F_FLOAT},
+	{"accel", FOFS(accel), fieldtype_t::F_FLOAT},
+	{"decel", FOFS(decel), fieldtype_t::F_FLOAT},
+	{"target", FOFS(target), fieldtype_t::F_LSTRING},
+	{"targetname", FOFS(targetname), fieldtype_t::F_LSTRING},
+	{"pathtarget", FOFS(pathtarget), fieldtype_t::F_LSTRING},
+	{"deathtarget", FOFS(deathtarget), fieldtype_t::F_LSTRING},
+	{"killtarget", FOFS(killtarget), fieldtype_t::F_LSTRING},
+	{"combattarget", FOFS(combattarget), fieldtype_t::F_LSTRING},
+	{"message", FOFS(message), fieldtype_t::F_LSTRING},
+	{"team", FOFS(team), fieldtype_t::F_LSTRING},
+	{"wait", FOFS(wait), fieldtype_t::F_FLOAT},
+	{"delay", FOFS(delay), fieldtype_t::F_FLOAT},
+	{"random", FOFS(random), fieldtype_t::F_FLOAT},
+	{"move_origin", FOFS(move_origin), fieldtype_t::F_VECTOR},
+	{"move_angles", FOFS(move_angles), fieldtype_t::F_VECTOR},
+	{"style", FOFS(style), fieldtype_t::F_INT},
+	{"count", FOFS(count), fieldtype_t::F_INT},
+	{"health", FOFS(health), fieldtype_t::F_INT},
+	{"sounds", FOFS(sounds), fieldtype_t::F_INT},
+	{"light", 0, fieldtype_t::F_IGNORE},
+	{"dmg", FOFS(dmg), fieldtype_t::F_INT},
+	{"angles", FOFS(s.angles), fieldtype_t::F_VECTOR},
+	{"angle", FOFS(s.angles), fieldtype_t::F_ANGLEHACK},
+	{"mass", FOFS(mass), fieldtype_t::F_INT},
+	{"volume", FOFS(volume), fieldtype_t::F_FLOAT},
+	{"attenuation", FOFS(attenuation), fieldtype_t::F_FLOAT},
+	{"map", FOFS(map), fieldtype_t::F_LSTRING},
 
 	// temp spawn vars -- only valid when the spawn function is called
-	{"lip", STOFS(lip), F_INT, FFL_SPAWNTEMP},
-	{"distance", STOFS(distance), F_INT, FFL_SPAWNTEMP},
-	{"height", STOFS(height), F_INT, FFL_SPAWNTEMP},
-	{"noise", STOFS(noise), F_LSTRING, FFL_SPAWNTEMP},
-	{"pausetime", STOFS(pausetime), F_FLOAT, FFL_SPAWNTEMP},
-	{"item", STOFS(item), F_LSTRING, FFL_SPAWNTEMP},
-	{"gravity", STOFS(gravity), F_LSTRING, FFL_SPAWNTEMP},
-	{"sky", STOFS(sky), F_LSTRING, FFL_SPAWNTEMP},
-	{"skyrotate", STOFS(skyrotate), F_FLOAT, FFL_SPAWNTEMP},
-	{"skyaxis", STOFS(skyaxis), F_VECTOR, FFL_SPAWNTEMP},
-	{"minyaw", STOFS(minyaw), F_FLOAT, FFL_SPAWNTEMP},
-	{"maxyaw", STOFS(maxyaw), F_FLOAT, FFL_SPAWNTEMP},
-	{"minpitch", STOFS(minpitch), F_FLOAT, FFL_SPAWNTEMP},
-	{"maxpitch", STOFS(maxpitch), F_FLOAT, FFL_SPAWNTEMP},
-	{"nextmap", STOFS(nextmap), F_LSTRING, FFL_SPAWNTEMP}
+	{"lip", STOFS(lip), fieldtype_t::F_INT, FFL_SPAWNTEMP},
+	{"distance", STOFS(distance), fieldtype_t::F_INT, FFL_SPAWNTEMP},
+	{"height", STOFS(height), fieldtype_t::F_INT, FFL_SPAWNTEMP},
+	{"noise", STOFS(noise), fieldtype_t::F_LSTRING, FFL_SPAWNTEMP},
+	{"pausetime", STOFS(pausetime), fieldtype_t::F_FLOAT, FFL_SPAWNTEMP},
+	{"item", STOFS(item), fieldtype_t::F_LSTRING, FFL_SPAWNTEMP},
+	{"gravity", STOFS(gravity), fieldtype_t::F_LSTRING, FFL_SPAWNTEMP},
+	{"sky", STOFS(sky), fieldtype_t::F_LSTRING, FFL_SPAWNTEMP},
+	{"skyrotate", STOFS(skyrotate), fieldtype_t::F_FLOAT, FFL_SPAWNTEMP},
+	{"skyaxis", STOFS(skyaxis), fieldtype_t::F_VECTOR, FFL_SPAWNTEMP},
+	{"minyaw", STOFS(minyaw), fieldtype_t::F_FLOAT, FFL_SPAWNTEMP},
+	{"maxyaw", STOFS(maxyaw), fieldtype_t::F_FLOAT, FFL_SPAWNTEMP},
+	{"minpitch", STOFS(minpitch), fieldtype_t::F_FLOAT, FFL_SPAWNTEMP},
+	{"maxpitch", STOFS(maxpitch), fieldtype_t::F_FLOAT, FFL_SPAWNTEMP},
+	{"nextmap", STOFS(nextmap), fieldtype_t::F_LSTRING, FFL_SPAWNTEMP}
 };
 
 // -------- just for savegames ----------
@@ -80,59 +80,59 @@ field_t fields[] = {
 // some of these, and if one were accidentally present twice
 // it would double swizzle (fuck) the pointer.
 
-field_t		savefields[] =
+field		savefields[] =
 {
-	{"", FOFS(classname), F_LSTRING},
-	{"", FOFS(target), F_LSTRING},
-	{"", FOFS(targetname), F_LSTRING},
-	{"", FOFS(killtarget), F_LSTRING},
-	{"", FOFS(team), F_LSTRING},
-	{"", FOFS(pathtarget), F_LSTRING},
-	{"", FOFS(deathtarget), F_LSTRING},
-	{"", FOFS(combattarget), F_LSTRING},
-	{"", FOFS(model), F_LSTRING},
-	{"", FOFS(map), F_LSTRING},
-	{"", FOFS(message), F_LSTRING},
+	{"", FOFS(classname), fieldtype_t::F_LSTRING},
+	{"", FOFS(target), fieldtype_t::F_LSTRING},
+	{"", FOFS(targetname), fieldtype_t::F_LSTRING},
+	{"", FOFS(killtarget), fieldtype_t::F_LSTRING},
+	{"", FOFS(team), fieldtype_t::F_LSTRING},
+	{"", FOFS(pathtarget), fieldtype_t::F_LSTRING},
+	{"", FOFS(deathtarget), fieldtype_t::F_LSTRING},
+	{"", FOFS(combattarget), fieldtype_t::F_LSTRING},
+	{"", FOFS(model), fieldtype_t::F_LSTRING},
+	{"", FOFS(map), fieldtype_t::F_LSTRING},
+	{"", FOFS(message), fieldtype_t::F_LSTRING},
 
-	{"", FOFS(client), F_CLIENT},
-	{"", FOFS(item), F_ITEM},
+	{"", FOFS(client), fieldtype_t::F_CLIENT},
+	{"", FOFS(item), fieldtype_t::F_ITEM},
 
-	{"", FOFS(goalentity), F_EDICT},
-	{"", FOFS(movetarget), F_EDICT},
-	{"", FOFS(enemy), F_EDICT},
-	{"", FOFS(oldenemy), F_EDICT},
-	{"", FOFS(activator), F_EDICT},
-	{"", FOFS(groundentity), F_EDICT},
-	{"", FOFS(teamchain), F_EDICT},
-	{"", FOFS(teammaster), F_EDICT},
-	{"", FOFS(owner), F_EDICT},
-	{"", FOFS(mynoise), F_EDICT},
-	{"", FOFS(mynoise2), F_EDICT},
-	{"", FOFS(target_ent), F_EDICT},
-	{"", FOFS(chain), F_EDICT},
+	{"", FOFS(goalentity), fieldtype_t::F_EDICT},
+	{"", FOFS(movetarget), fieldtype_t::F_EDICT},
+	{"", FOFS(enemy), fieldtype_t::F_EDICT},
+	{"", FOFS(oldenemy), fieldtype_t::F_EDICT},
+	{"", FOFS(activator), fieldtype_t::F_EDICT},
+	{"", FOFS(groundentity), fieldtype_t::F_EDICT},
+	{"", FOFS(teamchain), fieldtype_t::F_EDICT},
+	{"", FOFS(teammaster), fieldtype_t::F_EDICT},
+	{"", FOFS(owner), fieldtype_t::F_EDICT},
+	{"", FOFS(mynoise), fieldtype_t::F_EDICT},
+	{"", FOFS(mynoise2), fieldtype_t::F_EDICT},
+	{"", FOFS(target_ent), fieldtype_t::F_EDICT},
+	{"", FOFS(chain), fieldtype_t::F_EDICT},
 
-	{NULL, 0, F_INT}
+	{NULL, 0, fieldtype_t::F_INT}
 };
 
-field_t		levelfields[] =
+field		levelfields[] =
 {
-	{"", LLOFS(changemap), F_LSTRING},
+	{"", LLOFS(changemap), fieldtype_t::F_LSTRING},
 
-	{"", LLOFS(sight_client), F_EDICT},
-	{"", LLOFS(sight_entity), F_EDICT},
-	{"", LLOFS(sound_entity), F_EDICT},
-	{"", LLOFS(sound2_entity), F_EDICT},
+	{"", LLOFS(sight_client), fieldtype_t::F_EDICT},
+	{"", LLOFS(sight_entity), fieldtype_t::F_EDICT},
+	{"", LLOFS(sound_entity), fieldtype_t::F_EDICT},
+	{"", LLOFS(sound2_entity), fieldtype_t::F_EDICT},
 
-	{NULL, 0, F_INT}
+	{NULL, 0, fieldtype_t::F_INT}
 };
 
-field_t		clientfields[] =
+field		clientfields[] =
 {
-	{"", CLOFS(pers.weapon), F_ITEM},
-	{"", CLOFS(pers.lastweapon), F_ITEM},
-	{"", CLOFS(newweapon), F_ITEM},
+	{"", CLOFS(pers.weapon), fieldtype_t::F_ITEM},
+	{"", CLOFS(pers.lastweapon), fieldtype_t::F_ITEM},
+	{"", CLOFS(newweapon), fieldtype_t::F_ITEM},
 
-	{NULL, 0, F_INT}
+	{NULL, 0, fieldtype_t::F_INT}
 };
 
 /*
@@ -148,29 +148,29 @@ void InitGame (void)
 {
 	gi.dprintf ("==== InitGame ====\n");
 
-	gun_x = gi.cvar ("gun_x", "0", 0);
-	gun_y = gi.cvar ("gun_y", "0", 0);
-	gun_z = gi.cvar ("gun_z", "0", 0);
+	gun_x = gi.cvar_obj ("gun_x", "0", 0);
+	gun_y = gi.cvar_obj ("gun_y", "0", 0);
+	gun_z = gi.cvar_obj ("gun_z", "0", 0);
 
 	//FIXME: sv_ prefix is wrong for these
-	sv_rollspeed = gi.cvar ("sv_rollspeed", "200", 0);
-	sv_rollangle = gi.cvar ("sv_rollangle", "2", 0);
-	sv_maxvelocity = gi.cvar ("sv_maxvelocity", "2000", 0);
-	sv_gravity = gi.cvar ("sv_gravity", "800", 0);
+	sv_rollspeed = gi.cvar_obj ("sv_rollspeed", "200", 0);
+	sv_rollangle = gi.cvar_obj ("sv_rollangle", "2", 0);
+	sv_maxvelocity = gi.cvar_obj ("sv_maxvelocity", "2000", 0);
+	sv_gravity = gi.cvar_obj ("sv_gravity", "800", 0);
 
 	// noset vars
-	dedicated = gi.cvar ("dedicated", "0", CVAR_NOSET);
+	dedicated = gi.cvar_obj ("dedicated", "0", CVAR_NOSET);
 
 	// latched vars
-	sv_cheats = gi.cvar ("cheats", "0", CVAR_SERVERINFO|CVAR_LATCH);
-	gi.cvar ("gamename", GAMEVERSION , CVAR_SERVERINFO | CVAR_LATCH);
-	gi.cvar ("gamedate", __DATE__ , CVAR_SERVERINFO | CVAR_LATCH);
+	sv_cheats = gi.cvar_obj ("cheats", "0", CVAR_SERVERINFO|CVAR_LATCH);
+	gi.cvar_obj ("gamename", GAMEVERSION , CVAR_SERVERINFO | CVAR_LATCH);
+	gi.cvar_obj ("gamedate", __DATE__ , CVAR_SERVERINFO | CVAR_LATCH);
 
-	maxclients = gi.cvar ("maxclients", "4", CVAR_SERVERINFO | CVAR_LATCH);
-	deathmatch = gi.cvar ("deathmatch", "0", CVAR_LATCH);
-	coop = gi.cvar ("coop", "0", CVAR_LATCH);
-	skill = gi.cvar ("skill", "1", CVAR_LATCH);
-	maxentities = gi.cvar ("maxentities", "1024", CVAR_LATCH);
+	maxclients = gi.cvar_obj ("maxclients", "4", CVAR_SERVERINFO | CVAR_LATCH);
+	deathmatch = gi.cvar_obj ("deathmatch", "0", CVAR_LATCH);
+	coop = gi.cvar_obj ("coop", "0", CVAR_LATCH);
+	skill = gi.cvar_obj ("skill", "1", CVAR_LATCH);
+	maxentities = gi.cvar_obj ("maxentities", "1024", CVAR_LATCH);
 
 //ZOID
 //This game.dll only supports deathmatch
@@ -185,30 +185,30 @@ void InitGame (void)
 
 
 	// change anytime vars
-	dmflags = gi.cvar ("dmflags", "0", CVAR_SERVERINFO);
-	fraglimit = gi.cvar ("fraglimit", "0", CVAR_SERVERINFO);
-	timelimit = gi.cvar ("timelimit", "0", CVAR_SERVERINFO);
+	dmflags = gi.cvar_obj ("dmflags", "0", CVAR_SERVERINFO);
+	fraglimit = gi.cvar_obj ("fraglimit", "0", CVAR_SERVERINFO);
+	timelimit = gi.cvar_obj ("timelimit", "0", CVAR_SERVERINFO);
 //ZOID
-	capturelimit = gi.cvar ("capturelimit", "0", CVAR_SERVERINFO);
-	instantweap = gi.cvar ("instantweap", "0", CVAR_SERVERINFO);
+	capturelimit = gi.cvar_obj ("capturelimit", "0", CVAR_SERVERINFO);
+	instantweap = gi.cvar_obj ("instantweap", "0", CVAR_SERVERINFO);
 //ZOID
- 	password = gi.cvar ("password", "", CVAR_USERINFO);
+ 	password = gi.cvar_obj ("password", "", CVAR_USERINFO);
 
-	g_select_empty = gi.cvar ("g_select_empty", "0", CVAR_ARCHIVE);
+	g_select_empty = gi.cvar_obj ("g_select_empty", "0", CVAR_ARCHIVE);
 
-	run_pitch = gi.cvar ("run_pitch", "0.002", 0);
-	run_roll = gi.cvar ("run_roll", "0.005", 0);
-	bob_up  = gi.cvar ("bob_up", "0.005", 0);
-	bob_pitch = gi.cvar ("bob_pitch", "0.002", 0);
-	bob_roll = gi.cvar ("bob_roll", "0.002", 0);
+	run_pitch = gi.cvar_obj ("run_pitch", "0.002", 0);
+	run_roll = gi.cvar_obj ("run_roll", "0.005", 0);
+	bob_up  = gi.cvar_obj ("bob_up", "0.005", 0);
+	bob_pitch = gi.cvar_obj ("bob_pitch", "0.002", 0);
+	bob_roll = gi.cvar_obj ("bob_roll", "0.002", 0);
 
 	// flood control
-	flood_msgs = gi.cvar ("flood_msgs", "4", 0);
-	flood_persecond = gi.cvar ("flood_persecond", "4", 0);
-	flood_waitdelay = gi.cvar ("flood_waitdelay", "10", 0);
+	flood_msgs = gi.cvar_obj ("flood_msgs", "4", 0);
+	flood_persecond = gi.cvar_obj ("flood_persecond", "4", 0);
+	flood_waitdelay = gi.cvar_obj ("flood_waitdelay", "10", 0);
 
 	// dm map list
-	sv_maplist = gi.cvar ("sv_maplist", "", 0);
+	sv_maplist = gi.cvar_obj ("sv_maplist", "", 0);
 
 	// items
 	InitItems ();
@@ -235,7 +235,7 @@ void InitGame (void)
 
 //=========================================================
 
-void WriteField1 (FILE *f, field_t *field, byte *base)
+void WriteField1 (FILE *f, field *field, byte *base)
 {
 	void		*p;
 	int			len;
@@ -244,40 +244,40 @@ void WriteField1 (FILE *f, field_t *field, byte *base)
 	p = (void *)(base + field->ofs);
 	switch (field->type)
 	{
-	case F_INT:
-	case F_FLOAT:
-	case F_ANGLEHACK:
-	case F_VECTOR:
-	case F_IGNORE:
+	case fieldtype_t::F_INT:
+	case fieldtype_t::F_FLOAT:
+	case fieldtype_t::F_ANGLEHACK:
+	case fieldtype_t::F_VECTOR:
+	case fieldtype_t::F_IGNORE:
 		break;
 
-	case F_LSTRING:
-	case F_GSTRING:
+	case fieldtype_t::F_LSTRING:
+	case fieldtype_t::F_GSTRING:
 		if ( *(char **)p )
 			len = strlen(*(char **)p) + 1;
 		else
 			len = 0;
 		*(int *)p = len;
 		break;
-	case F_EDICT:
-		if ( *(struct edict_s **)p == NULL)
+	case fieldtype_t::F_EDICT:
+		if ( *(edict **)p == NULL)
 			index = -1;
 		else
-			index = *(struct edict_s **)p - g_edicts;
+			index = *(edict **)p - g_edicts;
 		*(int *)p = index;
 		break;
-	case F_CLIENT:
+	case fieldtype_t::F_CLIENT:
 		if ( *(gclient_t **)p == NULL)
 			index = -1;
 		else
 			index = *(gclient_t **)p - game.clients;
 		*(int *)p = index;
 		break;
-	case F_ITEM:
-		if ( *(struct edict_s **)p == NULL)
+	case fieldtype_t::F_ITEM:
+		if ( *(edict **)p == NULL)
 			index = -1;
 		else
-			index = *(gitem_t **)p - itemlist;
+			index = *(gitem **)p - itemlist;
 		*(int *)p = index;
 		break;
 
@@ -286,7 +286,7 @@ void WriteField1 (FILE *f, field_t *field, byte *base)
 	}
 }
 
-void WriteField2 (FILE *f, field_t *field, byte *base)
+void WriteField2 (FILE *f, field *field, byte *base)
 {
 	int			len;
 	void		*p;
@@ -294,8 +294,8 @@ void WriteField2 (FILE *f, field_t *field, byte *base)
 	p = (void *)(base + field->ofs);
 	switch (field->type)
 	{
-	case F_LSTRING:
-	case F_GSTRING:
+	case fieldtype_t::F_LSTRING:
+	case fieldtype_t::F_GSTRING:
 		if ( *(char **)p )
 		{
 			len = strlen(*(char **)p) + 1;
@@ -305,7 +305,7 @@ void WriteField2 (FILE *f, field_t *field, byte *base)
 	}
 }
 
-void ReadField (FILE *f, field_t *field, byte *base)
+void ReadField (FILE *f, field *field, byte *base)
 {
 	void		*p;
 	int			len;
@@ -314,14 +314,14 @@ void ReadField (FILE *f, field_t *field, byte *base)
 	p = (void *)(base + field->ofs);
 	switch (field->type)
 	{
-	case F_INT:
-	case F_FLOAT:
-	case F_ANGLEHACK:
-	case F_VECTOR:
-	case F_IGNORE:
+	case fieldtype_t::F_INT:
+	case fieldtype_t::F_FLOAT:
+	case fieldtype_t::F_ANGLEHACK:
+	case fieldtype_t::F_VECTOR:
+	case fieldtype_t::F_IGNORE:
 		break;
 
-	case F_LSTRING:
+	case fieldtype_t::F_LSTRING:
 		len = *(int *)p;
 		if (!len)
 			*(char **)p = NULL;
@@ -331,7 +331,7 @@ void ReadField (FILE *f, field_t *field, byte *base)
 			fread (*(char **)p, len, 1, f);
 		}
 		break;
-	case F_GSTRING:
+	case fieldtype_t::F_GSTRING:
 		len = *(int *)p;
 		if (!len)
 			*(char **)p = NULL;
@@ -341,26 +341,26 @@ void ReadField (FILE *f, field_t *field, byte *base)
 			fread (*(char **)p, len, 1, f);
 		}
 		break;
-	case F_EDICT:
+	case fieldtype_t::F_EDICT:
 		index = *(int *)p;
 		if ( index == -1 )
-			*(struct edict_s **)p = NULL;
+			*(edict **)p = NULL;
 		else
-			*(struct edict_s **)p = &g_edicts[index];
+			*(edict **)p = &g_edicts[index];
 		break;
-	case F_CLIENT:
+	case fieldtype_t::F_CLIENT:
 		index = *(int *)p;
 		if ( index == -1 )
 			*(gclient_t **)p = NULL;
 		else
 			*(gclient_t **)p = &game.clients[index];
 		break;
-	case F_ITEM:
+	case fieldtype_t::F_ITEM:
 		index = *(int *)p;
 		if ( index == -1 )
-			*(gitem_t **)p = NULL;
+			*(gitem **)p = NULL;
 		else
-			*(gitem_t **)p = &itemlist[index];
+			*(gitem **)p = &itemlist[index];
 		break;
 
 	default:
@@ -379,7 +379,7 @@ All pointer variables (except function pointers) must be handled specially.
 */
 void WriteClient (FILE *f, gclient_t *client)
 {
-	field_t		*field;
+	field		*field;
 	gclient_t	temp;
 
 	// all of the ints, floats, and vectors stay as they are
@@ -410,7 +410,7 @@ All pointer variables (except function pointers) must be handled specially.
 */
 void ReadClient (FILE *f, gclient_t *client)
 {
-	field_t		*field;
+	field		*field;
 
 	fread (client, sizeof(*client), 1, f);
 
@@ -501,10 +501,10 @@ WriteEdict
 All pointer variables (except function pointers) must be handled specially.
 ==============
 */
-void WriteEdict (FILE *f, struct edict_s *ent)
+void WriteEdict (FILE *f, edict *ent)
 {
-	field_t		*field;
-	struct edict_s		temp;
+	field		*field;
+	edict		temp;
 
 	// all of the ints, floats, and vectors stay as they are
 	temp = *ent;
@@ -535,7 +535,7 @@ All pointer variables (except function pointers) must be handled specially.
 */
 void WriteLevelLocals (FILE *f)
 {
-	field_t		*field;
+	field		*field;
 	level_locals_t		temp;
 
 	// all of the ints, floats, and vectors stay as they are
@@ -565,9 +565,9 @@ ReadEdict
 All pointer variables (except function pointers) must be handled specially.
 ==============
 */
-void ReadEdict (FILE *f, struct edict_s *ent)
+void ReadEdict (FILE *f, edict *ent)
 {
-	field_t		*field;
+	field		*field;
 
 	fread (ent, sizeof(*ent), 1, f);
 
@@ -586,7 +586,7 @@ All pointer variables (except function pointers) must be handled specially.
 */
 void ReadLevelLocals (FILE *f)
 {
-	field_t		*field;
+	field		*field;
 
 	fread (&level, sizeof(level), 1, f);
 
@@ -605,7 +605,7 @@ WriteLevel
 void WriteLevel (char *filename)
 {
 	int		i;
-	struct edict_s	*ent;
+	edict	*ent;
 	FILE	*f;
 	void	*base;
 
@@ -614,7 +614,7 @@ void WriteLevel (char *filename)
 		gi.error ("Couldn't open %s", filename);
 
 	// write out edict size for checking
-	i = sizeof(struct edict_s);
+	i = sizeof(edict);
 	fwrite (&i, sizeof(i), 1, f);
 
 	// write out a function pointer for checking
@@ -662,7 +662,7 @@ void ReadLevel (char *filename)
 	FILE	*f;
 	int		i;
 	void	*base;
-	struct edict_s	*ent;
+	edict	*ent;
 
 	f = fopen (filename, "rb");
 	if (!f)
@@ -678,7 +678,7 @@ void ReadLevel (char *filename)
 
 	// check edict size
 	fread (&i, sizeof(i), 1, f);
-	if (i != sizeof(struct edict_s))
+	if (i != sizeof(edict))
 	{
 		fclose (f);
 		gi.error ("ReadLevel: mismatched edict size");

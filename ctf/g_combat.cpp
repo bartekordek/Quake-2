@@ -29,7 +29,7 @@ Returns true if the inflictor can directly damage the target.  Used for
 explosions and melee attacks.
 ============
 */
-bool CanDamage (struct edict_s *targ, struct edict_s *inflictor)
+bool CanDamage (edict *targ, edict *inflictor)
 {
 	vec3_t	dest;
 	trace_t	trace;
@@ -89,7 +89,7 @@ bool CanDamage (struct edict_s *targ, struct edict_s *inflictor)
 Killed
 ============
 */
-void Killed (struct edict_s *targ, struct edict_s *inflictor, struct edict_s *attacker, int damage, vec3_t point)
+void Killed (edict *targ, edict *inflictor, edict *attacker, int damage, vec3_t point)
 {
 	if (targ->health < -999)
 		targ->health = -999;
@@ -168,7 +168,7 @@ dflags		these flags are used to control how T_Damage works
 	DAMAGE_NO_PROTECTION	kills godmode, armor, everything
 ============
 */
-static int CheckPowerArmor (struct edict_s *ent, vec3_t point, vec3_t normal, int damage, int dflags)
+static int CheckPowerArmor (edict *ent, vec3_t point, vec3_t normal, int damage, int dflags)
 {
 	gclient_t	*client;
 	int			save;
@@ -252,12 +252,12 @@ static int CheckPowerArmor (struct edict_s *ent, vec3_t point, vec3_t normal, in
 	return save;
 }
 
-static int CheckArmor (struct edict_s *ent, vec3_t point, vec3_t normal, int damage, int te_sparks, int dflags)
+static int CheckArmor (edict *ent, vec3_t point, vec3_t normal, int damage, int te_sparks, int dflags)
 {
 	gclient_t	*client;
 	int			save;
 	int			index;
-	gitem_t		*armor;
+	gitem		*armor;
 
 	if (!damage)
 		return 0;
@@ -292,7 +292,7 @@ static int CheckArmor (struct edict_s *ent, vec3_t point, vec3_t normal, int dam
 	return save;
 }
 
-void M_ReactToDamage (struct edict_s *targ, struct edict_s *attacker)
+void M_ReactToDamage (edict *targ, edict *attacker)
 {
 	if (!(attacker->client) && !(attacker->svflags & SVF_MONSTER))
 		return;
@@ -357,7 +357,7 @@ void M_ReactToDamage (struct edict_s *targ, struct edict_s *attacker)
 	}
 }
 
-bool CheckTeamDamage (struct edict_s *targ, struct edict_s *attacker)
+bool CheckTeamDamage (edict *targ, edict *attacker)
 {
 //ZOID
 	if (ctf->value && targ->client && attacker->client)
@@ -371,7 +371,7 @@ bool CheckTeamDamage (struct edict_s *targ, struct edict_s *attacker)
 	return false;
 }
 
-void T_Damage (struct edict_s *targ, struct edict_s *inflictor, struct edict_s *attacker, vec3_t dir, vec3_t point, vec3_t normal, int damage, int knockback, int dflags, int mod)
+void T_Damage (edict *targ, edict *inflictor, edict *attacker, vec3_t dir, vec3_t point, vec3_t normal, int damage, int knockback, int dflags, int mod)
 {
 	gclient_t	*client;
 	int			take;
@@ -564,10 +564,10 @@ void T_Damage (struct edict_s *targ, struct edict_s *inflictor, struct edict_s *
 T_RadiusDamage
 ============
 */
-void T_RadiusDamage (struct edict_s *inflictor, struct edict_s *attacker, float damage, struct edict_s *ignore, float radius, int mod)
+void T_RadiusDamage (edict *inflictor, edict *attacker, float damage, edict *ignore, float radius, int mod)
 {
 	float	points;
-	struct edict_s	*ent = NULL;
+	edict	*ent = NULL;
 	vec3_t	v;
 	vec3_t	dir;
 

@@ -298,8 +298,8 @@ CL_ParseServerData
 */
 void CL_ParseServerData (void)
 {
-    extern cvar_t    *fs_gamedirvar;
-    char    *str;
+    extern cvar* fs_gamedirvar;
+    char* str;
     int        i;
 
     Com_DPrintf ("Serverdata packet received.\n");
@@ -328,7 +328,16 @@ void CL_ParseServerData (void)
     strncpy (cl.gamedir, str, sizeof(cl.gamedir)-1);
 
     // set gamedir
-    if ((*str && (!fs_gamedirvar->string || !*fs_gamedirvar->string || strcmp(fs_gamedirvar->string, str))) || (!*str && (fs_gamedirvar->string || *fs_gamedirvar->string)))
+    if(
+        (
+        * str &&
+            (
+                !fs_gamedirvar->string.empty() ||
+                 strcmp(fs_gamedirvar->string.c_str(), str)
+            )) ||
+            (
+                !*str && !fs_gamedirvar->string.empty())
+        )
         Cvar_Set("game", str);
 
     // parse player entity number
@@ -359,10 +368,10 @@ CL_ParseBaseline
 */
 void CL_ParseBaseline (void)
 {
-    entity_state_t    *es;
+    entity_state* es;
     unsigned                bits;
     int                newnum;
-    entity_state_t    nullstate;
+    entity_state    nullstate;
 
     memset (&nullstate, 0, sizeof(nullstate));
 
@@ -381,7 +390,7 @@ CL_LoadClientinfo
 void CL_LoadClientinfo (clientinfo_t *ci, char *s)
 {
     int i;
-    char        *t;
+    char    * t;
     char        model_name[MAX_QPATH];
     char        skin_name[MAX_QPATH];
     char        model_filename[MAX_QPATH];
@@ -422,7 +431,7 @@ void CL_LoadClientinfo (clientinfo_t *ci, char *s)
             t = strstr(model_name, "\\");
         if (!t)
             t = model_name;
-        *t = 0;
+    * t = 0;
 
         // isolate the skin name
         strcpy (skin_name, s + strlen(model_name) + 1);
@@ -501,8 +510,8 @@ Load the skin, icon, and model for a client
 */
 void CL_ParseClientinfo (int player)
 {
-    char            *s;
-    clientinfo_t    *ci;
+    char        * s;
+    clientinfo_t* ci;
 
     s = cl.configstrings[player+CS_PLAYERSKINS];
 
@@ -520,7 +529,7 @@ CL_ParseConfigString
 void CL_ParseConfigString (void)
 {
     int        i;
-    char    *s;
+    char* s;
 
     i = MSG_ReadShort (&net_message);
     if (i < 0 || i >= MAX_CONFIGSTRINGS)
@@ -582,7 +591,7 @@ CL_ParseStartSoundPacket
 void CL_ParseStartSoundPacket(void)
 {
     vec3_t  pos_v;
-    float    *pos;
+    float* pos;
     int     channel, ent;
     int     sound_num;
     float     volume;
@@ -653,7 +662,7 @@ CL_ParseServerMessage
 void CL_ParseServerMessage (void)
 {
     int            cmd;
-    char        *s;
+    char    * s;
     int            i;
 
 //

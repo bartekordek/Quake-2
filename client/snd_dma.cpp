@@ -71,13 +71,13 @@ playsound_t    s_pendingplays;
 
 int            s_beginofs;
 
-cvar_t        *s_volume;
-cvar_t        *s_testsound;
-cvar_t        *s_loadas8bit;
-cvar_t        *s_khz;
-cvar_t        *s_show;
-cvar_t        *s_mixahead;
-cvar_t        *s_primary;
+cvar    * s_volume;
+cvar    * s_testsound;
+cvar    * s_loadas8bit;
+cvar    * s_khz;
+cvar    * s_show;
+cvar    * s_mixahead;
+cvar    * s_primary;
 
 
 int        s_rawend;
@@ -116,7 +116,7 @@ S_Init
 */
 void S_Init (void)
 {
-    cvar_t    *cv;
+    cvar* cv;
 
     //Com_Printf_C("\n------- sound initialization -------\n");
 
@@ -167,7 +167,7 @@ void S_Init (void)
 void S_Shutdown(void)
 {
     int        i;
-    sfx_t    *sfx;
+    sfx_t* sfx;
 
     if (!sound_started)
         return;
@@ -201,7 +201,7 @@ void S_Shutdown(void)
 sfx_t *S_FindName (const std::string& name, bool create)
 {
     int        i;
-    sfx_t    *sfx;
+    sfx_t* sfx;
 
     if (name.empty())
         Com_Error (ERR_FATAL, "S_FindName: NULL\n");
@@ -252,7 +252,7 @@ S_AliasName
 */
 sfx_t *S_AliasName (const std::string& aliasname, const std::string& truename)
 {
-    sfx_t    *sfx;
+    sfx_t* sfx;
     int        i;
 
     // find a free sfx
@@ -296,7 +296,7 @@ S_RegisterSound
 */
 sfx_t *S_RegisterSound (const std::string& name)
 {
-    sfx_t    *sfx;
+    sfx_t* sfx;
 
     if (!sound_started)
         return NULL;
@@ -320,7 +320,7 @@ S_EndRegistration
 void S_EndRegistration (void)
 {
     int        i;
-    sfx_t    *sfx;
+    sfx_t* sfx;
     int        size;
 
     // free any sounds not from this registration sequence
@@ -369,7 +369,7 @@ channel_t *S_PickChannel(int entnum, int entchannel)
     int            ch_idx;
     int            first_to_die;
     int            life_left;
-    channel_t    *ch;
+    channel_t* ch;
 
     if (entchannel<0)
         Com_Error (ERR_DROP, "S_PickChannel: entchannel<0");
@@ -423,7 +423,7 @@ void S_SpatializeOrigin (vec3_t origin, float master_vol, float dist_mult, int *
 
     if (cls.state != ca_active)
     {
-        *left_vol = *right_vol = 255;
+    * left_vol = *right_vol = 255;
         return;
     }
 
@@ -451,14 +451,14 @@ void S_SpatializeOrigin (vec3_t origin, float master_vol, float dist_mult, int *
 
     // add in distance effect
     scale = (1.0 - dist) * rscale;
-    *right_vol = (int) (master_vol * scale);
+* right_vol = (int) (master_vol * scale);
     if (*right_vol < 0)
-        *right_vol = 0;
+    * right_vol = 0;
 
     scale = (1.0 - dist) * lscale;
-    *left_vol = (int) (master_vol * scale);
+* left_vol = (int) (master_vol * scale);
     if (*left_vol < 0)
-        *left_vol = 0;
+    * left_vol = 0;
 }
 
 /*
@@ -496,7 +496,7 @@ S_AllocPlaysound
 */
 playsound_t *S_AllocPlaysound (void)
 {
-    playsound_t    *ps;
+    playsound_t* ps;
 
     ps = s_freeplays.next;
     if (ps == &s_freeplays)
@@ -541,8 +541,8 @@ by the update loop.
 */
 void S_IssuePlaysound (playsound_t *ps)
 {
-    channel_t    *ch;
-    sfxcache_t    *sc;
+    channel_t* ch;
+    sfxcache_t* sc;
 
     if (s_show->value)
     {
@@ -579,12 +579,12 @@ void S_IssuePlaysound (playsound_t *ps)
     S_FreePlaysound (ps);
 }
 
-struct sfx_s *S_RegisterSexedSound (entity_state_t *ent, const std::string& base)
+struct sfx_s *S_RegisterSexedSound (entity_state *ent, const std::string& base)
 {
     int                n;
-    char            *p;
-    struct sfx_s    *sfx;
-    FILE            *f;
+    char        * p;
+    struct sfx_s* sfx;
+    FILE        * f;
     char            model[MAX_QPATH];
     char            sexedFilename[MAX_QPATH];
     char            maleFilename[MAX_QPATH];
@@ -601,7 +601,7 @@ struct sfx_s *S_RegisterSexedSound (entity_state_t *ent, const std::string& base
             strcpy(model, p);
             p = strchr(model, '/');
             if (p)
-                *p = 0;
+            * p = 0;
         }
     }
     // if we can't figure it out, they're male
@@ -649,9 +649,9 @@ Entchannel 0 will never override a playing sound
 */
 void S_StartSound(vec3_t origin, int entnum, int entchannel, sfx_t *sfx, float fvol, float attenuation, float timeofs)
 {
-    sfxcache_t    *sc;
+    sfxcache_t* sc;
     int            vol;
-    playsound_t    *ps, *sort;
+    playsound_t* ps, *sort;
     int            start;
 
     if (!sound_started)
@@ -732,7 +732,7 @@ S_StartLocalSound
 */
 void S_StartLocalSound (const std::string& sound)
 {
-    sfx_t    *sfx;
+    sfx_t* sfx;
 
     if (!sound_started)
         return;
@@ -817,11 +817,11 @@ void S_AddLoopSounds (void)
     int            i, j;
     int            sounds[MAX_EDICTS];
     int            left, right, left_total, right_total;
-    channel_t    *ch;
-    sfx_t        *sfx;
-    sfxcache_t    *sc;
+    channel_t* ch;
+    sfx_t    * sfx;
+    sfxcache_t* sc;
     int            num;
-    entity_state_t    *ent;
+    entity_state* ent;
 
     if (cl_paused->value)
         return;
@@ -1005,8 +1005,8 @@ void S_Update(vec3_t origin, vec3_t forward, vec3_t right, vec3_t up)
 {
     int            i;
     int            total;
-    channel_t    *ch;
-    channel_t    *combine;
+    channel_t* ch;
+    channel_t* combine;
 
     if (!sound_started)
         return;
@@ -1155,7 +1155,7 @@ void S_Play(void)
 {
     int     i;
     char name[256];
-    sfx_t    *sfx;
+    sfx_t* sfx;
 
     i = 1;
     while (i<Cmd_Argc())
@@ -1176,8 +1176,8 @@ void S_Play(void)
 void S_SoundList(void)
 {
     int        i;
-    sfx_t    *sfx;
-    sfxcache_t    *sc;
+    sfx_t* sfx;
+    sfxcache_t* sc;
     int        size, total;
 
     total = 0;

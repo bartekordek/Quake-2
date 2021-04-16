@@ -117,10 +117,10 @@ extern    image_t        gltextures[MAX_GLTEXTURES];
 extern    int            numgltextures;
 
 
-extern    image_t        *r_notexture;
-extern    image_t        *r_particletexture;
-extern    entity_t    *currententity;
-extern    model_t        *currentmodel;
+extern    image_t    * r_notexture;
+extern    image_t    * r_particletexture;
+extern    entity_t* currententity;
+extern    model_t    * currentmodel;
 extern    int            r_visframecount;
 extern    int            r_framecount;
 extern    plane_t    frustum[4];
@@ -143,71 +143,71 @@ extern    vec3_t    r_origin;
 extern    refdef_t    r_newrefdef;
 extern    int        r_viewcluster, r_viewcluster2, r_oldviewcluster, r_oldviewcluster2;
 
-extern    cvar_t    *r_norefresh;
-extern    cvar_t    *r_lefthand;
-extern    cvar_t    *r_drawentities;
-extern    cvar_t    *r_drawworld;
-extern    cvar_t    *r_speeds;
-extern    cvar_t    *r_fullbright;
-extern    cvar_t    *r_novis;
-extern    cvar_t    *r_nocull;
-extern    cvar_t    *r_lerpmodels;
+extern    cvar* r_norefresh;
+extern    cvar* r_lefthand;
+extern    cvar* r_drawentities;
+extern    cvar* r_drawworld;
+extern    cvar* r_speeds;
+extern    cvar* r_fullbright;
+extern    cvar* r_novis;
+extern    cvar* r_nocull;
+extern    cvar* r_lerpmodels;
 
-extern    cvar_t    *r_lightlevel;    // FIXME: This is a HACK to get the client's light level
+extern    cvar* r_lightlevel;    // FIXME: This is a HACK to get the client's light level
 
-extern cvar_t    *gl_vertex_arrays;
+extern cvar* gl_vertex_arrays;
 
-extern cvar_t    *gl_ext_swapinterval;
-extern cvar_t    *gl_ext_palettedtexture;
-extern cvar_t    *gl_ext_multitexture;
-extern cvar_t    *gl_ext_pointparameters;
-extern cvar_t    *gl_ext_compiled_vertex_array;
+extern cvar* gl_ext_swapinterval;
+extern cvar* gl_ext_palettedtexture;
+extern cvar* gl_ext_multitexture;
+extern cvar* gl_ext_pointparameters;
+extern cvar* gl_ext_compiled_vertex_array;
 
-extern cvar_t    *gl_particle_min_size;
-extern cvar_t    *gl_particle_max_size;
-extern cvar_t    *gl_particle_size;
-extern cvar_t    *gl_particle_att_a;
-extern cvar_t    *gl_particle_att_b;
-extern cvar_t    *gl_particle_att_c;
+extern cvar* gl_particle_min_size;
+extern cvar* gl_particle_max_size;
+extern cvar* gl_particle_size;
+extern cvar* gl_particle_att_a;
+extern cvar* gl_particle_att_b;
+extern cvar* gl_particle_att_c;
 
-extern    cvar_t    *gl_nosubimage;
-extern    cvar_t    *gl_bitdepth;
-extern    cvar_t    *gl_mode;
-extern    cvar_t    *gl_log;
-extern    cvar_t    *gl_lightmap;
-extern    cvar_t    *gl_shadows;
-extern    cvar_t    *gl_dynamic;
-extern  cvar_t  *gl_monolightmap;
-extern    cvar_t    *gl_nobind;
-extern    cvar_t    *gl_round_down;
-extern    cvar_t    *gl_picmip;
-extern    cvar_t    *gl_skymip;
-extern    cvar_t    *gl_showtris;
-extern    cvar_t    *gl_finish;
-extern    cvar_t    *gl_ztrick;
-extern    cvar_t    *gl_clear;
-extern    cvar_t    *gl_cull;
-extern    cvar_t    *gl_poly;
-extern    cvar_t    *gl_texsort;
-extern    cvar_t    *gl_polyblend;
-extern    cvar_t    *gl_flashblend;
-extern    cvar_t    *gl_lightmaptype;
-extern    cvar_t    *gl_modulate;
-extern    cvar_t    *gl_playermip;
-extern    cvar_t    *gl_drawbuffer;
-extern    cvar_t    *gl_3dlabs_broken;
-extern  cvar_t  *gl_driver;
-extern    cvar_t    *gl_swapinterval;
-extern    cvar_t    *gl_texturemode;
-extern    cvar_t    *gl_texturealphamode;
-extern    cvar_t    *gl_texturesolidmode;
-extern  cvar_t  *gl_saturatelighting;
-extern  cvar_t  *gl_lockpvs;
+extern    cvar* gl_nosubimage;
+extern    cvar* gl_bitdepth;
+extern    cvar* gl_mode;
+extern    cvar* gl_log;
+extern    cvar* gl_lightmap;
+extern    cvar* gl_shadows;
+extern    cvar* gl_dynamic;
+extern  cvar  *gl_monolightmap;
+extern    cvar* gl_nobind;
+extern    cvar* gl_round_down;
+extern    cvar* gl_picmip;
+extern    cvar* gl_skymip;
+extern    cvar* gl_showtris;
+extern    cvar* gl_finish;
+extern    cvar* gl_ztrick;
+extern    cvar* gl_clear;
+extern    cvar* gl_cull;
+extern    cvar* gl_poly;
+extern    cvar* gl_texsort;
+extern    cvar* gl_polyblend;
+extern    cvar* gl_flashblend;
+extern    cvar* gl_lightmaptype;
+extern    cvar* gl_modulate;
+extern    cvar* gl_playermip;
+extern    cvar* gl_drawbuffer;
+extern    cvar* gl_3dlabs_broken;
+extern  cvar  *gl_driver;
+extern    cvar* gl_swapinterval;
+extern    cvar* gl_texturemode;
+extern    cvar* gl_texturealphamode;
+extern    cvar* gl_texturesolidmode;
+extern  cvar  *gl_saturatelighting;
+extern  cvar  *gl_lockpvs;
 
-extern    cvar_t    *vid_fullscreen;
-extern    cvar_t    *vid_gamma;
+extern    cvar* vid_fullscreen;
+extern    cvar* vid_gamma;
 
-extern    cvar_t        *intensity;
+extern    cvar    * intensity;
 
 extern    int        gl_lightmap_format;
 extern    int        gl_solid_format;
@@ -223,7 +223,7 @@ extern    float    r_world_matrix[16];
 void R_TranslatePlayerSkin (int playernum);
 void ref_gl_GL_Bind (int texnum);
 void ref_gl_GL_MBind( GLenum target, int texnum );
-void ref_gl_GL_TexEnv();
+void ref_gl_GL_TexEnv( GLenum value );
 void ref_gl_GL_EnableMultitexture( bool enable );
 void GL_SelectTexture( GLenum );
 
@@ -232,7 +232,7 @@ void ref_gl_R_PushDlights (void);
 
 //====================================================================
 
-extern    model_t    *r_worldmodel;
+extern    model_t* r_worldmodel;
 
 extern    unsigned    d_8to24table[256];
 
@@ -261,7 +261,7 @@ bool ref_gl_R_CullBox (vec3_t mins, vec3_t maxs);
 void ref_gl_R_RotateForEntity (entity_t *e);
 void ref_gl_R_MarkLeaves (void);
 
-glpoly_t *ref_gl_WaterWarpPolyVerts (glpoly_t *p);
+glpoly_s *ref_gl_WaterWarpPolyVerts (glpoly_s *p);
 void ref_gl_EmitWaterPolys (msurface_t *fa);
 void ref_gl_R_AddSkySurface (msurface_t *fa);
 void ref_gl_R_ClearSkyBox (void);
@@ -276,7 +276,7 @@ short BigShort (short l);
 int    LittleLong (int l);
 float LittleFloat (float f);
 
-char    *va(char *format, ...);
+char* va(char *format, ...);
 // does a varargs printf into a temp buffer
 #endif
 
@@ -428,5 +428,7 @@ void        GLimp_EnableLogging( bool enable );
 void        GLimp_LogNewFrame( void );
 
 refexport_t ref_gl_GetRefAPI( refimport_t rimp );
+
+void ref_gl_Scrap_Upload( void );
 
 #endif // ____REF_GL_GL_LOCAL_H__

@@ -90,7 +90,7 @@ to the apropriate place.
         if ((strlen (msg) + strlen(rd_buffer)) > (rd_buffersize - 1))
         {
             SV_FlushRedirect(rd_target, rd_buffer);
-            *rd_buffer = 0;
+        * rd_buffer = 0;
         }
         strcat (rd_buffer, msg);
         return;
@@ -125,7 +125,7 @@ void VID_CreateWindow_1( int width, int height, int stylebits )
 {
     WNDCLASS        wc;
     RECT            r;
-    cvar_t            *vid_xpos, *vid_ypos, *vid_fullscreen;
+    cvar        * vid_xpos, *vid_ypos, *vid_fullscreen;
     int                x, y, w, h;
     int                exstyle;
 
@@ -192,7 +192,7 @@ bool VID_CreateWindow_0( int width, int height, bool fullscreen )
 {
     WNDCLASS        wc;
     RECT            r;
-    cvar_t            *vid_xpos, *vid_ypos;
+    cvar        * vid_xpos, *vid_ypos;
     int                stylebits;
     int                x, y, w, h;
     int                exstyle;
@@ -316,7 +316,7 @@ void SV_FlushRedirect (int sv_redirected, char *outputbuf)
 {
     if (sv_redirected == RD_PACKET)
     {
-        Netchan_OutOfBandPrint (NS_SERVER, net_from, "print\n%s", outputbuf);
+        Netchan_OutOfBandPrint (netsrc_t::NS_SERVER, net_from, "print\n%s", outputbuf);
     }
     else if (sv_redirected == RD_CLIENT)
     {

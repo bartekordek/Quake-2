@@ -20,9 +20,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "g_local.hpp"
 #include "m_player.hpp"
 
-void ClientUserinfoChanged (struct edict_s *ent, char *userinfo);
+void ClientUserinfoChanged (edict *ent, char *userinfo);
 
-void SP_misc_teleporter_dest (struct edict_s *ent);
+void SP_misc_teleporter_dest (edict *ent);
 
 //
 // Gross, ugly, disgustuing hack section
@@ -36,9 +36,9 @@ void SP_misc_teleporter_dest (struct edict_s *ent);
 // we use carnal knowledge of the maps to fix the coop spot targetnames to match
 // that of the nearest named single player spot
 
-static void SP_FixCoopSpots (struct edict_s *self)
+static void SP_FixCoopSpots (edict *self)
 {
-	struct edict_s	*spot;
+	edict	*spot;
 	vec3_t	d;
 
 	spot = NULL;
@@ -67,9 +67,9 @@ static void SP_FixCoopSpots (struct edict_s *self)
 // some maps don't have any coop spots at all, so we need to create them
 // where they should have been
 
-static void SP_CreateCoopSpots (struct edict_s *self)
+static void SP_CreateCoopSpots (edict *self)
 {
-	struct edict_s	*spot;
+	edict	*spot;
 
 	if(stricmp(level.mapname, "security") == 0)
 	{
@@ -105,7 +105,7 @@ static void SP_CreateCoopSpots (struct edict_s *self)
 /*QUAKED info_player_start (1 0 0) (-16 -16 -24) (16 16 32)
 The normal starting point for a level.
 */
-void SP_info_player_start(struct edict_s *self)
+void SP_info_player_start(edict *self)
 {
 	if (!coop->value)
 		return;
@@ -120,7 +120,7 @@ void SP_info_player_start(struct edict_s *self)
 /*QUAKED info_player_deathmatch (1 0 1) (-16 -16 -24) (16 16 32)
 potential spawning position for deathmatch games
 */
-void SP_info_player_deathmatch(struct edict_s *self)
+void SP_info_player_deathmatch(edict *self)
 {
 	if (!deathmatch->value)
 	{
@@ -134,7 +134,7 @@ void SP_info_player_deathmatch(struct edict_s *self)
 potential spawning position for coop games
 */
 
-void SP_info_player_coop(struct edict_s *self)
+void SP_info_player_coop(edict *self)
 {
 	if (!coop->value)
 	{
@@ -176,13 +176,13 @@ void SP_info_player_intermission(void)
 //=======================================================================
 
 
-void player_pain (struct edict_s *self, struct edict_s *other, float kick, int damage)
+void player_pain (edict *self, edict *other, float kick, int damage)
 {
 	// player pain is handled at the end of the frame in P_DamageFeedback
 }
 
 
-bool IsFemale (struct edict_s *ent)
+bool IsFemale (edict *ent)
 {
 	char		*info;
 
@@ -196,7 +196,7 @@ bool IsFemale (struct edict_s *ent)
 }
 
 
-void ClientObituary (struct edict_s *self, struct edict_s *inflictor, struct edict_s *attacker)
+void ClientObituary (edict *self, edict *inflictor, edict *attacker)
 {
 	int			mod;
 	char		*message;
@@ -395,12 +395,12 @@ void ClientObituary (struct edict_s *self, struct edict_s *inflictor, struct edi
 }
 
 
-void Touch_Item (struct edict_s *ent, struct edict_s *other, plane_t *plane, csurface_t *surf);
+void Touch_Item (edict *ent, edict *other, plane_t *plane, csurface_t *surf);
 
-void TossClientWeapon (struct edict_s *self)
+void TossClientWeapon (edict *self)
 {
-	gitem_t		*item;
-	struct edict_s		*drop;
+	gitem		*item;
+	edict		*drop;
 	bool	quad;
 	float		spread;
 
@@ -450,7 +450,7 @@ void TossClientWeapon (struct edict_s *self)
 LookAtKiller
 ==================
 */
-void LookAtKiller (struct edict_s *self, struct edict_s *inflictor, struct edict_s *attacker)
+void LookAtKiller (edict *self, edict *inflictor, edict *attacker)
 {
 	vec3_t		dir;
 
@@ -486,7 +486,7 @@ void LookAtKiller (struct edict_s *self, struct edict_s *inflictor, struct edict
 player_die
 ==================
 */
-void player_die (struct edict_s *self, struct edict_s *inflictor, struct edict_s *attacker, int damage, vec3_t point)
+void player_die (edict *self, edict *inflictor, edict *attacker, int damage, vec3_t point)
 {
 	int		n;
 
@@ -609,7 +609,7 @@ but is called after each death and level change in deathmatch
 */
 void InitClientPersistant (gclient_t *client)
 {
-	gitem_t		*item;
+	gitem		*item;
 
 	memset (&client->pers, 0, sizeof(client->pers));
 
@@ -677,7 +677,7 @@ edicts are wiped.
 void SaveClientData (void)
 {
 	int		i;
-	struct edict_s	*ent;
+	edict	*ent;
 
 	for (i=0 ; i<game.maxclients ; i++)
 	{
@@ -692,7 +692,7 @@ void SaveClientData (void)
 	}
 }
 
-void FetchClientEntData (struct edict_s *ent)
+void FetchClientEntData (edict *ent)
 {
 	ent->health = ent->client->pers.health;
 	ent->max_health = ent->client->pers.max_health;
@@ -719,9 +719,9 @@ PlayersRangeFromSpot
 Returns the distance to the nearest player from the given spot
 ================
 */
-float	PlayersRangeFromSpot (struct edict_s *spot)
+float	PlayersRangeFromSpot (edict *spot)
 {
-	struct edict_s	*player;
+	edict	*player;
 	float	bestplayerdistance;
 	vec3_t	v;
 	int		n;
@@ -758,9 +758,9 @@ go to a random point, but NOT the two points closest
 to other players
 ================
 */
-struct edict_s *SelectRandomDeathmatchSpawnPoint (void)
+edict *SelectRandomDeathmatchSpawnPoint (void)
 {
-	struct edict_s	*spot, *spot1, *spot2;
+	edict	*spot, *spot1, *spot2;
 	int		count = 0;
 	int		selection;
 	float	range, range1, range2;
@@ -814,11 +814,11 @@ SelectFarthestDeathmatchSpawnPoint
 
 ================
 */
-struct edict_s *SelectFarthestDeathmatchSpawnPoint (void)
+edict *SelectFarthestDeathmatchSpawnPoint (void)
 {
-	struct edict_s	*bestspot;
+	edict	*bestspot;
 	float	bestdistance, bestplayerdistance;
-	struct edict_s	*spot;
+	edict	*spot;
 
 
 	spot = NULL;
@@ -847,7 +847,7 @@ struct edict_s *SelectFarthestDeathmatchSpawnPoint (void)
 	return spot;
 }
 
-struct edict_s *SelectDeathmatchSpawnPoint (void)
+edict *SelectDeathmatchSpawnPoint (void)
 {
 	if ( (int)(dmflags->value) & DF_SPAWN_FARTHEST)
 		return SelectFarthestDeathmatchSpawnPoint ();
@@ -856,10 +856,10 @@ struct edict_s *SelectDeathmatchSpawnPoint (void)
 }
 
 
-struct edict_s *SelectCoopSpawnPoint (struct edict_s *ent)
+edict *SelectCoopSpawnPoint (edict *ent)
 {
 	int		index;
-	struct edict_s	*spot = NULL;
+	edict	*spot = NULL;
 	char	*target;
 
 	index = ent->client - game.clients;
@@ -900,9 +900,9 @@ SelectSpawnPoint
 Chooses a player start, deathmatch start, coop start, etc
 ============
 */
-void	SelectSpawnPoint (struct edict_s *ent, vec3_t origin, vec3_t angles)
+void	SelectSpawnPoint (edict *ent, vec3_t origin, vec3_t angles)
 {
-	struct edict_s	*spot = NULL;
+	edict	*spot = NULL;
 
 	if (deathmatch->value)
 //ZOID
@@ -951,7 +951,7 @@ void	SelectSpawnPoint (struct edict_s *ent, vec3_t origin, vec3_t angles)
 void InitBodyQue (void)
 {
 	int		i;
-	struct edict_s	*ent;
+	edict	*ent;
 
 	level.body_que = 0;
 	for (i=0; i<BODY_QUEUE_SIZE ; i++)
@@ -961,7 +961,7 @@ void InitBodyQue (void)
 	}
 }
 
-void body_die (struct edict_s *self, struct edict_s *inflictor, struct edict_s *attacker, int damage, vec3_t point)
+void body_die (edict *self, edict *inflictor, edict *attacker, int damage, vec3_t point)
 {
 	int	n;
 
@@ -976,9 +976,9 @@ void body_die (struct edict_s *self, struct edict_s *inflictor, struct edict_s *
 	}
 }
 
-void CopyToBodyQue (struct edict_s *ent)
+void CopyToBodyQue (edict *ent)
 {
-	struct edict_s		*body;
+	edict		*body;
 
 
 	// grab a body que and cycle to the next one
@@ -1011,7 +1011,7 @@ void CopyToBodyQue (struct edict_s *ent)
 }
 
 
-void respawn (struct edict_s *self)
+void respawn (edict *self)
 {
 	if (deathmatch->value || coop->value)
 	{
@@ -1047,7 +1047,7 @@ Called when a player connects to a server or respawns in
 a deathmatch.
 ============
 */
-void PutClientInServer (struct edict_s *ent)
+void PutClientInServer (edict *ent)
 {
 	vec3_t	mins = {-16, -16, -24};
 	vec3_t	maxs = {16, 16, 32};
@@ -1208,7 +1208,7 @@ A client has just connected to the server in
 deathmatch mode, so clear everything out before starting them.
 =====================
 */
-void ClientBeginDeathmatch (struct edict_s *ent)
+void ClientBeginDeathmatch (edict *ent)
 {
 	G_InitEdict (ent);
 
@@ -1238,7 +1238,7 @@ called when a client has finished connecting, and is ready
 to be placed into the game.  This will happen every level load.
 ============
 */
-void ClientBegin (struct edict_s *ent)
+void ClientBegin (edict *ent)
 {
 	int		i;
 
@@ -1304,7 +1304,7 @@ The game can override any of the settings in place
 (forcing skins or names, etc) before copying it off.
 ============
 */
-void ClientUserinfoChanged (struct edict_s *ent, char *userinfo)
+void ClientUserinfoChanged (edict *ent, char *userinfo)
 {
 	char	*s;
 	int		playernum;
@@ -1370,7 +1370,7 @@ Changing levels will NOT cause this to be called again, but
 loadgames will.
 ============
 */
-bool ClientConnect (struct edict_s *ent, char *userinfo)
+bool ClientConnect (edict *ent, char *userinfo)
 {
 	char	*value;
 
@@ -1419,7 +1419,7 @@ Called when a player drops from the server.
 Will not be called between levels.
 ============
 */
-void ClientDisconnect (struct edict_s *ent)
+void ClientDisconnect (edict *ent)
 {
 	int		playernum;
 
@@ -1454,7 +1454,7 @@ void ClientDisconnect (struct edict_s *ent)
 //==============================================================
 
 
-struct edict_s	*pm_passent;
+edict	*pm_passent;
 
 // pmove doesn't need to know about passent and contentmask
 trace_t	PM_trace (vec3_t start, vec3_t mins, vec3_t maxs, vec3_t end)
@@ -1490,10 +1490,10 @@ This will be called once for each client frame, which will
 usually be a couple times for each server frame.
 ==============
 */
-void ClientThink (struct edict_s *ent, usercmd_t *ucmd)
+void ClientThink (edict *ent, usercmd_t *ucmd)
 {
 	gclient_t	*client;
-	struct edict_s	*other;
+	edict	*other;
 	int		i, j;
 	pmove_t	pm;
 
@@ -1525,9 +1525,9 @@ void ClientThink (struct edict_s *ent, usercmd_t *ucmd)
 	memset (&pm, 0, sizeof(pm));
 
 	if (ent->movetype == MOVETYPE_NOCLIP)
-		client->ps.pmove.pm_type = PM_SPECTATOR;
+		client->ps.pmove.pm_type = pmtype_t::PM_SPECTATOR;
 	else if (ent->s.modelindex != 255)
-		client->ps.pmove.pm_type = PM_GIB;
+		client->ps.pmove.pm_type = pmtype_t::PM_GIB;
 	else if (ent->deadflag)
 		client->ps.pmove.pm_type = pmtype_t::PM_DEAD;
 	else
@@ -1675,7 +1675,7 @@ This will be called once for each server frame, before running
 any other entities in the world.
 ==============
 */
-void ClientBeginServerFrame (struct edict_s *ent)
+void ClientBeginServerFrame (edict *ent)
 {
 	gclient_t	*client;
 	int			buttonMask;

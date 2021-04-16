@@ -84,7 +84,7 @@ mframe_t actor_frames_stand [] =
 };
 mmove_t actor_move_stand = {FRAME_stand101, FRAME_stand140, actor_frames_stand, NULL};
 
-void actor_stand (struct edict_s *self)
+void actor_stand (edict *self)
 {
 	self->monsterinfo.currentmove = &actor_move_stand;
 
@@ -110,7 +110,7 @@ mframe_t actor_frames_walk [] =
 };
 mmove_t actor_move_walk = {FRAME_walk01, FRAME_walk08, actor_frames_walk, NULL};
 
-void actor_walk (struct edict_s *self)
+void actor_walk (edict *self)
 {
 	self->monsterinfo.currentmove = &actor_move_walk;
 }
@@ -133,7 +133,7 @@ mframe_t actor_frames_run [] =
 };
 mmove_t actor_move_run = {FRAME_run02, FRAME_run07, actor_frames_run, NULL};
 
-void actor_run (struct edict_s *self)
+void actor_run (edict *self)
 {
 	if ((level.time < self->pain_debounce_time) && (!self->enemy))
 	{
@@ -227,7 +227,7 @@ char *messages[] =
 	"Check your targets"
 };
 
-void actor_pain (struct edict_s *self, struct edict_s *other, float kick, int damage)
+void actor_pain (edict *self, edict *other, float kick, int damage)
 {
 	int		n;
 
@@ -266,7 +266,7 @@ void actor_pain (struct edict_s *self, struct edict_s *other, float kick, int da
 }
 
 
-void actorMachineGun (struct edict_s *self)
+void actorMachineGun (edict *self)
 {
 	vec3_t	start, target;
 	vec3_t	forward, right;
@@ -296,7 +296,7 @@ void actorMachineGun (struct edict_s *self)
 }
 
 
-void actor_dead (struct edict_s *self)
+void actor_dead (edict *self)
 {
 	VectorSet (self->mins, -16, -16, -24);
 	VectorSet (self->maxs, 16, 16, -8);
@@ -336,7 +336,7 @@ mframe_t actor_frames_death2 [] =
 };
 mmove_t actor_move_death2 = {FRAME_death201, FRAME_death213, actor_frames_death2, actor_dead};
 
-void actor_die (struct edict_s *self, struct edict_s *inflictor, struct edict_s *attacker, int damage, vec3_t point)
+void actor_die (edict *self, edict *inflictor, edict *attacker, int damage, vec3_t point)
 {
 	int		n;
 
@@ -369,7 +369,7 @@ void actor_die (struct edict_s *self, struct edict_s *inflictor, struct edict_s 
 }
 
 
-void actor_fire (struct edict_s *self)
+void actor_fire (edict *self)
 {
 	actorMachineGun (self);
 
@@ -388,7 +388,7 @@ mframe_t actor_frames_attack [] =
 };
 mmove_t actor_move_attack = {FRAME_attak01, FRAME_attak04, actor_frames_attack, actor_run};
 
-void actor_attack(struct edict_s *self)
+void actor_attack(edict *self)
 {
 	int		n;
 
@@ -398,7 +398,7 @@ void actor_attack(struct edict_s *self)
 }
 
 
-void actor_use (struct edict_s *self, struct edict_s *other, struct edict_s *activator)
+void actor_use (edict *self, edict *other, edict *activator)
 {
 	vec3_t		v;
 
@@ -422,7 +422,7 @@ void actor_use (struct edict_s *self, struct edict_s *other, struct edict_s *act
 /*QUAKED misc_actor (1 .5 0) (-16 -16 -24) (16 16 32)
 */
 
-void SP_misc_actor (struct edict_s *self)
+void SP_misc_actor (edict *self)
 {
 	if (deathmatch->value)
 	{
@@ -493,7 +493,7 @@ for JUMP only:
 "height"		speed thrown upwards (default 200)
 */
 
-void target_actor_touch (struct edict_s *self, struct edict_s *other, plane_t *plane, csurface_t *surf)
+void target_actor_touch (edict *self, edict *other, plane_t *plane, csurface_t *surf)
 {
 	vec3_t	v;
 
@@ -508,7 +508,7 @@ void target_actor_touch (struct edict_s *self, struct edict_s *other, plane_t *p
 	if (self->message)
 	{
 		int		n;
-		struct edict_s	*ent;
+		edict	*ent;
 
 		for (n = 1; n <= game.maxclients; n++)
 		{
@@ -582,7 +582,7 @@ void target_actor_touch (struct edict_s *self, struct edict_s *other, plane_t *p
 	}
 }
 
-void SP_target_actor (struct edict_s *self)
+void SP_target_actor (edict *self)
 {
 	if (!self->targetname)
 		gi.dprintf ("%s with no targetname at %s\n", self->classname, vtos(self->s.origin));

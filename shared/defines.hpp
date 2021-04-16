@@ -1,6 +1,10 @@
 #ifndef ____SHARED_DEFINES_H__
 #define ____SHARED_DEFINES_H__
 
+constexpr char* BASEDIRNAME = "baseq2";
+
+#include <string>
+
 typedef unsigned char         byte;
 
 #define MAXPRINTMSG 16384
@@ -111,4 +115,68 @@ typedef enum
     DAMAGE_AIM            // auto targeting recognizes this
 } damage_t;
 
+#define    MAX_STATS                32
+
+// pmove_state is the information necessary for client side movement
+// prediction
+enum class pmtype_t: short
+{
+    // can accelerate and turn
+    PM_NORMAL,
+    PM_SPECTATOR,
+    // no acceleration or turning
+    PM_DEAD,
+    PM_GIB,        // different bounding box
+    PM_FREEZE
+};
+
+// this structure needs to be communicated bit-accurate
+// from the server to the client to guarantee that
+// prediction stays in sync, so no floats are used.
+// if any part of the game code modifies this struct, it
+// will result in a prediction error of some degree.
+struct pmove_state
+{
+    pmtype_t    pm_type;
+
+    short        origin[3];        // 12.3
+    short        velocity[3];    // 12.3
+    byte        pm_flags;        // ducked, jump_held, etc
+    byte        pm_time;        // each unit = 8 ms
+    short        gravity;
+    short        delta_angles[3];    // add to command angles to get view direction
+                                    // changed by spawns, rotating objects, and teleporters
+};
+
+//
+// per-level limits
+//
+#define    MAX_CLIENTS            256        // absolute limit
+#define    MAX_EDICTS            1024    // must change protocol to increase more
+#define    MAX_LIGHTSTYLES        256
+#define    MAX_MODELS            256        // these are sent over the net as bytes
+#define    MAX_SOUNDS            256        // so they cannot be blindly increased
+#define    MAX_IMAGES            256
+#define    MAX_ITEMS            256
+#define MAX_GENERAL            (MAX_CLIENTS*2)    // general config strings
+
+struct packfile
+{
+    std::string name;
+    int filepos = 0, filelen = 0;
+};
+
+// nothing outside the Cvar_*() functions should modify these fields!
+struct cvar
+{
+    std::string name;
+    std::string string;
+    std::string latched_string;    // for CVAR_LATCH vars
+    int            flags;
+    bool    modified;    // set each time the cvar is changed
+    float        value;
+    cvar* next;
+};
+
+char* toChar( const std::string& someString );
 #endif // ____SHARED_DEFINES_H__

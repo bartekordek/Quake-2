@@ -26,8 +26,8 @@ void CL_ItemRespawnParticles (vec3_t org);
 
 static vec3_t avelocities [NUMVERTEXNORMALS];
 
-extern    struct model_s    *cl_mod_smoke;
-extern    struct model_s    *cl_mod_flash;
+extern    struct model_s* cl_mod_smoke;
+extern    struct model_s* cl_mod_flash;
 
 /*
 ==============================================================
@@ -67,7 +67,7 @@ void CL_RunLightStyles (void)
 {
     int        ofs;
     int        i;
-    clightstyle_t    *ls;
+    clightstyle_t* ls;
 
     ofs = cl.time / 100;
     if (ofs == lastofs)
@@ -91,7 +91,7 @@ void CL_RunLightStyles (void)
 
 void CL_SetLightstyle (int i)
 {
-    char    *s;
+    char* s;
     int        j, k;
 
     s = cl.configstrings[i+CS_LIGHTS];
@@ -114,7 +114,7 @@ CL_AddLightStyles
 void CL_AddLightStyles (void)
 {
     int        i;
-    clightstyle_t    *ls;
+    clightstyle_t* ls;
 
     for (i=0,ls=cl_lightstyle ; i<MAX_LIGHTSTYLES ; i++, ls++)
         V_AddLightStyle (i, ls->value[0], ls->value[1], ls->value[2]);
@@ -149,7 +149,7 @@ CL_AllocDlight
 cdlight_t *CL_AllocDlight (int key)
 {
     int        i;
-    cdlight_t    *dl;
+    cdlight_t* dl;
 
 // first look for an exact key match
     if (key)
@@ -191,7 +191,7 @@ CL_NewDlight
 */
 void CL_NewDlight (int key, float x, float y, float z, float radius, float time)
 {
-    cdlight_t    *dl;
+    cdlight_t* dl;
 
     dl = CL_AllocDlight (key);
     dl->origin[0] = x;
@@ -211,7 +211,7 @@ CL_RunDLights
 void CL_RunDLights (void)
 {
     int            i;
-    cdlight_t    *dl;
+    cdlight_t* dl;
 
     dl = cl_dlights;
     for (i=0 ; i<MAX_DLIGHTS ; i++, dl++)
@@ -238,9 +238,9 @@ CL_ParseMuzzleFlash
 void CL_ParseMuzzleFlash (void)
 {
     vec3_t        fv, rv;
-    cdlight_t    *dl;
+    cdlight_t* dl;
     int            i, weapon;
-    centity_t    *pl;
+    centity_t* pl;
     int            silenced;
     float        volume;
     std::string soundname;
@@ -435,7 +435,7 @@ void CL_ParseMuzzleFlash2 (void)
     int            ent;
     vec3_t        origin;
     int            flash_number;
-    cdlight_t    *dl;
+    cdlight_t* dl;
     vec3_t        forward, right;
     char        soundname[64];
 
@@ -816,7 +816,7 @@ CL_AddDLights
 void CL_AddDLights (void)
 {
     int            i;
-    cdlight_t    *dl;
+    cdlight_t* dl;
 
     dl = cl_dlights;
 
@@ -869,7 +869,7 @@ PARTICLE MANAGEMENT
 // THIS HAS BEEN RELOCATED TO CLIENT.H
 typedef struct particle_s
 {
-    struct particle_s    *next;
+    struct particle_s* next;
 
     float        time;
 
@@ -886,7 +886,7 @@ typedef struct particle_s
 #define    PARTICLE_GRAVITY    40
 */
 
-cparticle_t    *active_particles, *free_particles;
+cparticle_t* active_particles, *free_particles;
 
 cparticle_t    particles[MAX_PARTICLES];
 int            cl_numparticles = MAX_PARTICLES;
@@ -920,7 +920,7 @@ Wall impact puffs
 void CL_ParticleEffect (vec3_t org, vec3_t dir, int color, int count)
 {
     int            i, j;
-    cparticle_t    *p;
+    cparticle_t* p;
     float        d;
 
     for (i=0 ; i<count ; i++)
@@ -959,7 +959,7 @@ CL_ParticleEffect2
 void CL_ParticleEffect2 (vec3_t org, vec3_t dir, int color, int count)
 {
     int            i, j;
-    cparticle_t    *p;
+    cparticle_t* p;
     float        d;
 
     for (i=0 ; i<count ; i++)
@@ -999,7 +999,7 @@ CL_ParticleEffect3
 void CL_ParticleEffect3 (vec3_t org, vec3_t dir, int color, int count)
 {
     int            i, j;
-    cparticle_t    *p;
+    cparticle_t* p;
     float        d;
 
     for (i=0 ; i<count ; i++)
@@ -1034,10 +1034,10 @@ void CL_ParticleEffect3 (vec3_t org, vec3_t dir, int color, int count)
 CL_TeleporterParticles
 ===============
 */
-void CL_TeleporterParticles (entity_state_t *ent)
+void CL_TeleporterParticles (entity_state *ent)
 {
     int            i, j;
-    cparticle_t    *p;
+    cparticle_t* p;
 
     for (i=0 ; i<8 ; i++)
     {
@@ -1078,7 +1078,7 @@ CL_LogoutEffect
 void CL_LogoutEffect (vec3_t org, int type)
 {
     int            i, j;
-    cparticle_t    *p;
+    cparticle_t* p;
 
     for (i=0 ; i<500 ; i++)
     {
@@ -1123,7 +1123,7 @@ CL_ItemRespawnParticles
 void CL_ItemRespawnParticles (vec3_t org)
 {
     int            i, j;
-    cparticle_t    *p;
+    cparticle_t* p;
 
     for (i=0 ; i<64 ; i++)
     {
@@ -1162,7 +1162,7 @@ CL_ExplosionParticles
 void CL_ExplosionParticles (vec3_t org)
 {
     int            i, j;
-    cparticle_t    *p;
+    cparticle_t* p;
 
     for (i=0 ; i<256 ; i++)
     {
@@ -1199,7 +1199,7 @@ CL_BigTeleportParticles
 void CL_BigTeleportParticles (vec3_t org)
 {
     int            i;
-    cparticle_t    *p;
+    cparticle_t* p;
     float        angle, dist;
     static int colortable[4] = {2*8,13*8,21*8,18*8};
 
@@ -1246,7 +1246,7 @@ Wall impact puffs
 void CL_BlasterParticles (vec3_t org, vec3_t dir)
 {
     int            i, j;
-    cparticle_t    *p;
+    cparticle_t* p;
     float        d;
     int            count;
 
@@ -1291,7 +1291,7 @@ void CL_BlasterTrail (vec3_t start, vec3_t end)
     vec3_t        vec;
     float        len;
     int            j;
-    cparticle_t    *p;
+    cparticle_t* p;
     int            dec;
 
     VectorCopy (start, move);
@@ -1342,7 +1342,7 @@ void CL_QuadTrail (vec3_t start, vec3_t end)
     vec3_t        vec;
     float        len;
     int            j;
-    cparticle_t    *p;
+    cparticle_t* p;
     int            dec;
 
     VectorCopy (start, move);
@@ -1392,7 +1392,7 @@ void CL_FlagTrail (vec3_t start, vec3_t end, float color)
     vec3_t        vec;
     float        len;
     int            j;
-    cparticle_t    *p;
+    cparticle_t* p;
     int            dec;
 
     VectorCopy (start, move);
@@ -1442,7 +1442,7 @@ void CL_DiminishingTrail (vec3_t start, vec3_t end, centity_t *old, int flags)
     vec3_t        vec;
     float        len;
     int            j;
-    cparticle_t    *p;
+    cparticle_t* p;
     float        dec;
     float        orgscale;
     float        velscale;
@@ -1563,7 +1563,7 @@ void CL_RocketTrail (vec3_t start, vec3_t end, centity_t *old)
     vec3_t        vec;
     float        len;
     int            j;
-    cparticle_t    *p;
+    cparticle_t* p;
     float        dec;
 
     // smoke
@@ -1620,7 +1620,7 @@ void CL_RailTrail (vec3_t start, vec3_t end)
     vec3_t        vec;
     float        len;
     int            j;
-    cparticle_t    *p;
+    cparticle_t* p;
     float        dec;
     vec3_t        right, up;
     int            i;
@@ -1775,7 +1775,7 @@ void CL_BubbleTrail (vec3_t start, vec3_t end)
     vec3_t        vec;
     float        len;
     int            i, j;
-    cparticle_t    *p;
+    cparticle_t* p;
     float        dec;
 
     VectorCopy (start, move);
@@ -1823,7 +1823,7 @@ CL_FlyParticles
 void CL_FlyParticles (vec3_t origin, int count)
 {
     int            i;
-    cparticle_t    *p;
+    cparticle_t* p;
     float        angle;
     float        sr, sp, sy, cr, cp, cy;
     vec3_t        forward;
@@ -1925,7 +1925,7 @@ CL_BfgParticles
 void CL_BfgParticles (entity_t *ent)
 {
     int            i;
-    cparticle_t    *p;
+    cparticle_t* p;
     float        angle;
     float        sr, sp, sy, cr, cp, cy;
     vec3_t        forward;
@@ -1998,7 +1998,7 @@ void CL_TrapParticles (entity_t *ent)
     vec3_t        start, end;
     float        len;
     int            j;
-    cparticle_t    *p;
+    cparticle_t* p;
     int            dec;
 
     ent->origin[2]-=14;
@@ -2046,7 +2046,7 @@ void CL_TrapParticles (entity_t *ent)
 
 
     int            i, j, k;
-    cparticle_t    *p;
+    cparticle_t* p;
     float        vel;
     vec3_t        dir;
     vec3_t        org;
@@ -2101,7 +2101,7 @@ CL_BFGExplosionParticles
 void CL_BFGExplosionParticles (vec3_t org)
 {
     int            i, j;
-    cparticle_t    *p;
+    cparticle_t* p;
 
     for (i=0 ; i<256 ; i++)
     {
@@ -2139,7 +2139,7 @@ CL_TeleportParticles
 void CL_TeleportParticles (vec3_t org)
 {
     int            i, j, k;
-    cparticle_t    *p;
+    cparticle_t* p;
     float        vel;
     vec3_t        dir;
 
@@ -2185,12 +2185,12 @@ CL_AddParticles
 */
 void CL_AddParticles (void)
 {
-    cparticle_t        *p, *next;
+    cparticle_t    * p, *next;
     float            alpha;
     float            time, time2;
     vec3_t            org;
     int                color;
-    cparticle_t        *active, *tail;
+    cparticle_t    * active, *tail;
 
     active = NULL;
     tail = NULL;
@@ -2257,9 +2257,9 @@ An entity has just been parsed that has an event value
 the female events are there for backwards compatability
 ==============
 */
-extern struct sfx_s    *cl_sfx_footsteps[4];
+extern struct sfx_s* cl_sfx_footsteps[4];
 
-void CL_EntityEvent (entity_state_t *ent)
+void CL_EntityEvent (entity_state *ent)
 {
     switch (ent->event)
     {

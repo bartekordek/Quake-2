@@ -27,9 +27,9 @@ jorg
 
 #include "g_local.hpp"
 #include "m_boss31.hpp"
+#include "shared/edict.hpp"
 
-extern SP_monster_makron (struct edict_s *self);
-bool visible (struct edict_s *self, struct edict_s *other);
+bool visible (edict *self, edict *other);
 
 static int	sound_pain1;
 static int	sound_pain2;
@@ -46,11 +46,11 @@ static int	sound_step_left;
 static int	sound_step_right;
 static int	sound_death_hit;
 
-void BossExplode (struct edict_s *self);
-void MakronToss (struct edict_s *self);
+void BossExplode (edict *self);
+void MakronToss (edict *self);
 
 
-void jorg_search (struct edict_s *self)
+void jorg_search (edict *self)
 {
 	float r;
 
@@ -65,16 +65,16 @@ void jorg_search (struct edict_s *self)
 }
 
 
-void jorg_dead (struct edict_s *self);
-void jorgBFG (struct edict_s *self);
-void jorgMachineGun (struct edict_s *self);
-void jorg_firebullet (struct edict_s *self);
-void jorg_reattack1(struct edict_s *self);
-void jorg_attack1(struct edict_s *self);
-void jorg_idle(struct edict_s *self);
-void jorg_step_left(struct edict_s *self);
-void jorg_step_right(struct edict_s *self);
-void jorg_death_hit(struct edict_s *self);
+void jorg_dead (edict *self);
+void jorgBFG (edict *self);
+void jorgMachineGun (edict *self);
+void jorg_firebullet (edict *self);
+void jorg_reattack1(edict *self);
+void jorg_attack1(edict *self);
+void jorg_idle(edict *self);
+void jorg_step_left(edict *self);
+void jorg_step_right(edict *self);
+void jorg_death_hit(edict *self);
 
 //
 // stand
@@ -136,29 +136,29 @@ mframe_t jorg_frames_stand []=
 };
 mmove_t	jorg_move_stand = {FRAME_stand01, FRAME_stand51, jorg_frames_stand, NULL};
 
-void jorg_idle (struct edict_s *self)
+void jorg_idle (edict *self)
 {
 	gi.sound (self, CHAN_VOICE, sound_idle, 1, ATTN_NORM,0);
 }
 
-void jorg_death_hit (struct edict_s *self)
+void jorg_death_hit (edict *self)
 {
 	gi.sound (self, CHAN_BODY, sound_death_hit, 1, ATTN_NORM,0);
 }
 
 
-void jorg_step_left (struct edict_s *self)
+void jorg_step_left (edict *self)
 {
 	gi.sound (self, CHAN_BODY, sound_step_left, 1, ATTN_NORM,0);
 }
 
-void jorg_step_right (struct edict_s *self)
+void jorg_step_right (edict *self)
 {
 	gi.sound (self, CHAN_BODY, sound_step_right, 1, ATTN_NORM,0);
 }
 
 
-void jorg_stand (struct edict_s *self)
+void jorg_stand (edict *self)
 {
 	self->monsterinfo.currentmove = &jorg_move_stand;
 }
@@ -226,12 +226,12 @@ mframe_t jorg_frames_end_walk [] =
 };
 mmove_t jorg_move_end_walk = {FRAME_walk20, FRAME_walk25, jorg_frames_end_walk, NULL};
 
-void jorg_walk (struct edict_s *self)
+void jorg_walk (edict *self)
 {
 		self->monsterinfo.currentmove = &jorg_move_walk;
 }
 
-void jorg_run (struct edict_s *self)
+void jorg_run (edict *self)
 {
 	if (self->monsterinfo.aiflags & AI_STAND_GROUND)
 		self->monsterinfo.currentmove = &jorg_move_stand;
@@ -391,7 +391,7 @@ mframe_t jorg_frames_end_attack1[]=
 };
 mmove_t jorg_move_end_attack1 = {FRAME_attak115, FRAME_attak118, jorg_frames_end_attack1, jorg_run};
 
-void jorg_reattack1(struct edict_s *self)
+void jorg_reattack1(edict *self)
 {
 	if (visible(self, self->enemy))
 		if (random() < 0.9)
@@ -408,12 +408,12 @@ void jorg_reattack1(struct edict_s *self)
 	}
 }
 
-void jorg_attack1(struct edict_s *self)
+void jorg_attack1(edict *self)
 {
 	self->monsterinfo.currentmove = &jorg_move_attack1;
 }
 
-void jorg_pain (struct edict_s *self, struct edict_s *other, float kick, int damage)
+void jorg_pain (edict *self, edict *other, float kick, int damage)
 {
 
 	if (self->health < (self->max_health / 2))
@@ -472,7 +472,7 @@ void jorg_pain (struct edict_s *self, struct edict_s *other, float kick, int dam
 	}
 };
 
-void jorgBFG (struct edict_s *self)
+void jorgBFG (edict *self)
 {
 	vec3_t	forward, right;
 	vec3_t	start;
@@ -487,7 +487,7 @@ void jorgBFG (struct edict_s *self)
 	VectorSubtract (vec, start, dir);
 	VectorNormalize (dir);
 	gi.sound (self, CHAN_VOICE, sound_attack2, 1, ATTN_NORM, 0);
-	/*void monster_fire_bfg (struct edict_s *self,
+	/*void monster_fire_bfg (edict *self,
 							 vec3_t start,
 							 vec3_t aimdir,
 							 int damage,
@@ -498,7 +498,7 @@ void jorgBFG (struct edict_s *self)
 	monster_fire_bfg (self, start, dir, 50, 300, 100, 200, MZ2_JORG_BFG_1);
 }
 
-void jorg_firebullet_right (struct edict_s *self)
+void jorg_firebullet_right (edict *self)
 {
 	vec3_t	forward, right, target;
 	vec3_t	start;
@@ -514,7 +514,7 @@ void jorg_firebullet_right (struct edict_s *self)
 	monster_fire_bullet (self, start, forward, 6, 4, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MZ2_JORG_MACHINEGUN_R1);
 }
 
-void jorg_firebullet_left (struct edict_s *self)
+void jorg_firebullet_left (edict *self)
 {
 	vec3_t	forward, right, target;
 	vec3_t	start;
@@ -530,13 +530,13 @@ void jorg_firebullet_left (struct edict_s *self)
 	monster_fire_bullet (self, start, forward, 6, 4, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MZ2_JORG_MACHINEGUN_L1);
 }
 
-void jorg_firebullet (struct edict_s *self)
+void jorg_firebullet (edict *self)
 {
 	jorg_firebullet_left(self);
 	jorg_firebullet_right(self);
 };
 
-void jorg_attack(struct edict_s *self)
+void jorg_attack(edict *self)
 {
 	vec3_t	vec;
 	float	range;
@@ -557,10 +557,10 @@ void jorg_attack(struct edict_s *self)
 	}
 }
 
-void jorg_dead (struct edict_s *self)
+void jorg_dead (edict *self)
 {
 #if 0
-	struct edict_s	*tempent;
+	edict	*tempent;
 	/*
 	VectorSet (self->mins, -16, -16, -24);
 	VectorSet (self->maxs, 16, 16, -8);
@@ -586,7 +586,7 @@ void jorg_dead (struct edict_s *self)
 }
 
 
-void jorg_die (struct edict_s *self, struct edict_s *inflictor, struct edict_s *attacker, int damage, vec3_t point)
+void jorg_die (edict *self, edict *inflictor, edict *attacker, int damage, vec3_t point)
 {
 	gi.sound (self, CHAN_VOICE, sound_death, 1, ATTN_NORM, 0);
 	self->deadflag = DEAD_DEAD;
@@ -596,7 +596,7 @@ void jorg_die (struct edict_s *self, struct edict_s *inflictor, struct edict_s *
 	self->monsterinfo.currentmove = &jorg_move_death;
 }
 
-bool Jorg_CheckAttack (struct edict_s *self)
+bool Jorg_CheckAttack (edict *self)
 {
 	vec3_t	spot1, spot2;
 	vec3_t	temp;
@@ -693,7 +693,7 @@ void MakronPrecache (void);
 
 /*QUAKED monster_jorg (1 .5 0) (-80 -80 0) (90 90 140) Ambush Trigger_Spawn Sight
 */
-void SP_monster_jorg (struct edict_s *self)
+void SP_monster_jorg (edict *self)
 {
 	if (deathmatch->value)
 	{

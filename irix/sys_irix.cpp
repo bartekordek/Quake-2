@@ -24,7 +24,7 @@
 
 #include "../linux/rw_linux.h"
 
-cvar_t *nostdout;
+cvar *nostdout;
 
 unsigned	sys_frame_time;
 

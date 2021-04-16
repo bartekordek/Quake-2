@@ -38,7 +38,7 @@ the player has been recently.  It is used by monsters for pursuit.
 
 #define	TRAIL_LENGTH	8
 
-struct edict_s		*trail[TRAIL_LENGTH];
+edict		*trail[TRAIL_LENGTH];
 int			trail_head;
 bool	trail_active = false;
 
@@ -92,7 +92,7 @@ void PlayerTrail_New (vec3_t spot)
 }
 
 
-struct edict_s *PlayerTrail_PickFirst (struct edict_s *self)
+edict *PlayerTrail_PickFirst (edict *self)
 {
 	int		marker;
 	int		n;
@@ -121,7 +121,7 @@ struct edict_s *PlayerTrail_PickFirst (struct edict_s *self)
 	return trail[marker];
 }
 
-struct edict_s *PlayerTrail_PickNext (struct edict_s *self)
+edict *PlayerTrail_PickNext (edict *self)
 {
 	int		marker;
 	int		n;
@@ -140,7 +140,7 @@ struct edict_s *PlayerTrail_PickNext (struct edict_s *self)
 	return trail[marker];
 }
 
-struct edict_s *PlayerTrail_LastSpot (void)
+edict *PlayerTrail_LastSpot (void)
 {
 	return trail[PREV(trail_head)];
 }

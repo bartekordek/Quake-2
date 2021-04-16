@@ -25,8 +25,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define    PAINTBUFFER_SIZE    2048
 portable_samplepair_t paintbuffer[PAINTBUFFER_SIZE];
 int        snd_scaletable[32][256];
-int     *snd_p, snd_linear_count, snd_vol;
-short    *snd_out;
+int * snd_p, snd_linear_count, snd_vol;
+short* snd_out;
 
 void S_WriteLinearBlastStereo16 (void);
 
@@ -145,7 +145,7 @@ void S_TransferPaintBuffer(int endtime)
     int     out_idx;
     int     count;
     int     out_mask;
-    int     *p;
+    int * p;
     int     step;
     int        val;
     unsigned long *pbuf;
@@ -226,9 +226,9 @@ void S_PaintChannels(int endtime)
     int     i;
     int     end;
     channel_t *ch;
-    sfxcache_t    *sc;
+    sfxcache_t* sc;
     int        ltime, count;
-    playsound_t    *ps;
+    playsound_t* ps;
 
     snd_vol = s_volume->value*256;
 
@@ -368,10 +368,10 @@ void S_InitScaletable (void)
 void S_PaintChannelFrom8 (channel_t *ch, sfxcache_t *sc, int count, int offset)
 {
     int     data;
-    int        *lscale, *rscale;
+    int    * lscale, *rscale;
     unsigned char *sfx;
     int        i;
-    portable_samplepair_t    *samp;
+    portable_samplepair_t* samp;
 
     if (ch->leftvol > 255)
         ch->leftvol = 255;
@@ -476,7 +476,7 @@ void S_PaintChannelFrom16 (channel_t *ch, sfxcache_t *sc, int count, int offset)
     int leftvol, rightvol;
     signed short *sfx;
     int    i;
-    portable_samplepair_t    *samp;
+    portable_samplepair_t* samp;
 
     leftvol = ch->leftvol*snd_vol;
     rightvol = ch->rightvol*snd_vol;

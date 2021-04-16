@@ -82,7 +82,7 @@ BRUSH MODELS
 void    ref_soft_Mod_Init (void);
 void    ref_soft_Mod_ClearAll (void);
 model_t *ref_soft_Mod_ForName (char *name, bool crash);
-void    *Mod_Extradata (model_t *mod);    // handles caching
+void* Mod_Extradata (model_t *mod);    // handles caching
 void    ref_soft_Mod_TouchModel (char *name);
 
 mleaf_t* ref_soft_Mod_PointInLeaf (float *p, model_t *model);

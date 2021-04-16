@@ -31,7 +31,7 @@ Used to group brushes together just for editor convenience.
 
 //=====================================================
 
-void Use_Areaportal (struct edict_s *ent, struct edict_s *other, struct edict_s *activator)
+void Use_Areaportal (edict *ent, edict *other, edict *activator)
 {
 	ent->count ^= 1;		// toggle state
 //	gi.dprintf ("portalstate: %i = %i\n", ent->style, ent->count);
@@ -44,7 +44,7 @@ This is a non-visible object that divides the world into
 areas that are seperated when this portal is not activated.
 Usually enclosed in the middle of a door.
 */
-void SP_func_areaportal (struct edict_s *ent)
+void SP_func_areaportal (edict *ent)
 {
 	ent->use = Use_Areaportal;
 	ent->count = 0;		// allways start closed;
@@ -70,7 +70,7 @@ void VelocityForDamage (int damage, vec3_t v)
 		VectorScale (v, 1.2, v);
 }
 
-void ClipGibVelocity (struct edict_s *ent)
+void ClipGibVelocity (edict *ent)
 {
 	if (ent->velocity[0] < -300)
 		ent->velocity[0] = -300;
@@ -92,7 +92,7 @@ void ClipGibVelocity (struct edict_s *ent)
 gibs
 =================
 */
-void gib_think (struct edict_s *self)
+void gib_think (edict *self)
 {
 	self->s.frame++;
 	self->nextthink = level.time + FRAMETIME;
@@ -104,7 +104,7 @@ void gib_think (struct edict_s *self)
 	}
 }
 
-void gib_touch (struct edict_s *self, struct edict_s *other, plane_t *plane, csurface_t *surf)
+void gib_touch (edict *self, edict *other, plane_t *plane, csurface_t *surf)
 {
 	vec3_t	normal_angles, right;
 
@@ -130,14 +130,14 @@ void gib_touch (struct edict_s *self, struct edict_s *other, plane_t *plane, csu
 	}
 }
 
-void gib_die (struct edict_s *self, struct edict_s *inflictor, struct edict_s *attacker, int damage, vec3_t point)
+void gib_die (edict *self, edict *inflictor, edict *attacker, int damage, vec3_t point)
 {
 	G_FreeEdict (self);
 }
 
-void ThrowGib (struct edict_s *self, char *gibname, int damage, int type)
+void ThrowGib (edict *self, char *gibname, int damage, int type)
 {
-	struct edict_s *gib;
+	edict *gib;
 	vec3_t	vd;
 	vec3_t	origin;
 	vec3_t	size;
@@ -183,7 +183,7 @@ void ThrowGib (struct edict_s *self, char *gibname, int damage, int type)
 	gi.linkentity (gib);
 }
 
-void ThrowHead (struct edict_s *self, char *gibname, int damage, int type)
+void ThrowHead (edict *self, char *gibname, int damage, int type)
 {
 	vec3_t	vd;
 	float	vscale;
@@ -229,7 +229,7 @@ void ThrowHead (struct edict_s *self, char *gibname, int damage, int type)
 }
 
 
-void ThrowClientHead (struct edict_s *self, int damage)
+void ThrowClientHead (edict *self, int damage)
 {
 	vec3_t	vd;
 	char	*gibname;
@@ -276,14 +276,14 @@ void ThrowClientHead (struct edict_s *self, int damage)
 debris
 =================
 */
-void debris_die (struct edict_s *self, struct edict_s *inflictor, struct edict_s *attacker, int damage, vec3_t point)
+void debris_die (edict *self, edict *inflictor, edict *attacker, int damage, vec3_t point)
 {
 	G_FreeEdict (self);
 }
 
-void ThrowDebris (struct edict_s *self, char *modelname, float speed, vec3_t origin)
+void ThrowDebris (edict *self, char *modelname, float speed, vec3_t origin)
 {
-	struct edict_s	*chunk;
+	edict	*chunk;
 	vec3_t	v;
 
 	chunk = G_Spawn();
@@ -309,7 +309,7 @@ void ThrowDebris (struct edict_s *self, char *modelname, float speed, vec3_t ori
 }
 
 
-void BecomeExplosion1 (struct edict_s *self)
+void BecomeExplosion1 (edict *self)
 {
 //ZOID
 	//flags are important
@@ -341,7 +341,7 @@ void BecomeExplosion1 (struct edict_s *self)
 }
 
 
-void BecomeExplosion2 (struct edict_s *self)
+void BecomeExplosion2 (edict *self)
 {
 	gi.WriteByte (svc_temp_entity);
 	gi.WriteByte (TE_EXPLOSION2);
@@ -358,10 +358,10 @@ Pathtarget: gets used when an entity that has
 	this path_corner targeted touches it
 */
 
-void path_corner_touch (struct edict_s *self, struct edict_s *other, plane_t *plane, csurface_t *surf)
+void path_corner_touch (edict *self, edict *other, plane_t *plane, csurface_t *surf)
 {
 	vec3_t		v;
-	struct edict_s		*next;
+	edict		*next;
 
 	if (other->movetarget != self)
 		return;
@@ -414,7 +414,7 @@ void path_corner_touch (struct edict_s *self, struct edict_s *other, plane_t *pl
 	}
 }
 
-void SP_path_corner (struct edict_s *self)
+void SP_path_corner (edict *self)
 {
 	if (!self->targetname)
 	{
@@ -437,9 +437,9 @@ Makes this the target of a monster and it will head here
 when first activated before going after the activator.  If
 hold is selected, it will stay here.
 */
-void point_combat_touch (struct edict_s *self, struct edict_s *other, plane_t *plane, csurface_t *surf)
+void point_combat_touch (edict *self, edict *other, plane_t *plane, csurface_t *surf)
 {
-	struct edict_s	*activator;
+	edict	*activator;
 
 	if (other->movetarget != self)
 		return;
@@ -489,7 +489,7 @@ void point_combat_touch (struct edict_s *self, struct edict_s *other, plane_t *p
 	}
 }
 
-void SP_point_combat (struct edict_s *self)
+void SP_point_combat (edict *self)
 {
 	if (deathmatch->value)
 	{
@@ -510,7 +510,7 @@ Just for the debugging level.  Don't use
 */
 static int robotron[4];
 
-void TH_viewthing(struct edict_s *ent)
+void TH_viewthing(edict *ent)
 {
 	ent->s.frame = (ent->s.frame + 1) % 7;
 //	ent->s.frame = (ent->s.frame + 1) % 9;
@@ -527,7 +527,7 @@ void TH_viewthing(struct edict_s *ent)
 	}
 }
 
-void SP_viewthing(struct edict_s *ent)
+void SP_viewthing(edict *ent)
 {
 	gi.dprintf ("viewthing spawned\n");
 
@@ -548,7 +548,7 @@ void SP_viewthing(struct edict_s *ent)
 /*QUAKED info_null (0 0.5 0) (-4 -4 -4) (4 4 4)
 Used as a positional target for spotlights, etc.
 */
-void SP_info_null (struct edict_s *self)
+void SP_info_null (edict *self)
 {
 	G_FreeEdict (self);
 };
@@ -557,7 +557,7 @@ void SP_info_null (struct edict_s *self)
 /*QUAKED info_notnull (0 0.5 0) (-4 -4 -4) (4 4 4)
 Used as a positional target for lightning.
 */
-void SP_info_notnull (struct edict_s *self)
+void SP_info_notnull (edict *self)
 {
 	VectorCopy (self->s.origin, self->absmin);
 	VectorCopy (self->s.origin, self->absmax);
@@ -574,7 +574,7 @@ Default _cone value is 10 (used to set size of light for spotlights)
 
 #define START_OFF	1
 
-static void light_use (struct edict_s *self, struct edict_s *other, struct edict_s *activator)
+static void light_use (edict *self, edict *other, edict *activator)
 {
 	if (self->spawnflags & START_OFF)
 	{
@@ -588,7 +588,7 @@ static void light_use (struct edict_s *self, struct edict_s *other, struct edict
 	}
 }
 
-void SP_light (struct edict_s *self)
+void SP_light (edict *self)
 {
 	// no targeted lights in deathmatch, because they cause global messages
 	if (!self->targetname || deathmatch->value)
@@ -622,7 +622,7 @@ START_ON		only valid for TRIGGER_SPAWN walls
 				the wall will initially be present
 */
 
-void func_wall_use (struct edict_s *self, struct edict_s *other, struct edict_s *activator)
+void func_wall_use (edict *self, edict *other, edict *activator)
 {
 	if (self->solid == SOLID_NOT)
 	{
@@ -641,7 +641,7 @@ void func_wall_use (struct edict_s *self, struct edict_s *other, struct edict_s 
 		self->use = NULL;
 }
 
-void SP_func_wall (struct edict_s *self)
+void SP_func_wall (edict *self)
 {
 	self->movetype = MOVETYPE_PUSH;
 	gi.setmodel (self, self->model);
@@ -694,7 +694,7 @@ void SP_func_wall (struct edict_s *self)
 This is solid bmodel that will fall if it's support it removed.
 */
 
-void func_object_touch (struct edict_s *self, struct edict_s *other, plane_t *plane, csurface_t *surf)
+void func_object_touch (edict *self, edict *other, plane_t *plane, csurface_t *surf)
 {
 	// only squash thing we fall on top of
 	if (!plane)
@@ -706,13 +706,13 @@ void func_object_touch (struct edict_s *self, struct edict_s *other, plane_t *pl
 	T_Damage (other, self, self, vec3_origin, self->s.origin, vec3_origin, self->dmg, 1, 0, MOD_CRUSH);
 }
 
-void func_object_release (struct edict_s *self)
+void func_object_release (edict *self)
 {
 	self->movetype = MOVETYPE_TOSS;
 	self->touch = func_object_touch;
 }
 
-void func_object_use (struct edict_s *self, struct edict_s *other, struct edict_s *activator)
+void func_object_use (edict *self, edict *other, edict *activator)
 {
 	self->solid = SOLID_BSP;
 	self->svflags &= ~SVF_NOCLIENT;
@@ -721,7 +721,7 @@ void func_object_use (struct edict_s *self, struct edict_s *other, struct edict_
 	func_object_release (self);
 }
 
-void SP_func_object (struct edict_s *self)
+void SP_func_object (edict *self)
 {
 	gi.setmodel (self, self->model);
 
@@ -774,7 +774,7 @@ mass defaults to 75.  This determines how much debris is emitted when
 it explodes.  You get one large chunk per 100 of mass (up to 8) and
 one small chunk per 25 of mass (up to 16).  So 800 gives the most.
 */
-void func_explosive_explode (struct edict_s *self, struct edict_s *inflictor, struct edict_s *attacker, int damage, vec3_t point)
+void func_explosive_explode (edict *self, edict *inflictor, edict *attacker, int damage, vec3_t point)
 {
 	vec3_t	origin;
 	vec3_t	chunkorigin;
@@ -838,12 +838,12 @@ void func_explosive_explode (struct edict_s *self, struct edict_s *inflictor, st
 		G_FreeEdict (self);
 }
 
-void func_explosive_use(struct edict_s *self, struct edict_s *other, struct edict_s *activator)
+void func_explosive_use(edict *self, edict *other, edict *activator)
 {
 	func_explosive_explode (self, self, other, self->health, vec3_origin);
 }
 
-void func_explosive_spawn (struct edict_s *self, struct edict_s *other, struct edict_s *activator)
+void func_explosive_spawn (edict *self, edict *other, edict *activator)
 {
 	self->solid = SOLID_BSP;
 	self->svflags &= ~SVF_NOCLIENT;
@@ -852,7 +852,7 @@ void func_explosive_spawn (struct edict_s *self, struct edict_s *other, struct e
 	gi.linkentity (self);
 }
 
-void SP_func_explosive (struct edict_s *self)
+void SP_func_explosive (edict *self)
 {
 	if (deathmatch->value)
 	{	// auto-remove for deathmatch
@@ -902,7 +902,7 @@ Large exploding box.  You can override its mass (100),
 health (80), and dmg (150).
 */
 
-void barrel_touch (struct edict_s *self, struct edict_s *other, plane_t *plane, csurface_t *surf)
+void barrel_touch (edict *self, edict *other, plane_t *plane, csurface_t *surf)
 
 {
 	float	ratio;
@@ -916,7 +916,7 @@ void barrel_touch (struct edict_s *self, struct edict_s *other, plane_t *plane, 
 	M_walkmove (self, vectoyaw(v), 20 * ratio * FRAMETIME);
 }
 
-void barrel_explode (struct edict_s *self)
+void barrel_explode (edict *self)
 {
 	vec3_t	org;
 	float	spd;
@@ -995,7 +995,7 @@ void barrel_explode (struct edict_s *self)
 		BecomeExplosion1 (self);
 }
 
-void barrel_delay (struct edict_s *self, struct edict_s *inflictor, struct edict_s *attacker, int damage, vec3_t point)
+void barrel_delay (edict *self, edict *inflictor, edict *attacker, int damage, vec3_t point)
 {
 	self->takedamage = DAMAGE_NO;
 	self->nextthink = level.time + 2 * FRAMETIME;
@@ -1003,7 +1003,7 @@ void barrel_delay (struct edict_s *self, struct edict_s *inflictor, struct edict
 	self->activator = attacker;
 }
 
-void SP_misc_explobox (struct edict_s *self)
+void SP_misc_explobox (edict *self)
 {
 	if (deathmatch->value)
 	{	// auto-remove for deathmatch
@@ -1050,7 +1050,7 @@ void SP_misc_explobox (struct edict_s *self)
 /*QUAKED misc_blackhole (1 .5 0) (-8 -8 -8) (8 8 8)
 */
 
-void misc_blackhole_use (struct edict_s *ent, struct edict_s *other, struct edict_s *activator)
+void misc_blackhole_use (edict *ent, edict *other, edict *activator)
 {
 	/*
 	gi.WriteByte (svc_temp_entity);
@@ -1061,7 +1061,7 @@ void misc_blackhole_use (struct edict_s *ent, struct edict_s *other, struct edic
 	G_FreeEdict (ent);
 }
 
-void misc_blackhole_think (struct edict_s *self)
+void misc_blackhole_think (edict *self)
 {
 	if (++self->s.frame < 19)
 		self->nextthink = level.time + FRAMETIME;
@@ -1072,7 +1072,7 @@ void misc_blackhole_think (struct edict_s *self)
 	}
 }
 
-void SP_misc_blackhole (struct edict_s *ent)
+void SP_misc_blackhole (edict *ent)
 {
 	ent->movetype = MOVETYPE_NONE;
 	ent->solid = SOLID_NOT;
@@ -1089,7 +1089,7 @@ void SP_misc_blackhole (struct edict_s *ent)
 /*QUAKED misc_eastertank (1 .5 0) (-32 -32 -16) (32 32 32)
 */
 
-void misc_eastertank_think (struct edict_s *self)
+void misc_eastertank_think (edict *self)
 {
 	if (++self->s.frame < 293)
 		self->nextthink = level.time + FRAMETIME;
@@ -1100,7 +1100,7 @@ void misc_eastertank_think (struct edict_s *self)
 	}
 }
 
-void SP_misc_eastertank (struct edict_s *ent)
+void SP_misc_eastertank (edict *ent)
 {
 	ent->movetype = MOVETYPE_NONE;
 	ent->solid = SOLID_BBOX;
@@ -1117,7 +1117,7 @@ void SP_misc_eastertank (struct edict_s *ent)
 */
 
 
-void misc_easterchick_think (struct edict_s *self)
+void misc_easterchick_think (edict *self)
 {
 	if (++self->s.frame < 247)
 		self->nextthink = level.time + FRAMETIME;
@@ -1128,7 +1128,7 @@ void misc_easterchick_think (struct edict_s *self)
 	}
 }
 
-void SP_misc_easterchick (struct edict_s *ent)
+void SP_misc_easterchick (edict *ent)
 {
 	ent->movetype = MOVETYPE_NONE;
 	ent->solid = SOLID_BBOX;
@@ -1145,7 +1145,7 @@ void SP_misc_easterchick (struct edict_s *ent)
 */
 
 
-void misc_easterchick2_think (struct edict_s *self)
+void misc_easterchick2_think (edict *self)
 {
 	if (++self->s.frame < 287)
 		self->nextthink = level.time + FRAMETIME;
@@ -1156,7 +1156,7 @@ void misc_easterchick2_think (struct edict_s *self)
 	}
 }
 
-void SP_misc_easterchick2 (struct edict_s *ent)
+void SP_misc_easterchick2 (edict *ent)
 {
 	ent->movetype = MOVETYPE_NONE;
 	ent->solid = SOLID_BBOX;
@@ -1175,7 +1175,7 @@ Not really a monster, this is the Tank Commander's decapitated body.
 There should be a item_commander_head that has this as it's target.
 */
 
-void commander_body_think (struct edict_s *self)
+void commander_body_think (edict *self)
 {
 	if (++self->s.frame < 24)
 		self->nextthink = level.time + FRAMETIME;
@@ -1186,20 +1186,20 @@ void commander_body_think (struct edict_s *self)
 		gi.sound (self, CHAN_BODY, gi.soundindex ("tank/thud.wav"), 1, ATTN_NORM, 0);
 }
 
-void commander_body_use (struct edict_s *self, struct edict_s *other, struct edict_s *activator)
+void commander_body_use (edict *self, edict *other, edict *activator)
 {
 	self->think = commander_body_think;
 	self->nextthink = level.time + FRAMETIME;
 	gi.sound (self, CHAN_BODY, gi.soundindex ("tank/pain.wav"), 1, ATTN_NORM, 0);
 }
 
-void commander_body_drop (struct edict_s *self)
+void commander_body_drop (edict *self)
 {
 	self->movetype = MOVETYPE_TOSS;
 	self->s.origin[2] += 2;
 }
 
-void SP_monster_commander_body (struct edict_s *self)
+void SP_monster_commander_body (edict *self)
 {
 	self->movetype = MOVETYPE_NONE;
 	self->solid = SOLID_BBOX;
@@ -1225,13 +1225,13 @@ void SP_monster_commander_body (struct edict_s *self)
 The origin is the bottom of the banner.
 The banner is 128 tall.
 */
-void misc_banner_think (struct edict_s *ent)
+void misc_banner_think (edict *ent)
 {
 	ent->s.frame = (ent->s.frame + 1) % 16;
 	ent->nextthink = level.time + FRAMETIME;
 }
 
-void SP_misc_banner (struct edict_s *ent)
+void SP_misc_banner (edict *ent)
 {
 	ent->movetype = MOVETYPE_NONE;
 	ent->solid = SOLID_NOT;
@@ -1246,7 +1246,7 @@ void SP_misc_banner (struct edict_s *ent)
 /*QUAKED misc_deadsoldier (1 .5 0) (-16 -16 0) (16 16 16) ON_BACK ON_STOMACH BACK_DECAP FETAL_POS SIT_DECAP IMPALED
 This is the dead player model. Comes in 6 exciting different poses!
 */
-void misc_deadsoldier_die (struct edict_s *self, struct edict_s *inflictor, struct edict_s *attacker, int damage, vec3_t point)
+void misc_deadsoldier_die (edict *self, edict *inflictor, edict *attacker, int damage, vec3_t point)
 {
 	int		n;
 
@@ -1259,7 +1259,7 @@ void misc_deadsoldier_die (struct edict_s *self, struct edict_s *inflictor, stru
 	ThrowHead (self, "models/objects/gibs/head2/tris.md2", damage, GIB_ORGANIC);
 }
 
-void SP_misc_deadsoldier (struct edict_s *ent)
+void SP_misc_deadsoldier (edict *ent)
 {
 	if (deathmatch->value)
 	{	// auto-remove for deathmatch
@@ -1304,17 +1304,17 @@ There must be a path for it to follow once it is activated.
 "speed"		How fast the Viper should fly
 */
 
-extern void train_use (struct edict_s *self, struct edict_s *other, struct edict_s *activator);
-extern void func_train_find (struct edict_s *self);
+extern void train_use (edict *self, edict *other, edict *activator);
+extern void func_train_find (edict *self);
 
-void misc_viper_use  (struct edict_s *self, struct edict_s *other, struct edict_s *activator)
+void misc_viper_use  (edict *self, edict *other, edict *activator)
 {
 	self->svflags &= ~SVF_NOCLIENT;
 	self->use = train_use;
 	train_use (self, other, activator);
 }
 
-void SP_misc_viper (struct edict_s *ent)
+void SP_misc_viper (edict *ent)
 {
 	if (!ent->target)
 	{
@@ -1345,7 +1345,7 @@ void SP_misc_viper (struct edict_s *ent)
 /*QUAKED misc_bigviper (1 .5 0) (-176 -120 -24) (176 120 72)
 This is a large stationary viper as seen in Paul's intro
 */
-void SP_misc_bigviper (struct edict_s *ent)
+void SP_misc_bigviper (edict *ent)
 {
 	ent->movetype = MOVETYPE_NONE;
 	ent->solid = SOLID_BBOX;
@@ -1359,7 +1359,7 @@ void SP_misc_bigviper (struct edict_s *ent)
 /*QUAKED misc_viper_bomb (1 0 0) (-8 -8 -8) (8 8 8)
 "dmg"	how much boom should the bomb make?
 */
-void misc_viper_bomb_touch (struct edict_s *self, struct edict_s *other, plane_t *plane, csurface_t *surf)
+void misc_viper_bomb_touch (edict *self, edict *other, plane_t *plane, csurface_t *surf)
 {
 	G_UseTargets (self, self->activator);
 
@@ -1368,7 +1368,7 @@ void misc_viper_bomb_touch (struct edict_s *self, struct edict_s *other, plane_t
 	BecomeExplosion2 (self);
 }
 
-void misc_viper_bomb_prethink (struct edict_s *self)
+void misc_viper_bomb_prethink (edict *self)
 {
 	vec3_t	v;
 	float	diff;
@@ -1387,9 +1387,9 @@ void misc_viper_bomb_prethink (struct edict_s *self)
 	self->s.angles[2] = diff + 10;
 }
 
-void misc_viper_bomb_use (struct edict_s *self, struct edict_s *other, struct edict_s *activator)
+void misc_viper_bomb_use (edict *self, edict *other, edict *activator)
 {
-	struct edict_s	*viper;
+	edict	*viper;
 
 	self->solid = SOLID_BBOX;
 	self->svflags &= ~SVF_NOCLIENT;
@@ -1407,7 +1407,7 @@ void misc_viper_bomb_use (struct edict_s *self, struct edict_s *other, struct ed
 	VectorCopy (viper->moveinfo.dir, self->moveinfo.dir);
 }
 
-void SP_misc_viper_bomb (struct edict_s *self)
+void SP_misc_viper_bomb (edict *self)
 {
 	self->movetype = MOVETYPE_NONE;
 	self->solid = SOLID_NOT;
@@ -1434,17 +1434,17 @@ There must be a path for it to follow once it is activated.
 "speed"		How fast it should fly
 */
 
-extern void train_use (struct edict_s *self, struct edict_s *other, struct edict_s *activator);
-extern void func_train_find (struct edict_s *self);
+extern void train_use (edict *self, edict *other, edict *activator);
+extern void func_train_find (edict *self);
 
-void misc_strogg_ship_use  (struct edict_s *self, struct edict_s *other, struct edict_s *activator)
+void misc_strogg_ship_use  (edict *self, edict *other, edict *activator)
 {
 	self->svflags &= ~SVF_NOCLIENT;
 	self->use = train_use;
 	train_use (self, other, activator);
 }
 
-void SP_misc_strogg_ship (struct edict_s *ent)
+void SP_misc_strogg_ship (edict *ent)
 {
 	if (!ent->target)
 	{
@@ -1474,21 +1474,21 @@ void SP_misc_strogg_ship (struct edict_s *ent)
 
 /*QUAKED misc_satellite_dish (1 .5 0) (-64 -64 0) (64 64 128)
 */
-void misc_satellite_dish_think (struct edict_s *self)
+void misc_satellite_dish_think (edict *self)
 {
 	self->s.frame++;
 	if (self->s.frame < 38)
 		self->nextthink = level.time + FRAMETIME;
 }
 
-void misc_satellite_dish_use (struct edict_s *self, struct edict_s *other, struct edict_s *activator)
+void misc_satellite_dish_use (edict *self, edict *other, edict *activator)
 {
 	self->s.frame = 0;
 	self->think = misc_satellite_dish_think;
 	self->nextthink = level.time + FRAMETIME;
 }
 
-void SP_misc_satellite_dish (struct edict_s *ent)
+void SP_misc_satellite_dish (edict *ent)
 {
 	ent->movetype = MOVETYPE_NONE;
 	ent->solid = SOLID_BBOX;
@@ -1502,7 +1502,7 @@ void SP_misc_satellite_dish (struct edict_s *ent)
 
 /*QUAKED light_mine1 (0 1 0) (-2 -2 -12) (2 2 12)
 */
-void SP_light_mine1 (struct edict_s *ent)
+void SP_light_mine1 (edict *ent)
 {
 	ent->movetype = MOVETYPE_NONE;
 	ent->solid = SOLID_BBOX;
@@ -1513,7 +1513,7 @@ void SP_light_mine1 (struct edict_s *ent)
 
 /*QUAKED light_mine2 (0 1 0) (-2 -2 -12) (2 2 12)
 */
-void SP_light_mine2 (struct edict_s *ent)
+void SP_light_mine2 (edict *ent)
 {
 	ent->movetype = MOVETYPE_NONE;
 	ent->solid = SOLID_BBOX;
@@ -1525,7 +1525,7 @@ void SP_light_mine2 (struct edict_s *ent)
 /*QUAKED misc_gib_arm (1 0 0) (-8 -8 -8) (8 8 8)
 Intended for use with the target_spawner
 */
-void SP_misc_gib_arm (struct edict_s *ent)
+void SP_misc_gib_arm (edict *ent)
 {
 	gi.setmodel (ent, "models/objects/gibs/arm/tris.md2");
 	ent->solid = SOLID_NOT;
@@ -1546,7 +1546,7 @@ void SP_misc_gib_arm (struct edict_s *ent)
 /*QUAKED misc_gib_leg (1 0 0) (-8 -8 -8) (8 8 8)
 Intended for use with the target_spawner
 */
-void SP_misc_gib_leg (struct edict_s *ent)
+void SP_misc_gib_leg (edict *ent)
 {
 	gi.setmodel (ent, "models/objects/gibs/leg/tris.md2");
 	ent->solid = SOLID_NOT;
@@ -1567,7 +1567,7 @@ void SP_misc_gib_leg (struct edict_s *ent)
 /*QUAKED misc_gib_head (1 0 0) (-8 -8 -8) (8 8 8)
 Intended for use with the target_spawner
 */
-void SP_misc_gib_head (struct edict_s *ent)
+void SP_misc_gib_head (edict *ent)
 {
 	gi.setmodel (ent, "models/objects/gibs/head/tris.md2");
 	ent->solid = SOLID_NOT;
@@ -1592,7 +1592,7 @@ used with target_string (must be on same "team")
 "count" is position in the string (starts at 1)
 */
 
-void SP_target_character (struct edict_s *self)
+void SP_target_character (edict *self)
 {
 	self->movetype = MOVETYPE_PUSH;
 	gi.setmodel (self, self->model);
@@ -1606,9 +1606,9 @@ void SP_target_character (struct edict_s *self)
 /*QUAKED target_string (0 0 1) (-8 -8 -8) (8 8 8)
 */
 
-void target_string_use (struct edict_s *self, struct edict_s *other, struct edict_s *activator)
+void target_string_use (edict *self, edict *other, edict *activator)
 {
-	struct edict_s *e;
+	edict *e;
 	int		n, l;
 	char	c;
 
@@ -1636,7 +1636,7 @@ void target_string_use (struct edict_s *self, struct edict_s *other, struct edic
 	}
 }
 
-void SP_target_string (struct edict_s *self)
+void SP_target_string (edict *self)
 {
 	if (!self->message)
 		self->message = "";
@@ -1662,7 +1662,7 @@ If START_OFF, this entity must be used before it starts
 // don't let field width of any clock messages change, or it
 // could cause an overwrite after a game load
 
-static void func_clock_reset (struct edict_s *self)
+static void func_clock_reset (edict *self)
 {
 	self->activator = NULL;
 	if (self->spawnflags & 1)
@@ -1677,7 +1677,7 @@ static void func_clock_reset (struct edict_s *self)
 	}
 }
 
-static void func_clock_format_countdown (struct edict_s *self)
+static void func_clock_format_countdown (edict *self)
 {
 	if (self->style == 0)
 	{
@@ -1704,7 +1704,7 @@ static void func_clock_format_countdown (struct edict_s *self)
 	}
 }
 
-void func_clock_think (struct edict_s *self)
+void func_clock_think (edict *self)
 {
 	if (!self->enemy)
 	{
@@ -1769,7 +1769,7 @@ void func_clock_think (struct edict_s *self)
 	self->nextthink = level.time + 1;
 }
 
-void func_clock_use (struct edict_s *self, struct edict_s *other, struct edict_s *activator)
+void func_clock_use (edict *self, edict *other, edict *activator)
 {
 	if (!(self->spawnflags & 8))
 		self->use = NULL;
@@ -1779,7 +1779,7 @@ void func_clock_use (struct edict_s *self, struct edict_s *other, struct edict_s
 	self->think (self);
 }
 
-void SP_func_clock (struct edict_s *self)
+void SP_func_clock (edict *self)
 {
 	if (!self->target)
 	{
@@ -1812,9 +1812,9 @@ void SP_func_clock (struct edict_s *self)
 
 //=================================================================================
 
-void teleporter_touch (struct edict_s *self, struct edict_s *other, plane_t *plane, csurface_t *surf)
+void teleporter_touch (edict *self, edict *other, plane_t *plane, csurface_t *surf)
 {
-	struct edict_s		*dest;
+	edict		*dest;
 	int			i;
 
 	if (!other->client)
@@ -1863,9 +1863,9 @@ void teleporter_touch (struct edict_s *self, struct edict_s *other, plane_t *pla
 /*QUAKED misc_teleporter (1 0 0) (-32 -32 -24) (32 32 -16)
 Stepping onto this disc will teleport players to the targeted misc_teleporter_dest object.
 */
-void SP_misc_teleporter (struct edict_s *ent)
+void SP_misc_teleporter (edict *ent)
 {
-	struct edict_s		*trig;
+	edict		*trig;
 
 	if (!ent->target)
 	{
@@ -1899,7 +1899,7 @@ void SP_misc_teleporter (struct edict_s *ent)
 /*QUAKED misc_teleporter_dest (1 0 0) (-32 -32 -24) (32 32 -16)
 Point teleporters at these.
 */
-void SP_misc_teleporter_dest (struct edict_s *ent)
+void SP_misc_teleporter_dest (edict *ent)
 {
 	gi.setmodel (ent, "models/objects/dmspot/tris.md2");
 	ent->s.skinnum = 0;

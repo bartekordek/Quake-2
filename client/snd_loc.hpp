@@ -43,7 +43,7 @@ typedef struct sfx_s
 {
     std::string name;
     int            registration_sequence;
-    sfxcache_t    *cache;
+    sfxcache_t* cache;
     std::string truename;
 } sfx_t;
 
@@ -52,8 +52,8 @@ typedef struct sfx_s
 // be assigned to a channel
 typedef struct playsound_s
 {
-    struct playsound_s    *prev, *next;
-    sfx_t        *sfx;
+    struct playsound_s* prev, *next;
+    sfx_t    * sfx;
     float        volume;
     float        attenuation;
     int            entnum;
@@ -71,13 +71,13 @@ typedef struct
     int            samplepos;                // in mono samples
     int            samplebits;
     int            speed;
-    byte        *buffer;
+    byte    * buffer;
 } dma_t;
 
 // !!! if this is changed, the asm code must change !!!
 typedef struct
 {
-    sfx_t        *sfx;            // sfx number
+    sfx_t    * sfx;            // sfx number
     int            leftvol;        // 0-255 volume
     int            rightvol;        // 0-255 volume
     int            end;            // end time in global paintsamples
@@ -141,14 +141,14 @@ extern    playsound_t    s_pendingplays;
 #define    MAX_RAW_SAMPLES    8192
 extern    portable_samplepair_t    s_rawsamples[MAX_RAW_SAMPLES];
 
-extern cvar_t    *s_volume;
-extern cvar_t    *s_nosound;
-extern cvar_t    *s_loadas8bit;
-extern cvar_t    *s_khz;
-extern cvar_t    *s_show;
-extern cvar_t    *s_mixahead;
-extern cvar_t    *s_testsound;
-extern cvar_t    *s_primary;
+extern cvar* s_volume;
+extern cvar* s_nosound;
+extern cvar* s_loadas8bit;
+extern cvar* s_khz;
+extern cvar* s_show;
+extern cvar* s_mixahead;
+extern cvar* s_testsound;
+extern cvar* s_primary;
 
 wavinfo_t GetWavinfo(const std::string& name, byte *wav, int wavlength);
 

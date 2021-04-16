@@ -34,6 +34,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "client.hpp"
 #include "win32/q_shwin.hpp"
+#include "client/screen.hpp"
 
 float        scr_con_current;    // aproaches scr_conlines at scr_conspeed
 float        scr_conlines;        // 0.0 to 1.0 lines of console to display
@@ -45,20 +46,20 @@ int            scr_draw_loading;
 vrect_t        scr_vrect;        // position of render window on screen
 
 
-cvar_t        *scr_viewsize;
-cvar_t        *scr_conspeed;
-cvar_t        *scr_centertime;
-cvar_t        *scr_showturtle;
-cvar_t        *scr_showpause;
-cvar_t        *scr_printspeed;
+cvar    * scr_viewsize;
+cvar    * scr_conspeed;
+cvar    * scr_centertime;
+cvar    * scr_showturtle;
+cvar    * scr_showpause;
+cvar    * scr_printspeed;
 
-cvar_t        *scr_netgraph;
-cvar_t        *scr_timegraph;
-cvar_t        *scr_debuggraph;
-cvar_t        *scr_graphheight;
-cvar_t        *scr_graphscale;
-cvar_t        *scr_graphshift;
-cvar_t        *scr_drawall;
+cvar    * scr_netgraph;
+cvar    * scr_timegraph;
+cvar    * scr_debuggraph;
+cvar    * scr_graphheight;
+cvar    * scr_graphscale;
+cvar    * scr_graphshift;
+cvar    * scr_drawall;
 
 typedef struct
 {
@@ -196,7 +197,7 @@ for a few moments
 */
 void SCR_CenterPrint (char *str)
 {
-    char    *s;
+    char* s;
     char    line[64];
     int        i, j, l;
 
@@ -251,7 +252,7 @@ void SCR_CenterPrint (char *str)
 
 void SCR_DrawCenterString (void)
 {
-    char    *start;
+    char* start;
     int        l;
     int        j;
     int        x, y;
@@ -609,8 +610,8 @@ SCR_TimeRefresh_f
 int entitycmpfnc( const entity_t *a, const entity_t *b )
 {
     /*
-    ** all other models are sorted by model then skin
-    */
+* * all other models are sorted by model then skin
+*/
     if ( a->model == b->model )
     {
         return ( ( int ) a->skin - ( int ) b->skin );
@@ -659,11 +660,7 @@ void SCR_TimeRefresh_f (void)
     Com_Printf_G ("%f seconds (%f fps)\n", time, 128/time);
 }
 
-/*
-=================
-SCR_AddDirtyPoint
-=================
-*/
+
 void SCR_AddDirtyPoint (int x, int y)
 {
     if (x < scr_dirty.x1)
@@ -683,9 +680,6 @@ void SCR_DirtyScreen (void)
 }
 
 /*
-==============
-SCR_TileClear
-
 Clear any parts of the tiled background that were drawn on last frame
 ==============
 */
@@ -777,7 +771,7 @@ void SCR_TileClear (void)
 
 
 #define STAT_MINUS        10    // num frame for '-' stats digit
-char        *sb_nums[2][11] =
+char    * sb_nums[2][11] =
 {
     {"num_0", "num_1", "num_2", "num_3", "num_4", "num_5",
     "num_6", "num_7", "num_8", "num_9", "num_minus"},
@@ -823,8 +817,8 @@ void SizeHUDString (char *string, int *w, int *h)
         string++;
     }
 
-    *w = width * 8;
-    *h = lines * 8;
+* w = width * 8;
+* h = lines * 8;
 }
 
 void DrawHUDString (char *string, int x, int y, int centerwidth, int xor)
@@ -943,10 +937,10 @@ void SCR_ExecuteLayoutString (char *s)
 {
     int        x, y;
     int        value;
-    char    *token;
+    char* token;
     int        width;
     int        index;
-    clientinfo_t    *ci;
+    clientinfo_t* ci;
 
     if (cls.state != ca_active || !cl.refresh_prepped)
         return;
@@ -1287,9 +1281,9 @@ void SCR_UpdateScreen (void)
         return;                // not initialized yet
 
     /*
-    ** range check cl_camera_separation so we don't inadvertently fry someone's
-    ** brain
-    */
+* * range check cl_camera_separation so we don't inadvertently fry someone's
+* * brain
+*/
     if ( cl_stereo_separation->value > 1.0 )
         Cvar_SetValue( "cl_stereo_separation", 1.0 );
     else if ( cl_stereo_separation->value < 0 )

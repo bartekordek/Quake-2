@@ -34,7 +34,7 @@ is not a staircase.
 */
 int c_yes, c_no;
 
-bool M_CheckBottom (struct edict_s *ent)
+bool M_CheckBottom (edict *ent)
 {
 	vec3_t	mins, maxs, start, stop;
 	trace_t	trace;
@@ -109,7 +109,7 @@ pr_global_struct->trace_normal is set to the normal of the blocking wall
 */
 //FIXME since we need to test end position contents here, can we avoid doing
 //it again later in catagorize position?
-bool SV_movestep (struct edict_s *ent, vec3_t move, bool relink)
+bool SV_movestep (edict *ent, vec3_t move, bool relink)
 {
 	float		dz;
 	vec3_t		oldorg, neworg, end;
@@ -301,7 +301,7 @@ M_ChangeYaw
 
 ===============
 */
-void M_ChangeYaw (struct edict_s *ent)
+void M_ChangeYaw (edict *ent)
 {
 	float	ideal;
 	float	current;
@@ -350,7 +350,7 @@ facing it.
 
 ======================
 */
-bool SV_StepDirection (struct edict_s *ent, float yaw, float dist)
+bool SV_StepDirection (edict *ent, float yaw, float dist)
 {
 	vec3_t		move, oldorigin;
 	float		delta;
@@ -386,7 +386,7 @@ SV_FixCheckBottom
 
 ======================
 */
-void SV_FixCheckBottom (struct edict_s *ent)
+void SV_FixCheckBottom (edict *ent)
 {
 	ent->flags |= FL_PARTIALGROUND;
 }
@@ -400,7 +400,7 @@ SV_NewChaseDir
 ================
 */
 #define	DI_NODIR	-1
-void SV_NewChaseDir (struct edict_s *actor, struct edict_s *enemy, float dist)
+void SV_NewChaseDir (edict *actor, edict *enemy, float dist)
 {
 	float	deltax,deltay;
 	float	d[3];
@@ -492,7 +492,7 @@ SV_CloseEnough
 
 ======================
 */
-bool SV_CloseEnough (struct edict_s *ent, struct edict_s *goal, float dist)
+bool SV_CloseEnough (edict *ent, edict *goal, float dist)
 {
 	int		i;
 
@@ -512,9 +512,9 @@ bool SV_CloseEnough (struct edict_s *ent, struct edict_s *goal, float dist)
 M_MoveToGoal
 ======================
 */
-void M_MoveToGoal (struct edict_s *ent, float dist)
+void M_MoveToGoal (edict *ent, float dist)
 {
-	struct edict_s		*goal;
+	edict		*goal;
 
 	goal = ent->goalentity;
 
@@ -539,7 +539,7 @@ void M_MoveToGoal (struct edict_s *ent, float dist)
 M_walkmove
 ===============
 */
-bool M_walkmove (struct edict_s *ent, float yaw, float dist)
+bool M_walkmove (edict *ent, float yaw, float dist)
 {
 	vec3_t	move;
 

@@ -67,10 +67,10 @@ typedef struct ghost_s {
 	int code; // ghost code
 	int team; // team
 	int score; // frags at time of disconnect
-	struct edict_s *ent;
+	edict *ent;
 } ghost_t;
 
-extern cvar_t *ctf;
+extern cvar *ctf;
 
 #define CTF_TEAM1_SKIN "ctf_r"
 #define CTF_TEAM2_SKIN "ctf_b"
@@ -109,82 +109,82 @@ extern cvar_t *ctf;
 void CTFInit(void);
 void CTFSpawn(void);
 
-void SP_info_player_team1(struct edict_s *self);
-void SP_info_player_team2(struct edict_s *self);
+void SP_info_player_team1(edict *self);
+void SP_info_player_team2(edict *self);
 
 char *CTFTeamName(int team);
 char *CTFOtherTeamName(int team);
-void CTFAssignSkin(struct edict_s *ent, char *s);
+void CTFAssignSkin(edict *ent, char *s);
 void CTFAssignTeam(gclient_t *who);
-struct edict_s *SelectCTFSpawnPoint (struct edict_s *ent);
-bool CTFPickup_Flag(struct edict_s *ent, struct edict_s *other);
-bool CTFDrop_Flag(struct edict_s *ent, gitem_t *item);
-void CTFEffects(struct edict_s *player);
+edict *SelectCTFSpawnPoint (edict *ent);
+bool CTFPickup_Flag(edict *ent, edict *other);
+bool CTFDrop_Flag(edict *ent, gitem *item);
+void CTFEffects(edict *player);
 void CTFCalcScores(void);
-void SetCTFStats(struct edict_s *ent);
-void CTFDeadDropFlag(struct edict_s *self);
-void CTFScoreboardMessage (struct edict_s *ent, struct edict_s *killer);
-void CTFTeam_f (struct edict_s *ent);
-void CTFID_f (struct edict_s *ent);
-void CTFSay_Team(struct edict_s *who, char *msg);
-void CTFFlagSetup (struct edict_s *ent);
+void SetCTFStats(edict *ent);
+void CTFDeadDropFlag(edict *self);
+void CTFScoreboardMessage (edict *ent, edict *killer);
+void CTFTeam_f (edict *ent);
+void CTFID_f (edict *ent);
+void CTFSay_Team(edict *who, char *msg);
+void CTFFlagSetup (edict *ent);
 void CTFResetFlag(int ctf_team);
-void CTFFragBonuses(struct edict_s *targ, struct edict_s *inflictor, struct edict_s *attacker);
-void CTFCheckHurtCarrier(struct edict_s *targ, struct edict_s *attacker);
+void CTFFragBonuses(edict *targ, edict *inflictor, edict *attacker);
+void CTFCheckHurtCarrier(edict *targ, edict *attacker);
 
 // GRAPPLE
-void CTFWeapon_Grapple (struct edict_s *ent);
-void CTFPlayerResetGrapple(struct edict_s *ent);
-void CTFGrapplePull(struct edict_s *self);
-void CTFResetGrapple(struct edict_s *self);
+void CTFWeapon_Grapple (edict *ent);
+void CTFPlayerResetGrapple(edict *ent);
+void CTFGrapplePull(edict *self);
+void CTFResetGrapple(edict *self);
 
 //TECH
-gitem_t *CTFWhat_Tech(struct edict_s *ent);
-bool CTFPickup_Tech (struct edict_s *ent, struct edict_s *other);
-void CTFDrop_Tech(struct edict_s *ent, gitem_t *item);
-void CTFDeadDropTech(struct edict_s *ent);
+gitem *CTFWhat_Tech(edict *ent);
+bool CTFPickup_Tech (edict *ent, edict *other);
+void CTFDrop_Tech(edict *ent, gitem *item);
+void CTFDeadDropTech(edict *ent);
 void CTFSetupTechSpawn(void);
-int CTFApplyResistance(struct edict_s *ent, int dmg);
-int CTFApplyStrength(struct edict_s *ent, int dmg);
-bool CTFApplyStrengthSound(struct edict_s *ent);
-bool CTFApplyHaste(struct edict_s *ent);
-void CTFApplyHasteSound(struct edict_s *ent);
-void CTFApplyRegeneration(struct edict_s *ent);
-bool CTFHasRegeneration(struct edict_s *ent);
-void CTFRespawnTech(struct edict_s *ent);
+int CTFApplyResistance(edict *ent, int dmg);
+int CTFApplyStrength(edict *ent, int dmg);
+bool CTFApplyStrengthSound(edict *ent);
+bool CTFApplyHaste(edict *ent);
+void CTFApplyHasteSound(edict *ent);
+void CTFApplyRegeneration(edict *ent);
+bool CTFHasRegeneration(edict *ent);
+void CTFRespawnTech(edict *ent);
 void CTFResetTech(void);
 
-void CTFOpenJoinMenu(struct edict_s *ent);
-bool CTFStartClient(struct edict_s *ent);
-void CTFVoteYes(struct edict_s *ent);
-void CTFVoteNo(struct edict_s *ent);
-void CTFReady(struct edict_s *ent);
-void CTFNotReady(struct edict_s *ent);
+void CTFOpenJoinMenu(edict *ent);
+bool CTFStartClient(edict *ent);
+void CTFVoteYes(edict *ent);
+void CTFVoteNo(edict *ent);
+void CTFReady(edict *ent);
+void CTFNotReady(edict *ent);
 bool CTFNextMap(void);
 bool CTFMatchSetup(void);
 bool CTFMatchOn(void);
-void CTFGhost(struct edict_s *ent);
-void CTFAdmin(struct edict_s *ent);
+void CTFGhost(edict *ent);
+void CTFAdmin(edict *ent);
 bool CTFInMatch(void);
-void CTFStats(struct edict_s *ent);
-void CTFWarp(struct edict_s *ent);
-void CTFBoot(struct edict_s *ent);
-void CTFPlayerList(struct edict_s *ent);
+void CTFStats(edict *ent);
+void CTFWarp(edict *ent);
+void CTFBoot(edict *ent);
+void CTFPlayerList(edict *ent);
 
 bool CTFCheckRules(void);
 
-void SP_misc_ctf_banner (struct edict_s *ent);
-void SP_misc_ctf_small_banner (struct edict_s *ent);
+void SP_misc_ctf_banner (edict *ent);
+void SP_misc_ctf_small_banner (edict *ent);
 
 extern char *ctf_statusbar;
 
-void UpdateChaseCam(struct edict_s *ent);
-void ChaseNext(struct edict_s *ent);
-void ChasePrev(struct edict_s *ent);
+void UpdateChaseCam(edict *ent);
+void ChaseNext(edict *ent);
+void ChasePrev(edict *ent);
 
-void CTFObserver(struct edict_s *ent);
+void CTFObserver(edict *ent);
 
-void SP_trigger_teleport (struct edict_s *ent);
-void SP_info_teleport_destination (struct edict_s *ent);
+void SP_trigger_teleport (edict *ent);
+void SP_info_teleport_destination (edict *ent);
 
 #endif // ____CTF_G_CTF_H__

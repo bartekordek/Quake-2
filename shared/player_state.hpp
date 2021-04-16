@@ -1,13 +1,15 @@
 #ifndef ____SHARED_PLAYER_STATE_H__
 #define ____SHARED_PLAYER_STATE_H__
 
-// player_state_t is the information needed in addition to pmove_state_t
-// to rendered a view.  There will only be 10 player_state_t sent each second,
-// but the number of pmove_state_t changes will be reletive to client
+#include "shared/defines.hpp"
+
+// player_state is the information needed in addition to pmove_state
+// to rendered a view.  There will only be 10 player_state sent each second,
+// but the number of pmove_state changes will be reletive to client
 // frame rates
-typedef struct
+struct player_state
 {
-    pmove_state_t    pmove;        // for prediction
+    pmove_state    pmove;        // for prediction
 
     // these fields do not need to be communicated bit-precise
 
@@ -28,6 +30,6 @@ typedef struct
     int            rdflags;        // refdef flags
 
     short        stats[MAX_STATS];        // fast status bar updates
-} player_state_t;
+};
 
 #endif // ____SHARED_PLAYER_STATE_H__

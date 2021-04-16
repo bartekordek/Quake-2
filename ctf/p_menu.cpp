@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // this is so that a static set of pmenu entries can be used
 // for multiple clients and changed without interference
 // note that arg will be freed when the menu is closed, it must be allocated memory
-pmenuhnd_t *PMenu_Open(struct edict_s *ent, pmenu_t *entries, int cur, int num, void *arg)
+pmenuhnd_t *PMenu_Open(edict *ent, pmenu_t *entries, int cur, int num, void *arg)
 {
 	pmenuhnd_t *hnd;
 	pmenu_t *p;
@@ -71,7 +71,7 @@ pmenuhnd_t *PMenu_Open(struct edict_s *ent, pmenu_t *entries, int cur, int num, 
 	return hnd;
 }
 
-void PMenu_Close(struct edict_s *ent)
+void PMenu_Close(edict *ent)
 {
 	int i;
 	pmenuhnd_t *hnd;
@@ -101,7 +101,7 @@ void PMenu_UpdateEntry(pmenu_t *entry, const char *text, int align, SelectFunc_t
 	entry->SelectFunc = SelectFunc;
 }
 
-void PMenu_Do_Update(struct edict_s *ent)
+void PMenu_Do_Update(edict *ent)
 {
 	char string[1400];
 	int i;
@@ -152,7 +152,7 @@ void PMenu_Do_Update(struct edict_s *ent)
 	gi.WriteString (string);
 }
 
-void PMenu_Update(struct edict_s *ent)
+void PMenu_Update(edict *ent)
 {
 	if (!ent->client->menu) {
 		gi.dprintf("warning:  ent has no menu\n");
@@ -170,7 +170,7 @@ void PMenu_Update(struct edict_s *ent)
 	ent->client->menudirty = true;
 }
 
-void PMenu_Next(struct edict_s *ent)
+void PMenu_Next(edict *ent)
 {
 	pmenuhnd_t *hnd;
 	int i;
@@ -201,7 +201,7 @@ void PMenu_Next(struct edict_s *ent)
 	PMenu_Update(ent);
 }
 
-void PMenu_Prev(struct edict_s *ent)
+void PMenu_Prev(edict *ent)
 {
 	pmenuhnd_t *hnd;
 	int i;
@@ -234,7 +234,7 @@ void PMenu_Prev(struct edict_s *ent)
 	PMenu_Update(ent);
 }
 
-void PMenu_Select(struct edict_s *ent)
+void PMenu_Select(edict *ent)
 {
 	pmenuhnd_t *hnd;
 	pmenu_t *p;

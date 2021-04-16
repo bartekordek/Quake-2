@@ -27,17 +27,17 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // development tools for weapons
 //
 int            gun_frame;
-struct model_s    *gun_model;
+struct model_s* gun_model;
 
 //=============
 
-cvar_t        *crosshair;
-cvar_t        *cl_testparticles;
-cvar_t        *cl_testentities;
-cvar_t        *cl_testlights;
-cvar_t        *cl_testblend;
+cvar    * crosshair;
+cvar    * cl_testparticles;
+cvar    * cl_testentities;
+cvar    * cl_testlights;
+cvar    * cl_testblend;
 
-cvar_t        *cl_stats;
+cvar    * cl_stats;
 
 
 int            r_numdlights;
@@ -91,7 +91,7 @@ V_AddParticle
 */
 void V_AddParticle (vec3_t org, int color, float alpha)
 {
-    particle_t    *p;
+    particle_t* p;
 
     if (r_numparticles >= MAX_PARTICLES)
         return;
@@ -109,7 +109,7 @@ V_AddLight
 */
 void V_AddLight (vec3_t org, float intensity, float r, float g, float b)
 {
-    dlight_t    *dl;
+    dlight_t* dl;
 
     if (r_numdlights >= MAX_DLIGHTS)
         return;
@@ -130,7 +130,7 @@ V_AddLightStyle
 */
 void V_AddLightStyle (int style, float r, float g, float b)
 {
-    lightstyle_t    *ls;
+    lightstyle_t* ls;
 
     if (style < 0 || style > MAX_LIGHTSTYLES)
         Com_Error (ERR_DROP, "Bad light style %i", style);
@@ -151,7 +151,7 @@ If cl_testparticles is set, create 4096 particles in the view
 */
 void V_TestParticles (void)
 {
-    particle_t    *p;
+    particle_t* p;
     int            i, j;
     float        d, r, u;
 
@@ -183,7 +183,7 @@ void V_TestEntities (void)
 {
     int            i, j;
     float        f, r;
-    entity_t    *ent;
+    entity_t* ent;
 
     r_numentities = 32;
     memset (r_entities, 0, sizeof(r_entities));
@@ -215,7 +215,7 @@ void V_TestLights (void)
 {
     int            i, j;
     float        f, r;
-    dlight_t    *dl;
+    dlight_t* dl;
 
     r_numdlights = 32;
     memset (r_dlights, 0, sizeof(r_dlights));

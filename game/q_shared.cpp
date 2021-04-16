@@ -165,8 +165,8 @@ void PerpendicularVector( vec3_t dst, const vec3_t src )
     vec3_t tempvec;
 
     /*
-    ** find the smallest magnitude axially aligned vector
-    */
+* * find the smallest magnitude axially aligned vector
+*/
     for ( pos = 0, i = 0; i < 3; i++ )
     {
         if ( fabs( src[i] ) < minelem )
@@ -179,13 +179,13 @@ void PerpendicularVector( vec3_t dst, const vec3_t src )
     tempvec[pos] = 1.0F;
 
     /*
-    ** project the point onto the plane defined by src
-    */
+* * project the point onto the plane defined by src
+*/
     ProjectPointOnPlane( dst, tempvec, src );
 
     /*
-    ** normalize the result
-    */
+* * normalize the result
+*/
     VectorNormalize( dst );
 }
 
@@ -814,7 +814,7 @@ COM_SkipPath
 */
 char *COM_SkipPath (char *pathname)
 {
-    char    *last;
+    char* last;
 
     last = pathname;
     while (*pathname)
@@ -834,8 +834,8 @@ COM_StripExtension
 void COM_StripExtension (char *in, char *out)
 {
     while (*in && *in != '.')
-        *out++ = *in++;
-    *out = 0;
+    * out++ = *in++;
+* out = 0;
 }
 
 /*
@@ -914,7 +914,7 @@ COM_DefaultExtension
 */
 void COM_DefaultExtension (char *path, char *extension)
 {
-    char    *src;
+    char* src;
 //
 // if path doesn't have a .EXT, append extension
 // (extension should include the .)
@@ -1055,7 +1055,7 @@ varargs versions of all text functions.
 FIXME: make this buffer size safe someday
 ============
 */
-char    *va(char *format, ...)
+char* va(char *format, ...)
 {
     va_list        argptr;
     static char        string[1024];
@@ -1081,7 +1081,7 @@ char *COM_Parse (char **data_p)
 {
     int        c;
     int        len;
-    char    *data;
+    char* data;
 
     data = *data_p;
     len = 0;
@@ -1089,7 +1089,7 @@ char *COM_Parse (char **data_p)
 
     if (!data)
     {
-        *data_p = NULL;
+    * data_p = NULL;
         return "";
     }
 
@@ -1099,7 +1099,7 @@ skipwhite:
     {
         if (c == 0)
         {
-            *data_p = NULL;
+        * data_p = NULL;
             return "";
         }
         data++;
@@ -1123,7 +1123,7 @@ skipwhite:
             if (c=='\"' || !c)
             {
                 com_token[len] = 0;
-                *data_p = data;
+            * data_p = data;
                 return com_token;
             }
             if (len < MAX_TOKEN_CHARS)
@@ -1153,7 +1153,7 @@ skipwhite:
     }
     com_token[len] = 0;
 
-    *data_p = data;
+* data_p = data;
     return com_token;
 }
 
@@ -1262,7 +1262,7 @@ char *Info_ValueForKey (char *s, char *key)
     static    char value[2][512];    // use two buffers so compares
                                 // work without stomping on each other
     static    int    valueindex;
-    char    *o;
+    char* o;
 
     valueindex ^= 1;
     if (*s == '\\')
@@ -1274,9 +1274,9 @@ char *Info_ValueForKey (char *s, char *key)
         {
             if (!*s)
                 return "";
-            *o++ = *s++;
+        * o++ = *s++;
         }
-        *o = 0;
+    * o = 0;
         s++;
 
         o = value[valueindex];
@@ -1285,9 +1285,9 @@ char *Info_ValueForKey (char *s, char *key)
         {
             if (!*s)
                 return "";
-            *o++ = *s++;
+        * o++ = *s++;
         }
-        *o = 0;
+    * o = 0;
 
         if (!strcmp (key, pkey) )
             return value[valueindex];
@@ -1298,14 +1298,16 @@ char *Info_ValueForKey (char *s, char *key)
     }
 }
 
-void Info_RemoveKey (char *s, char *key)
+void Info_RemoveKey( const std::string& ss, const std::string& key_s )
 {
-    char    *start;
+    char* s = toChar( ss );
+    char* key = toChar( key_s );
+    char* start;
     char    pkey[512];
     char    value[512];
-    char    *o;
+    char* o;
 
-    if (strstr (key, "\\"))
+    if( key_s.find( "\\" ) != std::string::npos )
     {
 //        Com_Printf_G ("Can't use a key with a \\\n");
         return;
@@ -1313,17 +1315,17 @@ void Info_RemoveKey (char *s, char *key)
 
     while (1)
     {
-        start = s;
-        if (*s == '\\')
+        start = toChar( s );
+        if( *s == '\\' )
             s++;
         o = pkey;
         while (*s != '\\')
         {
             if (!*s)
                 return;
-            *o++ = *s++;
+        * o++ = *s++;
         }
-        *o = 0;
+        * o = 0;
         s++;
 
         o = value;
@@ -1331,30 +1333,26 @@ void Info_RemoveKey (char *s, char *key)
         {
             if (!*s)
                 return;
-            *o++ = *s++;
+        *o++ = *s++;
         }
         *o = 0;
 
-        if (!strcmp (key, pkey) )
+        if( !strcmp( key, pkey ) )
         {
-            strcpy (start, s);    // remove this part
+            strcpy( start, s );    // remove this part
             return;
         }
 
-        if (!*s)
+        if( !*s )
             return;
     }
 
 }
 
-
 /*
-==================
 Info_Validate
-
 Some characters are illegal in info strings because they
 can mess up the server's parsing
-==================
 */
 bool Info_Validate (char *s)
 {
@@ -1365,58 +1363,49 @@ bool Info_Validate (char *s)
     return true;
 }
 
-void Info_SetValueForKey (char *s, char *key, char *value)
+void Info_SetValueForKey (const std::string& ss, const std::string& key, const std::string& value)
 {
-    char    newi[MAX_INFO_STRING], *v;
+    char* s = toChar( ss );
+    std::string newi;
+    char* v;
     int        c;
     int        maxsize = MAX_INFO_STRING;
 
-    if (strstr (key, "\\") || strstr (value, "\\") )
+    if( key.find( "\\" ) != std::string::npos || value.find( "\\" ) != std::string::npos )
     {
-        Com_Printf_G ("Can't use keys or values with a \\\n");
+        //Com_Printf_G ("Can't use keys or values with a \\\n");
         return;
     }
 
-    if (strstr (key, ";") )
+    if ( key.find( ";" ) != std::string::npos )
     {
-        Com_Printf_G ("Can't use keys or values with a semicolon\n");
+        //Com_Printf_G ("Can't use keys or values with a semicolon\n");
         return;
     }
 
-    if (strstr (key, "\"") || strstr (value, "\"") )
+    if( key.find( "\"" ) != std::string::npos || value.find( "\"" ) != std::string::npos )
     {
-        Com_Printf_G ("Can't use keys or values with a \"\n");
+       // Com_Printf_G ("Can't use keys or values with a \"\n");
         return;
     }
 
-    if (strlen(key) > MAX_INFO_KEY-1 || strlen(value) > MAX_INFO_KEY-1)
-    {
-        Com_Printf_G ("Keys and values must be < 64 characters.\n");
-        return;
-    }
     Info_RemoveKey (s, key);
-    if (!value || !strlen(value))
+    if( value.empty() )
         return;
 
     //Com_sprintf (newi, sizeof(newi), "\\%s\\%s", key, value);
 
-    if (strlen(newi) + strlen(s) > maxsize)
-    {
-        Com_Printf_G ("Info string length exceeded\n");
-        return;
-    }
-
     // only copy ascii values
     s += strlen(s);
-    v = newi;
+    v = toChar( newi );
     while (*v)
     {
         c = *v++;
         c &= 127;        // strip high bits
         if (c >= 32 && c < 127)
-            *s++ = c;
+        * s++ = c;
     }
-    *s = 0;
+* s = 0;
 }
 
 //====================================================================

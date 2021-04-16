@@ -1,6 +1,4 @@
-#ifndef ____CLIENT_ADIVTAB_H__
-#define ____CLIENT_ADIVTAB_H__
-
+#pragma once
 // table of quotients and remainders for [-15...16] / [-15...16]
 
 // numerator = -15
@@ -1059,5 +1057,3 @@
 {1, 2},
 {1, 1},
 {1, 0},
-
-#endif // ____CLIENT_ADIVTAB_H__

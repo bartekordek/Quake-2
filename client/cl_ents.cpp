@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "client.hpp"
 #include "shared/shared_functions.hpp"
 
-extern    struct model_s    *cl_mod_powerscreen;
+extern    struct model_s* cl_mod_powerscreen;
 
 //PGM
 int    vidref_val;
@@ -156,7 +156,7 @@ CL_LinkProjectiles
 void CL_AddProjectiles (void)
 {
     int        i, j;
-    projectile_t    *pr;
+    projectile_t* pr;
     entity_t        ent;
 
     memset (&ent, 0, sizeof(ent));
@@ -232,7 +232,7 @@ int CL_ParseEntityBits (unsigned *bits)
     else
         number = MSG_ReadByte (&net_message);
 
-    *bits = total;
+* bits = total;
 
     return number;
 }
@@ -244,10 +244,10 @@ CL_ParseDelta
 Can go from either a baseline or a previous packet_entity
 ==================
 */
-void CL_ParseDelta(entity_state_t *from, entity_state_t *to, int number, unsigned bits)
+void CL_ParseDelta(entity_state *from, entity_state *to, int number, unsigned bits)
 {
     // set everything to the state we are delta'ing from
-    *to = *from;
+* to = *from;
 
     VectorCopy (from->origin, to->old_origin);
     to->number = number;
@@ -324,10 +324,10 @@ Parses deltas from the given base and adds the resulting entity
 to the current frame
 ==================
 */
-void CL_DeltaEntity (frame_t *frame, int newnum, entity_state_t *old, int bits)
+void CL_DeltaEntity (frame_t *frame, int newnum, entity_state *old, int bits)
 {
-    centity_t    *ent;
-    entity_state_t    *state;
+    centity_t* ent;
+    entity_state* state;
 
     ent = &cl_entities[newnum];
 
@@ -389,7 +389,7 @@ void CL_ParsePacketEntities (frame_t *oldframe, frame_t *newframe)
 {
     int            newnum;
     unsigned            bits;
-    entity_state_t    *oldstate;
+    entity_state* oldstate;
     int            oldindex, oldnum;
 
     newframe->parse_entities = cl.parse_entities;
@@ -515,7 +515,7 @@ CL_ParsePlayerstate
 void CL_ParsePlayerstate (frame_t *oldframe, frame_t *newframe)
 {
     int            flags;
-    player_state_t    *state;
+    player_state* state;
     int            i;
     int            statbits;
 
@@ -523,14 +523,14 @@ void CL_ParsePlayerstate (frame_t *oldframe, frame_t *newframe)
 
     // clear to old value before delta parsing
     if (oldframe)
-        *state = oldframe->playerstate;
+    * state = oldframe->playerstate;
     else
         memset (state, 0, sizeof(*state));
 
     flags = MSG_ReadShort (&net_message);
 
     //
-    // parse the pmove_state_t
+    // parse the pmove_state
     //
     if (flags & PS_M_TYPE)
         state->pmove.pm_type = (pmtype_t)MSG_ReadByte (&net_message);
@@ -569,7 +569,7 @@ void CL_ParsePlayerstate (frame_t *oldframe, frame_t *newframe)
         state->pmove.pm_type = pmtype_t::PM_FREEZE;        // demo playback
 
     //
-    // parse the rest of the player_state_t
+    // parse the rest of the player_state
     //
     if (flags & PS_VIEWOFFSET)
     {
@@ -638,7 +638,7 @@ CL_FireEntityEvents
 */
 void CL_FireEntityEvents (frame_t *frame)
 {
-    entity_state_t        *s1;
+    entity_state    * s1;
     int                    pnum, num;
 
     for (pnum = 0 ; pnum<frame->num_entities ; pnum++)
@@ -664,7 +664,7 @@ void CL_ParseFrame (void)
 {
     int            cmd;
     int            len;
-    frame_t        *old;
+    frame_t    * old;
 
     memset (&cl.frame, 0, sizeof(cl.frame));
 
@@ -777,11 +777,11 @@ INTERPOLATE BETWEEN FRAMES TO GET RENDERING PARMS
 ==========================================================================
 */
 
-model_s *S_RegisterSexedModel(entity_state_t* ent, const std::string& base)
+model_s *S_RegisterSexedModel(entity_state* ent, const std::string& base)
 {
     int                n;
-    char            *p;
-    struct model_s    *mdl;
+    char        * p;
+    struct model_s* mdl;
     std::string model;
     std::string buffer;
 
@@ -797,7 +797,7 @@ model_s *S_RegisterSexedModel(entity_state_t* ent, const std::string& base)
     //         strcpy(model.c_str(), p);
     //         p = strchr(model, '/');
     //         if (p)
-    //             *p = 0;
+    //         * p = 0;
     //     }
     // }
     // // if we can't figure it out, they're male
@@ -837,13 +837,13 @@ CL_AddPacketEntities
 void CL_AddPacketEntities (frame_t *frame)
 {
     entity_t            ent;
-    entity_state_t        *s1;
+    entity_state    * s1;
     float                autorotate;
     int                    i;
     int                    pnum;
-    centity_t            *cent;
+    centity_t        * cent;
     int                    autoanim;
-    clientinfo_t        *ci;
+    clientinfo_t    * ci;
     unsigned int        effects, renderfx;
 
     // bonus items rotate at a fixed rate
@@ -1293,7 +1293,7 @@ void CL_AddPacketEntities (frame_t *frame)
 CL_AddViewWeapon
 ==============
 */
-void CL_AddViewWeapon (player_state_t *ps, player_state_t *ops)
+void CL_AddViewWeapon (player_state *ps, player_state *ops)
 {
     entity_t    gun;        // view model
     int            i;
@@ -1356,9 +1356,9 @@ void CL_CalcViewValues (void)
 {
     int            i;
     float        lerp, backlerp;
-    centity_t    *ent;
-    frame_t        *oldframe;
-    player_state_t    *ps, *ops;
+    centity_t* ent;
+    frame_t    * oldframe;
+    player_state* ps, *ops;
 
     // find the previous frame to interpolate from
     ps = &cl.frame.playerstate;
@@ -1492,7 +1492,7 @@ Called to get the sound spatialization origin
 */
 void CL_GetEntitySoundOrigin (int ent, vec3_t org)
 {
-    centity_t    *old;
+    centity_t* old;
 
     if (ent < 0 || ent >= MAX_EDICTS)
         Com_Error (ERR_DROP, "CL_GetEntitySoundOrigin: bad ent");

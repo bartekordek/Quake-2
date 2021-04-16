@@ -77,7 +77,7 @@ R_RenderDlights
 void ref_gl_R_RenderDlights (void)
 {
     int        i;
-    dlight_t    *l;
+    dlight_t* l;
 
     if (!gl_flashblend->value)
         return;
@@ -107,9 +107,9 @@ DYNAMIC LIGHTS
 */
 void ref_gl_R_MarkLights (dlight_t *light, int bit, mnode_t *node)
 {
-    plane_t    *splitplane;
+    plane_t* splitplane;
     float        dist;
-    msurface_t    *surf;
+    msurface_t* surf;
     int            i;
 
     if (node->contents != -1)
@@ -148,7 +148,7 @@ void ref_gl_R_MarkLights (dlight_t *light, int bit, mnode_t *node)
 void ref_gl_R_PushDlights (void)
 {
     int        i;
-    dlight_t    *l;
+    dlight_t* l;
 
     if (gl_flashblend->value)
         return;
@@ -170,20 +170,20 @@ LIGHT SAMPLING
 */
 
 vec3_t            pointcolor;
-plane_t        *lightplane;        // used as shadow plane
+plane_t    * lightplane;        // used as shadow plane
 vec3_t            lightspot;
 
 int ref_gl_RecursiveLightPoint (mnode_t *node, vec3_t start, vec3_t end)
 {
     float        front, back, frac;
     int            side;
-    plane_t    *plane;
+    plane_t* plane;
     vec3_t        mid;
-    msurface_t    *surf;
+    msurface_t* surf;
     int            s, t, ds, dt;
     int            i;
-    mtexinfo_t    *tex;
-    byte        *lightmap;
+    mtexinfo_t* tex;
+    byte    * lightmap;
     int            maps;
     int            r;
 
@@ -284,7 +284,7 @@ void ref_gl_R_LightPoint (vec3_t p, vec3_t color)
     vec3_t        end;
     float        r;
     int            lnum;
-    dlight_t    *dl;
+    dlight_t* dl;
     float        light;
     vec3_t        dist;
     float        add;
@@ -349,9 +349,9 @@ void ref_gl_R_AddDynamicLights (msurface_t *surf)
     int            s, t;
     int            i;
     int            smax, tmax;
-    mtexinfo_t    *tex;
-    dlight_t    *dl;
-    float        *pfBL;
+    mtexinfo_t* tex;
+    dlight_t* dl;
+    float    * pfBL;
     float        fsacc, ftacc;
 
     smax = (surf->extents[0]>>4)+1;
@@ -437,11 +437,11 @@ void ref_gl_R_BuildLightMap (msurface_t *surf, byte *dest, int stride)
     int            smax, tmax;
     int            r, g, b, a, max;
     int            i, j, size;
-    byte        *lightmap;
+    byte    * lightmap;
     float        scale[4];
     int            nummaps;
-    float        *bl;
-    lightstyle_t    *style;
+    float    * bl;
+    lightstyle_t* style;
     int monolightmap;
 
     if ( surf->texinfo->flags & (SURF_SKY|SURF_TRANS33|SURF_TRANS66|SURF_WARP) )
@@ -580,8 +580,8 @@ store:
                     b = 0;
 
                 /*
-                ** determine the brightest of the three color components
-                */
+            * * determine the brightest of the three color components
+            */
                 if (r > g)
                     max = r;
                 else
@@ -590,16 +590,16 @@ store:
                     max = b;
 
                 /*
-                ** alpha is ONLY used for the mono lightmap case.  For this reason
-                ** we set it to the brightest of the color components so that
-                ** things don't get too dim.
-                */
+            * * alpha is ONLY used for the mono lightmap case.  For this reason
+            * * we set it to the brightest of the color components so that
+            * * things don't get too dim.
+            */
                 a = max;
 
                 /*
-                ** rescale all the color components if the intensity of the greatest
-                ** channel exceeds 1.0
-                */
+            * * rescale all the color components if the intensity of the greatest
+            * * channel exceeds 1.0
+            */
                 if (max > 255)
                 {
                     float t = 255.0F / max;
@@ -640,8 +640,8 @@ store:
                     b = 0;
 
                 /*
-                ** determine the brightest of the three color components
-                */
+            * * determine the brightest of the three color components
+            */
                 if (r > g)
                     max = r;
                 else
@@ -650,16 +650,16 @@ store:
                     max = b;
 
                 /*
-                ** alpha is ONLY used for the mono lightmap case.  For this reason
-                ** we set it to the brightest of the color components so that
-                ** things don't get too dim.
-                */
+            * * alpha is ONLY used for the mono lightmap case.  For this reason
+            * * we set it to the brightest of the color components so that
+            * * things don't get too dim.
+            */
                 a = max;
 
                 /*
-                ** rescale all the color components if the intensity of the greatest
-                ** channel exceeds 1.0
-                */
+            * * rescale all the color components if the intensity of the greatest
+            * * channel exceeds 1.0
+            */
                 if (max > 255)
                 {
                     float t = 255.0F / max;
@@ -671,9 +671,9 @@ store:
                 }
 
                 /*
-                ** So if we are doing alpha lightmaps we need to set the R, G, and B
-                ** components to 0 and we need to set alpha to 1-alpha.
-                */
+            * * So if we are doing alpha lightmaps we need to set the R, G, and B
+            * * components to 0 and we need to set alpha to 1-alpha.
+            */
                 switch ( monolightmap )
                 {
                 case 'L':

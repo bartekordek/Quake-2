@@ -50,7 +50,7 @@ typedef struct ctfgame_s
 	int lasttime;		// last time update
 
 	elect_t election;	// election type
-	struct edict_s *etarget;	// for admin election, who's being elected
+	edict *etarget;	// for admin election, who's being elected
 	char elevel[32];	// for map election, target level
 	int evotes;			// votes so far
 	int needvotes;		// votes needed
@@ -63,17 +63,17 @@ typedef struct ctfgame_s
 
 ctfgame_t ctfgame;
 
-cvar_t *ctf;
-cvar_t *ctf_forcejoin;
+cvar *ctf;
+cvar *ctf_forcejoin;
 
-cvar_t *competition;
-cvar_t *matchlock;
-cvar_t *electpercentage;
-cvar_t *matchtime;
-cvar_t *matchsetuptime;
-cvar_t *matchstarttime;
-cvar_t *admin_password;
-cvar_t *warp_list;
+cvar *competition;
+cvar *matchlock;
+cvar *electpercentage;
+cvar *matchtime;
+cvar *matchsetuptime;
+cvar *matchstarttime;
+cvar *admin_password;
+cvar *warp_list;
 
 char *ctf_statusbar =
 "yb	-24 "
@@ -201,7 +201,7 @@ static char *tnames[] = {
 	NULL
 };
 
-void stuffcmd(struct edict_s *ent, char *s)
+void stuffcmd(edict *ent, char *s)
 {
    	gi.WriteByte (11);
 	gi.WriteString (s);
@@ -219,7 +219,7 @@ Returns entities that have origins within a spherical area
 findradius (origin, radius)
 =================
 */
-static struct edict_s *loc_findradius (struct edict_s *from, vec3_t org, float rad)
+static edict *loc_findradius (edict *from, vec3_t org, float rad)
 {
 	vec3_t	eorg;
 	int		j;
@@ -266,7 +266,7 @@ static void loc_buildboxpoints(vec3_t p[8], vec3_t org, vec3_t mins, vec3_t maxs
 	p[7][1] -= maxs[1];
 }
 
-static bool loc_CanSee (struct edict_s *targ, struct edict_s *inflictor)
+static bool loc_CanSee (edict *targ, edict *inflictor)
 {
 	trace_t	trace;
 	vec3_t	targpoints[8];
@@ -293,8 +293,8 @@ static bool loc_CanSee (struct edict_s *targ, struct edict_s *inflictor)
 
 /*--------------------------------------------------------------------------*/
 
-static gitem_t *flag1_item;
-static gitem_t *flag2_item;
+static gitem *flag1_item;
+static gitem *flag2_item;
 
 void CTFSpawn(void)
 {
@@ -313,16 +313,16 @@ void CTFSpawn(void)
 
 void CTFInit(void)
 {
-	ctf = gi.cvar("ctf", "1", CVAR_SERVERINFO);
-	ctf_forcejoin = gi.cvar("ctf_forcejoin", "", 0);
-	competition = gi.cvar("competition", "0", CVAR_SERVERINFO);
-	matchlock = gi.cvar("matchlock", "1", CVAR_SERVERINFO);
-	electpercentage = gi.cvar("electpercentage", "66", 0);
-	matchtime = gi.cvar("matchtime", "20", CVAR_SERVERINFO);
-	matchsetuptime = gi.cvar("matchsetuptime", "10", 0);
-	matchstarttime = gi.cvar("matchstarttime", "20", 0);
-	admin_password = gi.cvar("admin_password", "", 0);
-	warp_list = gi.cvar("warp_list", "q2ctf1 q2ctf2 q2ctf3 q2ctf4 q2ctf5", 0);
+	ctf = gi.cvar_obj("ctf", "1", CVAR_SERVERINFO);
+	ctf_forcejoin = gi.cvar_obj("ctf_forcejoin", "", 0);
+	competition = gi.cvar_obj("competition", "0", CVAR_SERVERINFO);
+	matchlock = gi.cvar_obj("matchlock", "1", CVAR_SERVERINFO);
+	electpercentage = gi.cvar_obj("electpercentage", "66", 0);
+	matchtime = gi.cvar_obj("matchtime", "20", CVAR_SERVERINFO);
+	matchsetuptime = gi.cvar_obj("matchsetuptime", "10", 0);
+	matchstarttime = gi.cvar_obj("matchstarttime", "20", 0);
+	admin_password = gi.cvar_obj("admin_password", "", 0);
+	warp_list = gi.cvar_obj("warp_list", "q2ctf1 q2ctf2 q2ctf3 q2ctf4 q2ctf5", 0);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -362,11 +362,11 @@ int CTFOtherTeam(int team)
 
 /*--------------------------------------------------------------------------*/
 
-struct edict_s *SelectRandomDeathmatchSpawnPoint (void);
-struct edict_s *SelectFarthestDeathmatchSpawnPoint (void);
-float	PlayersRangeFromSpot (struct edict_s *spot);
+edict *SelectRandomDeathmatchSpawnPoint (void);
+edict *SelectFarthestDeathmatchSpawnPoint (void);
+float	PlayersRangeFromSpot (edict *spot);
 
-void CTFAssignSkin(struct edict_s *ent, char *s)
+void CTFAssignSkin(edict *ent, char *s)
 {
 	int playernum = ent-g_edicts-1;
 	char *p;
@@ -398,7 +398,7 @@ void CTFAssignSkin(struct edict_s *ent, char *s)
 
 void CTFAssignTeam(gclient_t *who)
 {
-	struct edict_s		*player;
+	edict		*player;
 	int i;
 	int team1count = 0, team2count = 0;
 
@@ -441,9 +441,9 @@ go to a ctf point, but NOT the two points closest
 to other players
 ================
 */
-struct edict_s *SelectCTFSpawnPoint (struct edict_s *ent)
+edict *SelectCTFSpawnPoint (edict *ent)
 {
-	struct edict_s	*spot, *spot1, *spot2;
+	edict	*spot, *spot1, *spot2;
 	int		count = 0;
 	int		selection;
 	float	range, range1, range2;
@@ -519,13 +519,13 @@ Calculate the bonuses for flag defense, flag carrier defense, etc.
 Note that bonuses are not cumaltive.  You get one, they are in importance
 order.
 */
-void CTFFragBonuses(struct edict_s *targ, struct edict_s *inflictor, struct edict_s *attacker)
+void CTFFragBonuses(edict *targ, edict *inflictor, edict *attacker)
 {
 	int i;
-	struct edict_s *ent;
-	gitem_t *flag_item, *enemy_flag_item;
+	edict *ent;
+	gitem *flag_item, *enemy_flag_item;
 	int otherteam;
-	struct edict_s *flag, *carrier;
+	edict *flag, *carrier;
 	char *c;
 	vec3_t v1, v2;
 
@@ -662,9 +662,9 @@ void CTFFragBonuses(struct edict_s *targ, struct edict_s *inflictor, struct edic
 	}
 }
 
-void CTFCheckHurtCarrier(struct edict_s *targ, struct edict_s *attacker)
+void CTFCheckHurtCarrier(edict *targ, edict *attacker)
 {
-	gitem_t *flag_item;
+	gitem *flag_item;
 
 	if (!targ->client || !attacker->client)
 		return;
@@ -685,7 +685,7 @@ void CTFCheckHurtCarrier(struct edict_s *targ, struct edict_s *attacker)
 void CTFResetFlag(int ctf_team)
 {
 	char *c;
-	struct edict_s *ent;
+	edict *ent;
 
 	switch (ctf_team) {
 	case CTF_TEAM1:
@@ -717,12 +717,12 @@ void CTFResetFlags(void)
 	CTFResetFlag(CTF_TEAM2);
 }
 
-bool CTFPickup_Flag(struct edict_s *ent, struct edict_s *other)
+bool CTFPickup_Flag(edict *ent, edict *other)
 {
 	int ctf_team;
 	int i;
-	struct edict_s *player;
-	gitem_t *flag_item, *enemy_flag_item;
+	edict *player;
+	gitem *flag_item, *enemy_flag_item;
 
 	// figure out what team this flag is
 	if (strcmp(ent->classname, "item_flag_team1") == 0)
@@ -826,7 +826,7 @@ bool CTFPickup_Flag(struct edict_s *ent, struct edict_s *other)
 	return true;
 }
 
-static void CTFDropFlagTouch(struct edict_s *ent, struct edict_s *other, plane_t *plane, csurface_t *surf)
+static void CTFDropFlagTouch(edict *ent, edict *other, plane_t *plane, csurface_t *surf)
 {
 	//owner (who dropped us) can't touch for two secs
 	if (other == ent->owner &&
@@ -836,7 +836,7 @@ static void CTFDropFlagTouch(struct edict_s *ent, struct edict_s *other, plane_t
 	Touch_Item (ent, other, plane, surf);
 }
 
-static void CTFDropFlagThink(struct edict_s *ent)
+static void CTFDropFlagThink(edict *ent)
 {
 	// auto return the flag
 	// reset flag will remove ourselves
@@ -852,9 +852,9 @@ static void CTFDropFlagThink(struct edict_s *ent)
 }
 
 // Called from PlayerDie, to drop the flag from a dying player
-void CTFDeadDropFlag(struct edict_s *self)
+void CTFDeadDropFlag(edict *self)
 {
-	struct edict_s *dropped = NULL;
+	edict *dropped = NULL;
 
 	if (self->client->pers.inventory[ITEM_INDEX(flag1_item)]) {
 		dropped = Drop_Item(self, flag1_item);
@@ -875,7 +875,7 @@ void CTFDeadDropFlag(struct edict_s *self)
 	}
 }
 
-bool CTFDrop_Flag(struct edict_s *ent, gitem_t *item)
+bool CTFDrop_Flag(edict *ent, gitem *item)
 {
 	if (rand() & 1)
 		gi.cprintf(ent, PRINT_HIGH, "Only lusers drop flags.\n");
@@ -884,7 +884,7 @@ bool CTFDrop_Flag(struct edict_s *ent, gitem_t *item)
 	return false;
 }
 
-static void CTFFlagThink(struct edict_s *ent)
+static void CTFFlagThink(edict *ent)
 {
 	if (ent->solid != SOLID_NOT)
 		ent->s.frame = 173 + (((ent->s.frame - 173) + 1) % 16);
@@ -892,7 +892,7 @@ static void CTFFlagThink(struct edict_s *ent)
 }
 
 
-void CTFFlagSetup (struct edict_s *ent)
+void CTFFlagSetup (edict *ent)
 {
 	trace_t		tr;
 	vec3_t		dest;
@@ -930,7 +930,7 @@ void CTFFlagSetup (struct edict_s *ent)
 	ent->think = CTFFlagThink;
 }
 
-void CTFEffects(struct edict_s *player)
+void CTFEffects(edict *player)
 {
 	player->s.effects &= ~(EF_FLAG1 | EF_FLAG2);
 	if (player->health > 0) {
@@ -966,7 +966,7 @@ void CTFCalcScores(void)
 	}
 }
 
-void CTFID_f (struct edict_s *ent)
+void CTFID_f (edict *ent)
 {
 	if (ent->client->resp.id_state) {
 		gi.cprintf(ent, PRINT_HIGH, "Disabling player identication display.\n");
@@ -977,11 +977,11 @@ void CTFID_f (struct edict_s *ent)
 	}
 }
 
-static void CTFSetIDView(struct edict_s *ent)
+static void CTFSetIDView(edict *ent)
 {
 	vec3_t	forward, dir;
 	trace_t	tr;
-	struct edict_s	*who, *best;
+	edict	*who, *best;
 	float	bd = 0, d;
 	int i;
 
@@ -1016,12 +1016,12 @@ static void CTFSetIDView(struct edict_s *ent)
 			CS_PLAYERSKINS + (best - g_edicts - 1);
 }
 
-void SetCTFStats(struct edict_s *ent)
+void SetCTFStats(edict *ent)
 {
-	gitem_t *tech;
+	gitem *tech;
 	int i;
 	int p1, p2;
-	struct edict_s *e;
+	edict *e;
 
 	if (ctfgame.match > MATCH_NONE)
 		ent->client->ps.stats[STAT_CTF_MATCH] = CONFIG_CTF_MATCH;
@@ -1160,14 +1160,14 @@ void SetCTFStats(struct edict_s *ent)
 /*QUAKED info_player_team1 (1 0 0) (-16 -16 -24) (16 16 32)
 potential team1 spawning position for ctf games
 */
-void SP_info_player_team1(struct edict_s *self)
+void SP_info_player_team1(edict *self)
 {
 }
 
 /*QUAKED info_player_team2 (0 0 1) (-16 -16 -24) (16 16 32)
 potential team2 spawning position for ctf games
 */
-void SP_info_player_team2(struct edict_s *self)
+void SP_info_player_team2(edict *self)
 {
 }
 
@@ -1177,14 +1177,14 @@ void SP_info_player_team2(struct edict_s *self)
 /*------------------------------------------------------------------------*/
 
 // ent is player
-void CTFPlayerResetGrapple(struct edict_s *ent)
+void CTFPlayerResetGrapple(edict *ent)
 {
 	if (ent->client && ent->client->ctf_grapple)
 		CTFResetGrapple(ent->client->ctf_grapple);
 }
 
 // self is grapple, not player
-void CTFResetGrapple(struct edict_s *self)
+void CTFResetGrapple(edict *self)
 {
 	if (self->owner->client->ctf_grapple) {
 		float volume = 1.0;
@@ -1203,7 +1203,7 @@ void CTFResetGrapple(struct edict_s *self)
 	}
 }
 
-void CTFGrappleTouch (struct edict_s *self, struct edict_s *other, plane_t *plane, csurface_t *surf)
+void CTFGrappleTouch (edict *self, edict *other, plane_t *plane, csurface_t *surf)
 {
 	float volume = 1.0;
 
@@ -1251,7 +1251,7 @@ void CTFGrappleTouch (struct edict_s *self, struct edict_s *other, plane_t *plan
 }
 
 // draw beam between grapple and self
-void CTFGrappleDrawCable(struct edict_s *self)
+void CTFGrappleDrawCable(edict *self)
 {
 	vec3_t	offset, start, end, f, r;
 	vec3_t	dir;
@@ -1312,10 +1312,10 @@ void CTFGrappleDrawCable(struct edict_s *self)
 	gi.multicast (self->s.origin, MULTICAST_PVS);
 }
 
-void SV_AddGravity (struct edict_s *ent);
+void SV_AddGravity (edict *ent);
 
 // pull the player toward the grapple
-void CTFGrapplePull(struct edict_s *self)
+void CTFGrapplePull(edict *self)
 {
 	vec3_t hookdir, v;
 	float vlen;
@@ -1392,9 +1392,9 @@ void CTFGrapplePull(struct edict_s *self)
 	}
 }
 
-void CTFFireGrapple (struct edict_s *self, vec3_t start, vec3_t dir, int damage, int speed, int effect)
+void CTFFireGrapple (edict *self, vec3_t start, vec3_t dir, int damage, int speed, int effect)
 {
-	struct edict_s	*grapple;
+	edict	*grapple;
 	trace_t	tr;
 
 	VectorNormalize (dir);
@@ -1429,7 +1429,7 @@ void CTFFireGrapple (struct edict_s *self, vec3_t start, vec3_t dir, int damage,
 	}
 }
 
-void CTFGrappleFire (struct edict_s *ent, vec3_t g_offset, int damage, int effect)
+void CTFGrappleFire (edict *ent, vec3_t g_offset, int damage, int effect)
 {
 	vec3_t	forward, right;
 	vec3_t	start;
@@ -1466,7 +1466,7 @@ void CTFGrappleFire (struct edict_s *ent, vec3_t g_offset, int damage, int effec
 }
 
 
-void CTFWeapon_Grapple_Fire (struct edict_s *ent)
+void CTFWeapon_Grapple_Fire (edict *ent)
 {
 	int		damage;
 
@@ -1475,7 +1475,7 @@ void CTFWeapon_Grapple_Fire (struct edict_s *ent)
 	ent->client->ps.gunframe++;
 }
 
-void CTFWeapon_Grapple (struct edict_s *ent)
+void CTFWeapon_Grapple (edict *ent)
 {
 	static int	pause_frames[]	= {10, 18, 27, 0};
 	static int	fire_frames[]	= {6, 0};
@@ -1519,7 +1519,7 @@ void CTFWeapon_Grapple (struct edict_s *ent)
 	}
 }
 
-void CTFTeam_f (struct edict_s *ent)
+void CTFTeam_f (edict *ent)
 {
 	char *t, *s;
 	int desired_team;
@@ -1588,7 +1588,7 @@ void CTFTeam_f (struct edict_s *ent)
 CTFScoreboardMessage
 ==================
 */
-void CTFScoreboardMessage (struct edict_s *ent, struct edict_s *killer)
+void CTFScoreboardMessage (edict *ent, edict *killer)
 {
 	char	entry[1024];
 	char	string[1400];
@@ -1599,7 +1599,7 @@ void CTFScoreboardMessage (struct edict_s *ent, struct edict_s *killer)
 	int		score, total[2], totalscore[2];
 	int		last[2];
 	gclient_t	*cl;
-	struct edict_s		*cl_ent;
+	edict		*cl_ent;
 	int team;
 	int maxsize = 1000;
 
@@ -1798,7 +1798,7 @@ void CTFScoreboardMessage (struct edict_s *ent, struct edict_s *killer)
 /* TECH																	  */
 /*------------------------------------------------------------------------*/
 
-void CTFHasTech(struct edict_s *who)
+void CTFHasTech(edict *who)
 {
 	if (level.time - who->client->ctf_lasttechmsg > 2) {
 		gi.centerprintf(who, "You already have a TECH powerup.");
@@ -1806,9 +1806,9 @@ void CTFHasTech(struct edict_s *who)
 	}
 }
 
-gitem_t *CTFWhat_Tech(struct edict_s *ent)
+gitem *CTFWhat_Tech(edict *ent)
 {
-	gitem_t *tech;
+	gitem *tech;
 	int i;
 
 	i = 0;
@@ -1822,9 +1822,9 @@ gitem_t *CTFWhat_Tech(struct edict_s *ent)
 	return NULL;
 }
 
-bool CTFPickup_Tech (struct edict_s *ent, struct edict_s *other)
+bool CTFPickup_Tech (edict *ent, edict *other)
 {
-	gitem_t *tech;
+	gitem *tech;
 	int i;
 
 	i = 0;
@@ -1843,11 +1843,11 @@ bool CTFPickup_Tech (struct edict_s *ent, struct edict_s *other)
 	return true;
 }
 
-static void SpawnTech(gitem_t *item, struct edict_s *spot);
+static void SpawnTech(gitem *item, edict *spot);
 
-static struct edict_s *FindTechSpawn(void)
+static edict *FindTechSpawn(void)
 {
-	struct edict_s *spot = NULL;
+	edict *spot = NULL;
 	int i = rand() % 16;
 
 	while (i--)
@@ -1857,9 +1857,9 @@ static struct edict_s *FindTechSpawn(void)
 	return spot;
 }
 
-static void TechThink(struct edict_s *tech)
+static void TechThink(edict *tech)
 {
-	struct edict_s *spot;
+	edict *spot;
 
 	if ((spot = FindTechSpawn()) != NULL) {
 		SpawnTech(tech->item, spot);
@@ -1870,9 +1870,9 @@ static void TechThink(struct edict_s *tech)
 	}
 }
 
-void CTFDrop_Tech(struct edict_s *ent, gitem_t *item)
+void CTFDrop_Tech(edict *ent, gitem *item)
 {
-	struct edict_s *tech;
+	edict *tech;
 
 	tech = Drop_Item(ent, item);
 	tech->nextthink = level.time + CTF_TECH_TIMEOUT;
@@ -1880,10 +1880,10 @@ void CTFDrop_Tech(struct edict_s *ent, gitem_t *item)
 	ent->client->pers.inventory[ITEM_INDEX(item)] = 0;
 }
 
-void CTFDeadDropTech(struct edict_s *ent)
+void CTFDeadDropTech(edict *ent)
 {
-	gitem_t *tech;
-	struct edict_s *dropped;
+	gitem *tech;
+	edict *dropped;
 	int i;
 
 	i = 0;
@@ -1903,9 +1903,9 @@ void CTFDeadDropTech(struct edict_s *ent)
 	}
 }
 
-static void SpawnTech(gitem_t *item, struct edict_s *spot)
+static void SpawnTech(gitem *item, edict *spot)
 {
-	struct edict_s	*ent;
+	edict	*ent;
 	vec3_t	forward, right;
 	vec3_t  angles;
 
@@ -1940,10 +1940,10 @@ static void SpawnTech(gitem_t *item, struct edict_s *spot)
 	gi.linkentity (ent);
 }
 
-static void SpawnTechs(struct edict_s *ent)
+static void SpawnTechs(edict *ent)
 {
-	gitem_t *tech;
-	struct edict_s *spot;
+	gitem *tech;
+	edict *spot;
 	int i;
 
 	i = 0;
@@ -1958,9 +1958,9 @@ static void SpawnTechs(struct edict_s *ent)
 }
 
 // frees the passed edict!
-void CTFRespawnTech(struct edict_s *ent)
+void CTFRespawnTech(edict *ent)
 {
-	struct edict_s *spot;
+	edict *spot;
 
 	if ((spot = FindTechSpawn()) != NULL)
 		SpawnTech(ent->item, spot);
@@ -1969,7 +1969,7 @@ void CTFRespawnTech(struct edict_s *ent)
 
 void CTFSetupTechSpawn(void)
 {
-	struct edict_s *ent;
+	edict *ent;
 
 	if (((int)dmflags->value & DF_CTF_NO_TECH))
 		return;
@@ -1981,7 +1981,7 @@ void CTFSetupTechSpawn(void)
 
 void CTFResetTech(void)
 {
-	struct edict_s *ent;
+	edict *ent;
 	int i;
 
 	for (ent = g_edicts + 1, i = 1; i < globals.num_edicts; i++, ent++) {
@@ -1992,9 +1992,9 @@ void CTFResetTech(void)
 	SpawnTechs(NULL);
 }
 
-int CTFApplyResistance(struct edict_s *ent, int dmg)
+int CTFApplyResistance(edict *ent, int dmg)
 {
-	static gitem_t *tech = NULL;
+	static gitem *tech = NULL;
 	float volume = 1.0;
 
 	if (ent->client && ent->client->silencer_shots)
@@ -2010,9 +2010,9 @@ int CTFApplyResistance(struct edict_s *ent, int dmg)
 	return dmg;
 }
 
-int CTFApplyStrength(struct edict_s *ent, int dmg)
+int CTFApplyStrength(edict *ent, int dmg)
 {
-	static gitem_t *tech = NULL;
+	static gitem *tech = NULL;
 
 	if (!tech)
 		tech = FindItemByClassname("item_tech2");
@@ -2022,9 +2022,9 @@ int CTFApplyStrength(struct edict_s *ent, int dmg)
 	return dmg;
 }
 
-bool CTFApplyStrengthSound(struct edict_s *ent)
+bool CTFApplyStrengthSound(edict *ent)
 {
-	static gitem_t *tech = NULL;
+	static gitem *tech = NULL;
 	float volume = 1.0;
 
 	if (ent->client && ent->client->silencer_shots)
@@ -2047,9 +2047,9 @@ bool CTFApplyStrengthSound(struct edict_s *ent)
 }
 
 
-bool CTFApplyHaste(struct edict_s *ent)
+bool CTFApplyHaste(edict *ent)
 {
-	static gitem_t *tech = NULL;
+	static gitem *tech = NULL;
 
 	if (!tech)
 		tech = FindItemByClassname("item_tech3");
@@ -2059,9 +2059,9 @@ bool CTFApplyHaste(struct edict_s *ent)
 	return false;
 }
 
-void CTFApplyHasteSound(struct edict_s *ent)
+void CTFApplyHasteSound(edict *ent)
 {
-	static gitem_t *tech = NULL;
+	static gitem *tech = NULL;
 	float volume = 1.0;
 
 	if (ent->client && ent->client->silencer_shots)
@@ -2077,9 +2077,9 @@ void CTFApplyHasteSound(struct edict_s *ent)
 	}
 }
 
-void CTFApplyRegeneration(struct edict_s *ent)
+void CTFApplyRegeneration(edict *ent)
 {
-	static gitem_t *tech = NULL;
+	static gitem *tech = NULL;
 	bool noise = false;
 	gclient_t *client;
 	int index;
@@ -2120,9 +2120,9 @@ void CTFApplyRegeneration(struct edict_s *ent)
 	}
 }
 
-bool CTFHasRegeneration(struct edict_s *ent)
+bool CTFHasRegeneration(edict *ent)
 {
-	static gitem_t *tech = NULL;
+	static gitem *tech = NULL;
 
 	if (!tech)
 		tech = FindItemByClassname("item_tech4");
@@ -2175,17 +2175,17 @@ struct {
 };
 
 
-static void CTFSay_Team_Location(struct edict_s *who, char *buf)
+static void CTFSay_Team_Location(edict *who, char *buf)
 {
-	struct edict_s *what = NULL;
-	struct edict_s *hot = NULL;
+	edict *what = NULL;
+	edict *hot = NULL;
 	float hotdist = 999999, newdist;
 	vec3_t v;
 	int hotindex = 999;
 	int i;
-	gitem_t *item;
+	gitem *item;
 	int nearteam = -1;
-	struct edict_s *flag1, *flag2;
+	edict *flag1, *flag2;
 	bool hotsee = false;
 	bool cansee;
 
@@ -2281,9 +2281,9 @@ static void CTFSay_Team_Location(struct edict_s *who, char *buf)
 	strcat(buf, item->pickup_name);
 }
 
-static void CTFSay_Team_Armor(struct edict_s *who, char *buf)
+static void CTFSay_Team_Armor(edict *who, char *buf)
 {
-	gitem_t		*item;
+	gitem		*item;
 	int			index, cells;
 	int			power_armor_type;
 
@@ -2315,7 +2315,7 @@ static void CTFSay_Team_Armor(struct edict_s *who, char *buf)
 		strcpy(buf, "no armor");
 }
 
-static void CTFSay_Team_Health(struct edict_s *who, char *buf)
+static void CTFSay_Team_Health(edict *who, char *buf)
 {
 	if (who->health <= 0)
 		strcpy(buf, "dead");
@@ -2323,9 +2323,9 @@ static void CTFSay_Team_Health(struct edict_s *who, char *buf)
 		sprintf(buf, "%i health", who->health);
 }
 
-static void CTFSay_Team_Tech(struct edict_s *who, char *buf)
+static void CTFSay_Team_Tech(edict *who, char *buf)
 {
-	gitem_t *tech;
+	gitem *tech;
 	int i;
 
 	// see if the player has a tech powerup
@@ -2341,7 +2341,7 @@ static void CTFSay_Team_Tech(struct edict_s *who, char *buf)
 	strcpy(buf, "no powerup");
 }
 
-static void CTFSay_Team_Weapon(struct edict_s *who, char *buf)
+static void CTFSay_Team_Weapon(edict *who, char *buf)
 {
 	if (who->client->pers.weapon)
 		strcpy(buf, who->client->pers.weapon->pickup_name);
@@ -2349,10 +2349,10 @@ static void CTFSay_Team_Weapon(struct edict_s *who, char *buf)
 		strcpy(buf, "none");
 }
 
-static void CTFSay_Team_Sight(struct edict_s *who, char *buf)
+static void CTFSay_Team_Sight(edict *who, char *buf)
 {
 	int i;
-	struct edict_s *targ;
+	edict *targ;
 	int n = 0;
 	char s[1024];
 	char s2[1024];
@@ -2386,13 +2386,13 @@ static void CTFSay_Team_Sight(struct edict_s *who, char *buf)
 		strcpy(buf, "no one");
 }
 
-void CTFSay_Team(struct edict_s *who, char *msg)
+void CTFSay_Team(edict *who, char *msg)
 {
 	char outmsg[1024];
 	char buf[1024];
 	int i;
 	char *p;
-	struct edict_s *cl_ent;
+	edict *cl_ent;
 
 	if (CheckFlood(who))
 		return;
@@ -2468,13 +2468,13 @@ void CTFSay_Team(struct edict_s *who, char *msg)
 The origin is the bottom of the banner.
 The banner is 248 tall.
 */
-static void misc_ctf_banner_think (struct edict_s *ent)
+static void misc_ctf_banner_think (edict *ent)
 {
 	ent->s.frame = (ent->s.frame + 1) % 16;
 	ent->nextthink = level.time + FRAMETIME;
 }
 
-void SP_misc_ctf_banner (struct edict_s *ent)
+void SP_misc_ctf_banner (edict *ent)
 {
 	ent->movetype = MOVETYPE_NONE;
 	ent->solid = SOLID_NOT;
@@ -2493,7 +2493,7 @@ void SP_misc_ctf_banner (struct edict_s *ent)
 The origin is the bottom of the banner.
 The banner is 124 tall.
 */
-void SP_misc_ctf_small_banner (struct edict_s *ent)
+void SP_misc_ctf_small_banner (edict *ent)
 {
 	ent->movetype = MOVETYPE_NONE;
 	ent->solid = SOLID_NOT;
@@ -2529,11 +2529,11 @@ static void SetLevelName(pmenu_t *p)
 
 /* ELECTIONS */
 
-bool CTFBeginElection(struct edict_s *ent, elect_t type, char *msg)
+bool CTFBeginElection(edict *ent, elect_t type, char *msg)
 {
 	int i;
 	int count;
-	struct edict_s *e;
+	edict *e;
 
 	if (electpercentage->value == 0) {
 		gi.cprintf(ent, PRINT_HIGH, "Elections are disabled, only an admin can process this action.\n");
@@ -2576,12 +2576,12 @@ bool CTFBeginElection(struct edict_s *ent, elect_t type, char *msg)
 	return true;
 }
 
-void DoRespawn (struct edict_s *ent);
+void DoRespawn (edict *ent);
 
 void CTFResetAllPlayers(void)
 {
 	int i;
-	struct edict_s *ent;
+	edict *ent;
 
 	for (i = 1; i <= maxclients->value; i++) {
 		ent = g_edicts + i;
@@ -2620,7 +2620,7 @@ void CTFResetAllPlayers(void)
 		ctfgame.matchtime = level.time + matchsetuptime->value * 60;
 }
 
-void CTFAssignGhost(struct edict_s *ent)
+void CTFAssignGhost(edict *ent)
 {
 	int ghost, i;
 
@@ -2651,7 +2651,7 @@ void CTFAssignGhost(struct edict_s *ent)
 void CTFStartMatch(void)
 {
 	int i;
-	struct edict_s *ent;
+	edict *ent;
 	int ghost = 0;
 
 	ctfgame.match = MATCH_GAME;
@@ -2759,7 +2759,7 @@ void CTFWinElection(void)
 	ctfgame.election = ELECT_NONE;
 }
 
-void CTFVoteYes(struct edict_s *ent)
+void CTFVoteYes(edict *ent)
 {
 	if (ctfgame.election == ELECT_NONE) {
 		gi.cprintf(ent, PRINT_HIGH, "No election is in progress.\n");
@@ -2787,7 +2787,7 @@ void CTFVoteYes(struct edict_s *ent)
 		(int)(ctfgame.electtime - level.time));
 }
 
-void CTFVoteNo(struct edict_s *ent)
+void CTFVoteNo(edict *ent)
 {
 	if (ctfgame.election == ELECT_NONE) {
 		gi.cprintf(ent, PRINT_HIGH, "No election is in progress.\n");
@@ -2809,10 +2809,10 @@ void CTFVoteNo(struct edict_s *ent)
 		(int)(ctfgame.electtime - level.time));
 }
 
-void CTFReady(struct edict_s *ent)
+void CTFReady(edict *ent)
 {
 	int i, j;
-	struct edict_s *e;
+	edict *e;
 	int t1, t2;
 
 	if (ent->client->resp.ctf_team == CTF_NOTEAM) {
@@ -2853,7 +2853,7 @@ void CTFReady(struct edict_s *ent)
 	}
 }
 
-void CTFNotReady(struct edict_s *ent)
+void CTFNotReady(edict *ent)
 {
 	if (ent->client->resp.ctf_team == CTF_NOTEAM) {
 		gi.cprintf(ent, PRINT_HIGH, "Pick a team first (hit <TAB> for menu)\n");
@@ -2880,7 +2880,7 @@ void CTFNotReady(struct edict_s *ent)
 	}
 }
 
-void CTFGhost(struct edict_s *ent)
+void CTFGhost(edict *ent)
 {
 	int i;
 	int n;
@@ -2938,11 +2938,11 @@ bool CTFMatchOn(void)
 
 /*-----------------------------------------------------------------------*/
 
-void CTFJoinTeam1(struct edict_s *ent, pmenuhnd_t *p);
-void CTFJoinTeam2(struct edict_s *ent, pmenuhnd_t *p);
-void CTFCredits(struct edict_s *ent, pmenuhnd_t *p);
-void CTFReturnToMain(struct edict_s *ent, pmenuhnd_t *p);
-void CTFChaseCam(struct edict_s *ent, pmenuhnd_t *p);
+void CTFJoinTeam1(edict *ent, pmenuhnd_t *p);
+void CTFJoinTeam2(edict *ent, pmenuhnd_t *p);
+void CTFCredits(edict *ent, pmenuhnd_t *p);
+void CTFReturnToMain(edict *ent, pmenuhnd_t *p);
+void CTFChaseCam(edict *ent, pmenuhnd_t *p);
 
 pmenu_t creditsmenu[] = {
 	{ "*Quake II",						PMENU_ALIGN_CENTER, NULL },
@@ -3003,7 +3003,7 @@ pmenu_t nochasemenu[] = {
 	{ "Return to Main Menu", PMENU_ALIGN_LEFT, CTFReturnToMain }
 };
 
-void CTFJoinTeam(struct edict_s *ent, int desired_team)
+void CTFJoinTeam(edict *ent, int desired_team)
 {
 	char *s;
 
@@ -3040,20 +3040,20 @@ void CTFJoinTeam(struct edict_s *ent, int desired_team)
 	}
 }
 
-void CTFJoinTeam1(struct edict_s *ent, pmenuhnd_t *p)
+void CTFJoinTeam1(edict *ent, pmenuhnd_t *p)
 {
 	CTFJoinTeam(ent, CTF_TEAM1);
 }
 
-void CTFJoinTeam2(struct edict_s *ent, pmenuhnd_t *p)
+void CTFJoinTeam2(edict *ent, pmenuhnd_t *p)
 {
 	CTFJoinTeam(ent, CTF_TEAM2);
 }
 
-void CTFChaseCam(struct edict_s *ent, pmenuhnd_t *p)
+void CTFChaseCam(edict *ent, pmenuhnd_t *p)
 {
 	int i;
-	struct edict_s *e;
+	edict *e;
 
 	if (ent->client->chase_target) {
 		ent->client->chase_target = NULL;
@@ -3077,13 +3077,13 @@ void CTFChaseCam(struct edict_s *ent, pmenuhnd_t *p)
 	PMenu_Open(ent, nochasemenu, -1, sizeof(nochasemenu) / sizeof(pmenu_t), NULL);
 }
 
-void CTFReturnToMain(struct edict_s *ent, pmenuhnd_t *p)
+void CTFReturnToMain(edict *ent, pmenuhnd_t *p)
 {
 	PMenu_Close(ent);
 	CTFOpenJoinMenu(ent);
 }
 
-void CTFRequestMatch(struct edict_s *ent, pmenuhnd_t *p)
+void CTFRequestMatch(edict *ent, pmenuhnd_t *p)
 {
 	char text[1024];
 
@@ -3094,9 +3094,9 @@ void CTFRequestMatch(struct edict_s *ent, pmenuhnd_t *p)
 	CTFBeginElection(ent, ELECT_MATCH, text);
 }
 
-void DeathmatchScoreboard (struct edict_s *ent);
+void DeathmatchScoreboard (edict *ent);
 
-void CTFShowScores(struct edict_s *ent, pmenu_t *p)
+void CTFShowScores(edict *ent, pmenu_t *p)
 {
 	PMenu_Close(ent);
 
@@ -3105,7 +3105,7 @@ void CTFShowScores(struct edict_s *ent, pmenu_t *p)
 	DeathmatchScoreboard (ent);
 }
 
-int CTFUpdateJoinMenu(struct edict_s *ent)
+int CTFUpdateJoinMenu(edict *ent)
 {
 	static char team1players[32];
 	static char team2players[32];
@@ -3199,7 +3199,7 @@ int CTFUpdateJoinMenu(struct edict_s *ent)
 	return (rand() & 1) ? CTF_TEAM1 : CTF_TEAM2;
 }
 
-void CTFOpenJoinMenu(struct edict_s *ent)
+void CTFOpenJoinMenu(edict *ent)
 {
 	int team;
 
@@ -3213,13 +3213,13 @@ void CTFOpenJoinMenu(struct edict_s *ent)
 	PMenu_Open(ent, joinmenu, team, sizeof(joinmenu) / sizeof(pmenu_t), NULL);
 }
 
-void CTFCredits(struct edict_s *ent, pmenuhnd_t *p)
+void CTFCredits(edict *ent, pmenuhnd_t *p)
 {
 	PMenu_Close(ent);
 	PMenu_Open(ent, creditsmenu, -1, sizeof(creditsmenu) / sizeof(pmenu_t), NULL);
 }
 
-bool CTFStartClient(struct edict_s *ent)
+bool CTFStartClient(edict *ent)
 {
 	if (ent->client->resp.ctf_team != CTF_NOTEAM)
 		return false;
@@ -3239,7 +3239,7 @@ bool CTFStartClient(struct edict_s *ent)
 	return false;
 }
 
-void CTFObserver(struct edict_s *ent)
+void CTFObserver(edict *ent)
 {
 	// start as 'observer'
 	if (ent->movetype == MOVETYPE_NOCLIP) {
@@ -3273,7 +3273,7 @@ bool CTFCheckRules(void)
 	int t;
 	int i, j;
 	char text[64];
-	struct edict_s *ent;
+	edict *ent;
 
 	if (ctfgame.election != ELECT_NONE && ctfgame.electtime <= level.time) {
 		gi.bprintf(PRINT_CHAT, "Election timed out and has been cancelled.\n");
@@ -3363,9 +3363,9 @@ bool CTFCheckRules(void)
  * just here to help old map conversions
  *--------------------------------------------------------------------------*/
 
-static void old_teleporter_touch (struct edict_s *self, struct edict_s *other, plane_t *plane, csurface_t *surf)
+static void old_teleporter_touch (edict *self, edict *other, plane_t *plane, csurface_t *surf)
 {
-	struct edict_s		*dest;
+	edict		*dest;
 	int			i;
 	vec3_t		forward;
 
@@ -3423,9 +3423,9 @@ static void old_teleporter_touch (struct edict_s *self, struct edict_s *other, p
 /*QUAKED trigger_teleport (0.5 0.5 0.5) ?
 Players touching this will be teleported
 */
-void SP_trigger_teleport (struct edict_s *ent)
+void SP_trigger_teleport (edict *ent)
 {
-	struct edict_s *s;
+	edict *s;
 	int i;
 
 	if (!ent->target)
@@ -3454,7 +3454,7 @@ void SP_trigger_teleport (struct edict_s *ent)
 /*QUAKED info_teleport_destination (0.5 0.5 0.5) (-16 -16 -24) (16 16 32)
 Point trigger_teleports at these.
 */
-void SP_info_teleport_destination (struct edict_s *ent)
+void SP_info_teleport_destination (edict *ent)
 {
 	ent->s.origin[2] += 16;
 }
@@ -3475,10 +3475,10 @@ typedef struct admin_settings_s {
 
 #define SETMENU_SIZE (7 + 5)
 
-void CTFAdmin_UpdateSettings(struct edict_s *ent, pmenuhnd_t *setmenu);
-void CTFOpenAdminMenu(struct edict_s *ent);
+void CTFAdmin_UpdateSettings(edict *ent, pmenuhnd_t *setmenu);
+void CTFOpenAdminMenu(edict *ent);
 
-void CTFAdmin_SettingsApply(struct edict_s *ent, pmenuhnd_t *p)
+void CTFAdmin_SettingsApply(edict *ent, pmenuhnd_t *p)
 {
 	admin_settings_t *settings = p->arg;
 	char st[80];
@@ -3571,7 +3571,7 @@ void CTFAdmin_SettingsApply(struct edict_s *ent, pmenuhnd_t *p)
 	CTFOpenAdminMenu(ent);
 }
 
-void CTFAdmin_SettingsCancel(struct edict_s *ent, pmenuhnd_t *p)
+void CTFAdmin_SettingsCancel(edict *ent, pmenuhnd_t *p)
 {
 	admin_settings_t *settings = p->arg;
 
@@ -3579,7 +3579,7 @@ void CTFAdmin_SettingsCancel(struct edict_s *ent, pmenuhnd_t *p)
 	CTFOpenAdminMenu(ent);
 }
 
-void CTFAdmin_ChangeMatchLen(struct edict_s *ent, pmenuhnd_t *p)
+void CTFAdmin_ChangeMatchLen(edict *ent, pmenuhnd_t *p)
 {
 	admin_settings_t *settings = p->arg;
 
@@ -3590,7 +3590,7 @@ void CTFAdmin_ChangeMatchLen(struct edict_s *ent, pmenuhnd_t *p)
 	CTFAdmin_UpdateSettings(ent, p);
 }
 
-void CTFAdmin_ChangeMatchSetupLen(struct edict_s *ent, pmenuhnd_t *p)
+void CTFAdmin_ChangeMatchSetupLen(edict *ent, pmenuhnd_t *p)
 {
 	admin_settings_t *settings = p->arg;
 
@@ -3601,7 +3601,7 @@ void CTFAdmin_ChangeMatchSetupLen(struct edict_s *ent, pmenuhnd_t *p)
 	CTFAdmin_UpdateSettings(ent, p);
 }
 
-void CTFAdmin_ChangeMatchStartLen(struct edict_s *ent, pmenuhnd_t *p)
+void CTFAdmin_ChangeMatchStartLen(edict *ent, pmenuhnd_t *p)
 {
 	admin_settings_t *settings = p->arg;
 
@@ -3612,7 +3612,7 @@ void CTFAdmin_ChangeMatchStartLen(struct edict_s *ent, pmenuhnd_t *p)
 	CTFAdmin_UpdateSettings(ent, p);
 }
 
-void CTFAdmin_ChangeWeapStay(struct edict_s *ent, pmenuhnd_t *p)
+void CTFAdmin_ChangeWeapStay(edict *ent, pmenuhnd_t *p)
 {
 	admin_settings_t *settings = p->arg;
 
@@ -3620,7 +3620,7 @@ void CTFAdmin_ChangeWeapStay(struct edict_s *ent, pmenuhnd_t *p)
 	CTFAdmin_UpdateSettings(ent, p);
 }
 
-void CTFAdmin_ChangeInstantItems(struct edict_s *ent, pmenuhnd_t *p)
+void CTFAdmin_ChangeInstantItems(edict *ent, pmenuhnd_t *p)
 {
 	admin_settings_t *settings = p->arg;
 
@@ -3628,7 +3628,7 @@ void CTFAdmin_ChangeInstantItems(struct edict_s *ent, pmenuhnd_t *p)
 	CTFAdmin_UpdateSettings(ent, p);
 }
 
-void CTFAdmin_ChangeQuadDrop(struct edict_s *ent, pmenuhnd_t *p)
+void CTFAdmin_ChangeQuadDrop(edict *ent, pmenuhnd_t *p)
 {
 	admin_settings_t *settings = p->arg;
 
@@ -3636,7 +3636,7 @@ void CTFAdmin_ChangeQuadDrop(struct edict_s *ent, pmenuhnd_t *p)
 	CTFAdmin_UpdateSettings(ent, p);
 }
 
-void CTFAdmin_ChangeInstantWeap(struct edict_s *ent, pmenuhnd_t *p)
+void CTFAdmin_ChangeInstantWeap(edict *ent, pmenuhnd_t *p)
 {
 	admin_settings_t *settings = p->arg;
 
@@ -3644,7 +3644,7 @@ void CTFAdmin_ChangeInstantWeap(struct edict_s *ent, pmenuhnd_t *p)
 	CTFAdmin_UpdateSettings(ent, p);
 }
 
-void CTFAdmin_ChangeMatchLock(struct edict_s *ent, pmenuhnd_t *p)
+void CTFAdmin_ChangeMatchLock(edict *ent, pmenuhnd_t *p)
 {
 	admin_settings_t *settings = p->arg;
 
@@ -3652,7 +3652,7 @@ void CTFAdmin_ChangeMatchLock(struct edict_s *ent, pmenuhnd_t *p)
 	CTFAdmin_UpdateSettings(ent, p);
 }
 
-void CTFAdmin_UpdateSettings(struct edict_s *ent, pmenuhnd_t *setmenu)
+void CTFAdmin_UpdateSettings(edict *ent, pmenuhnd_t *setmenu)
 {
 	int i = 2;
 	char text[64];
@@ -3709,7 +3709,7 @@ pmenu_t def_setmenu[] = {
 	{ "Cancel",			PMENU_ALIGN_LEFT, CTFAdmin_SettingsCancel }
 };
 
-void CTFAdmin_Settings(struct edict_s *ent, pmenuhnd_t *p)
+void CTFAdmin_Settings(edict *ent, pmenuhnd_t *p)
 {
 	admin_settings_t *settings;
 	pmenuhnd_t *menu;
@@ -3731,7 +3731,7 @@ void CTFAdmin_Settings(struct edict_s *ent, pmenuhnd_t *p)
 	CTFAdmin_UpdateSettings(ent, menu);
 }
 
-void CTFAdmin_MatchSet(struct edict_s *ent, pmenuhnd_t *p)
+void CTFAdmin_MatchSet(edict *ent, pmenuhnd_t *p)
 {
 	PMenu_Close(ent);
 
@@ -3747,7 +3747,7 @@ void CTFAdmin_MatchSet(struct edict_s *ent, pmenuhnd_t *p)
 	}
 }
 
-void CTFAdmin_MatchMode(struct edict_s *ent, pmenuhnd_t *p)
+void CTFAdmin_MatchMode(edict *ent, pmenuhnd_t *p)
 {
 	PMenu_Close(ent);
 
@@ -3759,7 +3759,7 @@ void CTFAdmin_MatchMode(struct edict_s *ent, pmenuhnd_t *p)
 	}
 }
 
-void CTFAdmin_Cancel(struct edict_s *ent, pmenuhnd_t *p)
+void CTFAdmin_Cancel(edict *ent, pmenuhnd_t *p)
 {
 	PMenu_Close(ent);
 }
@@ -3775,7 +3775,7 @@ pmenu_t adminmenu[] = {
 	{ NULL,						PMENU_ALIGN_CENTER, NULL },
 };
 
-void CTFOpenAdminMenu(struct edict_s *ent)
+void CTFOpenAdminMenu(edict *ent)
 {
 	adminmenu[3].text = NULL;
 	adminmenu[3].SelectFunc = NULL;
@@ -3796,7 +3796,7 @@ void CTFOpenAdminMenu(struct edict_s *ent)
 	PMenu_Open(ent, adminmenu, -1, sizeof(adminmenu) / sizeof(pmenu_t), NULL);
 }
 
-void CTFAdmin(struct edict_s *ent)
+void CTFAdmin(edict *ent)
 {
 	char text[1024];
 
@@ -3822,13 +3822,13 @@ void CTFAdmin(struct edict_s *ent)
 
 /*----------------------------------------------------------------*/
 
-void CTFStats(struct edict_s *ent)
+void CTFStats(edict *ent)
 {
 	int i, e;
 	ghost_t *g;
 	char st[80];
 	char text[1400];
-	struct edict_s *e2;
+	edict *e2;
 
 	*text = 0;
 	if (ctfgame.match == MATCH_SETUP) {
@@ -3884,12 +3884,12 @@ void CTFStats(struct edict_s *ent)
 	gi.cprintf(ent, PRINT_HIGH, "%s", text);
 }
 
-void CTFPlayerList(struct edict_s *ent)
+void CTFPlayerList(edict *ent)
 {
 	int i;
 	char st[80];
 	char text[1400];
-	struct edict_s *e2;
+	edict *e2;
 
 	*text = 0;
 	if (ctfgame.match == MATCH_SETUP) {
@@ -3933,7 +3933,7 @@ void CTFPlayerList(struct edict_s *ent)
 }
 
 
-void CTFWarp(struct edict_s *ent)
+void CTFWarp(edict *ent)
 {
 	char text[1024];
 	char *mlist, *token;
@@ -3978,10 +3978,10 @@ void CTFWarp(struct edict_s *ent)
 		strncpy(ctfgame.elevel, gi.argv(1), sizeof(ctfgame.elevel) - 1);
 }
 
-void CTFBoot(struct edict_s *ent)
+void CTFBoot(edict *ent)
 {
 	int i;
-	struct edict_s *targ;
+	edict *targ;
 	char text[80];
 
 	if (!ent->client->resp.admin) {

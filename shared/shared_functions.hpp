@@ -11,12 +11,12 @@
 #include "qcommon/qcommon.hpp"
 
 extern refimport_t ri;
-extern game_import_t gi;
+extern game_import gi;
 extern FILE	*logfile;
-extern cvar_t	*logfile_active;
+extern cvar	*logfile_active;
 extern char	*rd_buffer;
-extern int	rd_buffersize;
-extern server_static_t	svs;
+extern int    rd_buffersize;
+extern server_static_t    svs;
 
 // this is only here so the functions in q_shared.c and q_shwin.c can link
 void Sys_Error_G(char *error, ...);
@@ -34,7 +34,7 @@ void SV_Shutdown (char *finalmsg, bool reconnect);
 
 void SV_FlushRedirect (int sv_redirected, char *outputbuf);
 
-extern float	r_avertexnormals[NUMVERTEXNORMALS][3];
+extern float    r_avertexnormals[NUMVERTEXNORMALS][3];
 
 int ref_gl_Draw_GetPalette (void);
 void ref_soft_Draw_GetPalette (void);

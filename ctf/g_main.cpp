@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 game_locals_t	game;
 level_locals_t	level;
-game_import_t	gi;
+game_import	gi;
 game_export_t	globals;
 spawn_temp_t	st;
 
@@ -31,55 +31,55 @@ int	sm_meat_index;
 int	snd_fry;
 int meansOfDeath;
 
-struct edict_s* g_edicts;
+edict* g_edicts;
 
-cvar_t	*deathmatch;
-cvar_t	*coop;
-cvar_t	*dmflags;
-cvar_t	*skill;
-cvar_t	*fraglimit;
-cvar_t	*timelimit;
+cvar	*deathmatch;
+cvar	*coop;
+cvar	*dmflags;
+cvar	*skill;
+cvar	*fraglimit;
+cvar	*timelimit;
 //ZOID
-cvar_t	*capturelimit;
-cvar_t	*instantweap;
+cvar	*capturelimit;
+cvar	*instantweap;
 //ZOID
-cvar_t	*password;
-cvar_t	*maxclients;
-cvar_t	*maxentities;
-cvar_t	*g_select_empty;
-cvar_t	*dedicated;
+cvar	*password;
+cvar	*maxclients;
+cvar	*maxentities;
+cvar	*g_select_empty;
+cvar	*dedicated;
 
-cvar_t	*sv_maxvelocity;
-cvar_t	*sv_gravity;
+cvar	*sv_maxvelocity;
+cvar	*sv_gravity;
 
-cvar_t	*sv_rollspeed;
-cvar_t	*sv_rollangle;
-cvar_t	*gun_x;
-cvar_t	*gun_y;
-cvar_t	*gun_z;
+cvar	*sv_rollspeed;
+cvar	*sv_rollangle;
+cvar	*gun_x;
+cvar	*gun_y;
+cvar	*gun_z;
 
-cvar_t	*run_pitch;
-cvar_t	*run_roll;
-cvar_t	*bob_up;
-cvar_t	*bob_pitch;
-cvar_t	*bob_roll;
+cvar	*run_pitch;
+cvar	*run_roll;
+cvar	*bob_up;
+cvar	*bob_pitch;
+cvar	*bob_roll;
 
-cvar_t	*sv_cheats;
+cvar	*sv_cheats;
 
-cvar_t	*flood_msgs;
-cvar_t	*flood_persecond;
-cvar_t	*flood_waitdelay;
+cvar	*flood_msgs;
+cvar	*flood_persecond;
+cvar	*flood_waitdelay;
 
-cvar_t	*sv_maplist;
+cvar	*sv_maplist;
 
 void SpawnEntities (char *mapname, char *entities, char *spawnpoint);
-void ClientThink (struct edict_s *ent, usercmd_t *cmd);
-bool ClientConnect (struct edict_s *ent, char *userinfo);
-void ClientUserinfoChanged (struct edict_s *ent, char *userinfo);
-void ClientDisconnect (struct edict_s *ent);
-void ClientBegin (struct edict_s *ent);
-void ClientCommand (struct edict_s *ent);
-void RunEntity (struct edict_s *ent);
+void ClientThink (edict *ent, usercmd_t *cmd);
+bool ClientConnect (edict *ent, char *userinfo);
+void ClientUserinfoChanged (edict *ent, char *userinfo);
+void ClientDisconnect (edict *ent);
+void ClientBegin (edict *ent);
+void ClientCommand (edict *ent);
+void RunEntity (edict *ent);
 void WriteGame (char *filename, bool autosave);
 void ReadGame (char *filename);
 void WriteLevel (char *filename);
@@ -108,7 +108,7 @@ Returns a pointer to the structure with all entry points
 and global variables
 =================
 */
-game_export_t *GetGameAPI (game_import_t *import)
+game_export_t *GetGameAPI (game_import *import)
 {
 	gi = *import;
 
@@ -133,14 +133,14 @@ game_export_t *GetGameAPI (game_import_t *import)
 
 	globals.ServerCommand = ServerCommand;
 
-	globals.edict_size = sizeof(struct edict_s);
+	globals.edict_size = sizeof(edict);
 
 	return &globals;
 }
 
 #ifndef GAME_HARD_LINKED
 // this is only here so the functions in q_shared.c and q_shwin.c can link
-void Sys_Error (char *error, ...)
+void Sys_Error(char *error, ...)
 {
 	va_list		argptr;
 	char		text[1024];
@@ -167,7 +167,7 @@ ClientEndServerFrames
 void ClientEndServerFrames (void)
 {
 	int		i;
-	struct edict_s	*ent;
+	edict	*ent;
 
 	// calc the player views now that all pushing
 	// and damage has been added
@@ -188,9 +188,9 @@ CreateTargetChangeLevel
 Returns the created target changelevel
 =================
 */
-struct edict_s *CreateTargetChangeLevel(char *map)
+edict *CreateTargetChangeLevel(char *map)
 {
-	struct edict_s *ent;
+	edict *ent;
 
 	ent = G_Spawn ();
 	ent->classname = "target_changelevel";
@@ -208,7 +208,7 @@ The timelimit or fraglimit has been exceeded
 */
 void EndDMLevel (void)
 {
-	struct edict_s		*ent;
+	edict		*ent;
 	char *s, *t, *f;
 	static const char *seps = " ,\n\r";
 
@@ -324,7 +324,7 @@ ExitLevel
 void ExitLevel (void)
 {
 	int		i;
-	struct edict_s	*ent;
+	edict	*ent;
 	char	command [256];
 
 	level.exitintermission = 0;
@@ -360,7 +360,7 @@ Advances the world by 0.1 seconds
 void G_RunFrame (void)
 {
 	int		i;
-	struct edict_s	*ent;
+	edict	*ent;
 
 	level.framenum++;
 	level.time = level.framenum*FRAMETIME;

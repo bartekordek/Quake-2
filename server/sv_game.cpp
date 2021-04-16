@@ -24,9 +24,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 game_export_t* ge;
 
 
-edict_t* Edict_num( unsigned n )
+edict* Edict_num( unsigned n )
 {
-    return ( ( edict_t* ) ( ( byte* ) ge->edicts + ge->edict_size * ( n ) ) );
+    return ( ( edict* ) ( ( byte* ) ge->edicts + ge->edict_size * ( n ) ) );
 }
 
 
@@ -37,10 +37,10 @@ PF_Unicast
 Sends the contents of the mutlicast buffer to a single client
 ===============
 */
-void PF_Unicast (struct edict_s *ent, bool reliable)
+void PF_Unicast (edict *ent, bool reliable)
 {
     int        p;
-    client_t    *client;
+    client_t* client;
 
     if (!ent)
         return;
@@ -87,7 +87,7 @@ PF_cprintf
 Print to a single client
 ===============
 */
-void PF_cprintf (struct edict_s *ent, int level, char *fmt, ...)
+void PF_cprintf (edict *ent, int level, char *fmt, ...)
 {
     char        msg[1024];
     va_list        argptr;
@@ -118,7 +118,7 @@ PF_centerprintf
 centerprint to a single client
 ===============
 */
-void PF_centerprintf (struct edict_s *ent, char *fmt, ...)
+void PF_centerprintf (edict *ent, char *fmt, ...)
 {
     char        msg[1024];
     va_list        argptr;
@@ -165,10 +165,10 @@ PF_setmodel
 Also sets mins and maxs for inline bmodels
 =================
 */
-void PF_setmodel (struct edict_s *ent, char *name)
+void PF_setmodel (edict *ent, char *name)
 {
     int        i;
-    cmodel_t    *mod;
+    cmodel_t* mod;
 
     if (!name)
         Com_Error (ERR_DROP, "PF_setmodel: NULL");
@@ -242,7 +242,7 @@ bool PF_inPVS (vec3_t p1, vec3_t p2)
     int        leafnum;
     int        cluster;
     int        area1, area2;
-    byte    *mask;
+    byte* mask;
 
     leafnum = CM_PointLeafnum (p1);
     cluster = CM_LeafCluster (leafnum);
@@ -272,7 +272,7 @@ bool PF_inPHS (vec3_t p1, vec3_t p2)
     int        leafnum;
     int        cluster;
     int        area1, area2;
-    byte    *mask;
+    byte* mask;
 
     leafnum = CM_PointLeafnum (p1);
     cluster = CM_LeafCluster (leafnum);
@@ -290,7 +290,7 @@ bool PF_inPHS (vec3_t p1, vec3_t p2)
     return true;
 }
 
-void PF_StartSound (struct edict_s *entity, int channel, int sound_num, float volume,
+void PF_StartSound (edict *entity, int channel, int sound_num, float volume,
     float attenuation, float timeofs)
 {
     if (!entity)
@@ -330,7 +330,7 @@ void SCR_DebugGraph (float value, int color);
 
 void SV_InitGameProgs (void)
 {
-    game_import_t import;
+    game_import import;
 
     // unload anything we have now
     if (ge)
@@ -391,7 +391,7 @@ void SV_InitGameProgs (void)
     import.SetAreaPortalState = CM_SetAreaPortalState;
     import.AreasConnected = CM_AreasConnected;
 
-    ge = ( game_import_t* ) malloc( sizeof( game_import_t ) );
+    ge = ( game_import* ) malloc( sizeof( game_import ) );
 
     ge->Init();
 

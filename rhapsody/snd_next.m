@@ -377,7 +377,7 @@ mig_external kern_return_t ntsoundAcquire (
                 return MIG_TYPE_ERROR;
 #endif	TypeCheck
 
-        *dmaAddress /* dmaAddress */ = /* *dmaAddress */ OutP->dmaAddress;
+    * dmaAddress /* dmaAddress */ = /* *dmaAddress */ OutP->dmaAddress;
 
 #if	TypeCheck
 #if	UseStaticMsgType
@@ -392,7 +392,7 @@ mig_external kern_return_t ntsoundAcquire (
                 return MIG_TYPE_ERROR;
 #endif	TypeCheck
 
-        *dmaSize /* dmaSize */ = /* *dmaSize */ OutP->dmaSize;
+    * dmaSize /* dmaSize */ = /* *dmaSize */ OutP->dmaSize;
 
 #if	TypeCheck
 #if	UseStaticMsgType
@@ -407,7 +407,7 @@ mig_external kern_return_t ntsoundAcquire (
                 return MIG_TYPE_ERROR;
 #endif	TypeCheck
 
-        *success /* success */ = /* *success */ OutP->success;
+    * success /* success */ = /* *success */ OutP->success;
 
         return OutP->RetCode;
 }
@@ -1144,7 +1144,7 @@ mig_external kern_return_t ntsoundBytesProcessed (
                 return MIG_TYPE_ERROR;
 #endif	TypeCheck
 
-        *byte_count /* byte_count */ = /* *byte_count */ OutP->byte_count;
+    * byte_count /* byte_count */ = /* *byte_count */ OutP->byte_count;
 
         return OutP->RetCode;
 }
@@ -1293,7 +1293,7 @@ mig_external kern_return_t ntsoundDMACount (
                 return MIG_TYPE_ERROR;
 #endif	TypeCheck
 
-        *dma_count /* dma_count */ = /* *dma_count */ OutP->dma_count;
+    * dma_count /* dma_count */ = /* *dma_count */ OutP->dma_count;
 
         return OutP->RetCode;
 }
@@ -1442,7 +1442,7 @@ mig_external kern_return_t ntsoundInterruptCount (
                 return MIG_TYPE_ERROR;
 #endif	TypeCheck
 
-        *irq_count /* irq_count */ = /* *irq_count */ OutP->irq_count;
+    * irq_count /* irq_count */ = /* *irq_count */ OutP->irq_count;
 
         return OutP->RetCode;
 }
@@ -1632,7 +1632,7 @@ mig_external kern_return_t ntsoundWrite (
                 return MIG_TYPE_ERROR;
 #endif	TypeCheck
 
-        *actual_count /* actual_count */ = /* *actual_count */ OutP->actual_count;
+    * actual_count /* actual_count */ = /* *actual_count */ OutP->actual_count;
 
         return OutP->RetCode;
 }
@@ -2033,7 +2033,7 @@ qboolean SNDDMA_Init(void)
 	byte	*buf;
         int	bufsize;
   	int	progress, oldprogress;
-        
+
     shm = &sn;
     shm->channels = 2;
     shm->samplebits = 16;
@@ -2081,14 +2081,14 @@ qboolean SNDDMA_Init(void)
    //
    // find a buffer crossing point for pos testing
    //
-   
+
    ntsoundBytesProcessed(devPort,task_self(),&oldprogress);
    do
        {
        ntsoundBytesProcessed(devPort,task_self(),&progress);
      } while (progress == oldprogress);
    snd_basetime = Sys_DoubleTime() - progress/(11025*2);
- 
+
    return true;
 }
 
@@ -2113,12 +2113,12 @@ int SNDDMA_GetDMAPos(void)
     progress += 2048;
     progress >>= 1;
 #else
-    
+
  progress = (Sys_DoubleTime() - snd_basetime)*11025*2;
  progress += 8192;
  progress &= ~1;
 #endif
- 
+
     progress &= (shm->samples-1);
 
     return progress;

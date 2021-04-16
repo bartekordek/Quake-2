@@ -21,10 +21,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "shared/g_client.hpp"
 #include "shared/edict.hpp"
 
-void UpdateChaseCam(struct edict_s *ent)
+void UpdateChaseCam(edict *ent)
 {
 	vec3_t o, ownerv, goal;
-	struct edict_s *targ;
+	edict *targ;
 	vec3_t forward, right;
 	trace_t trace;
 	int i;
@@ -34,7 +34,7 @@ void UpdateChaseCam(struct edict_s *ent)
 	// is our chase target gone?
 	if (!ent->client->chase_target->inuse
 		|| ent->client->chase_target->client->resp.spectator) {
-		struct edict_s *old = ent->client->chase_target;
+		edict *old = ent->client->chase_target;
 		ChaseNext(ent);
 		if (ent->client->chase_target == old) {
 			ent->client->chase_target = NULL;
@@ -110,10 +110,10 @@ void UpdateChaseCam(struct edict_s *ent)
 	gi.linkentity(ent);
 }
 
-void ChaseNext(struct edict_s *ent)
+void ChaseNext(edict *ent)
 {
 	int i;
-	struct edict_s *e;
+	edict *e;
 
 	if (!ent->client->chase_target)
 		return;
@@ -134,10 +134,10 @@ void ChaseNext(struct edict_s *ent)
 	ent->client->update_chase = true;
 }
 
-void ChasePrev(struct edict_s *ent)
+void ChasePrev(edict *ent)
 {
 	int i;
-	struct edict_s *e;
+	edict *e;
 
 	if (!ent->client->chase_target)
 		return;
@@ -158,10 +158,10 @@ void ChasePrev(struct edict_s *ent)
 	ent->client->update_chase = true;
 }
 
-void GetChaseTarget(struct edict_s *ent)
+void GetChaseTarget(edict *ent)
 {
 	int i;
-	struct edict_s *other;
+	edict *other;
 
 	for (i = 1; i <= maxclients->value; i++) {
 		other = g_edicts + i;

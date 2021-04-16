@@ -49,23 +49,23 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 typedef struct entity_s
 {
-    struct model_s        *model;            // opaque type outside refresh
+    struct model_s* model;            // opaque type outside refresh
     float                angles[3];
 
     /*
-    ** most recent data
+    * * most recent data
     */
     float                origin[3];        // also used as RF_BEAM's "from"
     int                    frame;            // also used as RF_BEAM's diameter
 
     /*
-    ** previous data for lerping
+    * * previous data for lerping
     */
     float                oldorigin[3];    // also used as RF_BEAM's "to"
     int                    oldframe;
 
     /*
-    ** misc
+    **misc
     */
     float    backlerp;                // 0.0 = current, 1.0 = old
     int        skinnum;                // also used as RF_BEAM's palette index
@@ -73,7 +73,7 @@ typedef struct entity_s
     int        lightstyle;                // for flashing entities
     float    alpha;                    // ignore if RF_TRANSLUCENT isn't set
 
-    struct image_s    *skin;            // NULL for inline skin
+    struct image_s* skin;            // NULL for inline skin
     int        flags;
 
 } entity_t;
@@ -110,18 +110,18 @@ typedef struct
     float        time;                // time is uesed to auto animate
     int            rdflags;            // RDF_UNDERWATER, etc
 
-    byte        *areabits;            // if not NULL, only areas with set bits will be drawn
+    byte    * areabits;            // if not NULL, only areas with set bits will be drawn
 
-    lightstyle_t    *lightstyles;    // [MAX_LIGHTSTYLES]
+    lightstyle_t* lightstyles;    // [MAX_LIGHTSTYLES]
 
     int            num_entities;
-    entity_t    *entities;
+    entity_t* entities;
 
     int            num_dlights;
-    dlight_t    *dlights;
+    dlight_t* dlights;
 
     int            num_particles;
-    particle_t    *particles;
+    particle_t* particles;
 } refdef_t;
 
 
@@ -176,7 +176,7 @@ typedef struct
     void    (*DrawStretchRaw) (int x, int y, int w, int h, int cols, int rows, byte *data);
 
     /*
-    ** video mode and refresh state management entry points
+    **video mode and refresh state management entry points
     */
     void    (*CinematicSetPalette)( const unsigned char *palette);    // NULL = game palette
     void    (*BeginFrame)( float camera_separation );
@@ -196,8 +196,8 @@ typedef struct
     void    (*Cmd_AddCommand) (const std::string& name, void(*cmd)(void));
     void    (*Cmd_RemoveCommand) (const std::string& name);
     int        (*Cmd_Argc) (void);
-    char    *(*Cmd_Argv) (int i);
-    void    (*Cmd_ExecuteText) (int exec_when, char *text);
+    char* (*Cmd_Argv) (int i);
+    void    (*Cmd_ExecuteText) (int exec_when, const std::string& text);
 
     void    (*Con_Printf) (int print_level, char *str, ...);
 
@@ -211,10 +211,10 @@ typedef struct
 
     // gamedir will be the current directory that generated
     // files should be stored to, ie: "f:\quake\id1"
-    char    *(*FS_Gamedir) (void);
+    char* (*FS_Gamedir) (void);
 
-    cvar_t    *(*Cvar_Get) (const std::string& name, char *value, int flags);
-    cvar_t    *(*Cvar_Set)( const std::string& name, char *value );
+    cvar* (*Cvar_Get) (const std::string& name, const std::string& value, int flags);
+    cvar* (*Cvar_Set)( const std::string& name, const std::string& value );
     void     (*Cvar_SetValue)( const std::string& name, float value );
 
     bool    (*Vid_GetModeInfo)( int *width, int *height, int mode );

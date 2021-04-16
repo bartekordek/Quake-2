@@ -34,7 +34,7 @@ typedef struct pmenuhnd_s {
 	void *arg;
 } pmenuhnd_t;
 
-typedef void (*SelectFunc_t)(struct edict_s *ent, pmenuhnd_t *hnd);
+typedef void (*SelectFunc_t)(edict *ent, pmenuhnd_t *hnd);
 
 typedef struct pmenu_s {
 	char *text;
@@ -42,13 +42,13 @@ typedef struct pmenu_s {
 	SelectFunc_t SelectFunc;
 } pmenu_t;
 
-pmenuhnd_t *PMenu_Open(struct edict_s *ent, pmenu_t *entries, int cur, int num, void *arg);
-void PMenu_Close(struct edict_s *ent);
+pmenuhnd_t *PMenu_Open(edict *ent, pmenu_t *entries, int cur, int num, void *arg);
+void PMenu_Close(edict *ent);
 void PMenu_UpdateEntry(pmenu_t *entry, const char *text, int align, SelectFunc_t SelectFunc);
-void PMenu_Do_Update(struct edict_s *ent);
-void PMenu_Update(struct edict_s *ent);
-void PMenu_Next(struct edict_s *ent);
-void PMenu_Prev(struct edict_s *ent);
-void PMenu_Select(struct edict_s *ent);
+void PMenu_Do_Update(edict *ent);
+void PMenu_Update(edict *ent);
+void PMenu_Next(edict *ent);
+void PMenu_Prev(edict *ent);
+void PMenu_Select(edict *ent);
 
 #endif // ____CTF_P_MENU_H__

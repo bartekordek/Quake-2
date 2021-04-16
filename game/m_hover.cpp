@@ -28,7 +28,7 @@ hover
 #include "g_local.hpp"
 #include "m_hover.hpp"
 
-bool visible (struct edict_s *self, struct edict_s *other);
+bool visible (edict *self, edict *other);
 
 
 static int	sound_pain1;
@@ -40,12 +40,12 @@ static int	sound_search1;
 static int	sound_search2;
 
 
-void hover_sight (struct edict_s *self, struct edict_s *other)
+void hover_sight (edict *self, edict *other)
 {
 	gi.sound (self, CHAN_VOICE, sound_sight, 1, ATTN_NORM, 0);
 }
 
-void hover_search (struct edict_s *self)
+void hover_search (edict *self)
 {
 	if (random() < 0.5)
 		gi.sound (self, CHAN_VOICE, sound_search1, 1, ATTN_NORM, 0);
@@ -54,13 +54,13 @@ void hover_search (struct edict_s *self)
 }
 
 
-void hover_run (struct edict_s *self);
-void hover_stand (struct edict_s *self);
-void hover_dead (struct edict_s *self);
-void hover_attack (struct edict_s *self);
-void hover_reattack (struct edict_s *self);
-void hover_fire_blaster (struct edict_s *self);
-void hover_die (struct edict_s *self, struct edict_s *inflictor, struct edict_s *attacker, int damage, vec3_t point);
+void hover_run (edict *self);
+void hover_stand (edict *self);
+void hover_dead (edict *self);
+void hover_attack (edict *self);
+void hover_reattack (edict *self);
+void hover_fire_blaster (edict *self);
+void hover_die (edict *self, edict *inflictor, edict *attacker, int damage, vec3_t point);
 
 mframe_t hover_frames_stand [] =
 {
@@ -418,7 +418,7 @@ mframe_t hover_frames_end_attack [] =
 };
 mmove_t hover_move_end_attack = {FRAME_attak107, FRAME_attak108, hover_frames_end_attack, hover_run};
 
-void hover_reattack (struct edict_s *self)
+void hover_reattack (edict *self)
 {
 	if (self->enemy->health > 0 )
 		if (visible (self, self->enemy) )
@@ -431,7 +431,7 @@ void hover_reattack (struct edict_s *self)
 }
 
 
-void hover_fire_blaster (struct edict_s *self)
+void hover_fire_blaster (edict *self)
 {
 	vec3_t	start;
 	vec3_t	forward, right;
@@ -455,12 +455,12 @@ void hover_fire_blaster (struct edict_s *self)
 }
 
 
-void hover_stand (struct edict_s *self)
+void hover_stand (edict *self)
 {
 		self->monsterinfo.currentmove = &hover_move_stand;
 }
 
-void hover_run (struct edict_s *self)
+void hover_run (edict *self)
 {
 	if (self->monsterinfo.aiflags & AI_STAND_GROUND)
 		self->monsterinfo.currentmove = &hover_move_stand;
@@ -468,23 +468,23 @@ void hover_run (struct edict_s *self)
 		self->monsterinfo.currentmove = &hover_move_run;
 }
 
-void hover_walk (struct edict_s *self)
+void hover_walk (edict *self)
 {
 	self->monsterinfo.currentmove = &hover_move_walk;
 }
 
-void hover_start_attack (struct edict_s *self)
+void hover_start_attack (edict *self)
 {
 	self->monsterinfo.currentmove = &hover_move_start_attack;
 }
 
-void hover_attack(struct edict_s *self)
+void hover_attack(edict *self)
 {
 	self->monsterinfo.currentmove = &hover_move_attack1;
 }
 
 
-void hover_pain (struct edict_s *self, struct edict_s *other, float kick, int damage)
+void hover_pain (edict *self, edict *other, float kick, int damage)
 {
 	if (self->health < (self->max_health / 2))
 		self->s.skinnum = 1;
@@ -517,7 +517,7 @@ void hover_pain (struct edict_s *self, struct edict_s *other, float kick, int da
 	}
 }
 
-void hover_deadthink (struct edict_s *self)
+void hover_deadthink (edict *self)
 {
 	if (!self->groundentity && level.time < self->timestamp)
 	{
@@ -527,7 +527,7 @@ void hover_deadthink (struct edict_s *self)
 	BecomeExplosion1(self);
 }
 
-void hover_dead (struct edict_s *self)
+void hover_dead (edict *self)
 {
 	VectorSet (self->mins, -16, -16, -24);
 	VectorSet (self->maxs, 16, 16, -8);
@@ -538,7 +538,7 @@ void hover_dead (struct edict_s *self)
 	gi.linkentity (self);
 }
 
-void hover_die (struct edict_s *self, struct edict_s *inflictor, struct edict_s *attacker, int damage, vec3_t point)
+void hover_die (edict *self, edict *inflictor, edict *attacker, int damage, vec3_t point)
 {
 	int		n;
 
@@ -570,7 +570,7 @@ void hover_die (struct edict_s *self, struct edict_s *inflictor, struct edict_s 
 
 /*QUAKED monster_hover (1 .5 0) (-16 -16 -24) (16 16 32) Ambush Trigger_Spawn Sight
 */
-void SP_monster_hover (struct edict_s *self)
+void SP_monster_hover (edict *self)
 {
 	if (deathmatch->value)
 	{

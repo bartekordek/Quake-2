@@ -30,8 +30,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #define VERSION     3.19
 
-#define BASEDIRNAME "baseq2"
-
 #ifdef WIN32
 
 #ifdef NDEBUG
@@ -79,14 +77,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 //============================================================================
 
-extern char    *rd_buffer;
+extern char* rd_buffer;
 extern int    rd_target;
 
 typedef struct sizebuf_s
 {
     bool    allowoverflow;    // if false, do a Com_Error
     bool    overflowed;        // set to true if the buffer size failed
-    byte    *data;
+    byte* data;
     int        maxsize;
     int        cursize;
     int        readcount;
@@ -96,25 +94,25 @@ void SZ_Init (sizebuf_t *buf, byte *data, int length);
 void SZ_Clear (sizebuf_t *buf);
 void *SZ_GetSpace (sizebuf_t *buf, int length);
 void SZ_Write (sizebuf_t *buf, void *data, int length);
-void SZ_Print (sizebuf_t *buf, char *data);    // strcats onto the sizebuf
+void SZ_Print (sizebuf_t *buf, const std::string& data);    // strcats onto the sizebuf
 
 //============================================================================
 
 struct usercmd_s;
-struct entity_state_s;
+struct entity_state;
 
 void MSG_WriteChar (sizebuf_t *sb, int c);
 void MSG_WriteByte (sizebuf_t *sb, int c);
 void MSG_WriteShort (sizebuf_t *sb, int c);
 void MSG_WriteLong (sizebuf_t *sb, int c);
 void MSG_WriteFloat (sizebuf_t *sb, float f);
-void MSG_WriteString (sizebuf_t *sb, char *s);
+void MSG_WriteString (sizebuf_t *sb, const std::string& s);
 void MSG_WriteCoord (sizebuf_t *sb, float f);
 void MSG_WritePos (sizebuf_t *sb, vec3_t pos);
 void MSG_WriteAngle (sizebuf_t *sb, float f);
 void MSG_WriteAngle16 (sizebuf_t *sb, float f);
 void MSG_WriteDeltaUsercmd (sizebuf_t *sb, struct usercmd_s *from, struct usercmd_s *cmd);
-void MSG_WriteDeltaEntity (struct entity_state_s *from, struct entity_state_s *to, sizebuf_t *msg, bool force, bool newentity);
+void MSG_WriteDeltaEntity (struct entity_state *from, struct entity_state *to, sizebuf_t *msg, bool force, bool newentity);
 void MSG_WriteDir (sizebuf_t *sb, vec3_t vector);
 
 
@@ -125,8 +123,8 @@ int        MSG_ReadByte (sizebuf_t *sb);
 int        MSG_ReadShort (sizebuf_t *sb);
 int        MSG_ReadLong (sizebuf_t *sb);
 float    MSG_ReadFloat (sizebuf_t *sb);
-char    *MSG_ReadString (sizebuf_t *sb);
-char    *MSG_ReadStringLine (sizebuf_t *sb);
+char* MSG_ReadString (sizebuf_t *sb);
+char* MSG_ReadStringLine (sizebuf_t *sb);
 
 float    MSG_ReadCoord (sizebuf_t *sb);
 void    MSG_ReadPos (sizebuf_t *sb, vec3_t pos);
@@ -153,19 +151,19 @@ extern    float    LittleFloat (float l);
 
 
 int    COM_Argc (void);
-char *COM_Argv (int arg);    // range and null checked
+const std::string& COM_Argv (int arg);    // range and null checked
 void COM_ClearArgv (int arg);
-int COM_CheckParm (char *parm);
-void COM_AddParm (char *parm);
+int COM_CheckParm (const std::string& parm);
+void COM_AddParm (const std::string& parm);
 
 void COM_Init (void);
-void COM_InitArgv (int argc, char **argv);
+void COM_InitArgv (int argc, const char** argv);
 
-char *CopyString (char *in);
+const std::string& CopyString (const std::string& in);
 
 //============================================================================
 
-void Info_Print (char *s);
+void Info_Print (const std::string& s);
 
 
 /* crc.h */
@@ -197,7 +195,7 @@ PROTOCOL
 
 //=========================================
 
-#define    UPDATE_BACKUP    16    // copies of entity_state_t to keep buffered
+#define    UPDATE_BACKUP    16    // copies of entity_state to keep buffered
                             // must be power of two
 #define    UPDATE_MASK        (UPDATE_BACKUP-1)
 
@@ -267,7 +265,7 @@ enum clc_ops_e
 
 //==============================================
 
-// entity_state_t communication
+// entity_state communication
 
 // try to pack the common update flags into the first byte
 #define    U_ORIGIN1    (1<<0)
@@ -334,16 +332,16 @@ The game starts with a Cbuf_AddText ("exec quake.rc\n"); Cbuf_Execute ();
 void Cbuf_Init (void);
 // allocates an initial text buffer that will grow as needed
 
-void Cbuf_AddText (char *text);
+void Cbuf_AddText (const std::string& text);
 // as new commands are generated from the console or keybindings,
 // the text is added to the end of the command buffer.
 
-void Cbuf_InsertText (char *text);
+void Cbuf_InsertText (const std::string& text);
 // when a command wants to issue other commands immediately, the text is
 // inserted at the beginning of the buffer, before any remaining unexecuted
 // commands.
 
-void Cbuf_ExecuteText (int exec_when, char *text);
+void Cbuf_ExecuteText (int exec_when, const std::string& text);
 // this can be used in place of either Cbuf_AddText or Cbuf_InsertText
 
 void Cbuf_AddEarlyCommands (bool clear);
@@ -378,33 +376,33 @@ typedef void (*xcommand_t) (void);
 
 void    Cmd_Init (void);
 
-void    Cmd_AddCommand (char *cmd_name, xcommand_t function);
+void    Cmd_AddCommand (const std::string& cmd_name, xcommand_t function);
 // called by the init functions of other parts of the program to
 // register commands and functions to call for them.
 // The cmd_name is referenced later, so it should not be in temp memory
 // if function is NULL, the command will be forwarded to the server
 // as a clc_stringcmd instead of executed locally
-void    Cmd_RemoveCommand (char *cmd_name);
+void    Cmd_RemoveCommand (const std::string& cmd_name);
 
-bool Cmd_Exists (char *cmd_name);
+bool Cmd_Exists (const std::string& cmd_name);
 // used by the cvar code to check for cvar / command name overlap
 
-char     *Cmd_CompleteCommand (char *partial);
+char * Cmd_CompleteCommand (const std::string& partial);
 // attempts to match a partial command for automatic command line completion
 // returns NULL if nothing fits
 
 int        Cmd_Argc (void);
-char    *Cmd_Argv (int arg);
-char    *Cmd_Args (void);
+char* Cmd_Argv (int arg);
+char* Cmd_Args (void);
 // The functions that execute commands get their parameters with these
 // functions. Cmd_Argv () will return an empty string, not a NULL
 // if arg > argc, so string operations are always safe.
 
-void    Cmd_TokenizeString (char *text, bool macroExpand);
+void    Cmd_TokenizeString (const std::string& text, bool macroExpand);
 // Takes a null terminated string.  Does not need to be /n terminated.
 // breaks the string up into arg tokens.
 
-void    Cmd_ExecuteString (char *text);
+void    Cmd_ExecuteString (const std::string& text);
 // Parses a single line of text into arguments and tries to execute it
 // as if it was typed at the console
 
@@ -424,7 +422,7 @@ CVAR
 
 /*
 
-cvar_t variables are used to hold scalar or string variables that can be changed or displayed at the console or prog code as well as accessed directly
+cvar variables are used to hold scalar or string variables that can be changed or displayed at the console or prog code as well as accessed directly
 in C code.
 
 The user can access cvars from the console in three ways:
@@ -435,31 +433,31 @@ Cvars are restricted from having the same names as commands to keep this
 interface from being ambiguous.
 */
 
-extern    cvar_t    *cvar_vars;
+extern cvar* cvar_vars;
 
-cvar_t *Cvar_Get (char *var_name, char *value, int flags);
+cvar *Cvar_Get (const std::string& var_name, const std::string& value, int flags);
 // creates the variable if it doesn't exist, or returns the existing one
 // if it exists, the value will not be changed, but flags will be ORed in
 // that allows variables to be unarchived without needing bitflags
 
-cvar_t     *Cvar_Set (char *var_name, char *value);
+cvar * Cvar_Set (const std::string& var_name, const std::string& value);
 // will create the variable if it doesn't exist
 
-cvar_t *Cvar_ForceSet (char *var_name, char *value);
+cvar *Cvar_ForceSet (const std::string& var_name, const std::string& value);
 // will set the variable even if NOSET or LATCH
 
-cvar_t     *Cvar_FullSet (char *var_name, char *value, int flags);
+cvar * Cvar_FullSet (const std::string& var_name, const std::string& value, int flags);
 
-void    Cvar_SetValue (char *var_name, float value);
+void    Cvar_SetValue (const std::string& var_name, float value);
 // expands value to a string and calls Cvar_Set
 
-float    Cvar_VariableValue (char *var_name);
+float    Cvar_VariableValue (const std::string& var_name);
 // returns 0 if not defined or non numeric
 
-char    *Cvar_VariableString (char *var_name);
+char* Cvar_VariableString (const std::string& var_name);
 // returns an empty string if not defined
 
-char     *Cvar_CompleteVariable (char *partial);
+char * Cvar_CompleteVariable (const std::string& partial);
 // attempts to match a partial variable name for command line completion
 // returns NULL if nothing fits
 
@@ -471,16 +469,16 @@ bool Cvar_Command (void);
 // command.  Returns true if the command was a variable reference that
 // was handled. (print or change)
 
-void     Cvar_WriteVariables (char *path);
+void     Cvar_WriteVariables (const std::string& path);
 // appends lines containing "set variable value" for all variables
 // with the archive flag set to true.
 
 void    Cvar_Init (void);
 
-char    *Cvar_Userinfo (void);
+char* Cvar_Userinfo (void);
 // returns an info string containing all the CVAR_USERINFO cvars
 
-char    *Cvar_Serverinfo (void);
+char* Cvar_Serverinfo (void);
 // returns an info string containing all the CVAR_SERVERINFO cvars
 
 extern    bool    userinfo_modified;
@@ -504,7 +502,11 @@ NET
 
 typedef enum {NA_LOOPBACK, NA_BROADCAST, NA_IP, NA_IPX, NA_BROADCAST_IPX} netadrtype_t;
 
-typedef enum {NS_CLIENT, NS_SERVER} netsrc_t;
+enum class netsrc_t: short
+{
+    NS_CLIENT,
+    NS_SERVER
+};
 
 typedef struct
 {
@@ -527,8 +529,8 @@ void        NET_SendPacket (netsrc_t sock, int length, void *data, netadr_t to);
 bool    NET_CompareAdr (netadr_t a, netadr_t b);
 bool    NET_CompareBaseAdr (netadr_t a, netadr_t b);
 bool    NET_IsLocalAddress (netadr_t adr);
-char        *NET_AdrToString (netadr_t a);
-bool    NET_StringToAdr (char *s, netadr_t *a);
+char    * NET_AdrToString (netadr_t a);
+bool    NET_StringToAdr (const std::string& s, netadr_t *a);
 void        NET_Sleep(int msec);
 
 //============================================================================
@@ -581,8 +583,8 @@ void Netchan_Setup (netsrc_t sock, netchan_t *chan, netadr_t adr, int qport);
 
 bool Netchan_NeedReliable (netchan_t *chan);
 void Netchan_Transmit (netchan_t *chan, int length, byte *data);
-void Netchan_OutOfBand (int net_socket, netadr_t adr, int length, byte *data);
-void Netchan_OutOfBandPrint (int net_socket, netadr_t adr, char *format, ...);
+void Netchan_OutOfBand (netsrc_t net_socket, netadr_t adr, int length, byte *data);
+void Netchan_OutOfBandPrint (netsrc_t net_socket, netadr_t adr, const std::string& format, ...);
 bool Netchan_Process (netchan_t *chan, sizebuf_t *msg);
 
 bool Netchan_CanReliable (netchan_t *chan);
@@ -599,12 +601,12 @@ CMODEL
 
 #include "../qcommon/qfiles.hpp"
 
-cmodel_t    *CM_LoadMap (char *name, bool clientload, unsigned *checksum);
-cmodel_t    *CM_InlineModel (char *name);    // *1, *2, etc
+cmodel_t* CM_LoadMap (const std::string& name, bool clientload, unsigned *checksum);
+cmodel_t* CM_InlineModel (const std::string& name);    // *1, *2, etc
 
 int            CM_NumClusters (void);
 int            CM_NumInlineModels (void);
-char        *CM_EntityString (void);
+char    * CM_EntityString (void);
 
 // creates a clipping hull for an arbitrary box
 int            CM_HeadnodeForBox (vec3_t mins, vec3_t maxs);
@@ -622,8 +624,8 @@ trace_t        CM_TransformedBoxTrace (vec3_t start, vec3_t end,
                           int headnode, int brushmask,
                           vec3_t origin, vec3_t angles);
 
-byte        *CM_ClusterPVS (int cluster);
-byte        *CM_ClusterPHS (int cluster);
+byte    * CM_ClusterPVS (int cluster);
+byte    * CM_ClusterPHS (int cluster);
 
 int            CM_PointLeafnum (vec3_t p);
 
@@ -668,9 +670,9 @@ FILESYSTEM
 */
 
 void    FS_InitFilesystem (void);
-void    FS_SetGamedir (char *dir);
-char    *FS_Gamedir (void);
-char    *FS_NextPath (char *prevpath);
+void FS_SetGamedir (const std::string& dir);
+char* FS_Gamedir (void);
+char* FS_NextPath (const std::string& prevpath);
 void    FS_ExecAutoexec (void);
 
 int FS_FOpenFile(const std::string&filename, FILE **file);
@@ -704,11 +706,11 @@ MISC
 #define    PRINT_ALL        0
 #define PRINT_DEVELOPER    1    // only print when "developer 1"
 
-void        Com_BeginRedirect (int target, char *buffer, int buffersize, void (*flush));
+void        Com_BeginRedirect (int target, const std::string& buffer, int buffersize, void (*flush));
 void        Com_EndRedirect (void);
-void         Com_Printf_G (char *fmt, ...);
-void         Com_DPrintf (char *fmt, ...);
-void         Com_Error (int code, char *fmt, ...);
+void         Com_Printf_G (const std::string& fmt, ...);
+void         Com_DPrintf (const std::string& fmt, ...);
+void         Com_Error (int code, const std::string& fmt, ...);
 void         Com_Quit (void);
 
 int            Com_ServerState (void);        // this should have just been a cvar...
@@ -720,10 +722,10 @@ byte        COM_BlockSequenceCRCByte (byte *base, int length, int sequence);
 float    frand(void);    // 0 ti 1
 float    crand(void);    // -1 to 1
 
-extern    cvar_t    *developer;
-extern    cvar_t    *dedicated;
-extern    cvar_t    *host_speeds;
-extern    cvar_t    *log_stats;
+extern    cvar* developer;
+extern    cvar* dedicated;
+extern    cvar* host_speeds;
+extern    cvar* log_stats;
 
 extern    FILE *log_stats_file;
 
@@ -738,7 +740,7 @@ void *Z_Malloc (int size);            // returns 0 filled memory
 void *Z_TagMalloc (int size, int tag);
 void Z_FreeTags (int tag);
 
-void Qcommon_Init (int argc, char **argv);
+void Qcommon_Init (int argc, const char** argv);
 void Qcommon_Frame (int msec);
 void Qcommon_Shutdown (void);
 
@@ -767,14 +769,14 @@ void win32_Sys_UnloadGame (void);
 void *win32_Sys_GetGameAPI (void *parms);
 // loads the game dll and calls the api init function
 
-char *win32_Sys_ConsoleInput (void);
-void win32_Sys_ConsoleOutput (char *string);
+const std::string& win32_Sys_ConsoleInput (void);
+void win32_Sys_ConsoleOutput (const std::string& string);
 #ifdef _WIN32
 void win32_Sys_SendKeyEvents (void);
 #endif
-void win32_Sys_Error(char *error, ...);
+void win32_Sys_Error(const std::string& error, ...);
 void win32_Sys_Quit(void);
-char *win32_Sys_GetClipboardData( void );
+std::string win32_Sys_GetClipboardData();
 void win32_Sys_CopyProtect (void);
 
 /*
@@ -789,7 +791,7 @@ void CL_Init (void);
 void CL_Drop (void);
 void CL_Shutdown (void);
 void CL_Frame (int msec);
-void Con_Print (char *text);
+void Con_Print (const std::string& text);
 void SCR_BeginLoadingPlaque (void);
 
 void SV_Init (void);

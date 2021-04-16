@@ -38,7 +38,7 @@ static fxMesaContext fc = NULL;
 
 #define NUM_RESOLUTIONS 3
 
-static resolutions[NUM_RESOLUTIONS][3]={ 
+static resolutions[NUM_RESOLUTIONS][3]={
   { 512, 384, GR_RESOLUTION_512x384 },
   { 640, 400, GR_RESOLUTION_640x400 },
   { 640, 480, GR_RESOLUTION_640x480 }
@@ -46,38 +46,38 @@ static resolutions[NUM_RESOLUTIONS][3]={
 
 static int findres(int *width, int *height)
 {
-	int i;
+    int i;
 
-	for(i=0;i<NUM_RESOLUTIONS;i++)
-		if((*width<=resolutions[i][0]) && (*height<=resolutions[i][1])) {
+    for(i=0;i<NUM_RESOLUTIONS;i++)
+	    if((*width<=resolutions[i][0]) && (*height<=resolutions[i][1])) {
 			*width = resolutions[i][0];
 			*height = resolutions[i][1];
-			return resolutions[i][2];
+		    return resolutions[i][2];
 		}
-        
+
 	*width = 640;
 	*height = 480;
-	return GR_RESOLUTION_640x480;
+    return GR_RESOLUTION_640x480;
 }
 
 static void signal_handler(int sig)
 {
-	printf("Received signal %d, exiting...\n", sig);
-	GLimp_Shutdown();
-	_exit(0);
+    printf("Received signal %d, exiting...\n", sig);
+    GLimp_Shutdown();
+    _exit(0);
 }
 
 static void InitSig(void)
 {
-	signal(SIGHUP, signal_handler);
-	signal(SIGQUIT, signal_handler);
-	signal(SIGILL, signal_handler);
-	signal(SIGTRAP, signal_handler);
-	signal(SIGIOT, signal_handler);
-	signal(SIGBUS, signal_handler);
-	signal(SIGFPE, signal_handler);
-	signal(SIGSEGV, signal_handler);
-	signal(SIGTERM, signal_handler);
+    signal(SIGHUP, signal_handler);
+    signal(SIGQUIT, signal_handler);
+    signal(SIGILL, signal_handler);
+    signal(SIGTRAP, signal_handler);
+    signal(SIGIOT, signal_handler);
+    signal(SIGBUS, signal_handler);
+    signal(SIGFPE, signal_handler);
+    signal(SIGSEGV, signal_handler);
+    signal(SIGTERM, signal_handler);
 }
 
 /*
@@ -85,46 +85,46 @@ static void InitSig(void)
 */
 int GLimp_SetMode( int *pwidth, int *pheight, int mode, qboolean fullscreen )
 {
-	int width, height;
-	GLint attribs[32];
+    int width, height;
+    GLint attribs[32];
 
-	ri.Con_Printf( PRINT_ALL, "Initializing OpenGL display\n");
+    ri.Con_Printf( PRINT_ALL, "Initializing OpenGL display\n");
 
-	ri.Con_Printf (PRINT_ALL, "...setting mode %d:", mode );
+    ri.Con_Printf (PRINT_ALL, "...setting mode %d:", mode );
 
-	if ( !ri.Vid_GetModeInfo( &width, &height, mode ) )
+    if ( !ri.Vid_GetModeInfo( &width, &height, mode ) )
 	{
-		ri.Con_Printf( PRINT_ALL, " invalid mode\n" );
-		return rserr_invalid_mode;
+	    ri.Con_Printf( PRINT_ALL, " invalid mode\n" );
+	    return rserr_invalid_mode;
 	}
 
-	ri.Con_Printf( PRINT_ALL, " %d %d\n", width, height );
+    ri.Con_Printf( PRINT_ALL, " %d %d\n", width, height );
 
 	// destroy the existing window
-	GLimp_Shutdown ();
+    GLimp_Shutdown ();
 
 	// set fx attribs
-	attribs[0] = FXMESA_DOUBLEBUFFER;
-	attribs[1] = FXMESA_ALPHA_SIZE;
-	attribs[2] = 1;
-	attribs[3] = FXMESA_DEPTH_SIZE;
-	attribs[4] = 1;
-	attribs[5] = FXMESA_NONE;
+    attribs[0] = FXMESA_DOUBLEBUFFER;
+    attribs[1] = FXMESA_ALPHA_SIZE;
+    attribs[2] = 1;
+    attribs[3] = FXMESA_DEPTH_SIZE;
+    attribs[4] = 1;
+    attribs[5] = FXMESA_NONE;
 
-	fc = fxMesaCreateContext(0, findres(&width, &height), GR_REFRESH_75Hz, 
-		attribs);
-	if (!fc)
-		return rserr_invalid_mode;
+    fc = fxMesaCreateContext(0, findres(&width, &height), GR_REFRESH_75Hz,
+	    attribs);
+    if (!fc)
+	    return rserr_invalid_mode;
 
 	*pwidth = width;
 	*pheight = height;
 
 	// let the sound and input subsystems know about the new window
-	ri.Vid_NewWindow (width, height);
+    ri.Vid_NewWindow (width, height);
 
-	fxMesaMakeCurrent(fc);
+    fxMesaMakeCurrent(fc);
 
-	return rserr_ok;
+    return rserr_ok;
 }
 
 /*
@@ -138,9 +138,9 @@ int GLimp_SetMode( int *pwidth, int *pheight, int mode, qboolean fullscreen )
 */
 void GLimp_Shutdown( void )
 {
-	if (fc) {
-		fxMesaDestroyContext(fc);
-		fc = NULL;
+    if (fc) {
+	    fxMesaDestroyContext(fc);
+	    fc = NULL;
 	}
 }
 
@@ -148,13 +148,13 @@ void GLimp_Shutdown( void )
 ** GLimp_Init
 **
 ** This routine is responsible for initializing the OS specific portions
-** of OpenGL.  
+** of OpenGL.
 */
 int GLimp_Init( void *hinstance, void *wndproc )
 {
-	InitSig();
+    InitSig();
 
-	return true;
+    return true;
 }
 
 /*
@@ -166,15 +166,15 @@ void GLimp_BeginFrame( float camera_seperation )
 
 /*
 ** GLimp_EndFrame
-** 
+**
 ** Responsible for doing a swapbuffers and possibly for other stuff
 ** as yet to be determined.  Probably better not to make this a GLimp
 ** function and instead do a call to GLimp_SwapBuffers.
 */
 void GLimp_EndFrame (void)
 {
-	glFlush();
-	fxMesaSwapBuffers();
+    glFlush();
+    fxMesaSwapBuffers();
 }
 
 /*
@@ -190,17 +190,17 @@ void Fake_glColorTableEXT( GLenum target, GLenum internalformat,
                              GLsizei width, GLenum format, GLenum type,
                              const GLvoid *table )
 {
-	byte temptable[256][4];
-	byte *intbl;
-	int i;
+    byte temptable[256][4];
+    byte *intbl;
+    int i;
 
-	for (intbl = (byte *)table, i = 0; i < 256; i++) {
-		temptable[i][2] = *intbl++;
-		temptable[i][1] = *intbl++;
-		temptable[i][0] = *intbl++;
-		temptable[i][3] = 255;
+    for (intbl = (byte *)table, i = 0; i < 256; i++) {
+	    temptable[i][2] = *intbl++;
+	    temptable[i][1] = *intbl++;
+	    temptable[i][0] = *intbl++;
+	    temptable[i][3] = 255;
 	}
-	gl3DfxSetPaletteEXT((GLuint *)temptable);
+    gl3DfxSetPaletteEXT((GLuint *)temptable);
 }
 
 

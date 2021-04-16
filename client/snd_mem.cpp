@@ -38,7 +38,7 @@ void ResampleSfx (sfx_t *sfx, int inrate, int inwidth, byte *data)
     float    stepscale;
     int        i;
     int        sample, samplefrac, fracstep;
-    sfxcache_t    *sc;
+    sfxcache_t* sc;
 
     sc = sfx->cache;
     if (!sc)
@@ -98,11 +98,11 @@ S_LoadSound
 sfxcache_t *S_LoadSound (sfx_t *s)
 {
     char    namebuffer[MAX_QPATH];
-    byte    *data;
+    byte* data;
     wavinfo_t    info;
     int        len;
     float    stepscale;
-    sfxcache_t    *sc;
+    sfxcache_t* sc;
     int        size;
     std::string name;
 
@@ -180,10 +180,10 @@ WAV loading
 */
 
 
-byte    *data_p;
-byte     *iff_end;
-byte     *last_chunk;
-byte     *iff_data;
+byte* data_p;
+byte * iff_end;
+byte * last_chunk;
+byte * iff_data;
 int     iff_chunk_len;
 
 

@@ -29,7 +29,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // and we can mess it up based on skill.  Spread should be for normal
 // and we can tighten or loosen based on skill.  We could muck with
 // the damages too, but I'm not sure that's such a good idea.
-void monster_fire_bullet (struct edict_s *self, vec3_t start, vec3_t dir, int damage, int kick, int hspread, int vspread, int flashtype)
+void monster_fire_bullet (edict *self, vec3_t start, vec3_t dir, int damage, int kick, int hspread, int vspread, int flashtype)
 {
 	fire_bullet (self, start, dir, damage, kick, hspread, vspread, MOD_UNKNOWN);
 
@@ -39,7 +39,7 @@ void monster_fire_bullet (struct edict_s *self, vec3_t start, vec3_t dir, int da
 	gi.multicast (start, MULTICAST_PVS);
 }
 
-void monster_fire_shotgun (struct edict_s *self, vec3_t start, vec3_t aimdir, int damage, int kick, int hspread, int vspread, int count, int flashtype)
+void monster_fire_shotgun (edict *self, vec3_t start, vec3_t aimdir, int damage, int kick, int hspread, int vspread, int count, int flashtype)
 {
 	fire_shotgun (self, start, aimdir, damage, kick, hspread, vspread, count, MOD_UNKNOWN);
 
@@ -49,7 +49,7 @@ void monster_fire_shotgun (struct edict_s *self, vec3_t start, vec3_t aimdir, in
 	gi.multicast (start, MULTICAST_PVS);
 }
 
-void monster_fire_blaster (struct edict_s *self, vec3_t start, vec3_t dir, int damage, int speed, int flashtype, int effect)
+void monster_fire_blaster (edict *self, vec3_t start, vec3_t dir, int damage, int speed, int flashtype, int effect)
 {
 	fire_blaster (self, start, dir, damage, speed, effect, false);
 
@@ -59,7 +59,7 @@ void monster_fire_blaster (struct edict_s *self, vec3_t start, vec3_t dir, int d
 	gi.multicast (start, MULTICAST_PVS);
 }
 
-void monster_fire_grenade (struct edict_s *self, vec3_t start, vec3_t aimdir, int damage, int speed, int flashtype)
+void monster_fire_grenade (edict *self, vec3_t start, vec3_t aimdir, int damage, int speed, int flashtype)
 {
 	fire_grenade (self, start, aimdir, damage, speed, 2.5, damage+40);
 
@@ -69,7 +69,7 @@ void monster_fire_grenade (struct edict_s *self, vec3_t start, vec3_t aimdir, in
 	gi.multicast (start, MULTICAST_PVS);
 }
 
-void monster_fire_rocket (struct edict_s *self, vec3_t start, vec3_t dir, int damage, int speed, int flashtype)
+void monster_fire_rocket (edict *self, vec3_t start, vec3_t dir, int damage, int speed, int flashtype)
 {
 	fire_rocket (self, start, dir, damage, speed, damage+20, damage);
 
@@ -79,7 +79,7 @@ void monster_fire_rocket (struct edict_s *self, vec3_t start, vec3_t dir, int da
 	gi.multicast (start, MULTICAST_PVS);
 }
 
-void monster_fire_railgun (struct edict_s *self, vec3_t start, vec3_t aimdir, int damage, int kick, int flashtype)
+void monster_fire_railgun (edict *self, vec3_t start, vec3_t aimdir, int damage, int kick, int flashtype)
 {
 	fire_rail (self, start, aimdir, damage, kick);
 
@@ -89,7 +89,7 @@ void monster_fire_railgun (struct edict_s *self, vec3_t start, vec3_t aimdir, in
 	gi.multicast (start, MULTICAST_PVS);
 }
 
-void monster_fire_bfg (struct edict_s *self, vec3_t start, vec3_t aimdir, int damage, int speed, int kick, float damage_radius, int flashtype)
+void monster_fire_bfg (edict *self, vec3_t start, vec3_t aimdir, int damage, int speed, int kick, float damage_radius, int flashtype)
 {
 	fire_bfg (self, start, aimdir, damage, speed, damage_radius);
 
@@ -105,13 +105,13 @@ void monster_fire_bfg (struct edict_s *self, vec3_t start, vec3_t aimdir, int da
 // Monster utility functions
 //
 
-static void M_FliesOff (struct edict_s *self)
+static void M_FliesOff (edict *self)
 {
 	self->s.effects &= ~EF_FLIES;
 	self->s.sound = 0;
 }
 
-static void M_FliesOn (struct edict_s *self)
+static void M_FliesOn (edict *self)
 {
 	if (self->waterlevel)
 		return;
@@ -121,7 +121,7 @@ static void M_FliesOn (struct edict_s *self)
 	self->nextthink = level.time + 60;
 }
 
-void M_FlyCheck (struct edict_s *self)
+void M_FlyCheck (edict *self)
 {
 	if (self->waterlevel)
 		return;
@@ -133,13 +133,13 @@ void M_FlyCheck (struct edict_s *self)
 	self->nextthink = level.time + 5 + 10 * random();
 }
 
-void AttackFinished (struct edict_s *self, float time)
+void AttackFinished (edict *self, float time)
 {
 	self->monsterinfo.attack_finished = level.time + time;
 }
 
 
-void M_CheckGround (struct edict_s *ent)
+void M_CheckGround (edict *ent)
 {
 	vec3_t		point;
 	trace_t		trace;
@@ -181,7 +181,7 @@ void M_CheckGround (struct edict_s *ent)
 }
 
 
-void M_CatagorizePosition (struct edict_s *ent)
+void M_CatagorizePosition (edict *ent)
 {
 	vec3_t		point;
 	int			cont;
@@ -216,7 +216,7 @@ void M_CatagorizePosition (struct edict_s *ent)
 }
 
 
-void M_WorldEffects (struct edict_s *ent)
+void M_WorldEffects (edict *ent)
 {
 	int		dmg;
 
@@ -308,7 +308,7 @@ void M_WorldEffects (struct edict_s *ent)
 }
 
 
-void M_droptofloor (struct edict_s *ent)
+void M_droptofloor (edict *ent)
 {
 	vec3_t		end;
 	trace_t		trace;
@@ -330,7 +330,7 @@ void M_droptofloor (struct edict_s *ent)
 }
 
 
-void M_SetEffects (struct edict_s *ent)
+void M_SetEffects (edict *ent)
 {
 	ent->s.effects &= ~(EF_COLOR_SHELL|EF_POWERSCREEN);
 	ent->s.renderfx &= ~(RF_SHELL_RED|RF_SHELL_GREEN|RF_SHELL_BLUE);
@@ -359,7 +359,7 @@ void M_SetEffects (struct edict_s *ent)
 }
 
 
-void M_MoveFrame (struct edict_s *self)
+void M_MoveFrame (edict *self)
 {
 	mmove_t* move;
 	int		index;
@@ -417,7 +417,7 @@ void M_MoveFrame (struct edict_s *self)
 }
 
 
-void monster_think (struct edict_s *self)
+void monster_think (edict *self)
 {
 	M_MoveFrame (self);
 	if (self->linkcount != self->monsterinfo.linkcount)
@@ -438,7 +438,7 @@ monster_use
 Using a monster makes it angry at the current activator
 ================
 */
-void monster_use (struct edict_s *self, struct edict_s *other, struct edict_s *activator)
+void monster_use (edict *self, edict *other, edict *activator)
 {
 	if (self->enemy)
 		return;
@@ -455,10 +455,10 @@ void monster_use (struct edict_s *self, struct edict_s *other, struct edict_s *a
 }
 
 
-void monster_start_go (struct edict_s *self);
+void monster_start_go (edict *self);
 
 
-void monster_triggered_spawn (struct edict_s *self)
+void monster_triggered_spawn (edict *self)
 {
 	self->s.origin[2] += 1;
 	KillBox (self);
@@ -481,7 +481,7 @@ void monster_triggered_spawn (struct edict_s *self)
 	}
 }
 
-void monster_triggered_spawn_use (struct edict_s *self, struct edict_s *other, struct edict_s *activator)
+void monster_triggered_spawn_use (edict *self, edict *other, edict *activator)
 {
 	// we have a one frame delay here so we don't telefrag the guy who activated us
 	self->think = monster_triggered_spawn;
@@ -491,7 +491,7 @@ void monster_triggered_spawn_use (struct edict_s *self, struct edict_s *other, s
 	self->use = monster_use;
 }
 
-void monster_triggered_start (struct edict_s *self)
+void monster_triggered_start (edict *self)
 {
 	self->solid = SOLID_NOT;
 	self->movetype = MOVETYPE_NONE;
@@ -509,7 +509,7 @@ When a monster dies, it fires all of its targets with the current
 enemy as activator.
 ================
 */
-void monster_death_use (struct edict_s *self)
+void monster_death_use (edict *self)
 {
 	self->flags &= ~(FL_FLY|FL_SWIM);
 	self->monsterinfo.aiflags &= AI_GOOD_GUY;
@@ -532,7 +532,7 @@ void monster_death_use (struct edict_s *self)
 
 //============================================================================
 
-bool monster_start (struct edict_s *self)
+bool monster_start (edict *self)
 {
 	if (deathmatch->value)
 	{
@@ -581,7 +581,7 @@ bool monster_start (struct edict_s *self)
 	return true;
 }
 
-void monster_start_go (struct edict_s *self)
+void monster_start_go (edict *self)
 {
 	vec3_t	v;
 
@@ -593,7 +593,7 @@ void monster_start_go (struct edict_s *self)
 	{
 		bool	notcombat;
 		bool	fixup;
-		struct edict_s		*target;
+		edict		*target;
 
 		target = NULL;
 		notcombat = false;
@@ -619,7 +619,7 @@ void monster_start_go (struct edict_s *self)
 	// validate combattarget
 	if (self->combattarget)
 	{
-		struct edict_s		*target;
+		edict		*target;
 
 		target = NULL;
 		while ((target = G_Find (target, FOFS(targetname), self->combattarget)) != NULL)
@@ -669,7 +669,7 @@ void monster_start_go (struct edict_s *self)
 }
 
 
-void walkmonster_start_go (struct edict_s *self)
+void walkmonster_start_go (edict *self)
 {
 	if (!(self->spawnflags & 2) && level.time < 1)
 	{
@@ -690,14 +690,14 @@ void walkmonster_start_go (struct edict_s *self)
 		monster_triggered_start (self);
 }
 
-void walkmonster_start (struct edict_s *self)
+void walkmonster_start (edict *self)
 {
 	self->think = walkmonster_start_go;
 	monster_start (self);
 }
 
 
-void flymonster_start_go (struct edict_s *self)
+void flymonster_start_go (edict *self)
 {
 	if (!M_walkmove (self, 0, 0))
 		gi.dprintf ("%s in solid at %s\n", self->classname, vtos(self->s.origin));
@@ -713,7 +713,7 @@ void flymonster_start_go (struct edict_s *self)
 }
 
 
-void flymonster_start (struct edict_s *self)
+void flymonster_start (edict *self)
 {
 	self->flags |= FL_FLY;
 	self->think = flymonster_start_go;
@@ -721,7 +721,7 @@ void flymonster_start (struct edict_s *self)
 }
 
 
-void swimmonster_start_go (struct edict_s *self)
+void swimmonster_start_go (edict *self)
 {
 	if (!self->yaw_speed)
 		self->yaw_speed = 10;
@@ -733,7 +733,7 @@ void swimmonster_start_go (struct edict_s *self)
 		monster_triggered_start (self);
 }
 
-void swimmonster_start (struct edict_s *self)
+void swimmonster_start (edict *self)
 {
 	self->flags |= FL_SWIM;
 	self->think = swimmonster_start_go;

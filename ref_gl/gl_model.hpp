@@ -60,12 +60,12 @@ void ref_gl_ModInit (void);
 void ref_gl_ModClearAll (void);
 model_t *ref_gl_ModForName (char *name, bool crash);
 mleaf_t *ref_gl_ModPointInLeaf (float *p, model_t *model);
-byte    *ref_gl_ModClusterPVS (int cluster, model_t *model);
+byte* ref_gl_ModClusterPVS (int cluster, model_t *model);
 
 void    ref_gl_Mod_Modellist_f (void);
 
-void    *Hunk_Begin (int maxsize);
-void    *Hunk_Alloc (int size);
+void* Hunk_Begin (int maxsize);
+void* Hunk_Alloc (int size);
 int        Hunk_End (void);
 void    Hunk_Free (void *base);
 

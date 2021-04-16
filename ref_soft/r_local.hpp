@@ -258,12 +258,12 @@ typedef struct finalvert_s {
 
 typedef struct
 {
-    void                            *pskin;
+    void                        * pskin;
     int                                     pskindesc;
     int                                     skinwidth;
     int                                     skinheight;
-    dtriangle_t                     *ptriangles;
-    finalvert_t                     *pfinalverts;
+    dtriangle_t                 * ptriangles;
+    finalvert_t                 * pfinalverts;
     int                                     numtriangles;
     int                                     drawtype;
     int                                     seamfixupX16;
@@ -273,12 +273,12 @@ typedef struct
 
 typedef struct
 {
-    byte            *surfdat;       // destination for generated surface
+    byte        * surfdat;       // destination for generated surface
     int                     rowbytes;       // destination logical width in bytes
-    msurface_t      *surf;          // description for surface to generate
+    msurface_t  * surf;          // description for surface to generate
     fixed8_t        lightadj[MAXLIGHTMAPS];
                             // adjust for lightmap levels for dynamic lighting
-    image_t            *image;
+    image_t        * image;
     int                     surfmip;        // mipmapped ratio of surface texels / world pixels
     int                     surfwidth;      // in mipmapped texels
     int                     surfheight;     // in mipmapped texels
@@ -289,14 +289,14 @@ typedef struct
 typedef struct {
     int                     ambientlight;
     int                     shadelight;
-    float           *plightvec;
+    float       * plightvec;
 } alight_t;
 
 // clipped bmodel edges
 
 typedef struct bedge_s
 {
-    mvertex_t               *v[2];
+    mvertex_t           * v[2];
     struct bedge_s  *pnext;
 } bedge_t;
 
@@ -306,7 +306,7 @@ typedef struct clipplane_s
 {
     vec3_t          normal;
     float           dist;
-    struct          clipplane_s     *next;
+    struct          clipplane_s * next;
     byte            leftedge;
     byte            rightedge;
     byte            reserved[2];
@@ -315,15 +315,15 @@ typedef struct clipplane_s
 
 typedef struct surfcache_s
 {
-    struct surfcache_s      *next;
-    struct surfcache_s      **owner;                // NULL is an empty chunk of memory
+    struct surfcache_s  * next;
+    struct surfcache_s  * *owner;                // NULL is an empty chunk of memory
     int                                     lightadj[MAXLIGHTMAPS]; // checked for strobe flush
     int                                     dlight;
     int                                     size;           // including header
     unsigned                        width;
     unsigned                        height;         // DEBUG only needed for debug
     float                           mipscale;
-    image_t                            *image;
+    image_t                        * image;
     byte                            data[4];        // width*height elements
 } surfcache_t;
 
@@ -338,8 +338,8 @@ typedef struct espan_s
 typedef struct
 {
     int                     nump;
-    emitpoint_t     *pverts;
-    byte            *pixels;                        // image
+    emitpoint_t * pverts;
+    byte        * pixels;                        // image
     int                     pixel_width;            // image width
     int         pixel_height;       // image height
     vec3_t          vup, vright, vpn;       // in worldspace, for plane eq
@@ -364,8 +364,8 @@ typedef struct surf_s
                                     // -1 = in inverted span (end before
                                     //  start)
     int                     flags;                          // currentface flags
-    msurface_t      *msurf;
-    entity_t        *entity;
+    msurface_t  * msurf;
+    entity_t    * entity;
     float           nearzi;                         // nearest 1/z on surface, for mipmapping
     bool        insubmodel;
     float           d_ziorigin, d_zistepu, d_zistepv;
@@ -382,7 +382,7 @@ typedef struct edge_s
     unsigned short  surfs[2];
     struct edge_s   *nextremove;
     float                   nearzi;
-    medge_t                 *owner;
+    medge_t             * owner;
 } edge_t;
 
 
@@ -431,8 +431,8 @@ extern byte             r_warpbuffer[WARP_WIDTH * WARP_HEIGHT];
 extern float    scale_for_mip;
 
 extern bool         d_roverwrapped;
-extern surfcache_t      *sc_rover;
-extern surfcache_t      *d_initial_rover;
+extern surfcache_t  * sc_rover;
+extern surfcache_t  * d_initial_rover;
 
 extern float    d_sdivzstepu, d_tdivzstepu, d_zistepu;
 extern float    d_sdivzstepv, d_tdivzstepv, d_zistepv;
@@ -447,7 +447,7 @@ void ref_soft_D_DrawZSpans (espan_t *pspans);
 void Turbulent8 (espan_t *pspan);
 void NonTurbulent8 (espan_t *pspan);    //PGM
 
-surfcache_t     *D_CacheSurface (msurface_t *surface, int miplevel);
+surfcache_t * D_CacheSurface (msurface_t *surface, int miplevel);
 
 extern int      d_vrectx, d_vrecty, d_vrectright_particle, d_vrectbottom_particle;
 
@@ -456,7 +456,7 @@ extern int      d_pix_min, d_pix_max, d_pix_shift;
 extern pixel_t  *d_viewbuffer;
 extern short *d_pzbuffer;
 extern unsigned int d_zrowbytes, d_zwidth;
-extern short    *zspantable[MAXHEIGHT];
+extern short* zspantable[MAXHEIGHT];
 extern int      d_scantable[MAXHEIGHT];
 
 extern int              d_minmip;
@@ -504,38 +504,38 @@ extern int      ubasestep, errorterm, erroradjustup, erroradjustdown;
 
 //===========================================================================
 
-extern cvar_t   *sw_aliasstats;
-extern cvar_t   *sw_clearcolor;
-extern cvar_t   *sw_drawflat;
-extern cvar_t   *sw_draworder;
-extern cvar_t   *sw_maxedges;
-extern cvar_t   *sw_maxsurfs;
-extern cvar_t   *sw_mipcap;
-extern cvar_t   *sw_mipscale;
-extern cvar_t   *sw_mode;
-extern cvar_t   *sw_reportsurfout;
-extern cvar_t   *sw_reportedgeout;
-extern cvar_t   *sw_stipplealpha;
-extern cvar_t   *sw_surfcacheoverride;
-extern cvar_t   *sw_waterwarp;
+extern cvar   *sw_aliasstats;
+extern cvar   *sw_clearcolor;
+extern cvar   *sw_drawflat;
+extern cvar   *sw_draworder;
+extern cvar   *sw_maxedges;
+extern cvar   *sw_maxsurfs;
+extern cvar   *sw_mipcap;
+extern cvar   *sw_mipscale;
+extern cvar   *sw_mode;
+extern cvar   *sw_reportsurfout;
+extern cvar   *sw_reportedgeout;
+extern cvar   *sw_stipplealpha;
+extern cvar   *sw_surfcacheoverride;
+extern cvar   *sw_waterwarp;
 
-extern cvar_t   *r_fullbright;
-extern cvar_t    *r_lefthand;
-extern cvar_t   *r_drawentities;
-extern cvar_t   *r_drawworld;
-extern cvar_t   *r_dspeeds;
-extern cvar_t   *r_lerpmodels;
+extern cvar   *r_fullbright;
+extern cvar* r_lefthand;
+extern cvar   *r_drawentities;
+extern cvar   *r_drawworld;
+extern cvar   *r_dspeeds;
+extern cvar   *r_lerpmodels;
 
-extern cvar_t   *r_speeds;
+extern cvar   *r_speeds;
 
-extern cvar_t   *r_lightlevel;  //FIXME HACK
+extern cvar   *r_lightlevel;  //FIXME HACK
 
-extern cvar_t    *vid_fullscreen;
-extern    cvar_t    *vid_gamma;
+extern cvar* vid_fullscreen;
+extern    cvar* vid_gamma;
 
 
 extern  clipplane_t     view_clipplanes[4];
-extern int              *pfrustum_indexes[4];
+extern int          * pfrustum_indexes[4];
 
 
 //=============================================================================
@@ -549,8 +549,8 @@ extern  plane_t        screenedge[4];
 extern  vec3_t  r_origin;
 
 extern    entity_t    r_worldentity;
-extern  model_t         *currentmodel;
-extern  entity_t                *currententity;
+extern  model_t     * currentmodel;
+extern  entity_t            * currententity;
 extern  vec3_t  modelorg;
 extern  vec3_t  r_entorigin;
 
@@ -627,7 +627,7 @@ extern int                      ubasestep, errorterm, erroradjustup, erroradjust
 extern fixed16_t        sadjust, tadjust;
 extern fixed16_t        bbextents, bbextentt;
 
-extern mvertex_t        *r_ptverts, *r_ptvertsmax;
+extern mvertex_t    * r_ptverts, *r_ptvertsmax;
 
 extern float                    entity_rotation[3][3];
 
@@ -659,7 +659,7 @@ extern float    aliasxscale, aliasyscale, aliasxcenter, aliasycenter;
 extern int              r_outofsurfaces;
 extern int              r_outofedges;
 
-extern mvertex_t        *r_pcurrentvertbase;
+extern mvertex_t    * r_pcurrentvertbase;
 extern int                      ref_soft_R_maxvalidedgeoffset;
 
 typedef struct
@@ -689,8 +689,8 @@ extern int              r_clipflags;
 extern int              r_dlightframecount;
 extern bool r_fov_greater_than_90;
 
-extern  image_t         *r_notexture_mip;
-extern  model_t         *r_worldmodel;
+extern  image_t     * r_notexture_mip;
+extern  model_t     * r_worldmodel;
 
 void ref_soft_R_PrintAliasStats (void);
 void ref_soft_R_PrintTimes (void);
@@ -705,9 +705,9 @@ void ref_soft_R_SplitEntityOnNode2 (mnode_t *node);
 
 extern  refdef_t        r_newrefdef;
 
-extern  surfcache_t     *sc_rover, *sc_base;
+extern  surfcache_t * sc_rover, *sc_base;
 
-extern  void            *colormap;
+extern  void        * colormap;
 
 //====================================================================
 
@@ -802,5 +802,7 @@ void        SWimp_Shutdown( void );
 rserr_t        SWimp_SetMode( int *pwidth, int *pheight, int mode, bool fullscreen );
 void        SWimp_AppActivate( bool active );
 
+
+void D_DrawSpans16 (espan_t *pspan);
 
 #endif // ____REF_SOFT_R_LOCAL_H__

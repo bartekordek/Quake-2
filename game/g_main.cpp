@@ -30,55 +30,55 @@ int    sm_meat_index;
 int    snd_fry;
 int meansOfDeath;
 
-struct edict_s        *g_edicts;
+edict    * g_edicts;
 
-cvar_t    *deathmatch;
-cvar_t    *coop;
-cvar_t    *dmflags;
-cvar_t    *skill;
-cvar_t    *fraglimit;
-cvar_t    *timelimit;
-cvar_t    *password;
-cvar_t    *spectator_password;
-cvar_t    *maxclients;
-cvar_t    *maxspectators;
-cvar_t    *maxentities;
-cvar_t    *g_select_empty;
-cvar_t    *dedicated;
+cvar* deathmatch;
+cvar* coop;
+cvar* dmflags;
+cvar* skill;
+cvar* fraglimit;
+cvar* timelimit;
+cvar* password;
+cvar* spectator_password;
+cvar* maxclients;
+cvar* maxspectators;
+cvar* maxentities;
+cvar* g_select_empty;
+cvar* dedicated;
 
-cvar_t    *filterban;
+cvar* filterban;
 
-cvar_t    *sv_maxvelocity;
-cvar_t    *sv_gravity;
+cvar* sv_maxvelocity;
+cvar* sv_gravity;
 
-cvar_t    *sv_rollspeed;
-cvar_t    *sv_rollangle;
-cvar_t    *gun_x;
-cvar_t    *gun_y;
-cvar_t    *gun_z;
+cvar* sv_rollspeed;
+cvar* sv_rollangle;
+cvar* gun_x;
+cvar* gun_y;
+cvar* gun_z;
 
-cvar_t    *run_pitch;
-cvar_t    *run_roll;
-cvar_t    *bob_up;
-cvar_t    *bob_pitch;
-cvar_t    *bob_roll;
+cvar* run_pitch;
+cvar* run_roll;
+cvar* bob_up;
+cvar* bob_pitch;
+cvar* bob_roll;
 
-cvar_t    *sv_cheats;
+cvar* sv_cheats;
 
-cvar_t    *flood_msgs;
-cvar_t    *flood_persecond;
-cvar_t    *flood_waitdelay;
+cvar* flood_msgs;
+cvar* flood_persecond;
+cvar* flood_waitdelay;
 
-cvar_t    *sv_maplist;
+cvar* sv_maplist;
 
 void SpawnEntities (char *mapname, char *entities, char *spawnpoint);
-void ClientThink (struct edict_s *ent, usercmd_t *cmd);
-bool ClientConnect (struct edict_s *ent, char *userinfo);
-void ClientUserinfoChanged (struct edict_s *ent, char *userinfo);
-void ClientDisconnect (struct edict_s *ent);
-void ClientBegin (struct edict_s *ent);
-void ClientCommand (struct edict_s *ent);
-void RunEntity (struct edict_s *ent);
+void ClientThink (edict *ent, usercmd_t *cmd);
+bool ClientConnect (edict *ent, char *userinfo);
+void ClientUserinfoChanged (edict *ent, char *userinfo);
+void ClientDisconnect (edict *ent);
+void ClientBegin (edict *ent);
+void ClientCommand (edict *ent);
+void RunEntity (edict *ent);
 void WriteGame (char *filename, bool autosave);
 void ReadGame (char *filename);
 void WriteLevel (char *filename);
@@ -107,7 +107,7 @@ Returns a pointer to the structure with all entry points
 and global variables
 =================
 */
-game_export_t *GetGameAPI (game_import_t *import)
+game_export_t *GetGameAPI (game_import *import)
 {
     gi = *import;
 
@@ -132,7 +132,7 @@ game_export_t *GetGameAPI (game_import_t *import)
 
     globals.ServerCommand = ServerCommand;
 
-    globals.edict_size = sizeof(struct edict_s);
+    globals.edict_size = sizeof(edict);
 
     return &globals;
 }
@@ -148,7 +148,7 @@ ClientEndServerFrames
 void ClientEndServerFrames (void)
 {
     int        i;
-    struct edict_s    *ent;
+    edict* ent;
 
     // calc the player views now that all pushing
     // and damage has been added
@@ -169,9 +169,9 @@ CreateTargetChangeLevel
 Returns the created target changelevel
 =================
 */
-struct edict_s *CreateTargetChangeLevel(char *map)
+edict *CreateTargetChangeLevel(char *map)
 {
-    struct edict_s *ent;
+    edict *ent;
 
     ent = G_Spawn ();
     ent->classname = "target_changelevel";
@@ -189,7 +189,7 @@ The timelimit or fraglimit has been exceeded
 */
 void EndDMLevel (void)
 {
-    struct edict_s        *ent;
+    edict    * ent;
     char *s, *t, *f;
     static const char *seps = " ,\n\r";
 
@@ -201,8 +201,8 @@ void EndDMLevel (void)
     }
 
     // see if it's in the map list
-    if (*sv_maplist->string) {
-        s = strdup(sv_maplist->string);
+    if (!sv_maplist->string.empty()) {
+        s = strdup(sv_maplist->string.c_str());
         f = NULL;
         t = strtok(s, seps);
         while (t != NULL) {
@@ -248,7 +248,7 @@ CheckDMRules
 void CheckDMRules (void)
 {
     int            i;
-    gclient_t    *cl;
+    gclient_t* cl;
 
     if (level.intermissiontime)
         return;
@@ -293,7 +293,7 @@ ExitLevel
 void ExitLevel (void)
 {
     int        i;
-    struct edict_s    *ent;
+    edict* ent;
     char    command [256];
 
     //Com_sprintf (command, sizeof(command), "gamemap \"%s\"\n", level.changemap);
@@ -325,7 +325,7 @@ Advances the world by 0.1 seconds
 void G_RunFrame (void)
 {
     int        i;
-    struct edict_s    *ent;
+    edict* ent;
 
     level.framenum++;
     level.time = level.framenum*FRAMETIME;

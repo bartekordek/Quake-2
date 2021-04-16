@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 // draw.c
 
-#include "gl_local.hpp"
+#include "ref_gl/gl_local.hpp"
 
 image_t* draw_chars;
 
@@ -114,11 +114,11 @@ void ref_gl_Draw_GetPicSize(int *w, int *h, char *pic)
     gl = ref_gl_Draw_FindPic(pic);
     if (!gl)
     {
-        *w = *h = -1;
+    * w = *h = -1;
         return;
     }
-    *w = gl->width;
-    *h = gl->height;
+* w = gl->width;
+* h = gl->height;
 }
 
 /*
@@ -310,7 +310,7 @@ void ref_gl_Draw_StretchRaw(int x, int y, int w, int h, int cols, int rows, byte
     unsigned    image32[256*256];
     unsigned char image8[256*256];
     int            i, j, trows;
-    byte        *source;
+    byte    * source;
     int            frac, fracstep;
     float        hscale;
     int            row;

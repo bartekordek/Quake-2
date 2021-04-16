@@ -43,7 +43,7 @@ rserr_t InitFullscreen (int width, int height)
     int			i;
 	NSString	*string;
 
-    
+
     vid_screen = [[NSDirectScreen alloc] initWithScreen:[NSScreen mainScreen]];
 
     // search for an apropriate mode
@@ -65,7 +65,7 @@ rserr_t InitFullscreen (int width, int height)
             bestHeight = modeHeight;
             bestMode = mode;
         }
-    } 
+    }
 
     // if there wasn't any paletted mode of that res or greater, fail
     if (!bestMode)
@@ -76,7 +76,7 @@ rserr_t InitFullscreen (int width, int height)
 
     // hide the cursor in all fullscreen modes
     [NSCursor hide];
-    
+
     vid_window_i = [vid_screen shieldingWindow];
 
     ri.Con_Printf (PRINT_ALL, "switchToDisplayMode\n");
@@ -128,7 +128,7 @@ void BlitFullscreen (void)
     for (j=0 ; j<vid.height ; j++
          , source += (vid.rowbytes>>2), dest += (vid_rowbytes>>2)  ) {
         for (i=0 ; i<w ; i++ ) {
-            dest[i] = source[i];            
+            dest[i] = source[i];
         }
  	}
 }
@@ -148,8 +148,8 @@ rserr_t InitWindowed (int width, int height)
 {
     rserr_t retval = rserr_ok;
     NSRect	content;
-    cvar_t	*vid_xpos;
-    cvar_t	*vid_ypos;
+    cvar	*vid_xpos;
+    cvar	*vid_ypos;
 
     //
     // open a window
@@ -288,7 +288,7 @@ rserr_t SWimp_SetMode( int *pwidth, int *pheight, int mode, qboolean fullscreen)
     const char 	*win_fs[] = { "W", "FS" };
     NSRect		content;
 	rserr_t		ret;
-    
+
     // free resources in use
     SWimp_Shutdown ();
 
@@ -307,7 +307,7 @@ rserr_t SWimp_SetMode( int *pwidth, int *pheight, int mode, qboolean fullscreen)
 
     if (fullscreen) {
         rhap_mode = rhap_fullscreen;
-        ret = InitFullscreen (*pwidth, *pheight);        
+        ret = InitFullscreen (*pwidth, *pheight);
     } else {
         rhap_mode = rhap_windowed;
         ret = InitWindowed (*pwidth, *pheight);
@@ -315,12 +315,12 @@ rserr_t SWimp_SetMode( int *pwidth, int *pheight, int mode, qboolean fullscreen)
 
     if (ret != rserr_ok) {
         SWimp_Shutdown ();
-        return ret;       
+        return ret;
     }
-    
+
     /*
-     ** the view is identical in windowed and fullscreen modes
-     */
+ * * the view is identical in windowed and fullscreen modes
+ */
     content.origin.x = content.origin.y = 0;
     content.size.width = *pwidth;
     content.size.height = *pheight;

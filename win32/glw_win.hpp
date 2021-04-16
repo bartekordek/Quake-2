@@ -29,20 +29,20 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 typedef struct
 {
-	HINSTANCE	hInstance;
-	void	*wndproc;
+    HINSTANCE    hInstance;
+    void	*wndproc;
 
-	HDC     hDC;			// handle to device context
-	HWND    hWnd;			// handle to window
-	HGLRC   hGLRC;			// handle to GL rendering context
+    HDC     hDC;			// handle to device context
+    HWND    hWnd;			// handle to window
+    HGLRC   hGLRC;			// handle to GL rendering context
 
-	HINSTANCE hinstOpenGL;	// HINSTANCE for the OpenGL library
+    HINSTANCE hinstOpenGL;	// HINSTANCE for the OpenGL library
 
-	bool minidriver;
-	bool allowdisplaydepthchange;
-	bool mcd_accelerated;
+    bool minidriver;
+    bool allowdisplaydepthchange;
+    bool mcd_accelerated;
 
-	FILE *log_fp;
+    FILE *log_fp;
 } glwstate_t;
 
 extern glwstate_t glw_state;

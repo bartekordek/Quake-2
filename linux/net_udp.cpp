@@ -372,10 +372,10 @@ void NET_OpenIP (void)
 	port = Cvar_Get ("port", va("%i", PORT_SERVER), CVAR_NOSET);
 	ip = Cvar_Get ("ip", "localhost", CVAR_NOSET);
 
-	if (!ip_sockets[NS_SERVER])
-		ip_sockets[NS_SERVER] = NET_Socket (ip->string, port->value);
-	if (!ip_sockets[NS_CLIENT])
-		ip_sockets[NS_CLIENT] = NET_Socket (ip->string, PORT_ANY);
+	if (!ip_sockets[netsrc_t::NS_SERVER])
+		ip_sockets[netsrc_t::NS_SERVER] = NET_Socket (ip->string, port->value);
+	if (!ip_sockets[netsrc_t::NS_CLIENT])
+		ip_sockets[netsrc_t::NS_CLIENT] = NET_Socket (ip->string, PORT_ANY);
 }
 
 /*
@@ -523,15 +523,15 @@ void NET_Sleep(int msec)
 	extern cvar_t *dedicated;
 	extern qboolean stdin_active;
 
-	if (!ip_sockets[NS_SERVER] || (dedicated && !dedicated->value))
+	if (!ip_sockets[netsrc_t::NS_SERVER] || (dedicated && !dedicated->value))
 		return; // we're not a server, just run full speed
 
 	FD_ZERO(&fdset);
 	if (stdin_active)
 		FD_SET(0, &fdset); // stdin is processed too
-	FD_SET(ip_sockets[NS_SERVER], &fdset); // network socket
+	FD_SET(ip_sockets[netsrc_t::NS_SERVER], &fdset); // network socket
 	timeout.tv_sec = msec/1000;
 	timeout.tv_usec = (msec%1000)*1000;
-	select(ip_sockets[NS_SERVER]+1, &fdset, NULL, NULL, &timeout);
+	select(ip_sockets[netsrc_t::NS_SERVER]+1, &fdset, NULL, NULL, &timeout);
 }
 

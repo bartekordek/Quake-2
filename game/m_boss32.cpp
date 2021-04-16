@@ -28,15 +28,15 @@ Makron -- Final Boss
 #include "g_local.hpp"
 #include "m_boss32.hpp"
 
-bool visible (struct edict_s *self, struct edict_s *other);
+bool visible (edict *self, edict *other);
 
-void MakronRailgun (struct edict_s *self);
-void MakronSaveloc (struct edict_s *self);
-void MakronHyperblaster (struct edict_s *self);
-void makron_step_left (struct edict_s *self);
-void makron_step_right (struct edict_s *self);
-void makronBFG (struct edict_s *self);
-void makron_dead (struct edict_s *self);
+void MakronRailgun (edict *self);
+void MakronSaveloc (edict *self);
+void MakronHyperblaster (edict *self);
+void makron_step_left (edict *self);
+void makron_step_right (edict *self);
+void makronBFG (edict *self);
+void makron_dead (edict *self);
 
 static int	sound_pain4;
 static int	sound_pain5;
@@ -53,7 +53,7 @@ static int	sound_taunt2;
 static int	sound_taunt3;
 static int	sound_hit;
 
-void makron_taunt (struct edict_s *self)
+void makron_taunt (edict *self)
 {
 	float r;
 
@@ -135,7 +135,7 @@ mframe_t makron_frames_stand []=
 };
 mmove_t	makron_move_stand = {FRAME_stand201, FRAME_stand260, makron_frames_stand, NULL};
 
-void makron_stand (struct edict_s *self)
+void makron_stand (edict *self)
 {
 	self->monsterinfo.currentmove = &makron_move_stand;
 }
@@ -155,32 +155,32 @@ mframe_t makron_frames_run [] =
 };
 mmove_t	makron_move_run = {FRAME_walk204, FRAME_walk213, makron_frames_run, NULL};
 
-void makron_hit (struct edict_s *self)
+void makron_hit (edict *self)
 {
 	gi.sound (self, CHAN_AUTO, sound_hit, 1, ATTN_NONE,0);
 }
 
-void makron_popup (struct edict_s *self)
+void makron_popup (edict *self)
 {
 	gi.sound (self, CHAN_BODY, sound_popup, 1, ATTN_NONE,0);
 }
 
-void makron_step_left (struct edict_s *self)
+void makron_step_left (edict *self)
 {
 	gi.sound (self, CHAN_BODY, sound_step_left, 1, ATTN_NORM,0);
 }
 
-void makron_step_right (struct edict_s *self)
+void makron_step_right (edict *self)
 {
 	gi.sound (self, CHAN_BODY, sound_step_right, 1, ATTN_NORM,0);
 }
 
-void makron_brainsplorch (struct edict_s *self)
+void makron_brainsplorch (edict *self)
 {
 	gi.sound (self, CHAN_VOICE, sound_brainsplorch, 1, ATTN_NORM,0);
 }
 
-void makron_prerailgun (struct edict_s *self)
+void makron_prerailgun (edict *self)
 {
 	gi.sound (self, CHAN_WEAPON, sound_prerailgun, 1, ATTN_NORM,0);
 }
@@ -201,12 +201,12 @@ mframe_t makron_frames_walk [] =
 };
 mmove_t	makron_move_walk = {FRAME_walk204, FRAME_walk213, makron_frames_run, NULL};
 
-void makron_walk (struct edict_s *self)
+void makron_walk (edict *self)
 {
 		self->monsterinfo.currentmove = &makron_move_walk;
 }
 
-void makron_run (struct edict_s *self)
+void makron_run (edict *self)
 {
 	if (self->monsterinfo.aiflags & AI_STAND_GROUND)
 		self->monsterinfo.currentmove = &makron_move_stand;
@@ -407,7 +407,7 @@ mframe_t makron_frames_sight [] =
 };
 mmove_t makron_move_sight= {FRAME_active01, FRAME_active13, makron_frames_sight, makron_run};
 
-void makronBFG (struct edict_s *self)
+void makronBFG (edict *self)
 {
 	vec3_t	forward, right;
 	vec3_t	start;
@@ -491,14 +491,14 @@ mframe_t makron_frames_attack5[]=
 };
 mmove_t makron_move_attack5 = {FRAME_attak501, FRAME_attak516, makron_frames_attack5, makron_run};
 
-void MakronSaveloc (struct edict_s *self)
+void MakronSaveloc (edict *self)
 {
 	VectorCopy (self->enemy->s.origin, self->pos1);	//save for aiming the shot
 	self->pos1[2] += self->enemy->viewheight;
 };
 
 // FIXME: He's not firing from the proper Z
-void MakronRailgun (struct edict_s *self)
+void MakronRailgun (edict *self)
 {
 	vec3_t	start;
 	vec3_t	dir;
@@ -515,7 +515,7 @@ void MakronRailgun (struct edict_s *self)
 }
 
 // FIXME: This is all wrong. He's not firing at the proper angles.
-void MakronHyperblaster (struct edict_s *self)
+void MakronHyperblaster (edict *self)
 {
 	vec3_t	dir;
 	vec3_t	vec;
@@ -552,7 +552,7 @@ void MakronHyperblaster (struct edict_s *self)
 }
 
 
-void makron_pain (struct edict_s *self, struct edict_s *other, float kick, int damage)
+void makron_pain (edict *self, edict *other, float kick, int damage)
 {
 
 	if (self->health < (self->max_health / 2))
@@ -598,12 +598,12 @@ void makron_pain (struct edict_s *self, struct edict_s *other, float kick, int d
 	}
 };
 
-void makron_sight(struct edict_s *self, struct edict_s *other)
+void makron_sight(edict *self, edict *other)
 {
 	self->monsterinfo.currentmove = &makron_move_sight;
 };
 
-void makron_attack(struct edict_s *self)
+void makron_attack(edict *self)
 {
 	vec3_t	vec;
 	float	range;
@@ -629,7 +629,7 @@ Makron Torso. This needs to be spawned in
 ---
 */
 
-void makron_torso_think (struct edict_s *self)
+void makron_torso_think (edict *self)
 {
 	if (++self->s.frame < 365)
 		self->nextthink = level.time + FRAMETIME;
@@ -640,7 +640,7 @@ void makron_torso_think (struct edict_s *self)
 	}
 }
 
-void makron_torso (struct edict_s *ent)
+void makron_torso (edict *ent)
 {
 	ent->movetype = MOVETYPE_NONE;
 	ent->solid = SOLID_NOT;
@@ -659,7 +659,7 @@ void makron_torso (struct edict_s *ent)
 // death
 //
 
-void makron_dead (struct edict_s *self)
+void makron_dead (edict *self)
 {
 	VectorSet (self->mins, -60, -60, 0);
 	VectorSet (self->maxs, 60, 60, 72);
@@ -670,9 +670,9 @@ void makron_dead (struct edict_s *self)
 }
 
 
-void makron_die (struct edict_s *self, struct edict_s *inflictor, struct edict_s *attacker, int damage, vec3_t point)
+void makron_die (edict *self, edict *inflictor, edict *attacker, int damage, vec3_t point)
 {
-	struct edict_s *tempent;
+	edict *tempent;
 
 	int		n;
 
@@ -708,7 +708,7 @@ void makron_die (struct edict_s *self, struct edict_s *inflictor, struct edict_s
 
 }
 
-bool Makron_CheckAttack (struct edict_s *self)
+bool Makron_CheckAttack (edict *self)
 {
 	vec3_t	spot1, spot2;
 	vec3_t	temp;
@@ -827,7 +827,7 @@ void MakronPrecache (void)
 
 /*QUAKED monster_makron (1 .5 0) (-30 -30 0) (30 30 90) Ambush Trigger_Spawn Sight
 */
-void SP_monster_makron (struct edict_s *self)
+void SP_monster_makron (edict *self)
 {
 	if (deathmatch->value)
 	{
@@ -874,10 +874,10 @@ MakronSpawn
 
 =================
 */
-void MakronSpawn (struct edict_s *self)
+void MakronSpawn (edict *self)
 {
 	vec3_t		vec;
-	struct edict_s		*player;
+	edict		*player;
 
 	SP_monster_makron (self);
 
@@ -901,9 +901,9 @@ MakronToss
 Jorg is just about dead, so set up to launch Makron out
 =================
 */
-void MakronToss (struct edict_s *self)
+void MakronToss (edict *self)
 {
-	struct edict_s	*ent;
+	edict	*ent;
 
 	ent = G_Spawn ();
 	ent->nextthink = level.time + 0.8;

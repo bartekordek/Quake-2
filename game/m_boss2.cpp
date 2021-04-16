@@ -28,9 +28,9 @@ boss2
 #include "g_local.hpp"
 #include "m_boss2.hpp"
 
-void BossExplode (struct edict_s *self);
+void BossExplode (edict *self);
 
-bool infront (struct edict_s *self, struct edict_s *other);
+bool infront (edict *self, edict *other);
 
 static int	sound_pain1;
 static int	sound_pain2;
@@ -38,21 +38,21 @@ static int	sound_pain3;
 static int	sound_death;
 static int	sound_search1;
 
-void boss2_search (struct edict_s *self)
+void boss2_search (edict *self)
 {
 	if (random() < 0.5)
 		gi.sound (self, CHAN_VOICE, sound_search1, 1, ATTN_NONE, 0);
 }
 
-void boss2_run (struct edict_s *self);
-void boss2_stand (struct edict_s *self);
-void boss2_dead (struct edict_s *self);
-void boss2_attack (struct edict_s *self);
-void boss2_attack_mg (struct edict_s *self);
-void boss2_reattack_mg (struct edict_s *self);
-void boss2_die (struct edict_s *self, struct edict_s *inflictor, struct edict_s *attacker, int damage, vec3_t point);
+void boss2_run (edict *self);
+void boss2_stand (edict *self);
+void boss2_dead (edict *self);
+void boss2_attack (edict *self);
+void boss2_attack_mg (edict *self);
+void boss2_reattack_mg (edict *self);
+void boss2_die (edict *self, edict *inflictor, edict *attacker, int damage, vec3_t point);
 
-void Boss2Rocket (struct edict_s *self)
+void Boss2Rocket (edict *self)
 {
 	vec3_t	forward, right;
 	vec3_t	start;
@@ -94,7 +94,7 @@ void Boss2Rocket (struct edict_s *self)
 	monster_fire_rocket (self, start, dir, 50, 500, MZ2_BOSS2_ROCKET_4);
 }
 
-void boss2_firebullet_right (struct edict_s *self)
+void boss2_firebullet_right (edict *self)
 {
 	vec3_t	forward, right, target;
 	vec3_t	start;
@@ -110,7 +110,7 @@ void boss2_firebullet_right (struct edict_s *self)
 	monster_fire_bullet (self, start, forward, 6, 4, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MZ2_BOSS2_MACHINEGUN_R1);
 }
 
-void boss2_firebullet_left (struct edict_s *self)
+void boss2_firebullet_left (edict *self)
 {
 	vec3_t	forward, right, target;
 	vec3_t	start;
@@ -127,7 +127,7 @@ void boss2_firebullet_left (struct edict_s *self)
 	monster_fire_bullet (self, start, forward, 6, 4, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MZ2_BOSS2_MACHINEGUN_L1);
 }
 
-void Boss2MachineGun (struct edict_s *self)
+void Boss2MachineGun (edict *self)
 {
 /*	vec3_t	forward, right;
 	vec3_t	start;
@@ -411,12 +411,12 @@ mframe_t boss2_frames_death [] =
 };
 mmove_t boss2_move_death = {FRAME_death2, FRAME_death50, boss2_frames_death, boss2_dead};
 
-void boss2_stand (struct edict_s *self)
+void boss2_stand (edict *self)
 {
 		self->monsterinfo.currentmove = &boss2_move_stand;
 }
 
-void boss2_run (struct edict_s *self)
+void boss2_run (edict *self)
 {
 	if (self->monsterinfo.aiflags & AI_STAND_GROUND)
 		self->monsterinfo.currentmove = &boss2_move_stand;
@@ -424,12 +424,12 @@ void boss2_run (struct edict_s *self)
 		self->monsterinfo.currentmove = &boss2_move_run;
 }
 
-void boss2_walk (struct edict_s *self)
+void boss2_walk (edict *self)
 {
 	self->monsterinfo.currentmove = &boss2_move_walk;
 }
 
-void boss2_attack (struct edict_s *self)
+void boss2_attack (edict *self)
 {
 	vec3_t	vec;
 	float	range;
@@ -450,12 +450,12 @@ void boss2_attack (struct edict_s *self)
 	}
 }
 
-void boss2_attack_mg (struct edict_s *self)
+void boss2_attack_mg (edict *self)
 {
 	self->monsterinfo.currentmove = &boss2_move_attack_mg;
 }
 
-void boss2_reattack_mg (struct edict_s *self)
+void boss2_reattack_mg (edict *self)
 {
 	if ( infront(self, self->enemy) )
 		if (random() <= 0.7)
@@ -467,7 +467,7 @@ void boss2_reattack_mg (struct edict_s *self)
 }
 
 
-void boss2_pain (struct edict_s *self, struct edict_s *other, float kick, int damage)
+void boss2_pain (edict *self, edict *other, float kick, int damage)
 {
 	if (self->health < (self->max_health / 2))
 		self->s.skinnum = 1;
@@ -494,7 +494,7 @@ void boss2_pain (struct edict_s *self, struct edict_s *other, float kick, int da
 	}
 }
 
-void boss2_dead (struct edict_s *self)
+void boss2_dead (edict *self)
 {
 	VectorSet (self->mins, -56, -56, 0);
 	VectorSet (self->maxs, 56, 56, 80);
@@ -504,7 +504,7 @@ void boss2_dead (struct edict_s *self)
 	gi.linkentity (self);
 }
 
-void boss2_die (struct edict_s *self, struct edict_s *inflictor, struct edict_s *attacker, int damage, vec3_t point)
+void boss2_die (edict *self, edict *inflictor, edict *attacker, int damage, vec3_t point)
 {
 	gi.sound (self, CHAN_VOICE, sound_death, 1, ATTN_NONE, 0);
 	self->deadflag = DEAD_DEAD;
@@ -537,7 +537,7 @@ void boss2_die (struct edict_s *self, struct edict_s *inflictor, struct edict_s 
 #endif
 }
 
-bool Boss2_CheckAttack (struct edict_s *self)
+bool Boss2_CheckAttack (edict *self)
 {
 	vec3_t	spot1, spot2;
 	vec3_t	temp;
@@ -633,7 +633,7 @@ bool Boss2_CheckAttack (struct edict_s *self)
 
 /*QUAKED monster_boss2 (1 .5 0) (-56 -56 0) (56 56 80) Ambush Trigger_Spawn Sight
 */
-void SP_monster_boss2 (struct edict_s *self)
+void SP_monster_boss2 (edict *self)
 {
 	if (deathmatch->value)
 	{

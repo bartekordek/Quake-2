@@ -4,20 +4,20 @@
 #define REF_SOFT	0
 #define REF_OPENGL	1
 
-extern cvar_t *vid_ref;
-extern cvar_t *vid_fullscreen;
-extern cvar_t *vid_gamma;
-extern cvar_t *scr_viewsize;
+extern cvar *vid_ref;
+extern cvar *vid_fullscreen;
+extern cvar *vid_gamma;
+extern cvar *scr_viewsize;
 
-static cvar_t *gl_mode;
-static cvar_t *gl_driver;
-static cvar_t *gl_picmip;
-static cvar_t *gl_ext_palettedtexture;
+static cvar *gl_mode;
+static cvar *gl_driver;
+static cvar *gl_picmip;
+static cvar *gl_ext_palettedtexture;
 
-cvar_t *sw_mode;
-static cvar_t *sw_stipplealpha;
+cvar *sw_mode;
+static cvar *sw_stipplealpha;
 
-static cvar_t *_windowed_mouse;
+static cvar *_windowed_mouse;
 
 extern void M_ForceMenuOff( void );
 

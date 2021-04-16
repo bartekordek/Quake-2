@@ -227,13 +227,13 @@ float    BigFloat (float l);
 float    LittleFloat (float l);
 
 void    Swap_Init (void);
-char    *va(char *format, ...);
+char* va(char *format, ...);
 
 //=============================================
 
 char *Info_ValueForKey (char *s, char *key);
 void Info_RemoveKey (char *s, char *key);
-void Info_SetValueForKey (char *s, char *key, char *value);
+void Info_SetValueForKey (const std::string& s, const std::string& key, const std::string& value);
 bool Info_Validate (char *s);
 
 /*
@@ -249,8 +249,8 @@ extern    int    curtime;        // time returned by last win32_Sys_Milliseconds
 void    Sys_Mkdir (char *path);
 
 // large block stack allocation routines
-void    *Hunk_Begin (int maxsize);
-void    *Hunk_Alloc (int size);
+void* Hunk_Begin (int maxsize);
+void* Hunk_Alloc (int size);
 void    Hunk_Free (void *buf);
 int        Hunk_End (void);
 
@@ -264,8 +264,8 @@ int        Hunk_End (void);
 /*
 ** pass in an attribute mask of things you wish to REJECT
 */
-char    *Sys_FindFirst (char *path, unsigned musthave, unsigned canthave );
-char    *Sys_FindNext ( unsigned musthave, unsigned canthave );
+char* Sys_FindFirst (char *path, unsigned musthave, unsigned canthave );
+char* Sys_FindNext ( unsigned musthave, unsigned canthave );
 void    Sys_FindClose (void);
 
 
@@ -290,14 +290,14 @@ CVARS (console variables)
 // nothing outside the Cvar_*() functions should modify these fields!
 typedef struct cvar_s
 {
-    char        *name;
-    char        *string;
-    char        *latched_string;    // for CVAR_LATCH vars
+    char    * name;
+    char    * string;
+    char    * latched_string;    // for CVAR_LATCH vars
     int            flags;
     bool    modified;    // set each time the cvar is changed
     float        value;
     struct cvar_s *next;
-} cvar_t;
+} cvar;
 
 #endif        // CVAR
 
@@ -405,9 +405,9 @@ typedef struct
     float        fraction;    // time completed, 1.0 = didn't hit anything
     vec3_t        endpos;        // final position
     plane_t    plane;        // surface normal at impact
-    csurface_t    *surface;    // surface hit
+    csurface_t* surface;    // surface hit
     int            contents;    // contents on other side of surface hit
-    struct edict_s    *ent;        // not set by CM_*() functions
+    edict* ent;        // not set by CM_*() functions
 } trace_t;
 
 
@@ -433,7 +433,7 @@ typedef struct
     short        gravity;
     short        delta_angles[3];    // add to command angles to get view direction
                                     // changed by spawns, rotating objects, and teleporters
-} pmove_state_t;   // pm_time is non-moving time
+} pmove_state;   // pm_time is non-moving time
 #define PMF_NO_PREDICTION    64    // temporarily disables prediction (used for grappling hook)
 
 //
@@ -460,7 +460,7 @@ typedef struct usercmd_s
 typedef struct
 {
     // state (in / out)
-    pmove_state_t    s;
+    pmove_state    s;
 
     // command (in)
     usercmd_t        cmd;
@@ -468,14 +468,14 @@ typedef struct
 
     // results (out)
     int            numtouch;
-    struct edict_s    *touchents[MAXTOUCH];
+    edict* touchents[MAXTOUCH];
 
     vec3_t        viewangles;            // clamped
     float        viewheight;
 
     vec3_t        mins, maxs;            // bounding box size
 
-    struct edict_s    *groundentity;
+    edict* groundentity;
     int            watertype;
     int            waterlevel;
 
@@ -485,7 +485,7 @@ typedef struct
 } pmove_t;
 
 
-// entity_state_t->effects
+// entity_state->effects
 // Effects are things handled on the client side (lights, particles, frame animations)
 // that happen constantly on the given entity.
 // An entity that has effects will be sent to the client
@@ -526,7 +526,7 @@ typedef struct
 #define EF_TRACKERTRAIL        0x80000000
 //ROGUE
 
-// entity_state_t->renderfx flags
+// entity_state->renderfx flags
 #define    RF_MINLIGHT            1        // allways have some light (viewmodel)
 #define    RF_VIEWERMODEL        2        // don't draw through eyes, only mirrors
 #define    RF_WEAPONMODEL        4        // only draw through eyes
@@ -548,7 +548,7 @@ typedef struct
 #define RF_USE_DISGUISE        0x00040000
 //ROGUE
 
-// player_state_t->refdef flags
+// player_state->refdef flags
 #define    RDF_UNDERWATER        1        // warp the screen as apropriate
 #define RDF_NOWORLDMODEL    2        // used for player configuration screen
 
@@ -948,8 +948,6 @@ typedef enum
 #define STAT_CHASE                16
 #define STAT_SPECTATOR            17
 
-#define    MAX_STATS                32
-
 
 // dmflags->value flags
 #define    DF_NO_HEALTH        0x00000001    // 1
@@ -1053,7 +1051,7 @@ ROGUE - VERSIONS
 //==============================================
 
 
-// entity_state_t->event values
+// entity_state->event values
 // ertity events are for effects that take place reletive
 // to an existing entities origin.  Very network efficient.
 // All muzzle flashes really should be converted to events...
@@ -1070,10 +1068,10 @@ typedef enum
 } entity_event_t;
 
 
-// entity_state_t is the information conveyed from the server
+// entity_state is the information conveyed from the server
 // in an update message about entities that the client will
 // need to render in some way
-typedef struct entity_state_s
+typedef struct entity_state
 {
     int        number;            // edict index
 
@@ -1093,18 +1091,18 @@ typedef struct entity_state_s
     int        event;            // impulse events -- muzzle flashes, footsteps, etc
                             // events only go out for a single frame, they
                             // are automatically cleared each frame
-} entity_state_t;
+} entity_state;
 
 //==============================================
 
 
-// player_state_t is the information needed in addition to pmove_state_t
-// to rendered a view.  There will only be 10 player_state_t sent each second,
-// but the number of pmove_state_t changes will be reletive to client
+// player_state is the information needed in addition to pmove_state
+// to rendered a view.  There will only be 10 player_state sent each second,
+// but the number of pmove_state changes will be reletive to client
 // frame rates
 typedef struct
 {
-    pmove_state_t    pmove;        // for prediction
+    pmove_state    pmove;        // for prediction
 
     // these fields do not need to be communicated bit-precise
 
@@ -1125,7 +1123,7 @@ typedef struct
     int            rdflags;        // refdef flags
 
     short        stats[MAX_STATS];        // fast status bar updates
-} player_state_t;
+} player_state;
 
 
 // ==================

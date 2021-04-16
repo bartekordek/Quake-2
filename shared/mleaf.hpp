@@ -11,13 +11,13 @@ typedef struct mleaf_s
 
     float        minmaxs[6];        // for bounding box culling
 
-    struct mnode_s    *parent;
+    struct mnode_s* parent;
 
 // leaf specific
     int            cluster;
     int            area;
 
-    msurface_t    **firstmarksurface;
+    msurface_t* *firstmarksurface;
     int            nummarksurfaces;
     int            key;            // BSP sequence number for leaf's contents
 } mleaf_t;

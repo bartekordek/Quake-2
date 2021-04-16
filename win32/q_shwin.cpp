@@ -33,7 +33,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 int        hunkcount;
 
 
-byte    *membase;
+byte* membase;
 int        hunkmaxsize;
 int        cursize;
 
@@ -57,7 +57,7 @@ void *Hunk_Begin (int maxsize)
 
 void *Hunk_Alloc (int size)
 {
-    void    *buf;
+    void* buf;
 
     // round to cacheline
     size = (size+31)&~31;
@@ -84,7 +84,7 @@ int Hunk_End (void)
 
     // free the remaining unused virtual memory
 #if 0
-    void    *buf;
+    void* buf;
 
     // write protect it
     buf = VirtualAlloc (membase, cursize, MEM_COMMIT, PAGE_READONLY);

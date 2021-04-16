@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "qcommon.hpp"
+#include "win32/q_shwin.hpp"
 
 /*
 
@@ -74,9 +75,9 @@ then a packet only needs to be delivered if there is something in the
 unacknowledged reliable
 */
 
-cvar_t        *showpackets;
-cvar_t        *showdrop;
-cvar_t        *qport;
+cvar    * showpackets;
+cvar    * showdrop;
+cvar    * qport;
 
 netadr_t    net_from;
 sizebuf_t    net_message;
@@ -107,7 +108,7 @@ Netchan_OutOfBand
 Sends an out-of-band datagram
 ================
 */
-void Netchan_OutOfBand (int net_socket, netadr_t adr, int length, byte *data)
+void Netchan_OutOfBand (netsrc_t net_socket, netadr_t adr, int length, byte *data)
 {
     sizebuf_t    send;
     byte        send_buf[MAX_MSGLEN];
@@ -119,7 +120,7 @@ void Netchan_OutOfBand (int net_socket, netadr_t adr, int length, byte *data)
     SZ_Write (&send, data, length);
 
 // send the datagram
-    NET_SendPacket (net_socket, send.cursize, send.data, adr);
+    NET_SendPacket(net_socket, send.cursize, send.data, adr);
 }
 
 /*
@@ -129,7 +130,7 @@ Netchan_OutOfBandPrint
 Sends a text message in an out-of-band datagram
 ================
 */
-void Netchan_OutOfBandPrint (int net_socket, netadr_t adr, char *format, ...)
+void Netchan_OutOfBandPrint (netsrc_t net_socket, netadr_t adr, char *format, ...)
 {
     va_list        argptr;
     static char        string[MAX_MSGLEN - 4];
@@ -250,7 +251,7 @@ void Netchan_Transmit (netchan_t *chan, int length, byte *data)
     MSG_WriteLong (&send, w2);
 
     // send the qport if we are a client
-    if (chan->sock == NS_CLIENT)
+    if (chan->sock == netsrc_t::NS_CLIENT)
         MSG_WriteShort (&send, qport->value);
 
 // copy the reliable message to the packet first
@@ -307,7 +308,7 @@ bool Netchan_Process (netchan_t *chan, sizebuf_t *msg)
     sequence_ack = MSG_ReadLong (msg);
 
     // read the qport if we are a server
-    if (chan->sock == NS_SERVER)
+    if (chan->sock == netsrc_t::NS_SERVER)
         qport = MSG_ReadShort (msg);
 
     reliable_message = sequence >> 31;

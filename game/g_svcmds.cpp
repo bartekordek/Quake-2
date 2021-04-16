@@ -241,11 +241,11 @@ void SVCmd_WriteIP_f (void)
 	char	name[MAX_OSPATH];
 	byte	b[4];
 	int		i;
-	cvar_t	*game;
+	cvar	*game;
 
-	game = gi.cvar("game", "", 0);
+	game = gi.cvar_obj ("game", "", 0);
 
-	if (!*game->string)
+	if (game->string.empty())
 		sprintf (name, "%s/listip.cfg", GAMEVERSION);
 	else
 		sprintf (name, "%s/listip.cfg", game->string);

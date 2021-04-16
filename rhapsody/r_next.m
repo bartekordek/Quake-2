@@ -28,7 +28,7 @@ int Draw_SetResolution (void);
 #define	TYPE_STRETCHED	2
 
 #define	NUM_RESOLUTIONS		7
-int	resolutions[NUM_RESOLUTIONS][2] = { 
+int	resolutions[NUM_RESOLUTIONS][2] = {
 	{320,200}, {320,240}, {400,300}, {512,384}, {640,480}, {800,600}, {1024,768} };
 
 qboolean	available[NUM_RESOLUTIONS][3];
@@ -40,12 +40,12 @@ unsigned       	gamma_palette[256];
 
 int			cursor_res, cursor_type;
 
-cvar_t		*vid_x;
-cvar_t		*vid_y;
-cvar_t		*vid_mode;
-cvar_t		*vid_stretched;
-cvar_t		*vid_fullscreen;
-cvar_t		*draw_gamma;
+cvar		*vid_x;
+cvar		*vid_y;
+cvar		*vid_mode;
+cvar		*vid_stretched;
+cvar		*vid_fullscreen;
+cvar		*draw_gamma;
 
 void Draw_BuildGammaTable (void);
 
@@ -174,7 +174,7 @@ void Draw_MenuKey (int key)
                         ri.Cmd_ExecuteText (EXEC_NOW, "vid_stretched 1");
                         break;
 		}
-                    
+
 		mode_res = cursor_res;
 		mode_type = cursor_type;
 		Draw_SetResolution ();
@@ -199,7 +199,7 @@ Also allocates the z buffer and surface cache
 int Draw_SetResolution (void)
 {
     NSRect	content;
-    
+
 	if (vid_mode->value < 0)
 		ri.Cmd_ExecuteText (EXEC_NOW, "vid_mode 0");
 	if (vid_mode->value >= NUM_RESOLUTIONS)
@@ -215,7 +215,7 @@ int Draw_SetResolution (void)
             free (buffernative);
             buffernative = NULL;
         }
-        
+
 	// free z buffer
 	if (d_pzbuffer)
 	{
@@ -282,10 +282,10 @@ int Draw_SetResolution (void)
 //   [vid_window_i addToEventMask: NS_FLAGSCHANGEDMASK];
    [vid_window_i setTitle: @"Bitmap Quake Console"];
  	[vid_window_i makeKeyAndOrderFront: nil];
-        
+
    // leave focus locked forever
    [vid_view_i lockFocus];
-   
+
 	ri.VID_SetSize (vid.width, vid.height);
 
 	return 0;
@@ -301,7 +301,7 @@ int Draw_Init (void *window)
 {
     [NSApplication sharedApplication];
 	[NSApp finishLaunching];
-  
+
 	ri.Con_Printf (PRINT_ALL, "refresh version: "REF_VERSION"\n");
 
 	vid_x = ri.Cvar_Get ("vid_x", "0", CVAR_ARCHIVE);
@@ -363,7 +363,7 @@ void Draw_BuildGammaTable (void)
 			gammatable[i] = i;
 		return;
 	}
-	
+
 	for (i=0 ; i<256 ; i++)
 	{
 		inf = 255 * pow ( (i+0.5)/255.5 , g ) + 0.5;
@@ -417,7 +417,7 @@ void Draw_EndFrame (void)
         c = vid.width*vid.height;
 	for (i=0 ; i<c ; i++)
 		buffernative[i] = gamma_palette[vid.buffer[i]];
-        
+
      bps = 8;
      spp = 3;
      bpp = 32;
@@ -477,7 +477,7 @@ void *Hunk_Alloc (int size)
 {
 	// round to cacheline
 	size = (size+31)&~31;
-	
+
 	cursize += size;
 
         if (cursize > maxsize)
@@ -491,7 +491,7 @@ void *Hunk_Alloc (int size)
 int Hunk_End (void)
 {
     kern_return_t	r;
-    
+
     // round to pagesize
     cursize = (cursize+vm_page_size)&~(vm_page_size-1);
     membase->length = cursize;
@@ -507,7 +507,7 @@ void Hunk_Free (void *base)
 {
     hunkheader_t	*h;
     kern_return_t	r;
-    
+
     h = ((hunkheader_t *)base) - 1;
     if (h->magic != HUNK_MAGIC)
         ri.Sys_Error (ERR_FATAL, "Hunk_Free: bad magic");
@@ -577,7 +577,7 @@ void IN_DeactivateMouse (void);
 
     r = [vid_window_i frame];
     ri.Cmd_ExecuteText (EXEC_NOW, va("vid_x %i", (int)r.origin.x+1));
-    ri.Cmd_ExecuteText (EXEC_NOW, va("vid_y %i", (int)r.origin.y+1));    
+    ri.Cmd_ExecuteText (EXEC_NOW, va("vid_y %i", (int)r.origin.y+1));
 }
 
 - (void)becomeKeyWindow

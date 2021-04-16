@@ -11,11 +11,11 @@ typedef struct mnode_s
 
     short        minmaxs[6];        // for bounding box culling
 
-    struct mnode_s    *parent;
+    struct mnode_s* parent;
 
 // node specific
-    plane_t    *plane;
-    struct mnode_s    *children[2];
+    plane_t* plane;
+    struct mnode_s* children[2];
 
     unsigned short        firstsurface;
     unsigned short        numsurfaces;

@@ -20,32 +20,35 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // common.c -- misc functions used in client and server
 #include "qcommon.hpp"
 #include <setjmp.h>
-#include "shared/defines.hpp"
+#include "shared/shared_functions.hpp"
 #include "server/server.hpp"
+#include "win32/q_shwin.hpp"
+
+#include <functional>
 
 #define MAX_NUM_ARGVS    50
 
 
 int        com_argc;
-char    *com_argv[MAX_NUM_ARGVS+1];
+char* com_argv[MAX_NUM_ARGVS+1];
 
 int        realtime;
 
 jmp_buf abortframe;        // an ERR_DROP occured, exit the entire frame
 
 
-FILE    *log_stats_file;
+FILE* log_stats_file;
 
-cvar_t    *host_speeds;
-cvar_t    *log_stats;
-cvar_t    *developer;
-cvar_t    *timescale;
-cvar_t    *fixedtime;
-cvar_t    *logfile_active;    // 1 = buffer log, 2 = flush after each print
-cvar_t    *showtrace;
-cvar_t    *dedicated;
+cvar* host_speeds;
+cvar* log_stats;
+cvar* developer;
+cvar* timescale;
+cvar* fixedtime;
+cvar* logfile_active;    // 1 = buffer log, 2 = flush after each print
+cvar* showtrace;
+cvar* dedicated;
 
-FILE    *logfile;
+FILE* logfile;
 
 int            server_state;
 
@@ -64,11 +67,14 @@ CLIENT / SERVER interactions
 */
 
 int    rd_target;
-char    *rd_buffer;
+char* rd_buffer;
 int    rd_buffersize;
-static void    (*rd_flush)(int target, char *buffer);
 
-void Com_BeginRedirect (int target, char *buffer, int buffersize, void (*flush))
+static std::function<void(int target, char *buffer)> rd_flush;
+//static void    (*rd_flush)(int target, char *buffer);
+
+//void Com_BeginRedirect (int target, char *buffer, int buffersize, void (*flush))
+void Com_BeginRedirect (int target, char *buffer, int buffersize, std::function<void(int, char *)>& flush)
 {
     if (!target || !buffer || !buffersize || !flush)
         return;
@@ -77,7 +83,7 @@ void Com_BeginRedirect (int target, char *buffer, int buffersize, void (*flush))
     rd_buffersize = buffersize;
     rd_flush = flush;
 
-    *rd_buffer = 0;
+* rd_buffer = 0;
 }
 
 void Com_EndRedirect (void)
@@ -130,8 +136,12 @@ void Com_Error (int code, char *fmt, ...)
     static char        msg[MAXPRINTMSG];
     static    bool    recursive;
 
+
     if (recursive)
-        Sys_Error ("recursive error after: %s", msg);
+    {
+            //     Sys_Error ("recursive error after: %s", msg);
+    }
+
     recursive = true;
 
     va_start (argptr,fmt);
@@ -146,7 +156,7 @@ void Com_Error (int code, char *fmt, ...)
     }
     else if (code == ERR_DROP)
     {
-        Com_Printf_G ("********************\nERROR: %s\n********************\n", msg);
+        //Com_Printf_G ("********************\nERROR: %s\n********************\n", msg);
         SV_Shutdown (va("Server crashed: %s\n", msg), false);
         CL_Drop ();
         recursive = false;
@@ -164,7 +174,7 @@ void Com_Error (int code, char *fmt, ...)
         logfile = NULL;
     }
 
-    Sys_Error ("%s", msg);
+    win32_Sys_Error ("%s", msg);
 }
 
 
@@ -232,7 +242,7 @@ vec3_t    bytedirs[NUMVERTEXNORMALS] =
 
 void MSG_WriteChar (sizebuf_t *sb, int c)
 {
-    byte    *buf;
+    byte* buf;
 
 #ifdef PARANOID
     if (c < -128 || c > 127)
@@ -245,7 +255,7 @@ void MSG_WriteChar (sizebuf_t *sb, int c)
 
 void MSG_WriteByte (sizebuf_t *sb, int c)
 {
-    byte    *buf;
+    byte* buf;
 
 #ifdef PARANOID
     if (c < 0 || c > 255)
@@ -258,7 +268,7 @@ void MSG_WriteByte (sizebuf_t *sb, int c)
 
 void MSG_WriteShort (sizebuf_t *sb, int c)
 {
-    byte    *buf;
+    byte* buf;
 
 #ifdef PARANOID
     if (c < ((short)0x8000) || c > (short)0x7fff)
@@ -272,7 +282,7 @@ void MSG_WriteShort (sizebuf_t *sb, int c)
 
 void MSG_WriteLong (sizebuf_t *sb, int c)
 {
-    byte    *buf;
+    byte* buf;
 
     buf = SZ_GetSpace (sb, 4);
     buf[0] = c&0xff;
@@ -423,7 +433,7 @@ Writes part of a packetentities message.
 Can delta from either a baseline or a previous packet_entity
 ==================
 */
-void MSG_WriteDeltaEntity (entity_state_t *from, entity_state_t *to, sizebuf_t *msg, bool force, bool newentity)
+void MSG_WriteDeltaEntity (entity_state *from, entity_state *to, sizebuf_t *msg, bool force, bool newentity)
 {
     int        bits;
 
@@ -840,7 +850,7 @@ void SZ_Clear (sizebuf_t *buf)
 
 void *SZ_GetSpace (sizebuf_t *buf, int length)
 {
-    void    *data;
+    void* data;
 
     if (buf->cursize + length > buf->maxsize)
     {
@@ -980,7 +990,7 @@ int    memsearch (byte *start, int count, int search)
 
 char *CopyString (char *in)
 {
-    char    *out;
+    char* out;
 
     out = Z_Malloc (strlen(in)+1);
     strcpy (out, in);
@@ -993,7 +1003,7 @@ void Info_Print (char *s)
 {
     char    key[512];
     char    value[512];
-    char    *o;
+    char* o;
     int        l;
 
     if (*s == '\\')
@@ -1002,7 +1012,7 @@ void Info_Print (char *s)
     {
         o = key;
         while (*s && *s != '\\')
-            *o++ = *s++;
+        * o++ = *s++;
 
         l = o - key;
         if (l < 20)
@@ -1011,7 +1021,7 @@ void Info_Print (char *s)
             key[20] = 0;
         }
         else
-            *o = 0;
+        * o = 0;
         Com_Printf_G ("%s", key);
 
         if (!*s)
@@ -1023,8 +1033,8 @@ void Info_Print (char *s)
         o = value;
         s++;
         while (*s && *s != '\\')
-            *o++ = *s++;
-        *o = 0;
+        * o++ = *s++;
+    * o = 0;
 
         if (*s)
             s++;
@@ -1048,7 +1058,7 @@ just cleared malloc with counters now...
 
 typedef struct zhead_s
 {
-    struct zhead_s    *prev, *next;
+    struct zhead_s* prev, *next;
     short    magic;
     short    tag;            // for group free
     int        size;
@@ -1064,7 +1074,7 @@ Z_Free
 */
 void Z_Free (void *ptr)
 {
-    zhead_t    *z;
+    zhead_t* z;
 
     z = ((zhead_t *)ptr) - 1;
 
@@ -1097,7 +1107,7 @@ Z_FreeTags
 */
 void Z_FreeTags (int tag)
 {
-    zhead_t    *z, *next;
+    zhead_t* z, *next;
 
     for (z=z_chain.next ; z != &z_chain ; z=next)
     {
@@ -1114,10 +1124,8 @@ Z_TagMalloc
 */
 void *Z_TagMalloc (int size, int tag)
 {
-    zhead_t    *z;
-
     size = size + sizeof(zhead_t);
-    z = malloc(size);
+    zhead_t* z = (zhead_t*)malloc(size);
     if (!z)
         Com_Error (ERR_FATAL, "Z_Malloc: failed on allocation of %i bytes",size);
     memset (z, 0, size);
@@ -1160,14 +1168,14 @@ For proxy protecting
 
 ====================
 */
-byte    COM_BlockSequenceCheckByte (byte *base, int length, int sequence, int challenge)
+byte COM_BlockSequenceCheckByte (byte *base, int length, int sequence, int challenge)
 {
-    Sys_Error("COM_BlockSequenceCheckByte called\n");
+    win32_Sys_Error("COM_BlockSequenceCheckByte called\n");
 
 #if 0
     int        checksum;
     byte    buf[68];
-    byte    *p;
+    byte* p;
     float temp;
     byte c;
 
@@ -1281,14 +1289,14 @@ For proxy protecting
 byte    COM_BlockSequenceCRCByte (byte *base, int length, int sequence)
 {
     int        n;
-    byte    *p;
+    byte* p;
     int        x;
     byte chkb[60 + 4];
     unsigned short crc;
 
 
     if (sequence < 0)
-        Sys_Error("sequence < 0, this shouldn't happen\n");
+        win32_Sys_Error("sequence < 0, this shouldn't happen\n");
 
     p = chktbl + (sequence % (sizeof(chktbl) - 4));
 
@@ -1349,10 +1357,8 @@ Qcommon_Init
 */
 void Qcommon_Init (int argc, char **argv)
 {
-    char    *s;
-
     if (setjmp (abortframe) )
-        Sys_Error ("Error during initialization");
+        win32_Sys_Error ("Error during initialization");
 
     z_chain.next = z_chain.prev = &z_chain;
 
@@ -1402,7 +1408,7 @@ void Qcommon_Init (int argc, char **argv)
     dedicated = Cvar_Get ("dedicated", "0", CVAR_NOSET);
 #endif
 
-    s = va("%4.2f %s %s %s", VERSION, CPUSTRING, __DATE__, BUILDSTRING);
+    char* s = va("%4.2f %s %s %s", VERSION, CPUSTRING, __DATE__, BUILDSTRING);
     Cvar_Get ("version", s, CVAR_SERVERINFO|CVAR_NOSET);
 
 
@@ -1442,7 +1448,7 @@ Qcommon_Frame
 */
 void Qcommon_Frame (int msec)
 {
-    char    *s;
+    char* s;
     int        time_before, time_between, time_after;
 
     if (setjmp (abortframe) )
@@ -1494,7 +1500,7 @@ void Qcommon_Frame (int msec)
 
     do
     {
-        s = win32_Sys_ConsoleInput ();
+        s = toChar( win32_Sys_ConsoleInput() );
         if (s)
             Cbuf_AddText (va("%s\n",s));
     } while (s);

@@ -4,23 +4,23 @@
 #include "shared/defines.hpp"
 #include "shared/mmove.hpp"
 
-typedef struct
+struct monsterinfo
 {
     mmove_t* currentmove;
     int            aiflags;
     int            nextframe;
     float        scale;
 
-    void        (*stand)(struct edict_s *self);
-    void        (*idle)(struct edict_s *self);
-    void        (*search)(struct edict_s *self);
-    void        (*walk)(struct edict_s *self);
-    void        (*run)(struct edict_s *self);
-    void        (*dodge)(struct edict_s *self, struct edict_s *other, float eta);
-    void        (*attack)(struct edict_s *self);
-    void        (*melee)(struct edict_s *self);
-    void        (*sight)(struct edict_s *self, struct edict_s *other);
-    bool    (*checkattack)(struct edict_s *self);
+    void        (*stand)(edict *self);
+    void        (*idle)(edict *self);
+    void        (*search)(edict *self);
+    void        (*walk)(edict *self);
+    void        (*run)(edict *self);
+    void        (*dodge)(edict *self, edict *other, float eta);
+    void        (*attack)(edict *self);
+    void        (*melee)(edict *self);
+    void        (*sight)(edict *self, edict *other);
+    bool    (*checkattack)(edict *self);
 
     float        pausetime;
     float        attack_finished;
@@ -36,7 +36,7 @@ typedef struct
 
     int power_armor_type;
     int power_armor_power;
-} monsterinfo_t;
+};
 
 
 #endif // ____SHARED_MONSTERINFO_H__

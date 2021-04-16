@@ -38,26 +38,26 @@ static int	sound_pain2;
 static int	sound_sight;
 
 
-void floater_sight (struct edict_s *self, struct edict_s *other)
+void floater_sight (edict *self, edict *other)
 {
 	gi.sound (self, CHAN_VOICE, sound_sight, 1, ATTN_NORM, 0);
 }
 
-void floater_idle (struct edict_s *self)
+void floater_idle (edict *self)
 {
 	gi.sound (self, CHAN_VOICE, sound_idle, 1, ATTN_IDLE, 0);
 }
 
 
-//void floater_stand1 (struct edict_s *self);
-void floater_dead (struct edict_s *self);
-void floater_die (struct edict_s *self, struct edict_s *inflictor, struct edict_s *attacker, int damage, vec3_t point);
-void floater_run (struct edict_s *self);
-void floater_wham (struct edict_s *self);
-void floater_zap (struct edict_s *self);
+//void floater_stand1 (edict *self);
+void floater_dead (edict *self);
+void floater_die (edict *self, edict *inflictor, edict *attacker, int damage, vec3_t point);
+void floater_run (edict *self);
+void floater_wham (edict *self);
+void floater_zap (edict *self);
 
 
-void floater_fire_blaster (struct edict_s *self)
+void floater_fire_blaster (edict *self)
 {
 	vec3_t	start;
 	vec3_t	forward, right;
@@ -194,7 +194,7 @@ mframe_t floater_frames_stand2 [] =
 };
 mmove_t	floater_move_stand2 = {FRAME_stand201, FRAME_stand252, floater_frames_stand2, NULL};
 
-void floater_stand (struct edict_s *self)
+void floater_stand (edict *self)
 {
 	if (random() <= 0.5)
 		self->monsterinfo.currentmove = &floater_move_stand1;
@@ -499,7 +499,7 @@ mframe_t floater_frames_run [] =
 };
 mmove_t	floater_move_run = {FRAME_stand101, FRAME_stand152, floater_frames_run, NULL};
 
-void floater_run (struct edict_s *self)
+void floater_run (edict *self)
 {
 	if (self->monsterinfo.aiflags & AI_STAND_GROUND)
 		self->monsterinfo.currentmove = &floater_move_stand1;
@@ -507,19 +507,19 @@ void floater_run (struct edict_s *self)
 		self->monsterinfo.currentmove = &floater_move_run;
 }
 
-void floater_walk (struct edict_s *self)
+void floater_walk (edict *self)
 {
 	self->monsterinfo.currentmove = &floater_move_walk;
 }
 
-void floater_wham (struct edict_s *self)
+void floater_wham (edict *self)
 {
 	static	vec3_t	aim = {MELEE_DISTANCE, 0, 0};
 	gi.sound (self, CHAN_WEAPON, sound_attack3, 1, ATTN_NORM, 0);
 	fire_hit (self, aim, 5 + rand() % 6, -50);
 }
 
-void floater_zap (struct edict_s *self)
+void floater_zap (edict *self)
 {
 	vec3_t	forward, right;
 	vec3_t	origin;
@@ -548,13 +548,13 @@ void floater_zap (struct edict_s *self)
 	T_Damage (self->enemy, self, self, dir, self->enemy->s.origin, vec3_origin, 5 + rand() % 6, -10, DAMAGE_ENERGY, MOD_UNKNOWN);
 }
 
-void floater_attack(struct edict_s *self)
+void floater_attack(edict *self)
 {
 	self->monsterinfo.currentmove = &floater_move_attack1;
 }
 
 
-void floater_melee(struct edict_s *self)
+void floater_melee(edict *self)
 {
 	if (random() < 0.5)
 		self->monsterinfo.currentmove = &floater_move_attack3;
@@ -563,7 +563,7 @@ void floater_melee(struct edict_s *self)
 }
 
 
-void floater_pain (struct edict_s *self, struct edict_s *other, float kick, int damage)
+void floater_pain (edict *self, edict *other, float kick, int damage)
 {
 	int		n;
 
@@ -590,7 +590,7 @@ void floater_pain (struct edict_s *self, struct edict_s *other, float kick, int 
 	}
 }
 
-void floater_dead (struct edict_s *self)
+void floater_dead (edict *self)
 {
 	VectorSet (self->mins, -16, -16, -24);
 	VectorSet (self->maxs, 16, 16, -8);
@@ -600,7 +600,7 @@ void floater_dead (struct edict_s *self)
 	gi.linkentity (self);
 }
 
-void floater_die (struct edict_s *self, struct edict_s *inflictor, struct edict_s *attacker, int damage, vec3_t point)
+void floater_die (edict *self, edict *inflictor, edict *attacker, int damage, vec3_t point)
 {
 	gi.sound (self, CHAN_VOICE, sound_death1, 1, ATTN_NORM, 0);
 	BecomeExplosion1(self);
@@ -608,7 +608,7 @@ void floater_die (struct edict_s *self, struct edict_s *inflictor, struct edict_
 
 /*QUAKED monster_floater (1 .5 0) (-16 -16 -24) (16 16 32) Ambush Trigger_Spawn Sight
 */
-void SP_monster_floater (struct edict_s *self)
+void SP_monster_floater (edict *self)
 {
 	if (deathmatch->value)
 	{

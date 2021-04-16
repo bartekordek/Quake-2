@@ -1,10 +1,7 @@
 #ifndef ____SHARED_EDICT_H__
 #define ____SHARED_EDICT_H__
 
-#include "game/q_shared.hpp"
-
-#include "shared/defines.hpp"
-#include "shared/gitem.hpp"
+#include "shared/entity_state.hpp"
 #include "shared/moveinfo.hpp"
 #include "shared/monsterinfo.hpp"
 #include "shared/g_client.hpp"
@@ -12,7 +9,7 @@
 // link_t is only used for entity area links now
 typedef struct link_s
 {
-	struct link_s	*prev, *next;
+    struct link_s	*prev, *next;
 } link_t;
 
 // edict->solid values
@@ -24,12 +21,14 @@ SOLID_BBOX,			// touch on edge
 SOLID_BSP			// bsp clip, touch on edge
 } solid_t;
 
-typedef struct edict_s
+struct edict;
+
+struct edict
 {
-    entity_state_t s;
-    struct gclient_s* client;// NULL if not a player
+    entity_state s;
+    gclient* client;// NULL if not a player
                              // the server expects the first part
-                             // of gclient_s to be a player_state_t
+                             // of gclient to be a player_state
                              // but the rest of it is opaque
 
     bool inuse;
@@ -49,7 +48,7 @@ typedef struct edict_s
     vec3_t absmin, absmax, size;
     solid_t solid;
     int clipmask;
-    struct edict_s* owner;
+    edict* owner;
 
     // DO NOT MODIFY ANYTHING ABOVE THIS, THE SERVER
     // EXPECTS THE FIELDS IN THAT ORDER!
@@ -58,27 +57,27 @@ typedef struct edict_s
     int movetype;
     int flags;
 
-    char        *model;
+    char    * model;
     float        freetime;            // sv.time when the object was freed
 
     //
     // only used locally in game, not by server
     //
-    char        *message;
-    char        *classname;
+    char    * message;
+    char    * classname;
     int            spawnflags;
 
     float        timestamp;
 
     float        angle;            // set in qe3, -1 = up, -2 = down
-    char        *target;
-    char        *targetname;
-    char        *killtarget;
-    char        *team;
-    char        *pathtarget;
-    char        *deathtarget;
-    char        *combattarget;
-    struct edict_s* target_ent;
+    char    * target;
+    char    * targetname;
+    char    * killtarget;
+    char    * team;
+    char    * pathtarget;
+    char    * deathtarget;
+    char    * combattarget;
+    edict* target_ent;
 
     float        speed, accel, decel;
     vec3_t        movedir;
@@ -91,19 +90,19 @@ typedef struct edict_s
     float        gravity;        // per entity gravity multiplier (1.0 is normal)
                                 // use for lowgrav artifact, flares
 
-    struct edict_s        *goalentity;
-    struct edict_s        *movetarget;
+    edict    * goalentity;
+    edict    * movetarget;
     float        yaw_speed;
     float        ideal_yaw;
 
     float        nextthink;
-    void        (*prethink) (struct edict_s *ent);
-    void        (*think)(struct edict_s *self);
-    void        (*blocked)(struct edict_s *self, struct edict_s *other);    //move to moveinfo?
-    void        (*touch)(struct edict_s *self, struct edict_s *other, plane_t *plane, csurface_t *surf);
-    void        (*use)(struct edict_s *self, struct edict_s *other, struct edict_s *activator);
-    void        (*pain)(struct edict_s *self, struct edict_s *other, float kick, int damage);
-    void        (*die)(struct edict_s *self, struct edict_s *inflictor, struct edict_s *attacker, int damage, vec3_t point);
+    void        (*prethink) (edict *ent);
+    void        (*think)(edict *self);
+    void        (*blocked)(edict *self, edict *other);    //move to moveinfo?
+    void        (*touch)(edict *self, edict *other, plane_t *plane, csurface_t *surf);
+    void        (*use)(edict *self, edict *other, edict *activator);
+    void        (*pain)(edict *self, edict *other, float kick, int damage);
+    void        (*die)(edict *self, edict *inflictor, edict *attacker, int damage, vec3_t point);
 
     float        touch_debounce_time;        // are all these legit?  do we need more/less of them?
     float        pain_debounce_time;
@@ -119,7 +118,7 @@ typedef struct edict_s
 
     float        powerarmor_time;
 
-    char        *map;            // target_changelevel
+    char    * map;            // target_changelevel
 
     int            viewheight;        // height above origin where eyesight is determined
     int            takedamage;
@@ -129,17 +128,17 @@ typedef struct edict_s
     int            sounds;            //make this a spawntemp var?
     int            count;
 
-    struct edict_s        *chain;
-    struct edict_s        *enemy;
-    struct edict_s        *oldenemy;
-    struct edict_s        *activator;
-    struct edict_s        *groundentity;
+    edict    * chain;
+    edict    * enemy;
+    edict    * oldenemy;
+    edict    * activator;
+    edict    * groundentity;
     int            groundentity_linkcount;
-    struct edict_s        *teamchain;
-    struct edict_s        *teammaster;
+    edict    * teamchain;
+    edict    * teammaster;
 
-    struct edict_s        *mynoise;        // can go in client only
-    struct edict_s        *mynoise2;
+    edict    * mynoise;        // can go in client only
+    edict    * mynoise2;
 
     int            noise_index;
     int            noise_index2;
@@ -164,11 +163,11 @@ typedef struct edict_s
 
     int            style;            // also used as areaportal number
 
-    gitem_t        *item;            // for bonus items
+    struct gitem* item;// for bonus items
 
     // common data blocks
-    moveinfo_t        moveinfo;
-    monsterinfo_t    monsterinfo;
-} edict_t;
+    moveinfo moveinfo;
+    monsterinfo monsterinfo;
+};
 
 #endif // ____SHARED_EDICT_H__

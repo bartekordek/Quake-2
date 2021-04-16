@@ -29,7 +29,7 @@ INTERMISSION
 ======================================================================
 */
 
-void MoveClientToIntermission (struct edict_s *ent)
+void MoveClientToIntermission (edict *ent)
 {
 	if (deathmatch->value || coop->value)
 		ent->client->showscores = true;
@@ -70,10 +70,10 @@ void MoveClientToIntermission (struct edict_s *ent)
 
 }
 
-void BeginIntermission (struct edict_s *targ)
+void BeginIntermission (edict *targ)
 {
 	int		i, n;
-	struct edict_s	*ent, *client;
+	edict	*ent, *client;
 
 	if (level.intermissiontime)
 		return;		// allready activated
@@ -166,7 +166,7 @@ DeathmatchScoreboardMessage
 
 ==================
 */
-void DeathmatchScoreboardMessage (struct edict_s *ent, struct edict_s *killer)
+void DeathmatchScoreboardMessage (edict *ent, edict *killer)
 {
 	char	entry[1024];
 	char	string[1400];
@@ -178,7 +178,7 @@ void DeathmatchScoreboardMessage (struct edict_s *ent, struct edict_s *killer)
 	int		picnum;
 	int		x, y;
 	gclient_t	*cl;
-	struct edict_s		*cl_ent;
+	edict		*cl_ent;
 	char	*tag;
 
 //ZOID
@@ -271,7 +271,7 @@ Draw instead of help message.
 Note that it isn't that hard to overflow the 1400 byte message limit!
 ==================
 */
-void DeathmatchScoreboard (struct edict_s *ent)
+void DeathmatchScoreboard (edict *ent)
 {
 	DeathmatchScoreboardMessage (ent, ent->enemy);
 	gi.unicast (ent, true);
@@ -285,7 +285,7 @@ Cmd_Score_f
 Display the scoreboard
 ==================
 */
-void Cmd_Score_f (struct edict_s *ent)
+void Cmd_Score_f (edict *ent)
 {
 	ent->client->showinventory = false;
 	ent->client->showhelp = false;
@@ -317,7 +317,7 @@ HelpComputer
 Draw help computer.
 ==================
 */
-void HelpComputer (struct edict_s *ent)
+void HelpComputer (edict *ent)
 {
 	char	string[1024];
 	char	*sk;
@@ -361,7 +361,7 @@ Cmd_Help_f
 Display the current help message
 ==================
 */
-void Cmd_Help_f (struct edict_s *ent)
+void Cmd_Help_f (edict *ent)
 {
 	// this is for backwards compatability
 	if (deathmatch->value)
@@ -392,9 +392,9 @@ void Cmd_Help_f (struct edict_s *ent)
 G_SetStats
 ===============
 */
-void G_SetStats (struct edict_s *ent)
+void G_SetStats (edict *ent)
 {
-	gitem_t		*item;
+	gitem		*item;
 	int			index, cells;
 	int			power_armor_type;
 

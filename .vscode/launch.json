@@ -20,10 +20,18 @@
             "preLaunchTask": "[WINDOWS][BUILD][DEBUG]"
         },
         {
-            "name": "Python: Current File",
+            "name": "[PYTHON][RENAME C TO CPP]",
             "type": "python",
             "request": "launch",
             "program": "CtoCPP.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "name": "[PYTHON][ADD GUARDS]",
+            "type": "python",
+            "request": "launch",
+            "program": "FixHeaders.py",
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}"
         }

@@ -34,7 +34,7 @@ R_ImageList_f
 void ref_soft_R_ImageList_f (void)
 {
     int        i;
-    image_t    *image;
+    image_t* image;
     int        texels;
 
     ri.Con_Printf (PRINT_ALL, "------------------\n");
@@ -86,19 +86,17 @@ LoadPCX
 */
 void ref_soft_LoadPCX (char *filename, byte **pic, byte **palette, int *width, int *height)
 {
-    byte    *raw;
-    pcx_t    *pcx;
+    byte* raw;
     int        x, y;
-    int        len;
     int        dataByte, runLength;
-    byte    *out, *pix;
+    byte* pix;
 
     *pic = NULL;
 
     //
     // load the file
     //
-    len = ri.FS_LoadFile (filename, (void **)&raw);
+    int len = ri.FS_LoadFile (filename, (void **)&raw);
     if (!raw)
     {
         ri.Con_Printf (PRINT_DEVELOPER, "Bad pcx file %s\n", filename);
@@ -108,7 +106,7 @@ void ref_soft_LoadPCX (char *filename, byte **pic, byte **palette, int *width, i
     //
     // parse the PCX file
     //
-    pcx = (pcx_t *)raw;
+    pcx_t* pcx = (pcx_t *)raw;
 
     pcx->xmin = LittleShort(pcx->xmin);
     pcx->ymin = LittleShort(pcx->ymin);
@@ -132,7 +130,7 @@ void ref_soft_LoadPCX (char *filename, byte **pic, byte **palette, int *width, i
         return;
     }
 
-    out = malloc ( (pcx->ymax+1) * (pcx->xmax+1) );
+    byte* out = (byte*)malloc ( (pcx->ymax+1) * (pcx->xmax+1) );
 
     *pic = out;
 
@@ -140,14 +138,14 @@ void ref_soft_LoadPCX (char *filename, byte **pic, byte **palette, int *width, i
 
     if (palette)
     {
-        *palette = malloc(768);
+        *palette = (byte *)malloc(768);
         memcpy (*palette, (byte *)pcx + len - 768, 768);
     }
 
     if (width)
-        *width = pcx->xmax+1;
+    * width = pcx->xmax+1;
     if (height)
-        *height = pcx->ymax+1;
+    * height = pcx->ymax+1;
 
     for (y=0 ; y<=pcx->ymax ; y++, pix += pcx->xmax+1)
     {
@@ -173,7 +171,7 @@ void ref_soft_LoadPCX (char *filename, byte **pic, byte **palette, int *width, i
     {
         ri.Con_Printf (PRINT_DEVELOPER, "PCX file %s was malformed", filename);
         free (*pic);
-        *pic = NULL;
+    * pic = NULL;
     }
 
     ri.FS_FreeFile (pcx);
@@ -204,15 +202,15 @@ ref_soft_LoadTGA
 void ref_soft_LoadTGA (char *name, byte **pic, int *width, int *height)
 {
     int        columns, rows, numPixels;
-    byte    *pixbuf;
+    byte* pixbuf;
     int        row, column;
-    byte    *buf_p;
-    byte    *buffer;
+    byte* buf_p;
+    byte* buffer;
     int        length;
     TargaHeader        targa_header;
-    byte            *targa_rgba;
+    byte        * targa_rgba;
 
-    *pic = NULL;
+* pic = NULL;
 
     //
     // load the file
@@ -259,11 +257,11 @@ void ref_soft_LoadTGA (char *name, byte **pic, int *width, int *height)
     numPixels = columns * rows;
 
     if (width)
-        *width = columns;
+    * width = columns;
     if (height)
-        *height = rows;
+    * height = rows;
 
-    targa_rgba = malloc (numPixels*4);
+    targa_rgba = (byte*)malloc (numPixels*4);
     *pic = targa_rgba;
 
     if (targa_header.id_length != 0)
@@ -280,20 +278,20 @@ void ref_soft_LoadTGA (char *name, byte **pic, int *width, int *height)
                             blue = *buf_p++;
                             green = *buf_p++;
                             red = *buf_p++;
-                            *pixbuf++ = red;
-                            *pixbuf++ = green;
-                            *pixbuf++ = blue;
-                            *pixbuf++ = 255;
+                        * pixbuf++ = red;
+                        * pixbuf++ = green;
+                        * pixbuf++ = blue;
+                        * pixbuf++ = 255;
                             break;
                     case 32:
                             blue = *buf_p++;
                             green = *buf_p++;
                             red = *buf_p++;
                             alphabyte = *buf_p++;
-                            *pixbuf++ = red;
-                            *pixbuf++ = green;
-                            *pixbuf++ = blue;
-                            *pixbuf++ = alphabyte;
+                        * pixbuf++ = red;
+                        * pixbuf++ = green;
+                        * pixbuf++ = blue;
+                        * pixbuf++ = alphabyte;
                             break;
                 }
             }
@@ -323,10 +321,10 @@ void ref_soft_LoadTGA (char *name, byte **pic, int *width, int *height)
                     }
 
                     for(j=0;j<packetSize;j++) {
-                        *pixbuf++=red;
-                        *pixbuf++=green;
-                        *pixbuf++=blue;
-                        *pixbuf++=alphabyte;
+                    * pixbuf++=red;
+                    * pixbuf++=green;
+                    * pixbuf++=blue;
+                    * pixbuf++=alphabyte;
                         column++;
                         if (column==columns) { // run spans across rows
                             column=0;
@@ -345,20 +343,20 @@ void ref_soft_LoadTGA (char *name, byte **pic, int *width, int *height)
                                     blue = *buf_p++;
                                     green = *buf_p++;
                                     red = *buf_p++;
-                                    *pixbuf++ = red;
-                                    *pixbuf++ = green;
-                                    *pixbuf++ = blue;
-                                    *pixbuf++ = 255;
+                                * pixbuf++ = red;
+                                * pixbuf++ = green;
+                                * pixbuf++ = blue;
+                                * pixbuf++ = 255;
                                     break;
                             case 32:
                                     blue = *buf_p++;
                                     green = *buf_p++;
                                     red = *buf_p++;
                                     alphabyte = *buf_p++;
-                                    *pixbuf++ = red;
-                                    *pixbuf++ = green;
-                                    *pixbuf++ = blue;
-                                    *pixbuf++ = alphabyte;
+                                * pixbuf++ = red;
+                                * pixbuf++ = green;
+                                * pixbuf++ = blue;
+                                * pixbuf++ = alphabyte;
                                     break;
                         }
                         column++;
@@ -385,7 +383,7 @@ void ref_soft_LoadTGA (char *name, byte **pic, int *width, int *height)
 
 image_t *ref_soft_R_FindFreeImage (void)
 {
-    image_t        *image;
+    image_t    * image;
     int            i;
 
     // find a free image_t
@@ -413,7 +411,7 @@ ref_soft_GL_LoadPic
 */
 image_t *ref_soft_GL_LoadPic (char *name, byte *pic, int width, int height, imagetype_t type)
 {
-    image_t        *image;
+    image_t    * image;
     int            i, c, b;
 
     image = ref_soft_R_FindFreeImage ();
@@ -427,7 +425,7 @@ image_t *ref_soft_GL_LoadPic (char *name, byte *pic, int width, int height, imag
     image->type = type;
 
     c = width*height;
-    image->pixels[0] = malloc (c);
+    image->pixels[0] = (byte*)malloc (c);
     image->transparent = false;
     for (i=0 ; i<c ; i++)
     {
@@ -442,9 +440,9 @@ image_t *ref_soft_GL_LoadPic (char *name, byte *pic, int width, int height, imag
 
 image_t *ref_soft_R_LoadWal (char *name)
 {
-    miptex_t    *mt;
+    miptex_t* mt;
     int            ofs;
-    image_t        *image;
+    image_t    * image;
     int            size;
 
     ri.FS_LoadFile (name, (void **)&mt);
@@ -462,7 +460,7 @@ image_t *ref_soft_R_LoadWal (char *name)
     image->registration_sequence = registration_sequence;
 
     size = image->width*image->height * (256+64+16+4)/256;
-    image->pixels[0] = malloc (size);
+    image->pixels[0] = (byte*)malloc (size);
     image->pixels[1] = image->pixels[0] + image->width*image->height;
     image->pixels[2] = image->pixels[1] + image->width*image->height/4;
     image->pixels[3] = image->pixels[2] + image->width*image->height/16;
@@ -479,11 +477,11 @@ image_t *ref_soft_R_LoadWal (char *name)
 /*
 Finds or loads the given image
 */
-image_t    *ref_soft_R_FindImage (char *name, imagetype_t type)
+image_t* ref_soft_R_FindImage (char *name, imagetype_t type)
 {
-    image_t    *image;
+    image_t* image;
     int        i, len;
-    byte    *pic, *palette;
+    byte* pic, *palette;
     int        width, height;
 
     if (!name)
@@ -550,7 +548,7 @@ will be freed.
 void ref_soft_R_FreeUnusedImages (void)
 {
     int        i;
-    image_t    *image;
+    image_t* image;
 
     for (i=0, image=r_images ; i<numr_images ; i++, image++)
     {
@@ -577,7 +575,7 @@ void    ref_soft_R_InitImages (void)
 void ref_soft_R_ShutdownImages (void)
 {
     int        i;
-    image_t    *image;
+    image_t* image;
 
     for (i=0, image=r_images ; i<numr_images ; i++, image++)
     {

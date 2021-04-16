@@ -19,83 +19,84 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 // cl_main.c  -- client main loop
 
-#include "client.hpp"
+#include "shared/defines.hpp"
+#include "client/client.hpp"
 #include "server/server.hpp"
 #include "shared/shared_functions.hpp"
 #include "win32/q_shwin.hpp"
 
-cvar_t    *freelook;
+cvar* freelook;
 
-cvar_t    *adr0;
-cvar_t    *adr1;
-cvar_t    *adr2;
-cvar_t    *adr3;
-cvar_t    *adr4;
-cvar_t    *adr5;
-cvar_t    *adr6;
-cvar_t    *adr7;
-cvar_t    *adr8;
+cvar* adr0;
+cvar* adr1;
+cvar* adr2;
+cvar* adr3;
+cvar* adr4;
+cvar* adr5;
+cvar* adr6;
+cvar* adr7;
+cvar* adr8;
 
-cvar_t    *cl_stereo_separation;
-cvar_t    *cl_stereo;
+cvar* cl_stereo_separation;
+cvar* cl_stereo;
 
-cvar_t    *rcon_client_password;
-cvar_t    *rcon_address;
+cvar* rcon_client_password;
+cvar* rcon_address;
 
-cvar_t    *cl_noskins;
-cvar_t    *cl_autoskins;
-cvar_t    *cl_footsteps;
-cvar_t    *cl_timeout;
-cvar_t    *cl_predict;
-//cvar_t    *cl_minfps;
-cvar_t    *cl_maxfps;
-cvar_t    *cl_gun;
+cvar* cl_noskins;
+cvar* cl_autoskins;
+cvar* cl_footsteps;
+cvar* cl_timeout;
+cvar* cl_predict;
+//cvar* cl_minfps;
+cvar* cl_maxfps;
+cvar* cl_gun;
 
-cvar_t    *cl_add_particles;
-cvar_t    *cl_add_lights;
-cvar_t    *cl_add_entities;
-cvar_t    *cl_add_blend;
+cvar* cl_add_particles;
+cvar* cl_add_lights;
+cvar* cl_add_entities;
+cvar* cl_add_blend;
 
-cvar_t    *cl_shownet;
-cvar_t    *cl_showmiss;
-cvar_t    *cl_showclamp;
+cvar* cl_shownet;
+cvar* cl_showmiss;
+cvar* cl_showclamp;
 
-cvar_t    *cl_paused;
-cvar_t    *cl_timedemo;
+cvar* cl_paused;
+cvar* cl_timedemo;
 
-cvar_t    *lookspring;
-cvar_t    *lookstrafe;
-cvar_t    *sensitivity;
+cvar* lookspring;
+cvar* lookstrafe;
+cvar* sensitivity;
 
-cvar_t    *m_pitch;
-cvar_t    *m_yaw;
-cvar_t    *m_forward;
-cvar_t    *m_side;
+cvar* m_pitch;
+cvar* m_yaw;
+cvar* m_forward;
+cvar* m_side;
 
-cvar_t    *cl_lightlevel;
+cvar* cl_lightlevel;
 
 //
 // userinfo
 //
-cvar_t    *info_password;
-cvar_t    *info_spectator;
-cvar_t    *name;
-cvar_t    *skin;
-cvar_t    *rate;
-cvar_t    *fov;
-cvar_t    *msg;
-cvar_t    *hand;
-cvar_t    *gender;
-cvar_t    *gender_auto;
+cvar* info_password;
+cvar* info_spectator;
+cvar* name;
+cvar* skin;
+cvar* rate;
+cvar* fov;
+cvar* msg;
+cvar* hand;
+cvar* gender;
+cvar* gender_auto;
 
-cvar_t    *cl_vwep;
+cvar* cl_vwep;
 
 client_static_t    cls;
 client_state_t    cl;
 
 centity_t        cl_entities[MAX_EDICTS];
 
-entity_state_t    cl_parse_entities[MAX_PARSE_ENTITIES];
+entity_state    cl_parse_entities[MAX_PARSE_ENTITIES];
 
 //======================================================================
 
@@ -161,8 +162,8 @@ void CL_Record_f (void)
     sizebuf_t    buf;
     int        i;
     int        len;
-    entity_state_t    *ent;
-    entity_state_t    nullstate;
+    entity_state* ent;
+    entity_state    nullstate;
 
     if (Cmd_Argc() != 2)
     {
@@ -280,7 +281,7 @@ so when they are typed in at the console, they will need to be forwarded.
 */
 void Cmd_ForwardToServer (void)
 {
-    char    *cmd;
+    char* cmd;
 
     cmd = Cmd_Argv(0);
     if (cls.state <= ca_connected || *cmd == '-' || *cmd == '+')
@@ -431,7 +432,7 @@ void CL_SendConnectPacket (void)
     port = Cvar_VariableValue ("qport");
     userinfo_modified = false;
 
-    Netchan_OutOfBandPrint (NS_CLIENT, adr, "connect %i %i %i \"%s\"\n",
+    Netchan_OutOfBandPrint(netsrc_t::NS_CLIENT, adr, "connect %i %i %i \"%s\"\n",
         PROTOCOL_VERSION, port, cls.challenge, Cvar_Userinfo() );
 }
 
@@ -478,7 +479,7 @@ void CL_CheckForResend (void)
 
     Com_Printf_G ("Connecting to %s...\n", cls.servername);
 
-    Netchan_OutOfBandPrint (NS_CLIENT, adr, "getchallenge\n");
+    Netchan_OutOfBandPrint (netsrc_t::NS_CLIENT, adr, "getchallenge\n");
 }
 
 
@@ -490,7 +491,7 @@ CL_Connect_f
 */
 void CL_Connect_f (void)
 {
-    char    *server;
+    char* server;
 
     if (Cmd_Argc() != 2)
     {
@@ -529,41 +530,38 @@ CL_Rcon_f
 */
 void CL_Rcon_f (void)
 {
-    char    message[1024];
+    std::string message;
     int        i;
     netadr_t    to;
 
-    if (!rcon_client_password->string)
+    if (rcon_client_password->string.empty())
     {
         Com_Printf_G ("You must set 'rcon_password' before\n"
                     "issuing an rcon command.\n");
         return;
     }
 
+    message.resize( 5 );
     message[0] = (char)255;
     message[1] = (char)255;
     message[2] = (char)255;
     message[3] = (char)255;
-    message[4] = 0;
+    //TODO? message[4] = 0;
 
     NET_Config (true);        // allow remote
 
-    strcat (message, "rcon ");
-
-    strcat (message, rcon_client_password->string);
-    strcat (message, " ");
-
+    message += "rcon ";
+    message += rcon_client_password->string + " ";
     for (i=1 ; i<Cmd_Argc() ; i++)
     {
-        strcat (message, Cmd_Argv(i));
-        strcat (message, " ");
+        message += std::string( Cmd_Argv(i) ) + " ";
     }
 
     if (cls.state >= ca_connected)
         to = cls.netchan.remote_address;
     else
     {
-        if (!strlen(rcon_address->string))
+        if (rcon_address->string.empty())
         {
             Com_Printf_G ("You must either be connected,\n"
                         "or set the 'rcon_address' cvar\n"
@@ -571,12 +569,12 @@ void CL_Rcon_f (void)
 
             return;
         }
-        NET_StringToAdr (rcon_address->string, &to);
+        NET_StringToAdr( (char*)rcon_address->string.c_str(), &to);
         if (to.port == 0)
             to.port = BigShort (PORT_SERVER);
     }
 
-    NET_SendPacket (NS_CLIENT, strlen(message)+1, message, to);
+    NET_SendPacket (netsrc_t::NS_CLIENT, message.length()+1,(char*) message.c_str(), to);
 }
 
 
@@ -676,7 +674,7 @@ void CL_Packet_f (void)
 {
     char    send[2048];
     int        i, l;
-    char    *in, *out;
+    char* in, *out;
     netadr_t    adr;
 
     if (Cmd_Argc() != 3)
@@ -704,15 +702,15 @@ void CL_Packet_f (void)
     {
         if (in[i] == '\\' && in[i+1] == 'n')
         {
-            *out++ = '\n';
+        * out++ = '\n';
             i++;
         }
         else
-            *out++ = in[i];
+        * out++ = in[i];
     }
-    *out = 0;
+* out = 0;
 
-    NET_SendPacket (NS_CLIENT, out-send, send, adr);
+    NET_SendPacket (netsrc_t::NS_CLIENT, out-send, send, adr);
 }
 
 /*
@@ -780,7 +778,7 @@ Handle a reply from a ping
 */
 void CL_ParseStatusMessage (void)
 {
-    char    *s;
+    char* s;
 
     s = MSG_ReadString(&net_message);
 
@@ -799,9 +797,9 @@ void CL_PingServers_f (void)
     int            i;
     netadr_t    adr;
     char        name[32];
-    char        *adrstring;
-    cvar_t        *noudp;
-    cvar_t        *noipx;
+    char    * adrstring;
+    cvar    * noudp;
+    cvar    * noipx;
 
     NET_Config (true);        // allow remote
 
@@ -813,7 +811,7 @@ void CL_PingServers_f (void)
     {
         adr.type = NA_BROADCAST;
         adr.port = BigShort(PORT_SERVER);
-        Netchan_OutOfBandPrint (NS_CLIENT, adr, va("info %i", PROTOCOL_VERSION));
+        Netchan_OutOfBandPrint (netsrc_t::NS_CLIENT, adr, va("info %i", PROTOCOL_VERSION));
     }
 
     noipx = Cvar_Get ("noipx", "0", CVAR_NOSET);
@@ -821,7 +819,7 @@ void CL_PingServers_f (void)
     {
         adr.type = NA_BROADCAST_IPX;
         adr.port = BigShort(PORT_SERVER);
-        Netchan_OutOfBandPrint (NS_CLIENT, adr, va("info %i", PROTOCOL_VERSION));
+        Netchan_OutOfBandPrint (netsrc_t::NS_CLIENT, adr, va("info %i", PROTOCOL_VERSION));
     }
 
     // send a packet to each address book entry
@@ -840,7 +838,7 @@ void CL_PingServers_f (void)
         }
         if (!adr.port)
             adr.port = BigShort(PORT_SERVER);
-        Netchan_OutOfBandPrint (NS_CLIENT, adr, va("info %i", PROTOCOL_VERSION));
+        Netchan_OutOfBandPrint (netsrc_t::NS_CLIENT, adr, va("info %i", PROTOCOL_VERSION));
     }
 }
 
@@ -879,8 +877,8 @@ Responses to broadcasts, etc
 */
 void CL_ConnectionlessPacket (void)
 {
-    char    *s;
-    char    *c;
+    char* s;
+    char* c;
 
     MSG_BeginReading (&net_message);
     MSG_ReadLong (&net_message);    // skip the -1
@@ -901,7 +899,7 @@ void CL_ConnectionlessPacket (void)
             Com_Printf_G ("Dup connect received.  Ignored.\n");
             return;
         }
-        Netchan_Setup (NS_CLIENT, &cls.netchan, net_from, cls.quakePort);
+        Netchan_Setup (netsrc_t::NS_CLIENT, &cls.netchan, net_from, cls.quakePort);
         MSG_WriteChar (&cls.netchan.message, clc_stringcmd);
         MSG_WriteString (&cls.netchan.message, "new");
         cls.state = ca_connected;
@@ -942,7 +940,7 @@ void CL_ConnectionlessPacket (void)
     // ping from somewhere
     if (!strcmp(c, "ping"))
     {
-        Netchan_OutOfBandPrint (NS_CLIENT, net_from, "ack");
+        Netchan_OutOfBandPrint (netsrc_t::NS_CLIENT, net_from, "ack");
         return;
     }
 
@@ -957,7 +955,7 @@ void CL_ConnectionlessPacket (void)
     // echo request from server
     if (!strcmp(c, "echo"))
     {
-        Netchan_OutOfBandPrint (NS_CLIENT, net_from, "%s", Cmd_Argv(1) );
+        Netchan_OutOfBandPrint (netsrc_t::NS_CLIENT, net_from, "%s", Cmd_Argv(1) );
         return;
     }
 
@@ -975,7 +973,7 @@ when they overflow
 */
 void CL_DumpPackets (void)
 {
-    while (NET_GetPacket (NS_CLIENT, &net_from, &net_message))
+    while (NET_GetPacket (netsrc_t::NS_CLIENT, &net_from, &net_message))
     {
         Com_Printf_G ("dumnping a packet\n");
     }
@@ -988,7 +986,7 @@ CL_ReadPackets
 */
 void CL_ReadPackets (void)
 {
-    while (NET_GetPacket (NS_CLIENT, &net_from, &net_message))
+    while (NET_GetPacket (netsrc_t::NS_CLIENT, &net_from, &net_message))
     {
 //    Com_Printf_G ("packet\n");
         //
@@ -1062,9 +1060,9 @@ void CL_FixUpGender(void)
             return;
         }
 
-        strncpy(sk, skin->string, sizeof(sk) - 1);
+        strncpy(sk, toChar(skin->string ), sizeof(sk) - 1);
         if ((p = strchr(sk, '/')) != NULL)
-            *p = 0;
+        * p = 0;
         if (Q_stricmp(sk, "male") == 0 || Q_stricmp(sk, "cyborg") == 0)
             Cvar_Set ("gender", "male");
         else if (Q_stricmp(sk, "female") == 0 || Q_stricmp(sk, "crackhor") == 0)
@@ -1252,10 +1250,10 @@ void CL_RequestNextDownload (void)
                 if (!p)
                     p = strchr(model, '\\');
                 if (p) {
-                    *p++ = 0;
+                * p++ = 0;
                     strcpy(skin, p);
                 } else
-                    *skin = 0;
+                * skin = 0;
 
                 switch (n) {
                 case 0: // model
@@ -1555,7 +1553,7 @@ Writes key bindings and archived cvars to config.cfg
 */
 void CL_WriteConfiguration (void)
 {
-    FILE    *f;
+    FILE* f;
     char    path[MAX_QPATH];
 
     if (cls.state == ca_uninitialized)
@@ -1584,12 +1582,12 @@ CL_FixCvarCheats
 ==================
 */
 
-typedef struct
+struct cheatvar_t
 {
-    char    *name;
-    char    *value;
-    cvar_t    *var;
-} cheatvar_t;
+    std::string name;
+    std::string value;
+    cvar* var;
+};
 
 cheatvar_t    cheatvars[] = {
     {"timescale", "1"},
@@ -1611,7 +1609,7 @@ int        numcheatvars;
 void CL_FixCvarCheats (void)
 {
     int            i;
-    cheatvar_t    *var;
+    cheatvar_t* var;
 
     if ( !strcmp(cl.configstrings[CS_MAXCLIENTS], "1")
         || !cl.configstrings[CS_MAXCLIENTS][0] )
@@ -1620,18 +1618,19 @@ void CL_FixCvarCheats (void)
     // find all the cvars if we haven't done it yet
     if (!numcheatvars)
     {
-        while (cheatvars[numcheatvars].name)
+        while (!cheatvars[numcheatvars].name.empty())
         {
             cheatvars[numcheatvars].var = Cvar_Get (cheatvars[numcheatvars].name,
                     cheatvars[numcheatvars].value, 0);
-            numcheatvars++;
+            ++numcheatvars;
         }
     }
 
     // make sure they are all set to the proper values
     for (i=0, var = cheatvars ; i<numcheatvars ; i++, var++)
     {
-        if ( strcmp (var->var->string, var->value) )
+        //if ( strcmp (var->var->string, var->value) )
+        if( var->var->string == var->value )
         {
             Cvar_Set (var->name, var->value);
         }

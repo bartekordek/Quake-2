@@ -56,10 +56,10 @@ typedef struct
     int            framenum;
 
     char        name[MAX_QPATH];            // map name, or cinematic name
-    struct cmodel_s        *models[MAX_MODELS];
+    struct cmodel_s    * models[MAX_MODELS];
 
     char        configstrings[MAX_CONFIGSTRINGS][MAX_QPATH];
-    entity_state_t    baselines[MAX_EDICTS];
+    entity_state    baselines[MAX_EDICTS];
 
     // the multicast buffer is used to send a message to a set of clients
     // it is only used to marshall data until SV_Multicast is called
@@ -67,13 +67,13 @@ typedef struct
     byte        multicast_buf[MAX_MSGLEN];
 
     // demo server information
-    FILE        *demofile;
+    FILE    * demofile;
     bool    timedemo;        // don't time sync
 } server_t;
 
-edict_t* Edict_num( unsigned n );
+edict* Edict_num( unsigned n );
 
-//#define EDICT_NUM(n) ((edict_s *)((byte *)ge->edicts + ge->edict_size*(n)))
+//#define EDICT_NUM(n) ((edict *)((byte *)ge->edicts + ge->edict_size*(n)))
 #define NUM_FOR_EDICT(e) ( ((byte *)(e)-(byte *)ge->edicts ) / ge->edict_size)
 
 
@@ -90,7 +90,7 @@ typedef struct
 {
     int                    areabytes;
     byte                areabits[MAX_MAP_AREAS/8];        // portalarea visibility bits
-    player_state_t        ps;
+    player_state        ps;
     int                    num_entities;
     int                    first_entity;        // into the circular sv_packet_entities[]
     int                    senttime;            // for ping calculations
@@ -118,7 +118,7 @@ typedef struct client_s
     int                rate;
     int                surpressCount;        // number of messages rate supressed
 
-    struct edict_s            *edict;                // EDICT_NUM(clientnum+1)
+    edict        * edict;                // EDICT_NUM(clientnum+1)
     char            name[32];            // extracted from userinfo, high bits masked
     int                messagelevel;        // for filtering printed messages
 
@@ -129,7 +129,7 @@ typedef struct client_s
 
     client_frame_t    frames[UPDATE_BACKUP];    // updates can be delta'd from here
 
-    byte            *download;            // file being downloaded
+    byte        * download;            // file being downloaded
     int                downloadsize;        // total bytes (can't use EOF because of paks)
     int                downloadcount;        // bytes sent
 
@@ -172,17 +172,17 @@ typedef struct
     int            spawncount;                    // incremented each server start
                                             // used to check late spawns
 
-    client_t    *clients;                    // [maxclients->value];
+    client_t* clients;                    // [maxclients->value];
     int            num_client_entities;        // maxclients->value*UPDATE_BACKUP*MAX_PACKET_ENTITIES
     int            next_client_entities;        // next client_entity to use
-    entity_state_t    *client_entities;        // [num_client_entities]
+    entity_state* client_entities;        // [num_client_entities]
 
     int            last_heartbeat;
 
     challenge_t    challenges[MAX_CHALLENGES];    // to prevent invalid IPs from connecting
 
     // serverrecord values
-    FILE        *demofile;
+    FILE    * demofile;
     sizebuf_t    demo_multicast;
     byte        demo_multicast_buf[MAX_MSGLEN];
 } server_static_t;
@@ -197,25 +197,25 @@ extern    netadr_t    master_adr[MAX_MASTERS];    // address of the master serve
 extern    server_static_t    svs;                // persistant server info
 extern    server_t        sv;                    // local server
 
-extern    cvar_t        *sv_paused;
-extern    cvar_t        *maxclients;
-extern    cvar_t        *sv_noreload;            // don't reload level state when reentering
-extern    cvar_t        *sv_airaccelerate;        // don't reload level state when reentering
+extern    cvar    * sv_paused;
+extern    cvar    * maxclients;
+extern    cvar    * sv_noreload;            // don't reload level state when reentering
+extern    cvar    * sv_airaccelerate;        // don't reload level state when reentering
                                             // development tool
-extern    cvar_t        *sv_enforcetime;
+extern    cvar    * sv_enforcetime;
 
-extern    client_t    *sv_client;
-
-
+extern    client_t* sv_client;
 
 
-extern struct edict_s* sv_player;
 
-cvar_t    *allow_download;
-cvar_t *allow_download_players;
-cvar_t *allow_download_models;
-cvar_t *allow_download_sounds;
-cvar_t *allow_download_maps;
+
+extern edict* sv_player;
+
+cvar* allow_download;
+cvar *allow_download_players;
+cvar *allow_download_models;
+cvar *allow_download_sounds;
+cvar *allow_download_maps;
 
 //===========================================================
 
@@ -267,7 +267,7 @@ void SV_DemoCompleted (void);
 void SV_SendClientMessages (void);
 
 void SV_Multicast (vec3_t origin, multicast_t to);
-void SV_StartSound (vec3_t origin, struct edict_s *entity, int channel,
+void SV_StartSound (vec3_t origin, edict *entity, int channel,
                     int soundindex, float volume,
                     float attenuation, float timeofs);
 void SV_ClientPrintf (client_t *cl, int level, char *fmt, ...);
@@ -299,11 +299,11 @@ void SV_Error (char *error, ...);
 //
 // sv_game.c
 //
-extern    game_export_t    *ge;
+extern    game_export_t* ge;
 
 void SV_InitGameProgs (void);
 void SV_ShutdownGameProgs (void);
-void SV_InitEdict (struct edict_s *e);
+void SV_InitEdict (edict *e);
 
 
 
@@ -316,18 +316,18 @@ void SV_InitEdict (struct edict_s *e);
 void SV_ClearWorld (void);
 // called after the world model has been loaded, before linking any entities
 
-void SV_UnlinkEdict (struct edict_s *ent);
+void SV_UnlinkEdict (edict *ent);
 // call before removing an entity, and before trying to move one,
 // so it doesn't clip against itself
 
-void SV_LinkEdict (struct edict_s *ent);
+void SV_LinkEdict (edict *ent);
 // Needs to be called any time an entity changes origin, mins, maxs,
 // or solid.  Automatically unlinks if needed.
 // sets ent->v.absmin and ent->v.absmax
 // sets ent->leafnums[] for pvs determination even if the entity
 // is not solid
 
-int SV_AreaEdicts (vec3_t mins, vec3_t maxs, struct edict_s **list, int maxcount, int areatype);
+int SV_AreaEdicts (vec3_t mins, vec3_t maxs, edict **list, int maxcount, int areatype);
 // fills in a table of edict pointers with edicts that have bounding boxes
 // that intersect the given area.  It is possible for a non-axial bmodel
 // to be returned that doesn't actually intersect the area on an exact
@@ -345,7 +345,7 @@ int SV_PointContents (vec3_t p);
 // Quake 2 extends this to also check entities, to allow moving liquids
 
 
-trace_t SV_Trace (vec3_t start, vec3_t mins, vec3_t maxs, vec3_t end, struct edict_s *passedict, int contentmask);
+trace_t SV_Trace (vec3_t start, vec3_t mins, vec3_t maxs, vec3_t end, edict *passedict, int contentmask);
 // mins and maxs are relative
 
 // if the entire move stays in a solid volume, trace.allsolid will be set,

@@ -20,21 +20,21 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "game/g_local.hpp"
 #include "shared/g_client.hpp"
 
-bool	Pickup_Weapon (struct edict_s *ent, struct edict_s *other);
-void		Use_Weapon (struct edict_s *ent, gitem_t *inv);
-void		Drop_Weapon (struct edict_s *ent, gitem_t *inv);
+bool	Pickup_Weapon (edict *ent, edict *other);
+void		Use_Weapon (edict *ent, gitem *inv);
+void		Drop_Weapon (edict *ent, gitem *inv);
 
-void Weapon_Blaster (struct edict_s *ent);
-void Weapon_Shotgun (struct edict_s *ent);
-void Weapon_SuperShotgun (struct edict_s *ent);
-void Weapon_Machinegun (struct edict_s *ent);
-void Weapon_Chaingun (struct edict_s *ent);
-void Weapon_HyperBlaster (struct edict_s *ent);
-void Weapon_RocketLauncher (struct edict_s *ent);
-void Weapon_Grenade (struct edict_s *ent);
-void Weapon_GrenadeLauncher (struct edict_s *ent);
-void Weapon_Railgun (struct edict_s *ent);
-void Weapon_BFG (struct edict_s *ent);
+void Weapon_Blaster (edict *ent);
+void Weapon_Shotgun (edict *ent);
+void Weapon_SuperShotgun (edict *ent);
+void Weapon_Machinegun (edict *ent);
+void Weapon_Chaingun (edict *ent);
+void Weapon_HyperBlaster (edict *ent);
+void Weapon_RocketLauncher (edict *ent);
+void Weapon_Grenade (edict *ent);
+void Weapon_GrenadeLauncher (edict *ent);
+void Weapon_Railgun (edict *ent);
+void Weapon_BFG (edict *ent);
 
 gitem_armor_t jacketarmor_info	= { 25,  50, .30, .00, ARMOR_JACKET};
 gitem_armor_t combatarmor_info	= { 50, 100, .60, .30, ARMOR_COMBAT};
@@ -49,7 +49,7 @@ int	power_shield_index;
 #define HEALTH_IGNORE_MAX	1
 #define HEALTH_TIMED		2
 
-void Use_Quad (struct edict_s *ent, gitem_t *item);
+void Use_Quad (edict *ent, gitem *item);
 static int	quad_drop_timeout_hack;
 
 //======================================================================
@@ -59,7 +59,7 @@ static int	quad_drop_timeout_hack;
 GetItemByIndex
 ===============
 */
-gitem_t	*GetItemByIndex (int index)
+gitem	*GetItemByIndex (int index)
 {
 	if (index == 0 || index >= game.num_items)
 		return NULL;
@@ -74,10 +74,10 @@ FindItemByClassname
 
 ===============
 */
-gitem_t	*FindItemByClassname (char *classname)
+gitem	*FindItemByClassname (char *classname)
 {
 	int		i;
-	gitem_t	*it;
+	gitem	*it;
 
 	it = itemlist;
 	for (i=0 ; i<game.num_items ; i++, it++)
@@ -97,10 +97,10 @@ FindItem
 
 ===============
 */
-gitem_t	*FindItem (char *pickup_name)
+gitem	*FindItem (char *pickup_name)
 {
 	int		i;
-	gitem_t	*it;
+	gitem	*it;
 
 	it = itemlist;
 	for (i=0 ; i<game.num_items ; i++, it++)
@@ -116,11 +116,11 @@ gitem_t	*FindItem (char *pickup_name)
 
 //======================================================================
 
-void DoRespawn (struct edict_s *ent)
+void DoRespawn (edict *ent)
 {
 	if (ent->team)
 	{
-		struct edict_s	*master;
+		edict	*master;
 		int	count;
 		int choice;
 
@@ -143,7 +143,7 @@ void DoRespawn (struct edict_s *ent)
 	ent->s.event = EV_ITEM_RESPAWN;
 }
 
-void SetRespawn (struct edict_s *ent, float delay)
+void SetRespawn (edict *ent, float delay)
 {
 	ent->flags |= FL_RESPAWN;
 	ent->svflags |= SVF_NOCLIENT;
@@ -156,7 +156,7 @@ void SetRespawn (struct edict_s *ent, float delay)
 
 //======================================================================
 
-bool Pickup_Powerup (struct edict_s *ent, struct edict_s *other)
+bool Pickup_Powerup (edict *ent, edict *other)
 {
 	int		quantity;
 
@@ -184,7 +184,7 @@ bool Pickup_Powerup (struct edict_s *ent, struct edict_s *other)
 	return true;
 }
 
-void Drop_General (struct edict_s *ent, gitem_t *item)
+void Drop_General (edict *ent, gitem *item)
 {
 	Drop_Item (ent, item);
 	ent->client->pers.inventory[ITEM_INDEX(item)]--;
@@ -194,7 +194,7 @@ void Drop_General (struct edict_s *ent, gitem_t *item)
 
 //======================================================================
 
-bool Pickup_Adrenaline (struct edict_s *ent, struct edict_s *other)
+bool Pickup_Adrenaline (edict *ent, edict *other)
 {
 	if (!deathmatch->value)
 		other->max_health += 1;
@@ -208,7 +208,7 @@ bool Pickup_Adrenaline (struct edict_s *ent, struct edict_s *other)
 	return true;
 }
 
-bool Pickup_AncientHead (struct edict_s *ent, struct edict_s *other)
+bool Pickup_AncientHead (edict *ent, edict *other)
 {
 	other->max_health += 2;
 
@@ -218,9 +218,9 @@ bool Pickup_AncientHead (struct edict_s *ent, struct edict_s *other)
 	return true;
 }
 
-bool Pickup_Bandolier (struct edict_s *ent, struct edict_s *other)
+bool Pickup_Bandolier (edict *ent, edict *other)
 {
-	gitem_t	*item;
+	gitem	*item;
 	int		index;
 
 	if (other->client->pers.max_bullets < 250)
@@ -256,9 +256,9 @@ bool Pickup_Bandolier (struct edict_s *ent, struct edict_s *other)
 	return true;
 }
 
-bool Pickup_Pack (struct edict_s *ent, struct edict_s *other)
+bool Pickup_Pack (edict *ent, edict *other)
 {
-	gitem_t	*item;
+	gitem	*item;
 	int		index;
 
 	if (other->client->pers.max_bullets < 300)
@@ -336,7 +336,7 @@ bool Pickup_Pack (struct edict_s *ent, struct edict_s *other)
 
 //======================================================================
 
-void Use_Quad (struct edict_s *ent, gitem_t *item)
+void Use_Quad (edict *ent, gitem *item)
 {
 	int		timeout;
 
@@ -363,7 +363,7 @@ void Use_Quad (struct edict_s *ent, gitem_t *item)
 
 //======================================================================
 
-void Use_Breather (struct edict_s *ent, gitem_t *item)
+void Use_Breather (edict *ent, gitem *item)
 {
 	ent->client->pers.inventory[ITEM_INDEX(item)]--;
 	ValidateSelectedItem (ent);
@@ -378,7 +378,7 @@ void Use_Breather (struct edict_s *ent, gitem_t *item)
 
 //======================================================================
 
-void Use_Envirosuit (struct edict_s *ent, gitem_t *item)
+void Use_Envirosuit (edict *ent, gitem *item)
 {
 	ent->client->pers.inventory[ITEM_INDEX(item)]--;
 	ValidateSelectedItem (ent);
@@ -393,7 +393,7 @@ void Use_Envirosuit (struct edict_s *ent, gitem_t *item)
 
 //======================================================================
 
-void	Use_Invulnerability (struct edict_s *ent, gitem_t *item)
+void	Use_Invulnerability (edict *ent, gitem *item)
 {
 	ent->client->pers.inventory[ITEM_INDEX(item)]--;
 	ValidateSelectedItem (ent);
@@ -408,7 +408,7 @@ void	Use_Invulnerability (struct edict_s *ent, gitem_t *item)
 
 //======================================================================
 
-void	Use_Silencer (struct edict_s *ent, gitem_t *item)
+void	Use_Silencer (edict *ent, gitem *item)
 {
 	ent->client->pers.inventory[ITEM_INDEX(item)]--;
 	ValidateSelectedItem (ent);
@@ -419,7 +419,7 @@ void	Use_Silencer (struct edict_s *ent, gitem_t *item)
 
 //======================================================================
 
-bool Pickup_Key (struct edict_s *ent, struct edict_s *other)
+bool Pickup_Key (edict *ent, edict *other)
 {
 	if (coop->value)
 	{
@@ -444,7 +444,7 @@ bool Pickup_Key (struct edict_s *ent, struct edict_s *other)
 
 //======================================================================
 
-bool Add_Ammo (struct edict_s *ent, gitem_t *item, int count)
+bool Add_Ammo (edict *ent, gitem *item, int count)
 {
 	int			index;
 	int			max;
@@ -480,7 +480,7 @@ bool Add_Ammo (struct edict_s *ent, gitem_t *item, int count)
 	return true;
 }
 
-bool Pickup_Ammo (struct edict_s *ent, struct edict_s *other)
+bool Pickup_Ammo (edict *ent, edict *other)
 {
 	int			oldcount;
 	int			count;
@@ -510,9 +510,9 @@ bool Pickup_Ammo (struct edict_s *ent, struct edict_s *other)
 	return true;
 }
 
-void Drop_Ammo (struct edict_s *ent, gitem_t *item)
+void Drop_Ammo (edict *ent, gitem *item)
 {
-	struct edict_s	*dropped;
+	edict	*dropped;
 	int		index;
 
 	index = ITEM_INDEX(item);
@@ -538,7 +538,7 @@ void Drop_Ammo (struct edict_s *ent, gitem_t *item)
 
 //======================================================================
 
-void MegaHealth_think (struct edict_s *self)
+void MegaHealth_think (edict *self)
 {
 	if (self->owner->health > self->owner->max_health)
 	{
@@ -553,7 +553,7 @@ void MegaHealth_think (struct edict_s *self)
 		G_FreeEdict (self);
 }
 
-bool Pickup_Health (struct edict_s *ent, struct edict_s *other)
+bool Pickup_Health (edict *ent, edict *other)
 {
 	if (!(ent->style & HEALTH_IGNORE_MAX))
 		if (other->health >= other->max_health)
@@ -587,7 +587,7 @@ bool Pickup_Health (struct edict_s *ent, struct edict_s *other)
 
 //======================================================================
 
-int ArmorIndex (struct edict_s *ent)
+int ArmorIndex (edict *ent)
 {
 	if (!ent->client)
 		return 0;
@@ -604,7 +604,7 @@ int ArmorIndex (struct edict_s *ent)
 	return 0;
 }
 
-bool Pickup_Armor (struct edict_s *ent, struct edict_s *other)
+bool Pickup_Armor (edict *ent, edict *other)
 {
 	int				old_armor_index;
 	gitem_armor_t	*oldinfo;
@@ -685,7 +685,7 @@ bool Pickup_Armor (struct edict_s *ent, struct edict_s *other)
 
 //======================================================================
 
-int PowerArmorType (struct edict_s *ent)
+int PowerArmorType (edict *ent)
 {
 	if (!ent->client)
 		return POWER_ARMOR_NONE;
@@ -702,7 +702,7 @@ int PowerArmorType (struct edict_s *ent)
 	return POWER_ARMOR_NONE;
 }
 
-void Use_PowerArmor (struct edict_s *ent, gitem_t *item)
+void Use_PowerArmor (edict *ent, gitem *item)
 {
 	int		index;
 
@@ -724,7 +724,7 @@ void Use_PowerArmor (struct edict_s *ent, gitem_t *item)
 	}
 }
 
-bool Pickup_PowerArmor (struct edict_s *ent, struct edict_s *other)
+bool Pickup_PowerArmor (edict *ent, edict *other)
 {
 	int		quantity;
 
@@ -744,7 +744,7 @@ bool Pickup_PowerArmor (struct edict_s *ent, struct edict_s *other)
 	return true;
 }
 
-void Drop_PowerArmor (struct edict_s *ent, gitem_t *item)
+void Drop_PowerArmor (edict *ent, gitem *item)
 {
 	if ((ent->flags & FL_POWER_ARMOR) && (ent->client->pers.inventory[ITEM_INDEX(item)] == 1))
 		Use_PowerArmor (ent, item);
@@ -758,7 +758,7 @@ void Drop_PowerArmor (struct edict_s *ent, gitem_t *item)
 Touch_Item
 ===============
 */
-void Touch_Item (struct edict_s *ent, struct edict_s *other, plane_t *plane, csurface_t *surf)
+void Touch_Item (edict *ent, edict *other, plane_t *plane, csurface_t *surf)
 {
 	bool	taken;
 
@@ -822,7 +822,7 @@ void Touch_Item (struct edict_s *ent, struct edict_s *other, plane_t *plane, csu
 
 //======================================================================
 
-static void drop_temp_touch (struct edict_s *ent, struct edict_s *other, plane_t *plane, csurface_t *surf)
+static void drop_temp_touch (edict *ent, edict *other, plane_t *plane, csurface_t *surf)
 {
 	if (other == ent->owner)
 		return;
@@ -830,7 +830,7 @@ static void drop_temp_touch (struct edict_s *ent, struct edict_s *other, plane_t
 	Touch_Item (ent, other, plane, surf);
 }
 
-static void drop_make_touchable (struct edict_s *ent)
+static void drop_make_touchable (edict *ent)
 {
 	ent->touch = Touch_Item;
 	if (deathmatch->value)
@@ -840,9 +840,9 @@ static void drop_make_touchable (struct edict_s *ent)
 	}
 }
 
-struct edict_s *Drop_Item (struct edict_s *ent, gitem_t *item)
+edict *Drop_Item (edict *ent, gitem *item)
 {
-	struct edict_s	*dropped;
+	edict	*dropped;
 	vec3_t	forward, right;
 	vec3_t	offset;
 
@@ -889,7 +889,7 @@ struct edict_s *Drop_Item (struct edict_s *ent, gitem_t *item)
 	return dropped;
 }
 
-void Use_Item (struct edict_s *ent, struct edict_s *other, struct edict_s *activator)
+void Use_Item (edict *ent, edict *other, edict *activator)
 {
 	ent->svflags &= ~SVF_NOCLIENT;
 	ent->use = NULL;
@@ -915,7 +915,7 @@ void Use_Item (struct edict_s *ent, struct edict_s *other, struct edict_s *activ
 droptofloor
 ================
 */
-void droptofloor (struct edict_s *ent)
+void droptofloor (edict *ent)
 {
 	trace_t		tr;
 	vec3_t		dest;
@@ -990,12 +990,12 @@ This will be called for each item spawned in a level,
 and for each item in each client's inventory.
 ===============
 */
-void PrecacheItem (gitem_t *it)
+void PrecacheItem (gitem *it)
 {
 	char	*s, *start;
 	char	data[MAX_QPATH];
 	int		len;
-	gitem_t	*ammo;
+	gitem	*ammo;
 
 	if (!it)
 		return;
@@ -1058,7 +1058,7 @@ Items can't be immediately dropped to floor, because they might
 be on an entity that hasn't spawned yet.
 ============
 */
-void SpawnItem (struct edict_s *ent, gitem_t *item)
+void SpawnItem (edict *ent, gitem *item)
 {
 	PrecacheItem (item);
 
@@ -1131,7 +1131,7 @@ void SpawnItem (struct edict_s *ent, gitem_t *item)
 
 //======================================================================
 
-gitem_t	itemlist[] =
+gitem	itemlist[] =
 {
 	{
 		NULL
@@ -2118,7 +2118,7 @@ tank commander's head
 
 /*QUAKED item_health (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
-void SP_item_health (struct edict_s *self)
+void SP_item_health (edict *self)
 {
 	if ( deathmatch->value && ((int)dmflags->value & DF_NO_HEALTH) )
 	{
@@ -2134,7 +2134,7 @@ void SP_item_health (struct edict_s *self)
 
 /*QUAKED item_health_small (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
-void SP_item_health_small (struct edict_s *self)
+void SP_item_health_small (edict *self)
 {
 	if ( deathmatch->value && ((int)dmflags->value & DF_NO_HEALTH) )
 	{
@@ -2151,7 +2151,7 @@ void SP_item_health_small (struct edict_s *self)
 
 /*QUAKED item_health_large (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
-void SP_item_health_large (struct edict_s *self)
+void SP_item_health_large (edict *self)
 {
 	if ( deathmatch->value && ((int)dmflags->value & DF_NO_HEALTH) )
 	{
@@ -2167,7 +2167,7 @@ void SP_item_health_large (struct edict_s *self)
 
 /*QUAKED item_health_mega (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
-void SP_item_health_mega (struct edict_s *self)
+void SP_item_health_mega (edict *self)
 {
 	if ( deathmatch->value && ((int)dmflags->value & DF_NO_HEALTH) )
 	{
@@ -2200,7 +2200,7 @@ Called by worldspawn
 void SetItemNames (void)
 {
 	int		i;
-	gitem_t	*it;
+	gitem	*it;
 
 	for (i=0 ; i<game.num_items ; i++)
 	{

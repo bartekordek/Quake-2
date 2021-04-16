@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "r_local.hpp"
 
-model_t    *loadmodel;
+model_t* loadmodel;
 char    loadname[32];    // for hunk tags
 
 void ref_soft_Mod_LoadSpriteModel (model_t *mod, void *buffer);
@@ -55,7 +55,7 @@ ref_soft_Mod_Modellist_f
 void ref_soft_Mod_Modellist_f (void)
 {
     int        i;
-    model_t    *mod;
+    model_t* mod;
     int        total;
 
     total = 0;
@@ -89,7 +89,7 @@ Loads in a model for the given name
 */
 model_t *ref_soft_Mod_ForName (char *name, bool crash)
 {
-    model_t    *mod;
+    model_t* mod;
     unsigned *buf;
     int        i;
 
@@ -182,29 +182,29 @@ model_t *ref_soft_Mod_ForName (char *name, bool crash)
 
 void ref_soft_Draw_GetPalette (void)
 {
-	int		i;
-	int		r, g, b;
-	byte	*pal, *out;
+    int	    i;
+    int	    r, g, b;
+    byte	*pal, *out;
 
 	// get the palette and colormap
-	ref_soft_LoadPCX ("pics/colormap.pcx", &vid.colormap, &pal, NULL, NULL);
-	if (!vid.colormap)
-		ri.Sys_Error (ERR_FATAL, "Couldn't load pics/colormap.pcx");
-	vid.alphamap = vid.colormap + 64*256;
+    ref_soft_LoadPCX ("pics/colormap.pcx", &vid.colormap, &pal, NULL, NULL);
+    if (!vid.colormap)
+	    ri.Sys_Error (ERR_FATAL, "Couldn't load pics/colormap.pcx");
+    vid.alphamap = vid.colormap + 64*256;
 
-	out = (byte *)d_8to24table;
-	for (i=0 ; i<256 ; i++, out+=4)
+    out = (byte *)d_8to24table;
+    for (i=0 ; i<256 ; i++, out+=4)
 	{
-		r = pal[i*3+0];
-		g = pal[i*3+1];
-		b = pal[i*3+2];
+	    r = pal[i*3+0];
+	    g = pal[i*3+1];
+	    b = pal[i*3+2];
 
         out[0] = r;
         out[1] = g;
         out[2] = b;
 	}
 
-	free (pal);
+    free (pal);
 }
 
 /*
@@ -214,9 +214,9 @@ ref_soft_Mod_PointInLeaf
 */
 mleaf_t *ref_soft_Mod_PointInLeaf (vec3_t p, model_t *model)
 {
-    mnode_t        *node;
+    mnode_t    * node;
     float        d;
-    plane_t    *plane;
+    plane_t* plane;
 
     if (!model || !model->nodes)
         ri.Sys_Error (ERR_DROP, "ref_soft_Mod_PointInLeaf: bad model");
@@ -247,7 +247,7 @@ byte *ref_soft_Mod_DecompressVis (byte *in, model_t *model)
 {
     static byte    decompressed[MAX_MAP_LEAFS/8];
     int        c;
-    byte    *out;
+    byte* out;
     int        row;
 
     row = (model->vis->numclusters+7)>>3;
@@ -260,7 +260,7 @@ byte *ref_soft_Mod_DecompressVis (byte *in, model_t *model)
     {    // no vis info, so make all visible
         while (row)
         {
-            *out++ = 0xff;
+        * out++ = 0xff;
             row--;
         }
         return decompressed;
@@ -270,7 +270,7 @@ byte *ref_soft_Mod_DecompressVis (byte *in, model_t *model)
     {
         if (*in)
         {
-            *out++ = *in++;
+        * out++ = *in++;
             continue;
         }
 
@@ -278,7 +278,7 @@ byte *ref_soft_Mod_DecompressVis (byte *in, model_t *model)
         in += 2;
         while (c)
         {
-            *out++ = 0;
+        * out++ = 0;
             c--;
         }
     } while (out - decompressed < row);
@@ -308,7 +308,7 @@ byte *ref_soft_Mod_ClusterPVS (int cluster, model_t *model)
 ===============================================================================
 */
 
-byte    *mod_base;
+byte* mod_base;
 
 
 /*
@@ -322,7 +322,7 @@ by taking the brightest component
 void ref_soft_Mod_LoadLighting (lump_t *l)
 {
     int        i, size;
-    byte    *in;
+    byte* in;
 
     if (!l->filelen)
     {
@@ -350,7 +350,7 @@ int        r_numvisleafs;
 
 void    R_NumberLeafs (mnode_t *node)
 {
-    mleaf_t    *leaf;
+    mleaf_t* leaf;
     int        leafnum;
 
     if (node->contents != -1)
@@ -403,8 +403,8 @@ ref_soft_Mod_LoadVertexes
 */
 void ref_soft_Mod_LoadVertexes (lump_t *l)
 {
-    dvertex_t    *in;
-    mvertex_t    *out;
+    dvertex_t* in;
+    mvertex_t* out;
     int            i, count;
 
     in = (void *)(mod_base + l->fileofs);
@@ -431,8 +431,8 @@ ref_soft_Mod_LoadSubmodels
 */
 void ref_soft_Mod_LoadSubmodels (lump_t *l)
 {
-    dmodel_t    *in;
-    dmodel_t    *out;
+    dmodel_t* in;
+    dmodel_t* out;
     int            i, j, count;
 
     in = (void *)(mod_base + l->fileofs);
@@ -566,8 +566,8 @@ void ref_soft_CalcSurfaceExtents (msurface_t *s)
 {
     float    mins[2], maxs[2], val;
     int        i,j, e;
-    mvertex_t    *v;
-    mtexinfo_t    *tex;
+    mvertex_t* v;
+    mtexinfo_t* tex;
     int        bmins[2], bmaxs[2];
 
     mins[0] = mins[1] = 999999;
@@ -618,8 +618,8 @@ ref_soft_Mod_LoadFaces
 */
 void ref_soft_Mod_LoadFaces (lump_t *l)
 {
-    dface_t        *in;
-    msurface_t     *out;
+    dface_t    * in;
+    msurface_t * out;
     int            i, count, surfnum;
     int            planenum, side;
 
@@ -723,8 +723,8 @@ ref_soft_Mod_LoadNodes
 void ref_soft_Mod_LoadNodes (lump_t *l)
 {
     int            i, j, count, p;
-    dnode_t        *in;
-    mnode_t     *out;
+    dnode_t    * in;
+    mnode_t * out;
 
     in = (void *)(mod_base + l->fileofs);
     if (l->filelen % sizeof(*in))
@@ -770,8 +770,8 @@ ref_soft_Mod_LoadLeafs
 */
 void ref_soft_Mod_LoadLeafs (lump_t *l)
 {
-    dleaf_t     *in;
-    mleaf_t     *out;
+    dleaf_t * in;
+    mleaf_t * out;
     int            i, j, count;
 
     in = (void *)(mod_base + l->fileofs);
@@ -810,7 +810,7 @@ ref_soft_Mod_LoadMarksurfaces
 void ref_soft_Mod_LoadMarksurfaces (lump_t *l)
 {
     int        i, j, count;
-    short        *in;
+    short    * in;
     msurface_t **out;
 
     in = (void *)(mod_base + l->fileofs);
@@ -839,7 +839,7 @@ ref_soft_Mod_LoadSurfedges
 void ref_soft_Mod_LoadSurfedges (lump_t *l)
 {
     int        i, count;
-    int        *in, *out;
+    int    * in, *out;
 
     in = (void *)(mod_base + l->fileofs);
     if (l->filelen % sizeof(*in))
@@ -862,8 +862,8 @@ ref_soft_Mod_LoadPlanes
 void ref_soft_Mod_LoadPlanes (lump_t *l)
 {
     int            i, j;
-    plane_t    *out;
-    dplane_t     *in;
+    plane_t* out;
+    dplane_t * in;
     int            count;
     int            bits;
 
@@ -901,8 +901,8 @@ ref_soft_Mod_LoadBrushModel
 void ref_soft_Mod_LoadBrushModel (model_t *mod, void *buffer)
 {
     int            i;
-    dheader_t    *header;
-    dmodel_t     *bm;
+    dheader_t* header;
+    dmodel_t * bm;
 
     loadmodel->type = mod_brush;
     if (loadmodel != mod_known)
@@ -947,7 +947,7 @@ void ref_soft_Mod_LoadBrushModel (model_t *mod, void *buffer)
         bm = &mod->submodels[i];
         starmod = &mod_inline[i];
 
-        *starmod = *loadmodel;
+    * starmod = *loadmodel;
 
         starmod->firstmodelsurface = bm->firstface;
         starmod->nummodelsurfaces = bm->numfaces;
@@ -959,7 +959,7 @@ void ref_soft_Mod_LoadBrushModel (model_t *mod, void *buffer)
         VectorCopy (bm->mins, starmod->mins);
 
         if (i == 0)
-            *loadmodel = *starmod;
+        * loadmodel = *starmod;
     }
 
     R_InitSkyBox ();
@@ -981,11 +981,11 @@ ref_soft_Mod_LoadAliasModel
 void ref_soft_Mod_LoadAliasModel (model_t *mod, void *buffer)
 {
     int                    i, j;
-    dmdl_t                *pinmodel, *pheader;
-    dstvert_t            *pinst, *poutst;
-    dtriangle_t            *pintri, *pouttri;
-    daliasframe_t        *pinframe, *poutframe;
-    int                    *pincmd, *poutcmd;
+    dmdl_t            * pinmodel, *pheader;
+    dstvert_t        * pinst, *poutst;
+    dtriangle_t        * pintri, *pouttri;
+    daliasframe_t    * pinframe, *poutframe;
+    int                * pincmd, *poutcmd;
     int                    version;
 
     pinmodel = (dmdl_t *)buffer;
@@ -1104,7 +1104,7 @@ ref_soft_Mod_LoadSpriteModel
 */
 void ref_soft_Mod_LoadSpriteModel (model_t *mod, void *buffer)
 {
-    dsprite_t    *sprin, *sprout;
+    dsprite_t* sprin, *sprout;
     int            i;
 
     sprin = (dsprite_t *)buffer;
@@ -1144,7 +1144,7 @@ Specifies the model that will be used as the world
 void ref_soft_R_BeginRegistration (char *model)
 {
     char    fullname[MAX_QPATH];
-    cvar_t    *flushmap;
+    cvar* flushmap;
 
     registration_sequence++;
     r_oldviewcluster = -1;        // force markleafs
@@ -1162,10 +1162,10 @@ void ref_soft_R_BeginRegistration (char *model)
 
 struct model_s* ref_soft_R_RegisterModel (char *name)
 {
-    model_t    *mod;
+    model_t* mod;
     int        i;
-    dsprite_t    *sprout;
-    dmdl_t        *pheader;
+    dsprite_t* sprout;
+    dmdl_t    * pheader;
 
     mod = ref_soft_Mod_ForName (name, false);
     if (mod)
@@ -1206,7 +1206,7 @@ ref_soft_R_EndRegistration
 void ref_soft_R_EndRegistration (void)
 {
     int        i;
-    model_t    *mod;
+    model_t* mod;
 
     for (i=0, mod=mod_known ; i<mod_numknown ; i++, mod++)
     {

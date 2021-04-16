@@ -1335,7 +1335,7 @@ void CL_AddBeams (void)
 //				Com_Printf_G ("Time:  %d %d %f\n", cl.time, cls.realtime, cls.frametime);
 */
 
-extern cvar_t *hand;
+extern cvar *hand;
 
 /*
 =================
@@ -1358,7 +1358,7 @@ void CL_AddPlayerBeams (void)
 
 	float		hand_multiplier;
 	frame_t		*oldframe;
-	player_state_t	*ps, *ops;
+	player_state	*ps, *ops;
 
 //PMM
 	if (hand)

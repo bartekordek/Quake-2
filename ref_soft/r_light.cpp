@@ -31,9 +31,9 @@ DYNAMIC LIGHTS
 */
 void   ref_soft_R_MarkLights (dlight_t *light, int bit, mnode_t *node)
 {
-    plane_t    *splitplane;
+    plane_t* splitplane;
     float        dist;
-    msurface_t    *surf;
+    msurface_t* surf;
     int            i;
 
     if (node->contents != -1)
@@ -80,7 +80,7 @@ void   ref_soft_R_MarkLights (dlight_t *light, int bit, mnode_t *node)
 void ref_soft_R_PushDlights (model_t *model)
 {
     int        i;
-    dlight_t    *l;
+    dlight_t* l;
 
     r_dlightframecount = r_framecount;
     for (i=0, l = r_newrefdef.dlights ; i<r_newrefdef.num_dlights ; i++, l++)
@@ -100,21 +100,21 @@ LIGHT SAMPLING
 */
 
 vec3_t    pointcolor;
-plane_t        *lightplane;        // used as shadow plane
+plane_t    * lightplane;        // used as shadow plane
 vec3_t            lightspot;
 
 int ref_soft_RecursiveLightPoint (mnode_t *node, vec3_t start, vec3_t end)
 {
     float        front, back, frac;
     int            side;
-    plane_t    *plane;
+    plane_t* plane;
     vec3_t        mid;
-    msurface_t    *surf;
+    msurface_t* surf;
     int            s, t, ds, dt;
     int            i;
-    mtexinfo_t    *tex;
-    byte        *lightmap;
-    float        *scales;
+    mtexinfo_t* tex;
+    byte    * lightmap;
+    float    * scales;
     int            maps;
     float        samp;
     int            r;
@@ -187,7 +187,7 @@ int ref_soft_RecursiveLightPoint (mnode_t *node, vec3_t start, vec3_t end)
             for (maps = 0 ; maps < MAXLIGHTMAPS && surf->styles[maps] != 255 ;
                     maps++)
             {
-                samp = *lightmap * /* 0.5 * */ (1.0/255);    // adjust for gl scale
+                samp = *lightmap */* 0.5 * */ (1.0/255);    // adjust for gl scale
                 scales = r_newrefdef.lightstyles[surf->styles[maps]].rgb;
                 VectorMA (pointcolor, samp, scales, pointcolor);
                 lightmap += ((surf->extents[0]>>4)+1) *
@@ -212,7 +212,7 @@ void ref_soft_R_LightPoint (vec3_t p, vec3_t color)
     vec3_t        end;
     float        r;
     int            lnum;
-    dlight_t    *dl;
+    dlight_t* dl;
     float        light;
     vec3_t        dist;
     float        add;
@@ -277,8 +277,8 @@ void   ref_soft_R_AddDynamicLights (void)
     int            s, t;
     int            i;
     int            smax, tmax;
-    mtexinfo_t    *tex;
-    dlight_t    *dl;
+    mtexinfo_t* tex;
+    dlight_t* dl;
     int            negativeLight;    //PGM
 
     surf = r_drawsurf.surf;
@@ -369,10 +369,10 @@ void   ref_soft_R_BuildLightMap (void)
     int            smax, tmax;
     int            t;
     int            i, size;
-    byte        *lightmap;
+    byte    * lightmap;
     unsigned    scale;
     int            maps;
-    msurface_t    *surf;
+    msurface_t* surf;
 
     surf = r_drawsurf.surf;
 

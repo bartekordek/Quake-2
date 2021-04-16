@@ -21,10 +21,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "g_local.hpp"
 
-bool FindTarget (struct edict_s *self);
-extern cvar_t	*maxclients;
+bool FindTarget (edict *self);
+extern cvar	*maxclients;
 
-bool ai_checkattack (struct edict_s *self, float dist);
+bool ai_checkattack (edict *self, float dist);
 
 bool	enemy_vis;
 bool	enemy_infront;
@@ -49,7 +49,7 @@ In coop games, sight_client will cycle between the clients.
 */
 void AI_SetSightClient (void)
 {
-	struct edict_s	*ent;
+	edict	*ent;
 	int		start, check;
 
 	if (level.sight_client == NULL)
@@ -89,7 +89,7 @@ Move the specified distance at current facing.
 This replaces the QC functions: ai_forward, ai_back, ai_pain, and ai_painforward
 ==============
 */
-void ai_move (struct edict_s *self, float dist)
+void ai_move (edict *self, float dist)
 {
 	M_walkmove (self, self->s.angles[YAW], dist);
 }
@@ -103,7 +103,7 @@ Used for standing around and looking for players
 Distance is for slight position adjustments needed by the animations
 ==============
 */
-void ai_stand (struct edict_s *self, float dist)
+void ai_stand (edict *self, float dist)
 {
 	vec3_t	v;
 
@@ -160,7 +160,7 @@ ai_walk
 The monster is walking it's beat
 =============
 */
-void ai_walk (struct edict_s *self, float dist)
+void ai_walk (edict *self, float dist)
 {
 	M_MoveToGoal (self, dist);
 
@@ -191,7 +191,7 @@ Turns towards target and advances
 Use this call with a distnace of 0 to replace ai_face
 ==============
 */
-void ai_charge (struct edict_s *self, float dist)
+void ai_charge (edict *self, float dist)
 {
 	vec3_t	v;
 
@@ -212,7 +212,7 @@ don't move, but turn towards ideal_yaw
 Distance is for slight position adjustments needed by the animations
 =============
 */
-void ai_turn (struct edict_s *self, float dist)
+void ai_turn (edict *self, float dist)
 {
 	if (dist)
 		M_walkmove (self, self->s.angles[YAW], dist);
@@ -261,7 +261,7 @@ returns the range catagorization of an entity reletive to self
 3	only triggered by damage
 =============
 */
-int range (struct edict_s *self, struct edict_s *other)
+int range (edict *self, edict *other)
 {
 	vec3_t	v;
 	float	len;
@@ -284,7 +284,7 @@ visible
 returns 1 if the entity is visible to self, even if not infront ()
 =============
 */
-bool visible (struct edict_s *self, struct edict_s *other)
+bool visible (edict *self, edict *other)
 {
 	vec3_t	spot1;
 	vec3_t	spot2;
@@ -309,7 +309,7 @@ infront
 returns 1 if the entity is in front (in sight) of self
 =============
 */
-bool infront (struct edict_s *self, struct edict_s *other)
+bool infront (edict *self, edict *other)
 {
 	vec3_t	vec;
 	float	dot;
@@ -328,7 +328,7 @@ bool infront (struct edict_s *self, struct edict_s *other)
 
 //============================================================================
 
-void HuntTarget (struct edict_s *self)
+void HuntTarget (edict *self)
 {
 	vec3_t	vec;
 
@@ -344,7 +344,7 @@ void HuntTarget (struct edict_s *self)
 		AttackFinished (self, 1);
 }
 
-void FoundTarget (struct edict_s *self)
+void FoundTarget (edict *self)
 {
 	// let other monsters see this monster for a while
 	if (self->enemy->client)
@@ -404,9 +404,9 @@ checked each frame.  This means multi player games will have slightly
 slower noticing monsters.
 ============
 */
-bool FindTarget (struct edict_s *self)
+bool FindTarget (edict *self)
 {
-	struct edict_s		*client;
+	edict		*client;
 	bool	heardit;
 	int			r;
 
@@ -591,7 +591,7 @@ FacingIdeal
 
 ============
 */
-bool FacingIdeal(struct edict_s *self)
+bool FacingIdeal(edict *self)
 {
 	float	delta;
 
@@ -604,7 +604,7 @@ bool FacingIdeal(struct edict_s *self)
 
 //=============================================================================
 
-bool M_CheckAttack (struct edict_s *self)
+bool M_CheckAttack (edict *self)
 {
 	vec3_t	spot1, spot2;
 	float	chance;
@@ -700,7 +700,7 @@ ai_run_melee
 Turn and close until within an angle to launch a melee attack
 =============
 */
-void ai_run_melee(struct edict_s *self)
+void ai_run_melee(edict *self)
 {
 	self->ideal_yaw = enemy_yaw;
 	M_ChangeYaw (self);
@@ -720,7 +720,7 @@ ai_run_missile
 Turn in place until within an angle to launch a missile attack
 =============
 */
-void ai_run_missile(struct edict_s *self)
+void ai_run_missile(edict *self)
 {
 	self->ideal_yaw = enemy_yaw;
 	M_ChangeYaw (self);
@@ -740,7 +740,7 @@ ai_run_slide
 Strafe sideways, but stay at aproximately the same range
 =============
 */
-void ai_run_slide(struct edict_s *self, float distance)
+void ai_run_slide(edict *self, float distance)
 {
 	float	ofs;
 
@@ -768,7 +768,7 @@ Decides if we're going to attack or do something else
 used by ai_run and ai_stand
 =============
 */
-bool ai_checkattack (struct edict_s *self, float dist)
+bool ai_checkattack (edict *self, float dist)
 {
 	vec3_t		temp;
 	bool	hesDeadJim;
@@ -911,13 +911,13 @@ ai_run
 The monster has an enemy it is trying to kill
 =============
 */
-void ai_run (struct edict_s *self, float dist)
+void ai_run (edict *self, float dist)
 {
 	vec3_t		v;
-	struct edict_s		*tempgoal;
-	struct edict_s		*save;
+	edict		*tempgoal;
+	edict		*save;
 	bool	isNew;
-	struct edict_s		*marker;
+	edict		*marker;
 	float		d1, d2;
 	trace_t		tr;
 	vec3_t		v_forward, v_right;

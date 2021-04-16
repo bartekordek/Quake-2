@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "m_player.hpp"
 
 
-char *ClientTeam (struct edict_s *ent)
+char *ClientTeam (edict *ent)
 {
 	char		*p;
 	static char	value[512];
@@ -46,7 +46,7 @@ char *ClientTeam (struct edict_s *ent)
 	return ++p;
 }
 
-bool OnSameTeam (struct edict_s *ent1, struct edict_s *ent2)
+bool OnSameTeam (edict *ent1, edict *ent2)
 {
 	char	ent1Team [512];
 	char	ent2Team [512];
@@ -63,11 +63,11 @@ bool OnSameTeam (struct edict_s *ent1, struct edict_s *ent2)
 }
 
 
-void SelectNextItem (struct edict_s *ent, int itflags)
+void SelectNextItem (edict *ent, int itflags)
 {
 	gclient_t	*cl;
 	int			i, index;
-	gitem_t		*it;
+	gitem		*it;
 
 	cl = ent->client;
 
@@ -100,11 +100,11 @@ void SelectNextItem (struct edict_s *ent, int itflags)
 	cl->pers.selected_item = -1;
 }
 
-void SelectPrevItem (struct edict_s *ent, int itflags)
+void SelectPrevItem (edict *ent, int itflags)
 {
 	gclient_t	*cl;
 	int			i, index;
-	gitem_t		*it;
+	gitem		*it;
 
 	cl = ent->client;
 
@@ -137,7 +137,7 @@ void SelectPrevItem (struct edict_s *ent, int itflags)
 	cl->pers.selected_item = -1;
 }
 
-void ValidateSelectedItem (struct edict_s *ent)
+void ValidateSelectedItem (edict *ent)
 {
 	gclient_t	*cl;
 
@@ -159,14 +159,14 @@ Cmd_Give_f
 Give items to a client
 ==================
 */
-void Cmd_Give_f (struct edict_s *ent)
+void Cmd_Give_f (edict *ent)
 {
 	char		*name;
-	gitem_t		*it;
+	gitem		*it;
 	int			index;
 	int			i;
 	bool	give_all;
-	struct edict_s		*it_ent;
+	edict		*it_ent;
 
 	if (deathmatch->value && !sv_cheats->value)
 	{
@@ -315,7 +315,7 @@ Sets client to godmode
 argv(0) god
 ==================
 */
-void Cmd_God_f (struct edict_s *ent)
+void Cmd_God_f (edict *ent)
 {
 	char	*msg;
 
@@ -344,7 +344,7 @@ Sets client to notarget
 argv(0) notarget
 ==================
 */
-void Cmd_Notarget_f (struct edict_s *ent)
+void Cmd_Notarget_f (edict *ent)
 {
 	char	*msg;
 
@@ -371,7 +371,7 @@ Cmd_Noclip_f
 argv(0) noclip
 ==================
 */
-void Cmd_Noclip_f (struct edict_s *ent)
+void Cmd_Noclip_f (edict *ent)
 {
 	char	*msg;
 
@@ -403,10 +403,10 @@ Cmd_Use_f
 Use an inventory item
 ==================
 */
-void Cmd_Use_f (struct edict_s *ent)
+void Cmd_Use_f (edict *ent)
 {
 	int			index;
-	gitem_t		*it;
+	gitem		*it;
 	char		*s;
 
 	s = gi.args();
@@ -439,10 +439,10 @@ Cmd_Drop_f
 Drop an inventory item
 ==================
 */
-void Cmd_Drop_f (struct edict_s *ent)
+void Cmd_Drop_f (edict *ent)
 {
 	int			index;
-	gitem_t		*it;
+	gitem		*it;
 	char		*s;
 
 //ZOID--special case for tech powerups
@@ -480,7 +480,7 @@ void Cmd_Drop_f (struct edict_s *ent)
 Cmd_Inven_f
 =================
 */
-void Cmd_Inven_f (struct edict_s *ent)
+void Cmd_Inven_f (edict *ent)
 {
 	int			i;
 	gclient_t	*cl;
@@ -526,9 +526,9 @@ void Cmd_Inven_f (struct edict_s *ent)
 Cmd_InvUse_f
 =================
 */
-void Cmd_InvUse_f (struct edict_s *ent)
+void Cmd_InvUse_f (edict *ent)
 {
-	gitem_t		*it;
+	gitem		*it;
 
 //ZOID
 	if (ent->client->menu) {
@@ -560,7 +560,7 @@ void Cmd_InvUse_f (struct edict_s *ent)
 Cmd_LastWeap_f
 =================
 */
-void Cmd_LastWeap_f (struct edict_s *ent)
+void Cmd_LastWeap_f (edict *ent)
 {
 	gclient_t	*cl;
 
@@ -578,11 +578,11 @@ void Cmd_LastWeap_f (struct edict_s *ent)
 Cmd_WeapPrev_f
 =================
 */
-void Cmd_WeapPrev_f (struct edict_s *ent)
+void Cmd_WeapPrev_f (edict *ent)
 {
 	gclient_t	*cl;
 	int			i, index;
-	gitem_t		*it;
+	gitem		*it;
 	int			selected_weapon;
 
 	cl = ent->client;
@@ -614,11 +614,11 @@ void Cmd_WeapPrev_f (struct edict_s *ent)
 Cmd_WeapNext_f
 =================
 */
-void Cmd_WeapNext_f (struct edict_s *ent)
+void Cmd_WeapNext_f (edict *ent)
 {
 	gclient_t	*cl;
 	int			i, index;
-	gitem_t		*it;
+	gitem		*it;
 	int			selected_weapon;
 
 	cl = ent->client;
@@ -650,11 +650,11 @@ void Cmd_WeapNext_f (struct edict_s *ent)
 Cmd_WeapLast_f
 =================
 */
-void Cmd_WeapLast_f (struct edict_s *ent)
+void Cmd_WeapLast_f (edict *ent)
 {
 	gclient_t	*cl;
 	int			index;
-	gitem_t		*it;
+	gitem		*it;
 
 	cl = ent->client;
 
@@ -677,9 +677,9 @@ void Cmd_WeapLast_f (struct edict_s *ent)
 Cmd_InvDrop_f
 =================
 */
-void Cmd_InvDrop_f (struct edict_s *ent)
+void Cmd_InvDrop_f (edict *ent)
 {
-	gitem_t		*it;
+	gitem		*it;
 
 	ValidateSelectedItem (ent);
 
@@ -703,7 +703,7 @@ void Cmd_InvDrop_f (struct edict_s *ent)
 Cmd_Kill_f
 =================
 */
-void Cmd_Kill_f (struct edict_s *ent)
+void Cmd_Kill_f (edict *ent)
 {
 //ZOID
 	if (ent->solid == SOLID_NOT)
@@ -723,7 +723,7 @@ void Cmd_Kill_f (struct edict_s *ent)
 Cmd_PutAway_f
 =================
 */
-void Cmd_PutAway_f (struct edict_s *ent)
+void Cmd_PutAway_f (edict *ent)
 {
 	ent->client->showscores = false;
 	ent->client->showhelp = false;
@@ -758,7 +758,7 @@ int PlayerSort (void const *a, void const *b)
 Cmd_Players_f
 =================
 */
-void Cmd_Players_f (struct edict_s *ent)
+void Cmd_Players_f (edict *ent)
 {
 	int		i;
 	int		count;
@@ -801,7 +801,7 @@ void Cmd_Players_f (struct edict_s *ent)
 Cmd_Wave_f
 =================
 */
-void Cmd_Wave_f (struct edict_s *ent)
+void Cmd_Wave_f (edict *ent)
 {
 	int		i;
 
@@ -847,7 +847,7 @@ void Cmd_Wave_f (struct edict_s *ent)
 	}
 }
 
-bool CheckFlood(struct edict_s *ent)
+bool CheckFlood(edict *ent)
 {
 	int		i;
 	gclient_t *cl;
@@ -882,10 +882,10 @@ bool CheckFlood(struct edict_s *ent)
 Cmd_Say_f
 ==================
 */
-void Cmd_Say_f (struct edict_s *ent, bool team, bool arg0)
+void Cmd_Say_f (edict *ent, bool team, bool arg0)
 {
 	int		j;
-	struct edict_s	*other;
+	edict	*other;
 	char	*p;
 	char	text[2048];
 
@@ -951,7 +951,7 @@ void Cmd_Say_f (struct edict_s *ent, bool team, bool arg0)
 ClientCommand
 =================
 */
-void ClientCommand (struct edict_s *ent)
+void ClientCommand (edict *ent)
 {
 	char	*cmd;
 

@@ -20,10 +20,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "g_local.hpp"
 
 
-void UpdateChaseCam(struct edict_s *ent)
+void UpdateChaseCam(edict *ent)
 {
 	vec3_t o, ownerv, goal;
-	struct edict_s *targ;
+	edict *targ;
 	vec3_t forward, right;
 	trace_t trace;
 	int i;
@@ -108,10 +108,10 @@ void UpdateChaseCam(struct edict_s *ent)
 
 }
 
-void ChaseNext(struct edict_s *ent)
+void ChaseNext(edict *ent)
 {
 	int i;
-	struct edict_s *e;
+	edict *e;
 
 	if (!ent->client->chase_target)
 		return;
@@ -132,10 +132,10 @@ void ChaseNext(struct edict_s *ent)
 	ent->client->update_chase = true;
 }
 
-void ChasePrev(struct edict_s *ent)
+void ChasePrev(edict *ent)
 {
 	int i;
-	struct edict_s *e;
+	edict *e;
 
 	if (!ent->client->chase_target)
 		return;

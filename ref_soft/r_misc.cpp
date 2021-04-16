@@ -19,14 +19,15 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 // r_misc.c
 
-#include "r_local.hpp"
+#include "ref_soft/r_local.hpp"
+#include "win32/winquake.hpp"
 
 #define NUM_MIPS    4
 
-cvar_t    *sw_mipcap;
-cvar_t    *sw_mipscale;
+cvar* sw_mipcap;
+cvar* sw_mipscale;
 
-surfcache_t        *d_initial_rover;
+surfcache_t    * d_initial_rover;
 bool        d_roverwrapped;
 int                d_minmip;
 float            d_scalemip[NUM_MIPS-1];
@@ -40,7 +41,7 @@ int    d_vrectx, d_vrecty, d_vrectright_particle, d_vrectbottom_particle;
 int    d_pix_min, d_pix_max, d_pix_shift;
 
 int        d_scantable[MAXHEIGHT];
-short    *zspantable[MAXHEIGHT];
+short* zspantable[MAXHEIGHT];
 
 /*
 ================
@@ -108,8 +109,8 @@ void D_ViewChanged (void)
     }
 
     /*
-    ** clear Z-buffer and color-buffers if we're doing the gallery
-    */
+* * clear Z-buffer and color-buffers if we're doing the gallery
+*/
     if ( r_newrefdef.rdflags & RDF_NOWORLDMODEL )
     {
         memset( d_pzbuffer, 0xff, vid.width * vid.height * sizeof( d_pzbuffer[0] ) );
@@ -142,13 +143,7 @@ void R_PrintTimes (void)
     c_surf = 0;
 }
 
-
-/*
-=============
-R_PrintDSpeeds
-=============
-*/
-void R_PrintDSpeeds (void)
+void ref_soft_R_PrintDSpeeds (void)
 {
     int    ms, dp_time, r_time2, rw_time, db_time, se_time, de_time, da_time;
 
@@ -177,14 +172,7 @@ void R_PrintAliasStats (void)
     ri.Con_Printf (PRINT_ALL,"%3i polygon model drawn\n", r_amodels_drawn);
 }
 
-
-
-/*
-===================
-R_TransformFrustum
-===================
-*/
-void R_TransformFrustum (void)
+void ref_soft_R_TransformFrustum (void)
 {
     int        i;
     vec3_t    v, v2;
@@ -282,7 +270,7 @@ void R_TransformPlane (plane_t *p, float *normal, float *dist)
     float    d;
 
     d = DotProduct (r_origin, p->normal);
-    *dist = p->dist - d;
+* dist = p->dist - d;
 // TODO: when we have rotating entities, this will need to use the view matrix
     TransformVector (p->normal, normal);
 }
@@ -480,7 +468,7 @@ void R_SetupFrame (void)
     R_ViewChanged (&vrect);
 
 // start off with just the four screen edge clip planes
-    R_TransformFrustum ();
+    ref_soft_R_TransformFrustum ();
     R_SetUpFrustumIndexes ();
 
 // save base values
@@ -548,9 +536,9 @@ void WritePCXfile (char *filename, byte *data, int width, int height,
     int rowbytes, byte *palette)
 {
     int            i, j, length;
-    pcx_t        *pcx;
-    byte        *pack;
-    FILE        *f;
+    pcx_t    * pcx;
+    byte    * pack;
+    FILE    * f;
 
     pcx = (pcx_t *)malloc (width*height*2+1000);
     if (!pcx)
@@ -580,11 +568,11 @@ void WritePCXfile (char *filename, byte *data, int width, int height,
         for (j=0 ; j<width ; j++)
         {
             if ( (*data & 0xc0) != 0xc0)
-                *pack++ = *data++;
+            * pack++ = *data++;
             else
             {
-                *pack++ = 0xc1;
-                *pack++ = *data++;
+            * pack++ = 0xc1;
+            * pack++ = *data++;
             }
         }
 
@@ -592,9 +580,9 @@ void WritePCXfile (char *filename, byte *data, int width, int height,
     }
 
 // write the palette
-    *pack++ = 0x0c;    // palette ID byte
+* pack++ = 0x0c;    // palette ID byte
     for (i=0 ; i<768 ; i++)
-        *pack++ = *palette++;
+    * pack++ = *palette++;
 
 // write output file
     length = pack - (byte *)pcx;
@@ -622,7 +610,7 @@ void ref_soft_R_ScreenShot_f (void)
     int            i;
     char        pcxname[80];
     char        checkname[MAX_OSPATH];
-    FILE        *f;
+    FILE    * f;
     byte        palette[768];
 
     // create the scrnshots directory if it doesn't exist

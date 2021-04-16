@@ -20,43 +20,43 @@ int curhunksize;
 void *Hunk_Begin (int maxsize)
 {
 	// reserve a huge chunk of memory, but don't commit any yet
-	maxhunksize = maxsize;
-	curhunksize = 0;
-	membase = malloc(maxhunksize);
-	if (membase == NULL)
-		Sys_Error(ERR_FATAL, "unable to allocate %d bytes", maxsize);
+    maxhunksize = maxsize;
+    curhunksize = 0;
+    membase = malloc(maxhunksize);
+    if (membase == NULL)
+	    Sys_Error(ERR_FATAL, "unable to allocate %d bytes", maxsize);
 
-	return membase;
+    return membase;
 }
 
 void *Hunk_Alloc (int size)
 {
-	byte *buf;
+    byte *buf;
 
 	// round to cacheline
-	size = (size+31)&~31;
-	if (curhunksize + size > maxhunksize)
-		Sys_Error(ERR_FATAL, "Hunk_Alloc overflow");
-	buf = membase + curhunksize;
-	curhunksize += size;
-	return buf;
+    size = (size+31)&~31;
+    if (curhunksize + size > maxhunksize)
+	    Sys_Error(ERR_FATAL, "Hunk_Alloc overflow");
+    buf = membase + curhunksize;
+    curhunksize += size;
+    return buf;
 }
 
 int Hunk_End (void)
 {
-	byte *n;
+    byte *n;
 
-	n = realloc(membase, curhunksize);
-	if (n != membase)
-		Sys_Error(ERR_FATAL, "Hunk_End:  Could not remap virtual block (%d)", errno);
+    n = realloc(membase, curhunksize);
+    if (n != membase)
+	    Sys_Error(ERR_FATAL, "Hunk_End:  Could not remap virtual block (%d)", errno);
 
-	return curhunksize;
+    return curhunksize;
 }
 
 void Hunk_Free (void *base)
 {
-	if (base)
-		free(base);
+    if (base)
+	    free(base);
 }
 
 //===============================================================================
@@ -70,21 +70,21 @@ Sys_Milliseconds
 int curtime;
 int Sys_Milliseconds2 (void)
 {
-	struct timeval tp;
-	struct timezone tzp;
-	static int		secbase;
+    struct timeval tp;
+    struct timezone tzp;
+    static int	    secbase;
 
-	gettimeofday(&tp, &tzp);
+    gettimeofday(&tp, &tzp);
 
-	if (!secbase)
+    if (!secbase)
 	{
-		secbase = tp.tv_sec;
-		return tp.tv_usec/1000;
+	    secbase = tp.tv_sec;
+	    return tp.tv_usec/1000;
 	}
 
-	curtime = (tp.tv_sec - secbase)*1000 + tp.tv_usec/1000;
+    curtime = (tp.tv_sec - secbase)*1000 + tp.tv_usec/1000;
 
-	return curtime;
+    return curtime;
 }
 
 void Sys_Mkdir (char *path)
@@ -94,101 +94,101 @@ void Sys_Mkdir (char *path)
 
 char *strlwr (char *s)
 {
-	while (*s) {
+    while (*s) {
 		*s = tolower(*s);
-		s++;
+	    s++;
 	}
 }
 
 //============================================
 
-static	char	findbase[MAX_OSPATH];
-static	char	findpath[MAX_OSPATH];
-static	char	findpattern[MAX_OSPATH];
-static	DIR		*fdir;
+static    char    findbase[MAX_OSPATH];
+static    char    findpath[MAX_OSPATH];
+static    char    findpattern[MAX_OSPATH];
+static    DIR		*fdir;
 
 static qboolean CompareAttributes(char *path, char *name,
-	unsigned musthave, unsigned canthave )
+    unsigned musthave, unsigned canthave )
 {
-	struct stat st;
-	char fn[MAX_OSPATH];
+    struct stat st;
+    char fn[MAX_OSPATH];
 
 // . and .. never match
-	if (strcmp(name, ".") == 0 || strcmp(name, "..") == 0)
-		return false;
+    if (strcmp(name, ".") == 0 || strcmp(name, "..") == 0)
+	    return false;
 
-	sprintf(fn, "%s/%s", path, name);
-	if (stat(fn, &st) == -1)
-		return false; // shouldn't happen
+    sprintf(fn, "%s/%s", path, name);
+    if (stat(fn, &st) == -1)
+	    return false; // shouldn't happen
 
-	if ( ( st.st_mode & S_IFDIR ) && ( canthave & SFF_SUBDIR ) )
-		return false;
+    if ( ( st.st_mode & S_IFDIR ) && ( canthave & SFF_SUBDIR ) )
+	    return false;
 
-	if ( ( musthave & SFF_SUBDIR ) && !( st.st_mode & S_IFDIR ) )
-		return false;
+    if ( ( musthave & SFF_SUBDIR ) && !( st.st_mode & S_IFDIR ) )
+	    return false;
 
-	return true;
+    return true;
 }
 
 char *Sys_FindFirst (char *path, unsigned musthave, unsigned canhave)
 {
-	struct dirent *d;
-	char *p;
+    struct dirent *d;
+    char *p;
 
-	if (fdir)
-		Sys_Error ("Sys_BeginFind without close");
+    if (fdir)
+	    Sys_Error ("Sys_BeginFind without close");
 
-//	COM_FilePath (path, findbase);
-	strcpy(findbase, path);
+//    COM_FilePath (path, findbase);
+    strcpy(findbase, path);
 
-	if ((p = strrchr(findbase, '/')) != NULL) {
+    if ((p = strrchr(findbase, '/')) != NULL) {
 		*p = 0;
-		strcpy(findpattern, p + 1);
+	    strcpy(findpattern, p + 1);
 	} else
-		strcpy(findpattern, "*");
+	    strcpy(findpattern, "*");
 
-	if (strcmp(findpattern, "*.*") == 0)
-		strcpy(findpattern, "*");
+    if (strcmp(findpattern, "*.*") == 0)
+	    strcpy(findpattern, "*");
 
-	if ((fdir = opendir(path)) == NULL)
-		return NULL;
-	while ((d = readdir(fdir)) != NULL) {
-		if (!*findpattern || glob_match(findpattern, d->d_name)) {
-//			if (*findpattern)
-//				printf("%s matched %s\n", findpattern, d->d_name);
-			if (CompareAttributes(findbase, d->d_name, musthave, canhave)) {
-				sprintf (findpath, "%s/%s", findbase, d->d_name);
-				return findpath;
+    if ((fdir = opendir(path)) == NULL)
+	    return NULL;
+    while ((d = readdir(fdir)) != NULL) {
+	    if (!*findpattern || glob_match(findpattern, d->d_name)) {
+//		    if (*findpattern)
+//			    printf("%s matched %s\n", findpattern, d->d_name);
+		    if (CompareAttributes(findbase, d->d_name, musthave, canhave)) {
+			    sprintf (findpath, "%s/%s", findbase, d->d_name);
+			    return findpath;
 			}
 		}
 	}
-	return NULL;
+    return NULL;
 }
 
 char *Sys_FindNext (unsigned musthave, unsigned canhave)
 {
-	struct dirent *d;
+    struct dirent *d;
 
-	if (fdir == NULL)
-		return NULL;
-	while ((d = readdir(fdir)) != NULL) {
-		if (!*findpattern || glob_match(findpattern, d->d_name)) {
-//			if (*findpattern)
-//				printf("%s matched %s\n", findpattern, d->d_name);
-			if (CompareAttributes(findbase, d->d_name, musthave, canhave)) {
-				sprintf (findpath, "%s/%s", findbase, d->d_name);
-				return findpath;
+    if (fdir == NULL)
+	    return NULL;
+    while ((d = readdir(fdir)) != NULL) {
+	    if (!*findpattern || glob_match(findpattern, d->d_name)) {
+//		    if (*findpattern)
+//			    printf("%s matched %s\n", findpattern, d->d_name);
+		    if (CompareAttributes(findbase, d->d_name, musthave, canhave)) {
+			    sprintf (findpath, "%s/%s", findbase, d->d_name);
+			    return findpath;
 			}
 		}
 	}
-	return NULL;
+    return NULL;
 }
 
 void Sys_FindClose (void)
 {
-	if (fdir != NULL)
-		closedir(fdir);
-	fdir = NULL;
+    if (fdir != NULL)
+	    closedir(fdir);
+    fdir = NULL;
 }
 
 

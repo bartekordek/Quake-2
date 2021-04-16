@@ -27,9 +27,9 @@ int		mx_accum, my_accum;
 int		window_center_x, window_center_y;
 int		old_mouse_x, old_mouse_y;
 
-cvar_t	in_mouse = {"in_mouse", "0", CVAR_ARCHIVE};
-cvar_t	m_filter = {"m_filter", "0", CVAR_ARCHIVE};
-cvar_t	freelook = {"in_freelook", "0", CVAR_ARCHIVE};
+cvar	in_mouse = {"in_mouse", "0", CVAR_ARCHIVE};
+cvar	m_filter = {"m_filter", "0", CVAR_ARCHIVE};
+cvar	freelook = {"in_freelook", "0", CVAR_ARCHIVE};
 
 
 /*
@@ -42,7 +42,7 @@ Called when the window gains focus or changes in some way
 void IN_ActivateMouse (void)
 {
     NSRect	r;
-  
+
         if (!mouseinitialized)
                 return;
         if (!in_mouse.value)
@@ -54,7 +54,7 @@ void IN_ActivateMouse (void)
 
         if (!mouseactive)
             PShidecursor ();
- 
+
         mouseactive = true;
         mousereset = true;
 }
@@ -86,8 +86,8 @@ IN_StartupMouse
 */
 void IN_StartupMouse (void)
 {
-        if ( COM_CheckParm ("-nomouse") ) 
-                return; 
+        if ( COM_CheckParm ("-nomouse") )
+                return;
 
         mouseinitialized = true;
 
@@ -122,7 +122,7 @@ void IN_MouseEvent (int mstate)
                 {
                                 Key_Event (K_MOUSE1 + i, false);
                 }
-        }	
+        }
 
         mouse_oldbuttonstate = mstate;
 }
@@ -170,7 +170,7 @@ void IN_Accumulate (void)
 
             mousex = p.x;
             mousey = p.y;
-            
+
             dx = mousex - old_x;
             dy = old_y - mousey;
 
@@ -200,7 +200,7 @@ void IN_MouseMove (usercmd_t *cmd)
 {
         int		mx, my;
 	int		mouse_x, mouse_y;
-       
+
         IN_Accumulate ();
 
         mx = mx_accum;
@@ -280,7 +280,7 @@ void IN_Init (void)
 
     Cmd_AddCommand ("showmouse", IN_ShowMouse);
     Cmd_AddCommand ("hidemouse", IN_HideMouse);
-    
+
     IN_StartupMouse ();
 
     // open the event status driver

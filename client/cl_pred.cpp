@@ -76,7 +76,7 @@ void CL_ClipMoveToEntities ( vec3_t start, vec3_t mins, vec3_t maxs, vec3_t end,
 	trace_t		trace;
 	int			headnode;
 	float		*angles;
-	entity_state_t	*ent;
+	entity_state	*ent;
 	int			num;
 	cmodel_t		*cmodel;
 	vec3_t		bmins, bmaxs;
@@ -125,7 +125,7 @@ void CL_ClipMoveToEntities ( vec3_t start, vec3_t mins, vec3_t maxs, vec3_t end,
 		if (trace.allsolid || trace.startsolid ||
 		trace.fraction < tr->fraction)
 		{
-			trace.ent = (struct edict_s *)ent;
+			trace.ent = (edict *)ent;
 		 	if (tr->startsolid)
 			{
 				*tr = trace;
@@ -152,7 +152,7 @@ trace_t		CL_PMTrace (vec3_t start, vec3_t mins, vec3_t maxs, vec3_t end)
 	// check against world
 	t = CM_BoxTrace (start, end, mins, maxs, 0, MASK_PLAYERSOLID);
 	if (t.fraction < 1.0)
-		t.ent = (struct edict_s *)1;
+		t.ent = (edict *)1;
 
 	// check all other solid models
 	CL_ClipMoveToEntities (start, mins, maxs, end, &t);
@@ -163,7 +163,7 @@ trace_t		CL_PMTrace (vec3_t start, vec3_t mins, vec3_t maxs, vec3_t end)
 int		CL_PMpointcontents (vec3_t point)
 {
 	int			i;
-	entity_state_t	*ent;
+	entity_state	*ent;
 	int			num;
 	cmodel_t		*cmodel;
 	int			contents;

@@ -31,8 +31,8 @@ typedef struct
     int            max_cells;
     int            max_slugs;
 
-    gitem_t        *weapon;
-    gitem_t        *lastweapon;
+    gitem    * weapon;
+    gitem    * lastweapon;
 
     int            power_cubes;    // used for tracking the cubes in coop games
     int            score;            // for calculating total unit score in coop games

@@ -29,7 +29,7 @@ a non-instant attack weapon.  It checks to see if a
 monster's dodge function should be called.
 =================
 */
-static void check_dodge (struct edict_s *self, vec3_t start, vec3_t dir, int speed)
+static void check_dodge (edict *self, vec3_t start, vec3_t dir, int speed)
 {
 	vec3_t	end;
 	vec3_t	v;
@@ -60,7 +60,7 @@ fire_hit
 Used for all impact (hit/punch/slash) attacks
 =================
 */
-bool fire_hit (struct edict_s *self, vec3_t aim, int damage, int kick)
+bool fire_hit (edict *self, vec3_t aim, int damage, int kick)
 {
 	trace_t		tr;
 	vec3_t		forward, right, up;
@@ -131,7 +131,7 @@ fire_lead
 This is an internal support routine used for bullet/pellet based weapons.
 =================
 */
-static void fire_lead (struct edict_s *self, vec3_t start, vec3_t aimdir, int damage, int kick, int te_impact, int hspread, int vspread, int mod)
+static void fire_lead (edict *self, vec3_t start, vec3_t aimdir, int damage, int kick, int te_impact, int hspread, int vspread, int mod)
 {
 	trace_t		tr;
 	vec3_t		dir;
@@ -274,7 +274,7 @@ Fires a single round.  Used for machinegun and chaingun.  Would be fine for
 pistols, rifles, etc....
 =================
 */
-void fire_bullet (struct edict_s *self, vec3_t start, vec3_t aimdir, int damage, int kick, int hspread, int vspread, int mod)
+void fire_bullet (edict *self, vec3_t start, vec3_t aimdir, int damage, int kick, int hspread, int vspread, int mod)
 {
 	fire_lead (self, start, aimdir, damage, kick, TE_GUNSHOT, hspread, vspread, mod);
 }
@@ -287,7 +287,7 @@ fire_shotgun
 Shoots shotgun pellets.  Used by shotgun and super shotgun.
 =================
 */
-void fire_shotgun (struct edict_s *self, vec3_t start, vec3_t aimdir, int damage, int kick, int hspread, int vspread, int count, int mod)
+void fire_shotgun (edict *self, vec3_t start, vec3_t aimdir, int damage, int kick, int hspread, int vspread, int count, int mod)
 {
 	int		i;
 
@@ -303,7 +303,7 @@ fire_blaster
 Fires a single blaster bolt.  Used by the blaster and hyper blaster.
 =================
 */
-void blaster_touch (struct edict_s *self, struct edict_s *other, plane_t *plane, csurface_t *surf)
+void blaster_touch (edict *self, edict *other, plane_t *plane, csurface_t *surf)
 {
 	int		mod;
 
@@ -342,9 +342,9 @@ void blaster_touch (struct edict_s *self, struct edict_s *other, plane_t *plane,
 	G_FreeEdict (self);
 }
 
-void fire_blaster (struct edict_s *self, vec3_t start, vec3_t dir, int damage, int speed, int effect, bool hyper)
+void fire_blaster (edict *self, vec3_t start, vec3_t dir, int damage, int speed, int effect, bool hyper)
 {
-	struct edict_s	*bolt;
+	edict	*bolt;
 	trace_t	tr;
 
 	VectorNormalize (dir);
@@ -395,7 +395,7 @@ void fire_blaster (struct edict_s *self, vec3_t start, vec3_t dir, int damage, i
 fire_grenade
 =================
 */
-static void Grenade_Explode (struct edict_s *ent)
+static void Grenade_Explode (edict *ent)
 {
 	vec3_t		origin;
 	int			mod;
@@ -452,7 +452,7 @@ static void Grenade_Explode (struct edict_s *ent)
 	G_FreeEdict (ent);
 }
 
-static void Grenade_Touch (struct edict_s *ent, struct edict_s *other, plane_t *plane, csurface_t *surf)
+static void Grenade_Touch (edict *ent, edict *other, plane_t *plane, csurface_t *surf)
 {
 	if (other == ent->owner)
 		return;
@@ -483,9 +483,9 @@ static void Grenade_Touch (struct edict_s *ent, struct edict_s *other, plane_t *
 	Grenade_Explode (ent);
 }
 
-void fire_grenade (struct edict_s *self, vec3_t start, vec3_t aimdir, int damage, int speed, float timer, float damage_radius)
+void fire_grenade (edict *self, vec3_t start, vec3_t aimdir, int damage, int speed, float timer, float damage_radius)
 {
-	struct edict_s	*grenade;
+	edict	*grenade;
 	vec3_t	dir;
 	vec3_t	forward, right, up;
 
@@ -516,9 +516,9 @@ void fire_grenade (struct edict_s *self, vec3_t start, vec3_t aimdir, int damage
 	gi.linkentity (grenade);
 }
 
-void fire_grenade2 (struct edict_s *self, vec3_t start, vec3_t aimdir, int damage, int speed, float timer, float damage_radius, bool held)
+void fire_grenade2 (edict *self, vec3_t start, vec3_t aimdir, int damage, int speed, float timer, float damage_radius, bool held)
 {
-	struct edict_s	*grenade;
+	edict	*grenade;
 	vec3_t	dir;
 	vec3_t	forward, right, up;
 
@@ -566,7 +566,7 @@ void fire_grenade2 (struct edict_s *self, vec3_t start, vec3_t aimdir, int damag
 fire_rocket
 =================
 */
-void rocket_touch (struct edict_s *ent, struct edict_s *other, plane_t *plane, csurface_t *surf)
+void rocket_touch (edict *ent, edict *other, plane_t *plane, csurface_t *surf)
 {
 	vec3_t		origin;
 	int			n;
@@ -617,9 +617,9 @@ void rocket_touch (struct edict_s *ent, struct edict_s *other, plane_t *plane, c
 	G_FreeEdict (ent);
 }
 
-void fire_rocket (struct edict_s *self, vec3_t start, vec3_t dir, int damage, int speed, float damage_radius, int radius_damage)
+void fire_rocket (edict *self, vec3_t start, vec3_t dir, int damage, int speed, float damage_radius, int radius_damage)
 {
-	struct edict_s	*rocket;
+	edict	*rocket;
 
 	rocket = G_Spawn();
 	VectorCopy (start, rocket->s.origin);
@@ -655,12 +655,12 @@ void fire_rocket (struct edict_s *self, vec3_t start, vec3_t dir, int damage, in
 fire_rail
 =================
 */
-void fire_rail (struct edict_s *self, vec3_t start, vec3_t aimdir, int damage, int kick)
+void fire_rail (edict *self, vec3_t start, vec3_t aimdir, int damage, int kick)
 {
 	vec3_t		from;
 	vec3_t		end;
 	trace_t		tr;
-	struct edict_s		*ignore;
+	edict		*ignore;
 	int			mask;
 	bool	water;
 
@@ -718,9 +718,9 @@ void fire_rail (struct edict_s *self, vec3_t start, vec3_t aimdir, int damage, i
 fire_bfg
 =================
 */
-void bfg_explode (struct edict_s *self)
+void bfg_explode (edict *self)
 {
-	struct edict_s	*ent;
+	edict	*ent;
 	float	points;
 	vec3_t	v;
 	float	dist;
@@ -762,7 +762,7 @@ void bfg_explode (struct edict_s *self)
 		self->think = G_FreeEdict;
 }
 
-void bfg_touch (struct edict_s *self, struct edict_s *other, plane_t *plane, csurface_t *surf)
+void bfg_touch (edict *self, edict *other, plane_t *plane, csurface_t *surf)
 {
 	if (other == self->owner)
 		return;
@@ -801,10 +801,10 @@ void bfg_touch (struct edict_s *self, struct edict_s *other, plane_t *plane, csu
 }
 
 
-void bfg_think (struct edict_s *self)
+void bfg_think (edict *self)
 {
-	struct edict_s	*ent;
-	struct edict_s	*ignore;
+	edict	*ent;
+	edict	*ignore;
 	vec3_t	point;
 	vec3_t	dir;
 	vec3_t	start;
@@ -879,9 +879,9 @@ void bfg_think (struct edict_s *self)
 }
 
 
-void fire_bfg (struct edict_s *self, vec3_t start, vec3_t dir, int damage, int speed, float damage_radius)
+void fire_bfg (edict *self, vec3_t start, vec3_t dir, int damage, int speed, float damage_radius)
 {
-	struct edict_s	*bfg;
+	edict	*bfg;
 
 	bfg = G_Spawn();
 	VectorCopy (start, bfg->s.origin);

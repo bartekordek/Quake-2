@@ -43,6 +43,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // game.h -- game dll information visible to server
 
 #include "shared/edict.hpp"
+#include "shared/defines.hpp"
 
 #define    GAME_API_VERSION    3
 
@@ -55,15 +56,15 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //===============================================================
 
 // functions provided by the main engine
-typedef struct
+typedef struct game_import
 {
     // special messages
     void    (*bprintf) (int printlevel, char *fmt, ...);
     void    (*dprintf) (char *fmt, ...);
-    void    (*cprintf) (struct edict_s *ent, int printlevel, char *fmt, ...);
-    void    (*centerprintf) (struct edict_s *ent, char *fmt, ...);
-    void    (*sound) (struct edict_s *ent, int channel, int soundindex, float volume, float attenuation, float timeofs);
-    void    (*positioned_sound) (vec3_t origin, struct edict_s *ent, int channel, int soundinedex, float volume, float attenuation, float timeofs);
+    void    (*cprintf) (edict *ent, int printlevel, char *fmt, ...);
+    void    (*centerprintf) (edict *ent, char *fmt, ...);
+    void    (*sound) (edict *ent, int channel, int soundindex, float volume, float attenuation, float timeofs);
+    void    (*positioned_sound) (vec3_t origin, edict *ent, int channel, int soundinedex, float volume, float attenuation, float timeofs);
 
     // config strings hold all the index strings, the lightstyles,
     // and misc data like the sky definition and cdtrack.
@@ -78,10 +79,10 @@ typedef struct
     int        (*soundindex) (char *name);
     int        (*imageindex) (char *name);
 
-    void    (*setmodel) (struct edict_s *ent, char *name);
+    void    (*setmodel) (edict *ent, char *name);
 
     // collision detection
-    trace_t    (*trace) (vec3_t start, vec3_t mins, vec3_t maxs, vec3_t end, struct edict_s *passent, int contentmask);
+    trace_t    (*trace) (vec3_t start, vec3_t mins, vec3_t maxs, vec3_t end, edict *passent, int contentmask);
     int        (*pointcontents) (vec3_t point);
     bool    (*inPVS) (vec3_t p1, vec3_t p2);
     bool    (*inPHS) (vec3_t p1, vec3_t p2);
@@ -91,14 +92,14 @@ typedef struct
     // an entity will never be sent to a client or used for collision
     // if it is not passed to linkentity.  If the size, position, or
     // solidity changes, it must be relinked.
-    void    (*linkentity) (struct edict_s *ent);
-    void    (*unlinkentity) (struct edict_s *ent);        // call before removing an interactive edict
-    int        (*BoxEdicts) (vec3_t mins, vec3_t maxs, struct edict_s **list,    int maxcount, int areatype);
+    void    (*linkentity) (edict *ent);
+    void    (*unlinkentity) (edict *ent);        // call before removing an interactive edict
+    int        (*BoxEdicts) (vec3_t mins, vec3_t maxs, edict **list,    int maxcount, int areatype);
     void    (*Pmove) (pmove_t *pmove);        // player movement code common with client prediction
 
     // network messaging
     void    (*multicast) (vec3_t origin, multicast_t to);
-    void    (*unicast) (struct edict_s *ent, bool reliable);
+    void    (*unicast) (edict *ent, bool reliable);
     void    (*WriteChar) (int c);
     void    (*WriteByte) (int c);
     void    (*WriteShort) (int c);
@@ -110,26 +111,26 @@ typedef struct
     void    (*WriteAngle) (float f);
 
     // managed memory allocation
-    void    *(*TagMalloc) (int size, int tag);
+    void* (*TagMalloc) (int size, int tag);
     void    (*TagFree) (void *block);
     void    (*FreeTags) (int tag);
 
     // console variable interaction
-    cvar_t    *(*cvar) (char *var_name, char *value, int flags);
-    cvar_t    *(*cvar_set) (char *var_name, char *value);
-    cvar_t    *(*cvar_forceset) (char *var_name, char *value);
+    cvar* (*cvar_obj) (char *var_name, char *value, int flags);
+    cvar* (*cvar_set) (char *var_name, char *value);
+    cvar* (*cvar_forceset) (char *var_name, char *value);
 
     // ClientCommand and ServerCommand parameter access
     int        (*argc) (void);
-    char    *(*argv) (int n);
-    char    *(*args) (void);    // concatenation of all argv >= 1
+    char* (*argv) (int n);
+    char* (*args) (void);    // concatenation of all argv >= 1
 
     // add commands to the server console as if they were typed in
     // for map changing, etc
     void    (*AddCommandString) (char *text);
 
     void    (*DebugGraph) (float value, int color);
-} game_import_t;
+};
 
 //
 // functions exported by the game subsystem
@@ -159,12 +160,12 @@ typedef struct
     void        (*WriteLevel) (char *filename);
     void        (*ReadLevel) (char *filename);
 
-    bool    (*ClientConnect) (struct edict_s *ent, char *userinfo);
-    void        (*ClientBegin) (struct edict_s *ent);
-    void        (*ClientUserinfoChanged) (struct edict_s *ent, char *userinfo);
-    void        (*ClientDisconnect) (struct edict_s *ent);
-    void        (*ClientCommand) (struct edict_s *ent);
-    void        (*ClientThink) (struct edict_s *ent, usercmd_t *cmd);
+    bool    (*ClientConnect) (edict *ent, char *userinfo);
+    void        (*ClientBegin) (edict *ent);
+    void        (*ClientUserinfoChanged) (edict *ent, char *userinfo);
+    void        (*ClientDisconnect) (edict *ent);
+    void        (*ClientCommand) (edict *ent);
+    void        (*ClientThink) (edict *ent, usercmd_t *cmd);
 
     void        (*RunFrame) (void);
 
@@ -182,12 +183,12 @@ typedef struct
     // can vary in size from one game to another.
     //
     // The size will be fixed when ge->Init() is called
-    struct edict_s* edicts;
+    edict* edicts;
     int edict_size;
     int num_edicts;        // current number, <= max_edicts
     int max_edicts;
 } game_export_t;
 
-game_export_t *GetGameApi (game_import_t *import);
+game_export_t *GetGameApi (game_import *import);
 
 #endif // ____GAME_GAME_H__

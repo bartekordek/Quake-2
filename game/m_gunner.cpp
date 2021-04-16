@@ -38,30 +38,30 @@ static int	sound_search;
 static int	sound_sight;
 
 
-void gunner_idlesound (struct edict_s *self)
+void gunner_idlesound (edict *self)
 {
 	gi.sound (self, CHAN_VOICE, sound_idle, 1, ATTN_IDLE, 0);
 }
 
-void gunner_sight (struct edict_s *self, struct edict_s *other)
+void gunner_sight (edict *self, edict *other)
 {
 	gi.sound (self, CHAN_VOICE, sound_sight, 1, ATTN_NORM, 0);
 }
 
-void gunner_search (struct edict_s *self)
+void gunner_search (edict *self)
 {
 	gi.sound (self, CHAN_VOICE, sound_search, 1, ATTN_NORM, 0);
 }
 
 
-bool visible (struct edict_s *self, struct edict_s *other);
-void GunnerGrenade (struct edict_s *self);
-void GunnerFire (struct edict_s *self);
-void gunner_fire_chain(struct edict_s *self);
-void gunner_refire_chain(struct edict_s *self);
+bool visible (edict *self, edict *other);
+void GunnerGrenade (edict *self);
+void GunnerFire (edict *self);
+void gunner_fire_chain(edict *self);
+void gunner_refire_chain(edict *self);
 
 
-void gunner_stand (struct edict_s *self);
+void gunner_stand (edict *self);
 
 mframe_t gunner_frames_fidget [] =
 {
@@ -121,7 +121,7 @@ mframe_t gunner_frames_fidget [] =
 };
 mmove_t	gunner_move_fidget = {FRAME_stand31, FRAME_stand70, gunner_frames_fidget, gunner_stand};
 
-void gunner_fidget (struct edict_s *self)
+void gunner_fidget (edict *self)
 {
 	if (self->monsterinfo.aiflags & AI_STAND_GROUND)
 		return;
@@ -166,7 +166,7 @@ mframe_t gunner_frames_stand [] =
 };
 mmove_t	gunner_move_stand = {FRAME_stand01, FRAME_stand30, gunner_frames_stand, NULL};
 
-void gunner_stand (struct edict_s *self)
+void gunner_stand (edict *self)
 {
 		self->monsterinfo.currentmove = &gunner_move_stand;
 }
@@ -190,7 +190,7 @@ mframe_t gunner_frames_walk [] =
 };
 mmove_t gunner_move_walk = {FRAME_walk07, FRAME_walk19, gunner_frames_walk, NULL};
 
-void gunner_walk (struct edict_s *self)
+void gunner_walk (edict *self)
 {
 	self->monsterinfo.currentmove = &gunner_move_walk;
 }
@@ -209,7 +209,7 @@ mframe_t gunner_frames_run [] =
 
 mmove_t gunner_move_run = {FRAME_run01, FRAME_run08, gunner_frames_run, NULL};
 
-void gunner_run (struct edict_s *self)
+void gunner_run (edict *self)
 {
 	if (self->monsterinfo.aiflags & AI_STAND_GROUND)
 		self->monsterinfo.currentmove = &gunner_move_stand;
@@ -229,7 +229,7 @@ mframe_t gunner_frames_runandshoot [] =
 
 mmove_t gunner_move_runandshoot = {FRAME_runs01, FRAME_runs06, gunner_frames_runandshoot, NULL};
 
-void gunner_runandshoot (struct edict_s *self)
+void gunner_runandshoot (edict *self)
 {
 	self->monsterinfo.currentmove = &gunner_move_runandshoot;
 }
@@ -280,7 +280,7 @@ mframe_t gunner_frames_pain1 [] =
 };
 mmove_t gunner_move_pain1 = {FRAME_pain101, FRAME_pain118, gunner_frames_pain1, gunner_run};
 
-void gunner_pain (struct edict_s *self, struct edict_s *other, float kick, int damage)
+void gunner_pain (edict *self, edict *other, float kick, int damage)
 {
 	if (self->health < (self->max_health / 2))
 		self->s.skinnum = 1;
@@ -306,7 +306,7 @@ void gunner_pain (struct edict_s *self, struct edict_s *other, float kick, int d
 		self->monsterinfo.currentmove = &gunner_move_pain1;
 }
 
-void gunner_dead (struct edict_s *self)
+void gunner_dead (edict *self)
 {
 	VectorSet (self->mins, -16, -16, -24);
 	VectorSet (self->maxs, 16, 16, -8);
@@ -332,7 +332,7 @@ mframe_t gunner_frames_death [] =
 };
 mmove_t gunner_move_death = {FRAME_death01, FRAME_death11, gunner_frames_death, gunner_dead};
 
-void gunner_die (struct edict_s *self, struct edict_s *inflictor, struct edict_s *attacker, int damage, vec3_t point)
+void gunner_die (edict *self, edict *inflictor, edict *attacker, int damage, vec3_t point)
 {
 	int		n;
 
@@ -360,7 +360,7 @@ void gunner_die (struct edict_s *self, struct edict_s *inflictor, struct edict_s
 }
 
 
-void gunner_duck_down (struct edict_s *self)
+void gunner_duck_down (edict *self)
 {
 	if (self->monsterinfo.aiflags & AI_DUCKED)
 		return;
@@ -377,7 +377,7 @@ void gunner_duck_down (struct edict_s *self)
 	gi.linkentity (self);
 }
 
-void gunner_duck_hold (struct edict_s *self)
+void gunner_duck_hold (edict *self)
 {
 	if (level.time >= self->monsterinfo.pausetime)
 		self->monsterinfo.aiflags &= ~AI_HOLD_FRAME;
@@ -385,7 +385,7 @@ void gunner_duck_hold (struct edict_s *self)
 		self->monsterinfo.aiflags |= AI_HOLD_FRAME;
 }
 
-void gunner_duck_up (struct edict_s *self)
+void gunner_duck_up (edict *self)
 {
 	self->monsterinfo.aiflags &= ~AI_DUCKED;
 	self->maxs[2] += 32;
@@ -406,7 +406,7 @@ mframe_t gunner_frames_duck [] =
 };
 mmove_t	gunner_move_duck = {FRAME_duck01, FRAME_duck08, gunner_frames_duck, gunner_run};
 
-void gunner_dodge (struct edict_s *self, struct edict_s *attacker, float eta)
+void gunner_dodge (edict *self, edict *attacker, float eta)
 {
 	if (random() > 0.25)
 		return;
@@ -418,12 +418,12 @@ void gunner_dodge (struct edict_s *self, struct edict_s *attacker, float eta)
 }
 
 
-void gunner_opengun (struct edict_s *self)
+void gunner_opengun (edict *self)
 {
 	gi.sound (self, CHAN_VOICE, sound_open, 1, ATTN_IDLE, 0);
 }
 
-void GunnerFire (struct edict_s *self)
+void GunnerFire (edict *self)
 {
 	vec3_t	start;
 	vec3_t	forward, right;
@@ -446,7 +446,7 @@ void GunnerFire (struct edict_s *self)
 	monster_fire_bullet (self, start, aim, 3, 4, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, flash_number);
 }
 
-void GunnerGrenade (struct edict_s *self)
+void GunnerGrenade (edict *self)
 {
 	vec3_t	start;
 	vec3_t	forward, right;
@@ -544,7 +544,7 @@ mframe_t gunner_frames_attack_grenade [] =
 };
 mmove_t gunner_move_attack_grenade = {FRAME_attak101, FRAME_attak121, gunner_frames_attack_grenade, gunner_run};
 
-void gunner_attack(struct edict_s *self)
+void gunner_attack(edict *self)
 {
 	if (range (self, self->enemy) == RANGE_MELEE)
 	{
@@ -559,12 +559,12 @@ void gunner_attack(struct edict_s *self)
 	}
 }
 
-void gunner_fire_chain(struct edict_s *self)
+void gunner_fire_chain(edict *self)
 {
 	self->monsterinfo.currentmove = &gunner_move_fire_chain;
 }
 
-void gunner_refire_chain(struct edict_s *self)
+void gunner_refire_chain(edict *self)
 {
 	if (self->enemy->health > 0)
 		if ( visible (self, self->enemy) )
@@ -578,7 +578,7 @@ void gunner_refire_chain(struct edict_s *self)
 
 /*QUAKED monster_gunner (1 .5 0) (-16 -16 -24) (16 16 32) Ambush Trigger_Spawn Sight
 */
-void SP_monster_gunner (struct edict_s *self)
+void SP_monster_gunner (edict *self)
 {
 	if (deathmatch->value)
 	{

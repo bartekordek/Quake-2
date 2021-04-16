@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 console_t con;
 
-cvar_t* con_notifytime;
+cvar* con_notifytime;
 
 
 #define MAXCMDLINE 256
@@ -143,8 +143,8 @@ Save the console contents out to a file
 void Con_Dump_f(void)
 {
     int        l, x;
-    char    *line;
-    FILE    *f;
+    char* line;
+    FILE* f;
     char    buffer[1024];
     char    name[MAX_OSPATH];
 
@@ -459,7 +459,7 @@ void Con_DrawInput (void)
 {
     int        y;
     int        i;
-    char    *text;
+    char* text;
 
     if (cls.key_dest == key_menu)
         return;
@@ -500,10 +500,10 @@ Draws the last few lines of output transparently over the game top
 void Con_DrawNotify (void)
 {
     int        x, v;
-    char    *text;
+    char* text;
     int        i;
     int        time;
-    char    *s;
+    char* s;
     int        skip;
 
     v = 0;
@@ -570,7 +570,7 @@ void Con_DrawConsole (float frac)
 {
     int                i, j, x, y, n;
     int                rows;
-    char            *text;
+    char        * text;
     int                row;
     int                lines;
     char            version[64];

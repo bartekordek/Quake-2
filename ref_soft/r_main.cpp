@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // r_main.c
 
 #include "ref_soft/r_local.hpp"
+#include "shared/shared_functions.hpp"
 
 viddef_t    vid;
 refimport_t    ri;
@@ -31,18 +32,18 @@ entity_t    r_worldentity;
 char        skyname[MAX_QPATH];
 float        skyrotate;
 vec3_t        skyaxis;
-image_t        *sky_images[6];
+image_t    * sky_images[6];
 
 refdef_t    r_newrefdef;
-model_t        *currentmodel;
+model_t    * currentmodel;
 
-model_t        *r_worldmodel;
+model_t    * r_worldmodel;
 
 byte        r_warpbuffer[WARP_WIDTH * WARP_HEIGHT];
 
 swstate_t sw_state;
 
-void        *colormap;
+void    * colormap;
 vec3_t        viewlightvec;
 alight_t    r_viewlighting = {128, 192, viewlightvec};
 float        r_time1;
@@ -53,7 +54,7 @@ int            r_outofedges;
 
 bool    r_dowarp;
 
-mvertex_t    *r_pcurrentvertbase;
+mvertex_t* r_pcurrentvertbase;
 
 int            c_surf;
 int            r_maxsurfsseen, r_maxedgesseen, r_cnumsurfs;
@@ -95,49 +96,49 @@ int        r_polycount;
 int        r_drawnpolycount;
 int        r_wholepolycount;
 
-int            *pfrustum_indexes[4];
+int        * pfrustum_indexes[4];
 int            r_frustum_indexes[4*6];
 
-mleaf_t        *r_viewleaf;
+mleaf_t    * r_viewleaf;
 int            r_viewcluster, r_oldviewcluster;
 
-image_t      *r_notexture_mip;
+image_t  * r_notexture_mip;
 
 float    da_time1, da_time2, dp_time1, dp_time2, db_time1, db_time2, rw_time1, rw_time2;
 float    se_time1, se_time2, de_time1, de_time2;
 
 void ref_soft_R_MarkLeaves (void);
 
-cvar_t    *r_lefthand;
-cvar_t    *sw_aliasstats;
-cvar_t    *sw_allow_modex;
-cvar_t    *sw_clearcolor;
-cvar_t    *sw_drawflat;
-cvar_t    *sw_draworder;
-cvar_t    *sw_maxedges;
-cvar_t    *sw_maxsurfs;
-cvar_t  *sw_mode;
-cvar_t    *sw_reportedgeout;
-cvar_t    *sw_reportsurfout;
-cvar_t  *sw_stipplealpha;
-cvar_t    *sw_surfcacheoverride;
-cvar_t    *sw_waterwarp;
+cvar* r_lefthand;
+cvar* sw_aliasstats;
+cvar* sw_allow_modex;
+cvar* sw_clearcolor;
+cvar* sw_drawflat;
+cvar* sw_draworder;
+cvar* sw_maxedges;
+cvar* sw_maxsurfs;
+cvar  *sw_mode;
+cvar* sw_reportedgeout;
+cvar* sw_reportsurfout;
+cvar  *sw_stipplealpha;
+cvar* sw_surfcacheoverride;
+cvar* sw_waterwarp;
 
-cvar_t    *r_drawworld;
-cvar_t    *r_drawentities;
-cvar_t    *r_dspeeds;
-cvar_t    *r_fullbright;
-cvar_t  *r_lerpmodels;
-cvar_t  *r_novis;
+cvar* r_drawworld;
+cvar* r_drawentities;
+cvar* r_dspeeds;
+cvar* r_fullbright;
+cvar  *r_lerpmodels;
+cvar  *r_novis;
 
-cvar_t    *r_speeds;
-cvar_t    *r_lightlevel;    //FIXME HACK
+cvar* r_speeds;
+cvar* r_lightlevel;    //FIXME HACK
 
-cvar_t    *vid_fullscreen;
-cvar_t    *vid_gamma;
+cvar* vid_fullscreen;
+cvar* vid_gamma;
 
 //PGM
-cvar_t    *sw_lockpvs;
+cvar* sw_lockpvs;
 //PGM
 
 #define    STRINGER(x) "x"
@@ -176,10 +177,10 @@ float    d_sdivzorigin, d_tdivzorigin, d_ziorigin;
 
 fixed16_t    sadjust, tadjust, bbextents, bbextentt;
 
-pixel_t            *cacheblock;
+pixel_t        * cacheblock;
 int                cachewidth;
-pixel_t            *d_viewbuffer;
-short            *d_pzbuffer;
+pixel_t        * d_viewbuffer;
+short        * d_pzbuffer;
 unsigned int    d_zrowbytes;
 unsigned int    d_zwidth;
 
@@ -196,7 +197,7 @@ R_InitTextures
 void    R_InitTextures (void)
 {
     int        x,y, m;
-    byte    *dest;
+    byte* dest;
 
 // create a simple checkerboard texture for the default
     r_notexture_mip = (image_t *)&r_notexture_buffer;
@@ -215,9 +216,9 @@ void    R_InitTextures (void)
             {
                 if (  (y< (8>>m) ) ^ (x< (8>>m) ) )
 
-                    *dest++ = 0;
+                * dest++ = 0;
                 else
-                    *dest++ = 0xff;
+                * dest++ = 0xff;
             }
     }
 }
@@ -410,10 +411,10 @@ cluster
 */
 void ref_soft_R_MarkLeaves (void)
 {
-    byte    *vis;
-    mnode_t    *node;
+    byte* vis;
+    mnode_t* node;
     int        i;
-    mleaf_t    *leaf;
+    mleaf_t* leaf;
     int        cluster;
 
     if (r_oldviewcluster == r_viewcluster && !r_novis->value && r_viewcluster != -1)
@@ -636,7 +637,7 @@ Find the first node that splits the given box
 */
 mnode_t *ref_soft_R_FindTopnode (vec3_t mins, vec3_t maxs)
 {
-    plane_t    *splitplane;
+    plane_t* splitplane;
     int            sides;
     mnode_t *node;
 
@@ -736,7 +737,7 @@ void ref_soft_R_DrawBEntitiesOnList (void)
     vec3_t        oldorigin;
     vec3_t        mins, maxs;
     float        minmaxs[6];
-    mnode_t        *topnode;
+    mnode_t    * topnode;
 
     if (!r_drawentities->value)
         return;
@@ -803,7 +804,7 @@ void ref_soft_R_DrawBEntitiesOnList (void)
         VectorCopy (base_vup, vup);
         VectorCopy (base_vright, vright);
         VectorCopy (oldorigin, modelorg);
-        R_TransformFrustum ();
+        ref_soft_R_TransformFrustum ();
     }
 
     insubmodel = false;
@@ -1001,7 +1002,7 @@ void ref_soft_R_RenderFrame (refdef_t *fd)
         R_PrintTimes ();
 
     if (r_dspeeds->value)
-        R_PrintDSpeeds ();
+        ref_soft_R_PrintDSpeeds ();
 
     if (sw_reportsurfout->value && r_outofsurfaces)
         ri.Con_Printf (PRINT_ALL,"Short %d surfaces\n", r_outofsurfaces);
@@ -1048,8 +1049,8 @@ void ref_soft_R_BeginFrame( float camera_separation )
     extern void Draw_BuildGammaTable( void );
 
     /*
-    ** rebuild the gamma correction palette if necessary
-    */
+* * rebuild the gamma correction palette if necessary
+*/
     if ( vid_gamma->modified )
     {
         Draw_BuildGammaTable();
@@ -1063,9 +1064,9 @@ void ref_soft_R_BeginFrame( float camera_separation )
         rserr_t err;
 
         /*
-        ** if this returns rserr_invalid_fullscreen then it set the mode but not as a
-        ** fullscreen mode, e.g. 320x200 on a system that doesn't support that res
-        */
+    * * if this returns rserr_invalid_fullscreen then it set the mode but not as a
+    * * fullscreen mode, e.g. 320x200 on a system that doesn't support that res
+    */
         if ( ( err = SWimp_SetMode( &vid.width, &vid.height, sw_mode->value, vid_fullscreen->value ) ) == rserr_ok )
         {
             ref_soft_R_InitGraphics( vid.width, vid.height );
@@ -1123,7 +1124,7 @@ void ref_soft_R_CinematicSetPalette( const unsigned char *palette )
 {
     byte palette32[1024];
     int        i, j, w;
-    int        *d;
+    int    * d;
 
     // clear screen to black to avoid any palette flash
     w = abs(vid.rowbytes)>>2;    // stupid negative pitch win32 stuff...

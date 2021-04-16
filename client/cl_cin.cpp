@@ -26,7 +26,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 typedef struct
 {
-    byte    *data;
+    byte* data;
     int        count;
 } cblock_t;
 
@@ -39,11 +39,11 @@ typedef struct
 
     int        width;
     int        height;
-    byte    *pic;
-    byte    *pic_pending;
+    byte* pic;
+    byte* pic_pending;
 
     // order 1 huffman stuff
-    int        *hnodes1;    // [256][256][2];
+    int    * hnodes1;    // [256][256][2];
     int        numhnodes1[256];
 
     int        h_used[512];
@@ -64,14 +64,14 @@ PCX LOADING
 
 void SCR_LoadPCX(std::string& filename, byte **pic, byte **palette, int *width, int *height)
 {
-    byte    *raw;
-    pcx_t    *pcx;
+    byte* raw;
+    pcx_t* pcx;
     int        x, y;
     int        len;
     int        dataByte, runLength;
-    byte    *out, *pix;
+    byte* out, *pix;
 
-    *pic = NULL;
+* pic = NULL;
 
     //
     // load the file
@@ -99,20 +99,20 @@ void SCR_LoadPCX(std::string& filename, byte **pic, byte **palette, int *width, 
 
     out = (byte*)Z_Malloc ( (pcx->ymax+1) * (pcx->xmax+1) );
 
-    *pic = out;
+* pic = out;
 
     pix = out;
 
     if (palette)
     {
-        *palette = (byte*)Z_Malloc(768);
+    * palette = (byte*)Z_Malloc(768);
         memcpy (*palette, (byte *)pcx + len - 768, 768);
     }
 
     if (width)
-        *width = pcx->xmax+1;
+    * width = pcx->xmax+1;
     if (height)
-        *height = pcx->ymax+1;
+    * height = pcx->ymax+1;
 
     for (y=0 ; y<=pcx->ymax ; y++, pix += pcx->xmax+1)
     {
@@ -138,7 +138,7 @@ void SCR_LoadPCX(std::string& filename, byte **pic, byte **palette, int *width, 
     {
         Com_Printf_G ("PCX file %s was malformed", filename);
         Z_Free (*pic);
-        *pic = NULL;
+    * pic = NULL;
     }
 
     FS_FreeFile (pcx);
@@ -249,7 +249,7 @@ void Huff1TableInit (void)
 {
     int        prev;
     int        j;
-    int        *node, *nodebase;
+    int    * node, *nodebase;
     byte    counts[256];
     int        numhnodes;
 
@@ -298,13 +298,13 @@ Huff1Decompress
 */
 cblock_t Huff1Decompress (cblock_t in)
 {
-    byte        *input;
-    byte        *out_p;
+    byte    * input;
+    byte    * out_p;
     int            nodenum;
     int            count;
     cblock_t    out;
     int            inbyte;
-    int            *hnodes, *hnodesbase;
+    int        * hnodes, *hnodesbase;
 //int        i;
 
     // get decompressed count
@@ -325,7 +325,7 @@ cblock_t Huff1Decompress (cblock_t in)
         if (nodenum < 256)
         {
             hnodes = hnodesbase + (nodenum<<9);
-            *out_p++ = nodenum;
+        * out_p++ = nodenum;
             if (!--count)
                 break;
             nodenum = cin.numhnodes1[nodenum];
@@ -336,7 +336,7 @@ cblock_t Huff1Decompress (cblock_t in)
         if (nodenum < 256)
         {
             hnodes = hnodesbase + (nodenum<<9);
-            *out_p++ = nodenum;
+        * out_p++ = nodenum;
             if (!--count)
                 break;
             nodenum = cin.numhnodes1[nodenum];
@@ -347,7 +347,7 @@ cblock_t Huff1Decompress (cblock_t in)
         if (nodenum < 256)
         {
             hnodes = hnodesbase + (nodenum<<9);
-            *out_p++ = nodenum;
+        * out_p++ = nodenum;
             if (!--count)
                 break;
             nodenum = cin.numhnodes1[nodenum];
@@ -358,7 +358,7 @@ cblock_t Huff1Decompress (cblock_t in)
         if (nodenum < 256)
         {
             hnodes = hnodesbase + (nodenum<<9);
-            *out_p++ = nodenum;
+        * out_p++ = nodenum;
             if (!--count)
                 break;
             nodenum = cin.numhnodes1[nodenum];
@@ -369,7 +369,7 @@ cblock_t Huff1Decompress (cblock_t in)
         if (nodenum < 256)
         {
             hnodes = hnodesbase + (nodenum<<9);
-            *out_p++ = nodenum;
+        * out_p++ = nodenum;
             if (!--count)
                 break;
             nodenum = cin.numhnodes1[nodenum];
@@ -380,7 +380,7 @@ cblock_t Huff1Decompress (cblock_t in)
         if (nodenum < 256)
         {
             hnodes = hnodesbase + (nodenum<<9);
-            *out_p++ = nodenum;
+        * out_p++ = nodenum;
             if (!--count)
                 break;
             nodenum = cin.numhnodes1[nodenum];
@@ -391,7 +391,7 @@ cblock_t Huff1Decompress (cblock_t in)
         if (nodenum < 256)
         {
             hnodes = hnodesbase + (nodenum<<9);
-            *out_p++ = nodenum;
+        * out_p++ = nodenum;
             if (!--count)
                 break;
             nodenum = cin.numhnodes1[nodenum];
@@ -402,7 +402,7 @@ cblock_t Huff1Decompress (cblock_t in)
         if (nodenum < 256)
         {
             hnodes = hnodesbase + (nodenum<<9);
-            *out_p++ = nodenum;
+        * out_p++ = nodenum;
             if (!--count)
                 break;
             nodenum = cin.numhnodes1[nodenum];
@@ -432,7 +432,7 @@ byte *SCR_ReadNextFrame (void)
     byte    samples[22050/14*4];
     byte    compressed[0x20000];
     int        size;
-    byte    *pic;
+    byte* pic;
     cblock_t    in, huf1;
     int        start, end, count;
 
@@ -571,7 +571,7 @@ bool SCR_DrawCinematic (void)
 void SCR_PlayCinematic(const std::string& arg)
 {
     int        width, height;
-    byte    *palette;
+    byte* palette;
     unsigned char *dot;
     int        old_khz;
     std::string name;

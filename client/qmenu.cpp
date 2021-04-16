@@ -93,7 +93,7 @@ void Field_Draw( menufield_s *f )
     if ( f->generic.name )
         Menu_DrawStringR2LDark( f->generic.x + f->generic.parent->x + LCOLUMN_OFFSET, f->generic.y + f->generic.parent->y, f->generic.name );
 
-    strncpy( tempbuffer, f->buffer + f->visible_offset, f->visible_length );
+    strncpy( tempbuffer, toChar( f->buffer ) + f->visible_offset, f->visible_length );
 
     Draw_Char( f->generic.x + f->generic.parent->x + 16, f->generic.y + f->generic.parent->y - 4, 18 );
     Draw_Char( f->generic.x + f->generic.parent->x + 16, f->generic.y + f->generic.parent->y + 4, 24 );
@@ -194,19 +194,21 @@ bool Field_Key( menufield_s *f, int key )
     }
 
     /*
-    ** support pasting from the clipboard
-    */
+* * support pasting from the clipboard
+*/
     if ( ( toupper( key ) == 'V' && keydown[K_CTRL] ) ||
          ( ( ( key == K_INS ) || ( key == K_KP_INS ) ) && keydown[K_SHIFT] ) )
     {
-        char *cbd;
+        char* cbd = toChar( win32_Sys_GetClipboardData() );
 
-        if ( ( cbd = win32_Sys_GetClipboardData() ) != 0 )
+        if(cbd )
         {
             strtok( cbd, "\n\r\b" );
 
-            strncpy( f->buffer, cbd, f->length - 1 );
-            f->cursor = strlen( f->buffer );
+            f->buffer = cbd;
+            //strncpy( f->buffer, cbd, f->length - 1 );
+            f->cursor = f->buffer.length();
+           // f->cursor = strlen( f->buffer );
             f->visible_offset = f->cursor - f->visible_length;
             if ( f->visible_offset < 0 )
                 f->visible_offset = 0;
@@ -291,8 +293,8 @@ void Menu_AdjustCursor( menuframework_s *m, int dir )
     menucommon_s *citem;
 
     /*
-    ** see if it's in a valid spot
-    */
+* * see if it's in a valid spot
+*/
     if ( m->cursor >= 0 && m->cursor < m->nitems )
     {
         if ( ( citem = (menucommon_s*)Menu_ItemAtCursor( m ) ) != 0 )
@@ -303,9 +305,9 @@ void Menu_AdjustCursor( menuframework_s *m, int dir )
     }
 
     /*
-    ** it's not in a valid spot, so crawl in the direction indicated until we
-    ** find a valid spot
-    */
+* * it's not in a valid spot, so crawl in the direction indicated until we
+* * find a valid spot
+*/
     if ( dir == 1 )
     {
         while ( 1 )
@@ -350,8 +352,8 @@ void Menu_Draw( menuframework_s *menu )
     menucommon_s *item;
 
     /*
-    ** draw contents
-    */
+* * draw contents
+*/
     for ( i = 0; i < menu->nitems; i++ )
     {
         switch ( ( ( menucommon_s * ) menu->items[i] )->type )
@@ -667,7 +669,7 @@ void SpinControl_Draw( menulist_s *s )
     else
     {
         strcpy( buffer, s->itemnames[s->curvalue] );
-        *strchr( buffer, '\n' ) = 0;
+    * strchr( buffer, '\n' ) = 0;
         Menu_DrawString( RCOLUMN_OFFSET + s->generic.x + s->generic.parent->x, s->generic.y + s->generic.parent->y, buffer );
         strcpy( buffer, strchr( s->itemnames[s->curvalue], '\n' ) + 1 );
         Menu_DrawString( RCOLUMN_OFFSET + s->generic.x + s->generic.parent->x, s->generic.y + s->generic.parent->y + 10, buffer );

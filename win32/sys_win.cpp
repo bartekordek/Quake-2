@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifdef _WIN32
 
 #include "qcommon/qcommon.hpp"
-#include "winquake.hpp"
+#include "win32/winquake.hpp"
 #include "resource.hpp"
 #include <errno.h>
 #include <float.h>
@@ -54,7 +54,7 @@ static HANDLE        qwclsemaphore;
 
 #define    MAX_NUM_ARGVS    128
 int            argc;
-char        *argv[MAX_NUM_ARGVS];
+char    * argv[MAX_NUM_ARGVS];
 
 
 /*
@@ -142,7 +142,7 @@ char *win32_Sys_ScanForCD (void)
     static bool    done;
 #ifndef DEMO
     char        drive[4];
-    FILE        *f;
+    FILE    * f;
     char        test[MAX_QPATH];
 
     if (done)        // don't re-check
@@ -188,7 +188,7 @@ Sys_CopyProtect
 void    win32_Sys_CopyProtect (void)
 {
 #ifndef DEMO
-    char    *cddir;
+    char* cddir;
 
     cddir = win32_Sys_ScanForCD();
     if (!cddir[0])
@@ -216,17 +216,17 @@ void win32_Sys_Init (void)
     // mutex will fail if semephore already exists
     qwclsemaphore = CreateMutex(
         NULL,         /* Security attributes */
-        0,            /* owner       */
-        "qwcl"); /* Semaphore name      */
+        0,            /* owner   */
+        "qwcl"); /* Semaphore name  */
     if (!qwclsemaphore)
         Sys_Error ("QWCL is already running on this system");
     CloseHandle (qwclsemaphore);
 
     qwclsemaphore = CreateSemaphore(
         NULL,         /* Security attributes */
-        0,            /* Initial count       */
-        1,            /* Maximum count       */
-        "qwcl"); /* Semaphore name      */
+        0,            /* Initial count   */
+        1,            /* Maximum count   */
+        "qwcl"); /* Semaphore name  */
 #endif
 
     timeBeginPeriod( 1 );
@@ -388,15 +388,7 @@ void win32_Sys_SendKeyEvents (void)
     sys_frame_time = timeGetTime();    // FIXME: should this be at start?
 }
 
-
-
-/*
-================
-win32_Sys_GetClipboardData
-
-================
-*/
-char *win32_Sys_GetClipboardData( void )
+char* win32_Sys_GetClipboardData()
 {
     char *data = NULL;
     char *cliptext;
@@ -407,9 +399,10 @@ char *win32_Sys_GetClipboardData( void )
 
         if ( ( hClipboardData = GetClipboardData( CF_TEXT ) ) != 0 )
         {
-            if ( ( cliptext = GlobalLock( hClipboardData ) ) != 0 )
+            cliptext = ( char* )GlobalLock( hClipboardData );
+            if ( cliptext )
             {
-                data = malloc( GlobalSize( hClipboardData ) + 1 );
+                data = ( char* ) malloc( GlobalSize( hClipboardData ) + 1 );
                 strcpy( data, cliptext );
                 GlobalUnlock( hClipboardData );
             }
@@ -456,9 +449,9 @@ Loads the game dll
 */
 void* Sys_GetGameAPI (void *parms)
 {
-    void    *(*GetGameAPI) (void *);
+    void* (*GetGameAPI) (void *);
     char    name[MAX_OSPATH];
-    char    *path;
+    char* path;
     char    cwd[MAX_OSPATH];
 #if defined _M_IX86
     const char *gamename = "gamex86.dll";
@@ -561,7 +554,7 @@ void ParseCommandLine (LPSTR lpCmdLine)
 
             if (*lpCmdLine)
             {
-                *lpCmdLine = 0;
+            * lpCmdLine = 0;
                 lpCmdLine++;
             }
 
@@ -576,7 +569,7 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 {
     MSG                msg;
     int                time, oldtime, newtime;
-    char            *cddir;
+    char        * cddir;
 
     /* previous instances do not exist in Win32 */
     if (hPrevInstance)

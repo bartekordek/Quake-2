@@ -12,7 +12,7 @@ file(MAKE_DIRECTORY Build-Linux)
 if( MSVC )
     # Disable warnings for time being. W4 to turn them on.
     add_compile_options( /W0 )
-    #add_compile_options( /MP )
+    add_compile_options( /MP )
 else()
     #add_compile_options( -Wall -Wextra -pedantic -Werror )
     #add_definitions( -Wfatal-errors )

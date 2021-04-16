@@ -8,16 +8,16 @@
 
 // this structure is cleared on each PutClientInServer(),
 // except for 'client->pers'
-struct gclient_s
+struct gclient
 {
     // known to server
-    player_state_t    ps;                // communicated by server to clients
+    player_state    ps;                // communicated by server to clients
     int                ping;
 
     // private to game
     client_persistant_t    pers;
     client_respawn_t    resp;
-    pmove_state_t        old_pmove;    // for detecting out-of-pmove changes
+    pmove_state        old_pmove;    // for detecting out-of-pmove changes
 
     bool    showscores;            // set layout stat
 //ZOID
@@ -36,7 +36,7 @@ struct gclient_s
 
     bool    weapon_thunk;
 
-    gitem_t        *newweapon;
+    gitem    * newweapon;
 
     // sum up damage over an entire frame, so
     // shotgun blasts give a single big kick
@@ -92,7 +92,7 @@ struct gclient_s
 
     float respawn_time;        // can respawn when time > this
 
-    struct edict_s* chase_target;        // player we are chasing
+    edict* chase_target;        // player we are chasing
     bool    update_chase;        // need to update chase info?
 
 //ZOID

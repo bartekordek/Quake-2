@@ -29,7 +29,7 @@ boss3
 #include "m_boss32.hpp"
 #include "shared/defines.hpp"
 
-void Use_Boss3 (struct edict_s *ent, struct edict_s *other, struct edict_s *activator)
+void Use_Boss3 (edict *ent, edict *other, edict *activator)
 {
 	gi.WriteByte (svc_temp_entity);
 	gi.WriteByte (TE_BOSSTPORT);
@@ -38,7 +38,7 @@ void Use_Boss3 (struct edict_s *ent, struct edict_s *other, struct edict_s *acti
 	G_FreeEdict (ent);
 }
 
-void Think_Boss3Stand (struct edict_s *ent)
+void Think_Boss3Stand (edict *ent)
 {
 	if (ent->s.frame == FRAME_stand260)
 		ent->s.frame = FRAME_stand201;
@@ -51,7 +51,7 @@ void Think_Boss3Stand (struct edict_s *ent)
 
 Just stands and cycles in one place until targeted, then teleports away.
 */
-void SP_monster_boss3_stand (struct edict_s *self)
+void SP_monster_boss3_stand (edict *self)
 {
 	if (deathmatch->value)
 	{

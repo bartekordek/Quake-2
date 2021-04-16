@@ -44,39 +44,39 @@ typedef struct model_s
     dmodel_t* submodels;
 
     int            numplanes;
-    plane_t    *planes;
+    plane_t* planes;
 
     int            numleafs;        // number of visible leafs, not counting 0
-    mleaf_t        *leafs;
+    mleaf_t    * leafs;
 
     int            numvertexes;
-    mvertex_t    *vertexes;
+    mvertex_t* vertexes;
 
     int            numedges;
-    medge_t        *edges;
+    medge_t    * edges;
 
     int            numnodes;
     int            firstnode;
-    mnode_t        *nodes;
+    mnode_t    * nodes;
 
     int            numtexinfo;
-    mtexinfo_t    *texinfo;
+    mtexinfo_t* texinfo;
 
     int            numsurfaces;
-    msurface_t    *surfaces;
+    msurface_t* surfaces;
 
     int            numsurfedges;
-    int            *surfedges;
+    int        * surfedges;
 
     int            nummarksurfaces;
-    msurface_t    **marksurfaces;
+    msurface_t* *marksurfaces;
 
-    dvis_t        *vis;
+    dvis_t    * vis;
 
-    byte        *lightdata;
+    byte    * lightdata;
 
     // for alias models, sprites and skins
-    image_t        *skins[MAX_MD2SKINS];
+    image_t    * skins[MAX_MD2SKINS];
 
     void *extradata;
     int extradatasize;

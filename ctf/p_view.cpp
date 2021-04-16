@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 
 
-static	struct edict_s		*current_player;
+static	edict		*current_player;
 static	gclient_t	*current_client;
 
 static	vec3_t	forward, right, up;
@@ -68,7 +68,7 @@ P_DamageFeedback
 Handles color blends and view kicks
 ===============
 */
-void P_DamageFeedback (struct edict_s *player)
+void P_DamageFeedback (edict *player)
 {
 	gclient_t	*client;
 	float	side;
@@ -219,7 +219,7 @@ Auto pitching on slopes?
 
 ===============
 */
-void SV_CalcViewOffset (struct edict_s *ent)
+void SV_CalcViewOffset (edict *ent)
 {
 	float		*angles;
 	float		bob;
@@ -342,7 +342,7 @@ void SV_CalcViewOffset (struct edict_s *ent)
 SV_CalcGunOffset
 ==============
 */
-void SV_CalcGunOffset (struct edict_s *ent)
+void SV_CalcGunOffset (edict *ent)
 {
 	int		i;
 	float	delta;
@@ -415,7 +415,7 @@ void SV_AddBlend (float r, float g, float b, float a, float *v_blend)
 SV_CalcBlend
 =============
 */
-void SV_CalcBlend (struct edict_s *ent)
+void SV_CalcBlend (edict *ent)
 {
 	int		contents;
 	vec3_t	vieworg;
@@ -498,7 +498,7 @@ void SV_CalcBlend (struct edict_s *ent)
 P_FallingDamage
 =================
 */
-void P_FallingDamage (struct edict_s *ent)
+void P_FallingDamage (edict *ent)
 {
 	float	delta;
 	int		damage;
@@ -750,7 +750,7 @@ void P_WorldEffects (void)
 G_SetClientEffects
 ===============
 */
-void G_SetClientEffects (struct edict_s *ent)
+void G_SetClientEffects (edict *ent)
 {
 	int		pa_type;
 	int		remaining;
@@ -815,7 +815,7 @@ void G_SetClientEffects (struct edict_s *ent)
 G_SetClientEvent
 ===============
 */
-void G_SetClientEvent (struct edict_s *ent)
+void G_SetClientEvent (edict *ent)
 {
 	if (ent->s.event)
 		return;
@@ -832,7 +832,7 @@ void G_SetClientEvent (struct edict_s *ent)
 G_SetClientSound
 ===============
 */
-void G_SetClientSound (struct edict_s *ent)
+void G_SetClientSound (edict *ent)
 {
 	char	*weap;
 
@@ -872,7 +872,7 @@ void G_SetClientSound (struct edict_s *ent)
 G_SetClientFrame
 ===============
 */
-void G_SetClientFrame (struct edict_s *ent)
+void G_SetClientFrame (edict *ent)
 {
 	gclient_t	*client;
 	bool	duck, run;
@@ -983,7 +983,7 @@ Called for each player at the end of the server frame
 and right after spawning
 =================
 */
-void ClientEndServerFrame (struct edict_s *ent)
+void ClientEndServerFrame (edict *ent)
 {
 	float	bobtime;
 	int		i;
@@ -1091,7 +1091,7 @@ void ClientEndServerFrame (struct edict_s *ent)
 //ZOID
 //update chasecam follower stats
 	for (i = 1; i <= maxclients->value; i++) {
-		struct edict_s *e = g_edicts + i;
+		edict *e = g_edicts + i;
 		if (!e->inuse || e->client->chase_target != ent)
 			continue;
 		memcpy(e->client->ps.stats,

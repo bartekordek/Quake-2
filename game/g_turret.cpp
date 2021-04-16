@@ -45,9 +45,9 @@ float SnapToEights(float x)
 }
 
 
-void turret_blocked(struct edict_s *self, struct edict_s *other)
+void turret_blocked(edict *self, edict *other)
 {
-	struct edict_s	*attacker;
+	edict	*attacker;
 
 	if (other->takedamage)
 	{
@@ -75,7 +75,7 @@ Use "angle" to set the starting angle.
 "maxyaw"	max acceptable yaw angle   : default 360
 */
 
-void turret_breach_fire (struct edict_s *self)
+void turret_breach_fire (edict *self)
 {
 	vec3_t	f, r, u;
 	vec3_t	start;
@@ -93,9 +93,9 @@ void turret_breach_fire (struct edict_s *self)
 	gi.positioned_sound (start, self, CHAN_WEAPON, gi.soundindex("weapons/rocklf1a.wav"), 1, ATTN_NORM, 0);
 }
 
-void turret_breach_think (struct edict_s *self)
+void turret_breach_think (edict *self)
 {
-	struct edict_s	*ent;
+	edict	*ent;
 	vec3_t	current_angles;
 	vec3_t	delta;
 
@@ -198,7 +198,7 @@ void turret_breach_think (struct edict_s *self)
 	}
 }
 
-void turret_breach_finish_init (struct edict_s *self)
+void turret_breach_finish_init (edict *self)
 {
 	// get and save info for muzzle location
 	if (!self->target)
@@ -217,7 +217,7 @@ void turret_breach_finish_init (struct edict_s *self)
 	self->think (self);
 }
 
-void SP_turret_breach (struct edict_s *self)
+void SP_turret_breach (edict *self)
 {
 	self->solid = SOLID_BSP;
 	self->movetype = MOVETYPE_PUSH;
@@ -256,7 +256,7 @@ This portion of the turret changes yaw only.
 MUST be teamed with a turret_breach.
 */
 
-void SP_turret_base (struct edict_s *self)
+void SP_turret_base (edict *self)
 {
 	self->solid = SOLID_BSP;
 	self->movetype = MOVETYPE_PUSH;
@@ -271,13 +271,13 @@ Must NOT be on the team with the rest of the turret parts.
 Instead it must target the turret_breach.
 */
 
-void infantry_die (struct edict_s *self, struct edict_s *inflictor, struct edict_s *attacker, int damage);
-void infantry_stand (struct edict_s *self);
-void monster_use (struct edict_s *self, struct edict_s *other, struct edict_s *activator);
+void infantry_die (edict *self, edict *inflictor, edict *attacker, int damage);
+void infantry_stand (edict *self);
+void monster_use (edict *self, edict *other, edict *activator);
 
-void turret_driver_die (struct edict_s *self, struct edict_s *inflictor, struct edict_s *attacker, int damage, vec3_t point)
+void turret_driver_die (edict *self, edict *inflictor, edict *attacker, int damage, vec3_t point)
 {
-	struct edict_s	*ent;
+	edict	*ent;
 
 	// level the gun
 	self->target_ent->move_angles[0] = 0;
@@ -295,9 +295,9 @@ void turret_driver_die (struct edict_s *self, struct edict_s *inflictor, struct 
 	infantry_die (self, inflictor, attacker, damage);
 }
 
-bool FindTarget (struct edict_s *self);
+bool FindTarget (edict *self);
 
-void turret_driver_think (struct edict_s *self)
+void turret_driver_think (edict *self)
 {
 	vec3_t	target;
 	vec3_t	dir;
@@ -351,10 +351,10 @@ void turret_driver_think (struct edict_s *self)
 	self->target_ent->spawnflags |= 65536;
 }
 
-void turret_driver_link (struct edict_s *self)
+void turret_driver_link (edict *self)
 {
 	vec3_t	vec;
-	struct edict_s	*ent;
+	edict	*ent;
 
 	self->think = turret_driver_think;
 	self->nextthink = level.time + FRAMETIME;
@@ -384,7 +384,7 @@ void turret_driver_link (struct edict_s *self)
 	self->flags |= FL_TEAMSLAVE;
 }
 
-void SP_turret_driver (struct edict_s *self)
+void SP_turret_driver (edict *self)
 {
 	if (deathmatch->value)
 	{

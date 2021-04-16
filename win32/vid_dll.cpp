@@ -32,7 +32,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // Structure containing functions exported from refresh DLL
 //refexport_t    re;
 
-cvar_t *win_noalttab;
+cvar *win_noalttab;
 
 #ifndef WM_MOUSEWHEEL
 #define WM_MOUSEWHEEL (WM_MOUSELAST+1)  // message that will be supported by the OS
@@ -41,11 +41,11 @@ cvar_t *win_noalttab;
 static UINT MSH_MOUSEWHEEL;
 
 // Console variables that we need to access from this module
-cvar_t        *vid_gamma;
-cvar_t        *vid_ref;            // Name of Refresh DLL loaded
-cvar_t        *vid_xpos;            // X coordinate of window position
-cvar_t        *vid_ypos;            // Y coordinate of window position
-cvar_t        *vid_fullscreen;
+cvar    * vid_gamma;
+cvar    * vid_ref;            // Name of Refresh DLL loaded
+cvar    * vid_xpos;            // X coordinate of window position
+cvar    * vid_ypos;            // Y coordinate of window position
+cvar    * vid_fullscreen;
 
 // Global variables used internally by this module
 viddef_t    viddef;                // global video state; used by other modules
@@ -310,9 +310,9 @@ LONG WINAPI MainWndProc (
     {
     case WM_MOUSEWHEEL:
         /*
-        ** this chunk of code theoretically only works under NT4 and Win98
-        ** since this message doesn't exist under Win95
-        */
+    * * this chunk of code theoretically only works under NT4 and Win98
+    * * since this message doesn't exist under Win95
+    */
         if ( ( short ) HIWORD( wParam ) > 0 )
         {
             Key_Event( K_MWHEELUP, true, sys_msg_time );
@@ -501,8 +501,8 @@ bool VID_GetModeInfo( int *width, int *height, int mode )
     if ( mode < 0 || mode >= VID_NUM_MODES )
         return false;
 
-    *width  = vid_modes[mode].width;
-    *height = vid_modes[mode].height;
+* width  = vid_modes[mode].width;
+* height = vid_modes[mode].height;
 
     return true;
 }
@@ -620,10 +620,14 @@ bool VID_LoadRefresh( char *name )
     vidref_val = VIDREF_OTHER;
     if(vid_ref)
     {
-        if(!strcmp (vid_ref->string, "gl"))
+        if( vid_ref->string == "gl" )
+        {
             vidref_val = VIDREF_GL;
-        else if(!strcmp(vid_ref->string, "soft"))
+        }
+        else if( vid_ref->string == "soft" )
+        {
             vidref_val = VIDREF_SOFT;
+        }
     }
 //PGM
 //======
@@ -665,8 +669,8 @@ void VID_CheckChanges (void)
     while (vid_ref->modified)
     {
         /*
-        ** refresh has changed
-        */
+    * * refresh has changed
+    */
         vid_ref->modified = false;
         vid_fullscreen->modified = true;
         cl.refresh_prepped = false;
@@ -675,13 +679,17 @@ void VID_CheckChanges (void)
         //Com_sprintf( name, sizeof(name), "ref_%s.dll", vid_ref->string );
         if ( !VID_LoadRefresh( name ) )
         {
-            if ( strcmp (vid_ref->string, "soft") == 0 )
-                Com_Error (ERR_FATAL, "Couldn't fall back to software refresh!");
+            //if( strcmp( vid_ref->string, "soft" ) == 0 )
+            if( vid_ref->string == "soft" )
+            {
+                Com_Error( ERR_FATAL, "Couldn't fall back to software refresh!" );
+            }
+                
             Cvar_Set( "vid_ref", "soft" );
 
             /*
-            ** drop the console if we fail to load a refresh
-            */
+        * * drop the console if we fail to load a refresh
+        */
             if ( cls.key_dest != key_console )
             {
                 Con_ToggleConsole_f();
@@ -691,8 +699,8 @@ void VID_CheckChanges (void)
     }
 
     /*
-    ** update our window position
-    */
+* * update our window position
+*/
     if ( vid_xpos->modified || vid_ypos->modified )
     {
         if (!vid_fullscreen->value)
@@ -723,12 +731,12 @@ void VID_Init (void)
     Cmd_AddCommand ("vid_front", VID_Front_f);
 
     /*
-    ** this is a gross hack but necessary to clamp the mode for 3Dfx
-    */
+* * this is a gross hack but necessary to clamp the mode for 3Dfx
+*/
 #if 0
     {
-        cvar_t *gl_driver = Cvar_Get( "gl_driver", "opengl32", 0 );
-        cvar_t *gl_mode = Cvar_Get( "gl_mode", "3", 0 );
+        cvar *gl_driver = Cvar_Get( "gl_driver", "opengl32", 0 );
+        cvar *gl_mode = Cvar_Get( "gl_mode", "3", 0 );
 
         if ( stricmp( gl_driver->string, "3dfxgl" ) == 0 )
         {
