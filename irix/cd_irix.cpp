@@ -30,7 +30,7 @@ void CDAudio_Update(void)
 int CDAudio_Init(void)
 {
         Com_Printf_G("XXX - CDAudio_Init\n");
-	return 0;
+    return 0;
 }
 
 

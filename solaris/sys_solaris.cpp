@@ -35,34 +35,34 @@ qboolean stdin_active = true;
 void Sys_ConsoleOutput (char *string)
 {
     if (nostdout && nostdout->value)
-	    return;
+        return;
 
     fputs(string, stdout);
 }
 
 void Sys_Printf (char *fmt, ...)
 {
-    va_list	    argptr;
-    char	    text[1024];
-    unsigned char		*p;
+    va_list        argptr;
+    char        text[1024];
+    unsigned char        *p;
 
     va_start (argptr,fmt);
     vsprintf (text,fmt,argptr);
     va_end (argptr);
 
     if (strlen(text) > sizeof(text))
-	    Sys_Error("memory overwrite in Sys_Printf");
+        Sys_Error("memory overwrite in Sys_Printf");
 
     if (nostdout && nostdout->value)
         return;
 
     for (p = (unsigned char *)text; *p; p++) {
-		*p &= 0x7f;
-	    if ((*p > 128 || *p < 32) && *p != 10 && *p != 13 && *p != 9)
-		    printf("[%02x]", *p);
-	    else
-		    putc(*p, stdout);
-	}
+        *p &= 0x7f;
+        if ((*p > 128 || *p < 32) && *p != 10 && *p != 13 && *p != 9)
+            printf("[%02x]", *p);
+        else
+            putc(*p, stdout);
+    }
 }
 
 void Sys_Quit (void)
@@ -122,7 +122,7 @@ int    Sys_FileTime (char *path)
     struct    stat    buf;
 
     if (stat (path,&buf) == -1)
-	    return -1;
+        return -1;
 
     return buf.st_mtime;
 }
@@ -141,25 +141,25 @@ char *Sys_ConsoleInput(void)
     struct timeval timeout;
 
     if (!dedicated || !dedicated->value)
-	    return NULL;
+        return NULL;
 
     if (!stdin_active)
-	    return NULL;
+        return NULL;
 
     FD_ZERO(&fdset);
     FD_SET(0, &fdset); // stdin
     timeout.tv_sec = 0;
     timeout.tv_usec = 0;
     if (select (1, &fdset, NULL, NULL, &timeout) == -1 || !FD_ISSET(0, &fdset))
-	    return NULL;
+        return NULL;
 
     len = read (0, text, sizeof(text));
     if (len == 0) { // eof!
-	    stdin_active = false;
-	    return NULL;
-	}
+        stdin_active = false;
+        return NULL;
+    }
     if (len < 1)
-	    return NULL;
+        return NULL;
     text[len-1] = 0;    // rip off the /n and terminate
 
     return text;
@@ -177,7 +177,7 @@ Sys_UnloadGame
 void Sys_UnloadGame (void)
 {
     if (game_library)
-	    dlclose (game_library);
+        dlclose (game_library);
     game_library = NULL;
 }
 
@@ -190,11 +190,11 @@ Loads the game dll
 */
 void *Sys_GetGameAPI (void *parms)
 {
-    void	*(*GetGameAPI) (void *);
+    void    *(*GetGameAPI) (void *);
 
     char    name[MAX_OSPATH];
     char    curpath[MAX_OSPATH];
-    char	*path;
+    char    *path;
 #ifdef __i386__
     const char *gamename = "gamei386.so";
 #elif defined __sun__
@@ -204,35 +204,35 @@ void *Sys_GetGameAPI (void *parms)
 #endif
 
     if (game_library)
-	    Com_Error (ERR_FATAL, "Sys_GetGameAPI without Sys_UnloadingGame");
+        Com_Error (ERR_FATAL, "Sys_GetGameAPI without Sys_UnloadingGame");
 
     getcwd(curpath, sizeof(curpath));
 
     Com_Printf_G("------- Loading %s -------", gamename);
 
-	// now run through the search paths
+    // now run through the search paths
     path = NULL;
     while (1)
-	{
-	    path = FS_NextPath (path);
-	    if (!path)
-		    return NULL;		// couldn't find one anywhere
-	    sprintf (name, "%s/%s/%s", curpath, path, gamename);
-	    game_library = dlopen (name, RTLD_NOW );
-	    if (game_library)
-		{
-		    Com_DPrintf ("LoadLibrary (%s)\n",name);
-		    break;
-		} else
-		    Com_Printf_G("error: %s\n", dlerror());
-	}
+    {
+        path = FS_NextPath (path);
+        if (!path)
+            return NULL;        // couldn't find one anywhere
+        sprintf (name, "%s/%s/%s", curpath, path, gamename);
+        game_library = dlopen (name, RTLD_NOW );
+        if (game_library)
+        {
+            Com_DPrintf ("LoadLibrary (%s)\n",name);
+            break;
+        } else
+            Com_Printf_G("error: %s\n", dlerror());
+    }
 
     GetGameAPI = (void *)dlsym (game_library, "GetGameAPI");
     if (!GetGameAPI)
-	{
-	    Sys_UnloadGame ();
-	    return NULL;
-	}
+    {
+        Sys_UnloadGame ();
+        return NULL;
+    }
 
     return GetGameAPI (parms);
 }
@@ -245,7 +245,7 @@ void Sys_AppActivate (void)
 
 void Sys_SendKeyEvents (void)
 {
-	// grab frame time
+    // grab frame time
     sys_frame_time = Sys_Milliseconds();
 }
 
@@ -265,7 +265,7 @@ int main (int argc, char **argv)
     char **newargv;
     int i;
 
-	// force dedicated
+    // force dedicated
     newargc = argc;
     newargv = malloc((argc + 3) * sizeof(char *));
     newargv[0] = argv[0];
@@ -273,7 +273,7 @@ int main (int argc, char **argv)
     newargv[2] = "dedicated";
     newargv[3] = "1";
     for (i = 1; i < argc; i++)
-	    newargv[i + 3] = argv[i];
+        newargv[i + 3] = argv[i];
     newargc += 3;
 
     Qcommon_Init(newargc, newargv);
@@ -286,20 +286,20 @@ int main (int argc, char **argv)
     nostdout = Cvar_Get("nostdout", "0", 0);
 
     if (!nostdout->value) {
-	    fcntl(0, F_SETFL, fcntl (0, F_GETFL, 0) | FNDELAY);
-//	    printf ("Linux Quake -- Version %0.3f\n", LINUX_VERSION);
-	}
+        fcntl(0, F_SETFL, fcntl (0, F_GETFL, 0) | FNDELAY);
+//        printf ("Linux Quake -- Version %0.3f\n", LINUX_VERSION);
+    }
 
     oldtime = Sys_Milliseconds ();
     while (1)
     {
 // find time spent rendering last frame
-	    do {
-		    newtime = Sys_Milliseconds ();
-		    time = newtime - oldtime;
-		} while (time < 1);
+        do {
+            newtime = Sys_Milliseconds ();
+            time = newtime - oldtime;
+        } while (time < 1);
         Qcommon_Frame (time);
-	    oldtime = newtime;
+        oldtime = newtime;
     }
 
 }
@@ -325,12 +325,12 @@ void Sys_MakeCodeWriteable (unsigned long startaddr, unsigned long length)
     addr = (startaddr & ~(psize-1)) - psize;
 
 //    fprintf(stderr, "writable code %lx(%lx)-%lx, length=%lx\n", startaddr,
-//		    addr, startaddr+length, length);
+//            addr, startaddr+length, length);
 
     r = mprotect((char*)addr, length + startaddr - addr + psize, 7);
 
     if (r < 0)
-    	    Sys_Error("Protection change failed\n");
+            Sys_Error("Protection change failed\n");
 
 }
 

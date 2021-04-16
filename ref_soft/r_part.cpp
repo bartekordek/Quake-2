@@ -54,7 +54,7 @@ static unsigned s_prefetch_address;
 */
 __declspec(naked) void BlendParticle33( void )
 {
-	//    return vid.alphamap[color + dstcolor*256];
+    //    return vid.alphamap[color + dstcolor*256];
     __asm mov ebp, vid.alphamap
     __asm xor ebx, ebx
 
@@ -73,7 +73,7 @@ __declspec(naked) void BlendParticle33( void )
 
 __declspec(naked) void BlendParticle66( void )
 {
-	//    return vid.alphamap[pcolor*256 + dstcolor];
+    //    return vid.alphamap[pcolor*256 + dstcolor];
     __asm mov ebp, vid.alphamap
     __asm xor ebx, ebx
 
@@ -116,27 +116,27 @@ __declspec(naked) void R_DrawParticle( void )
 
     static byte (*blendfunc)(void);
 
-	/*
-	** must be memvars since x86 can't load constants
-	** directly.  I guess I could use fld1, but that
-	** actually costs one more clock than fld [one]!
-	*/
+    /*
+    ** must be memvars since x86 can't load constants
+    ** directly.  I guess I could use fld1, but that
+    ** actually costs one more clock than fld [one]!
+    */
     static float    particle_z_clip    = PARTICLE_Z_CLIP;
     static float    one                = 1.0F;
     static float    point_five         = 0.5F;
     static float    eight_thousand_hex = 0x8000;
 
-	/*
-	** save trashed variables
-	*/
+    /*
+    ** save trashed variables
+    */
     __asm mov  ebpsave, ebp
     __asm push esi
     __asm push edi
 
-	/*
-	** transform the particle
-	*/
-	// VectorSubtract (pparticle->origin, r_origin, local);
+    /*
+    ** transform the particle
+    */
+    // VectorSubtract (pparticle->origin, r_origin, local);
     __asm mov  esi, partparms.particle
     __asm fld  dword ptr [esi+0]          ; p_o.x
     __asm fsub dword ptr [r_origin+0]     ; p_o.x-r_o.x
@@ -149,9 +149,9 @@ __declspec(naked) void R_DrawParticle( void )
     __asm fstp dword ptr [local+4]        ; p_o.z-r_o.z
     __asm fstp dword ptr [local+8]        ; (empty)
 
-	// transformed[0] = DotProduct(local, r_pright);
-	// transformed[1] = DotProduct(local, r_pup);
-	// transformed[2] = DotProduct(local, r_ppn);
+    // transformed[0] = DotProduct(local, r_pright);
+    // transformed[1] = DotProduct(local, r_pup);
+    // transformed[2] = DotProduct(local, r_ppn);
     __asm fld  dword ptr [local+0]        ; l.x
     __asm fmul dword ptr [r_pright+0]     ; l.x*pr.x
     __asm fld  dword ptr [local+4]        ; l.y | l.x*pr.x
@@ -185,14 +185,14 @@ __declspec(naked) void R_DrawParticle( void )
     __asm faddp st(1), st                 ; l.x*pr.x + l.y*pr.y + l.z*pr.z
     __asm fstp  dword ptr [transformed+8] ; (empty)
 
-	/*
-	** make sure that the transformed particle is not in front of
-	** the particle Z clip plane.  We can do the comparison in
-	** integer space since we know the sign of one of the inputs
-	** and can figure out the sign of the other easily enough.
-	*/
-	//    if (transformed[2] < PARTICLE_Z_CLIP)
-	//	    return;
+    /*
+    ** make sure that the transformed particle is not in front of
+    ** the particle Z clip plane.  We can do the comparison in
+    ** integer space since we know the sign of one of the inputs
+    ** and can figure out the sign of the other easily enough.
+    */
+    //    if (transformed[2] < PARTICLE_Z_CLIP)
+    //        return;
 
     __asm mov  eax, dword ptr [transformed+8]
     __asm and  eax, eax
@@ -200,23 +200,23 @@ __declspec(naked) void R_DrawParticle( void )
     __asm cmp  eax, particle_z_clip
     __asm jl   end
 
-	/*
-	** project the point by initiating the 1/z calc
-	*/
-	//    zi = 1.0 / transformed[2];
+    /*
+    ** project the point by initiating the 1/z calc
+    */
+    //    zi = 1.0 / transformed[2];
     __asm fld   one
     __asm fdiv  dword ptr [transformed+8]
 
-	/*
-	** bind the blend function pointer to the appropriate blender
-	** while we're dividing
-	*/
-	//if ( level == PARTICLE_33 )
-	//    blendparticle = BlendParticle33;
-	//else if ( level == PARTICLE_66 )
-	//    blendparticle = BlendParticle66;
-	//else
-	//    blendparticle = BlendParticle100;
+    /*
+    ** bind the blend function pointer to the appropriate blender
+    ** while we're dividing
+    */
+    //if ( level == PARTICLE_33 )
+    //    blendparticle = BlendParticle33;
+    //else if ( level == PARTICLE_66 )
+    //    blendparticle = BlendParticle66;
+    //else
+    //    blendparticle = BlendParticle100;
 
     __asm cmp partparms.level, PARTICLE_66
     __asm je  blendfunc_66
@@ -231,15 +231,15 @@ blendfunc_66:
 done_selecting_blend_func:
     __asm mov blendfunc, ebx
 
-	// prefetch the next particle
+    // prefetch the next particle
     __asm mov ebp, s_prefetch_address
     __asm mov ebp, [ebp]
 
-	// finish the above divide
+    // finish the above divide
     __asm fstp  zi
 
-	// u = (int)(xcenter + zi * transformed[0] + 0.5);
-	// v = (int)(ycenter - zi * transformed[1] + 0.5);
+    // u = (int)(xcenter + zi * transformed[0] + 0.5);
+    // v = (int)(ycenter - zi * transformed[1] + 0.5);
     __asm fld   zi                           ; zi
     __asm fmul  dword ptr [transformed+0]    ; zi * transformed[0]
     __asm fld   zi                           ; zi | zi * transformed[0]
@@ -257,17 +257,17 @@ done_selecting_blend_func:
       __asm fistp dword ptr [u]                ; v
       __asm fistp dword ptr [v]                ; (empty)
 
-	/*
-	** clip out the particle
-	*/
+    /*
+    ** clip out the particle
+    */
 
-	//    if ((v > d_vrectbottom_particle) ||
-	//		(u > d_vrectright_particle) ||
-	//		(v < d_vrecty) ||
-	//		(u < d_vrectx))
-	//	{
-	//	    return;
-	//	}
+    //    if ((v > d_vrectbottom_particle) ||
+    //        (u > d_vrectright_particle) ||
+    //        (v < d_vrecty) ||
+    //        (u < d_vrectx))
+    //    {
+    //        return;
+    //    }
 
     __asm mov ebx, u
     __asm mov ecx, v
@@ -280,18 +280,18 @@ done_selecting_blend_func:
     __asm cmp ebx, d_vrectx
     __asm jl  end
 
-	/*
-	** compute addresses of zbuffer, framebuffer, and
-	** compute the Z-buffer reference value.
-	**
-	** EBX      = U
-	** ECX      = V
-	**
-	** Outputs:
-	** ESI = Z-buffer address
-	** EDI = framebuffer address
-	*/
-	// ESI = d_pzbuffer + (d_zwidth * v) + u;
+    /*
+    ** compute addresses of zbuffer, framebuffer, and
+    ** compute the Z-buffer reference value.
+    **
+    ** EBX      = U
+    ** ECX      = V
+    **
+    ** Outputs:
+    ** ESI = Z-buffer address
+    ** EDI = framebuffer address
+    */
+    // ESI = d_pzbuffer + (d_zwidth * v) + u;
     __asm mov esi, d_pzbuffer             ; esi = d_pzbuffer
     __asm mov eax, d_zwidth               ; eax = d_zwidth
     __asm mul ecx                         ; eax = d_zwidth*v
@@ -299,42 +299,42 @@ done_selecting_blend_func:
     __asm shl eax, 1                      ; eax = 2*(d_zwidth*v+u)
     __asm add esi, eax                    ; esi = ( short * ) ( d_pzbuffer + ( d_zwidth * v ) + u )
 
-	// initiate
-	// izi = (int)(zi * 0x8000);
+    // initiate
+    // izi = (int)(zi * 0x8000);
     __asm fld  zi
     __asm fmul eight_thousand_hex
 
-	// EDI = pdest = d_viewbuffer + d_scantable[v] + u;
+    // EDI = pdest = d_viewbuffer + d_scantable[v] + u;
     __asm lea edi, [d_scantable+ecx*4]
     __asm mov edi, [edi]
     __asm add edi, d_viewbuffer
     __asm add edi, ebx
 
-	// complete
-	// izi = (int)(zi * 0x8000);
+    // complete
+    // izi = (int)(zi * 0x8000);
     __asm fistp tmp
     __asm mov   eax, tmp
     __asm mov   izi, ax
 
-	/*
-	** determine the screen area covered by the particle,
-	** which also means clamping to a min and max
-	*/
-	//    pix = izi >> d_pix_shift;
+    /*
+    ** determine the screen area covered by the particle,
+    ** which also means clamping to a min and max
+    */
+    //    pix = izi >> d_pix_shift;
     __asm xor edx, edx
     __asm mov dx, izi
     __asm mov ecx, d_pix_shift
     __asm shr dx, cl
 
-	//    if (pix < d_pix_min)
-	//	    pix = d_pix_min;
+    //    if (pix < d_pix_min)
+    //        pix = d_pix_min;
     __asm cmp edx, d_pix_min
     __asm jge check_pix_max
     __asm mov edx, d_pix_min
     __asm jmp skip_pix_clamp
 
-	//    else if (pix > d_pix_max)
-	//	    pix = d_pix_max;
+    //    else if (pix > d_pix_max)
+    //        pix = d_pix_max;
 check_pix_max:
     __asm cmp edx, d_pix_max
     __asm jle skip_pix_clamp
@@ -342,14 +342,14 @@ check_pix_max:
 
 skip_pix_clamp:
 
-	/*
-	** render the appropriate pixels
-	**
-	** ECX = count (used for inner loop)
-	** EDX = count (used for outer loop)
-	** ESI = zbuffer
-	** EDI = framebuffer
-	*/
+    /*
+    ** render the appropriate pixels
+    **
+    ** ECX = count (used for inner loop)
+    ** EDX = count (used for outer loop)
+    ** ESI = zbuffer
+    ** EDI = framebuffer
+    */
     __asm mov ecx, edx
 
     __asm cmp ecx, 1
@@ -357,11 +357,11 @@ skip_pix_clamp:
 
 over:
 
-	/*
-	** at this point:
-	**
-	** ECX = count
-	*/
+    /*
+    ** at this point:
+    **
+    ** ECX = count
+    */
     __asm push ecx
     __asm push edi
     __asm push esi
@@ -370,16 +370,16 @@ top_of_pix_vert_loop:
 
 top_of_pix_horiz_loop:
 
-	//    for ( ; count ; count--, pz += d_zwidth, pdest += screenwidth)
-	//	{
-	//	    for (i=0 ; i<pix ; i++)
-	//		{
-	//		    if (pz[i] <= izi)
-	//			{
-	//			    pdest[i] = blendparticle( color, pdest[i] );
-	//			}
-	//		}
-	//	}
+    //    for ( ; count ; count--, pz += d_zwidth, pdest += screenwidth)
+    //    {
+    //        for (i=0 ; i<pix ; i++)
+    //        {
+    //            if (pz[i] <= izi)
+    //            {
+    //                pdest[i] = blendparticle( color, pdest[i] );
+    //            }
+    //        }
+    //    }
     __asm xor   eax, eax
 
     __asm mov   ax, word ptr [esi]
@@ -470,15 +470,15 @@ void R_DrawParticle( void )
     int         level     = partparms.level;
     vec3_t    local, transformed;
     float    zi;
-    byte	*pdest;
-    short	*pz;
+    byte    *pdest;
+    short    *pz;
     int      color = pparticle->color;
-    int	    i, izi, pix, count, u, v;
+    int        i, izi, pix, count, u, v;
     byte  (*blendparticle)( int, int );
 
-	/*
-	** transform the particle
-	*/
+    /*
+    ** transform the particle
+    */
     VectorSubtract (pparticle->origin, r_origin, local);
 
     transformed[0] = DotProduct(local, r_pright);
@@ -486,55 +486,55 @@ void R_DrawParticle( void )
     transformed[2] = DotProduct(local, r_ppn);
 
     if (transformed[2] < PARTICLE_Z_CLIP)
-	    return;
+        return;
 
-	/*
-	** bind the blend function pointer to the appropriate blender
-	*/
+    /*
+    ** bind the blend function pointer to the appropriate blender
+    */
     if ( level == PARTICLE_33 )
-	    blendparticle = BlendParticle33;
+        blendparticle = BlendParticle33;
     else if ( level == PARTICLE_66 )
-	    blendparticle = BlendParticle66;
+        blendparticle = BlendParticle66;
     else
-	    blendparticle = BlendParticle100;
+        blendparticle = BlendParticle100;
 
-	/*
-	** project the point
-	*/
-	// FIXME: preadjust xcenter and ycenter
+    /*
+    ** project the point
+    */
+    // FIXME: preadjust xcenter and ycenter
     zi = 1.0 / transformed[2];
     u = (int)(xcenter + zi * transformed[0] + 0.5);
     v = (int)(ycenter - zi * transformed[1] + 0.5);
 
     if ((v > d_vrectbottom_particle) ||
-		(u > d_vrectright_particle) ||
-		(v < d_vrecty) ||
-		(u < d_vrectx))
-	{
-	    return;
-	}
+        (u > d_vrectright_particle) ||
+        (v < d_vrecty) ||
+        (u < d_vrectx))
+    {
+        return;
+    }
 
-	/*
-	** compute addresses of zbuffer, framebuffer, and
-	** compute the Z-buffer reference value.
-	*/
+    /*
+    ** compute addresses of zbuffer, framebuffer, and
+    ** compute the Z-buffer reference value.
+    */
     pz = d_pzbuffer + (d_zwidth * v) + u;
     pdest = d_viewbuffer + d_scantable[v] + u;
     izi = (int)(zi * 0x8000);
 
-	/*
-	** determine the screen area covered by the particle,
-	** which also means clamping to a min and max
-	*/
+    /*
+    ** determine the screen area covered by the particle,
+    ** which also means clamping to a min and max
+    */
     pix = izi >> d_pix_shift;
     if (pix < d_pix_min)
-	    pix = d_pix_min;
+        pix = d_pix_min;
     else if (pix > d_pix_max)
-	    pix = d_pix_max;
+        pix = d_pix_max;
 
-	/*
-	** render the appropriate pixels
-	*/
+    /*
+    ** render the appropriate pixels
+    */
     count = pix;
 
     switch (level) {
@@ -583,7 +583,7 @@ void R_DrawParticle( void )
     }
 }
 
-#endif	// !id386
+#endif    // !id386
 
 /*
 ** R_DrawParticles
@@ -608,27 +608,27 @@ void R_DrawParticles (void)
 #endif
 
     for (p=r_newrefdef.particles, i=0 ; i<r_newrefdef.num_particles ; i++,p++)
-	{
+    {
 
-	    if ( p->alpha > 0.66 )
-		    partparms.level = PARTICLE_OPAQUE;
-	    else if ( p->alpha > 0.33 )
-		    partparms.level = PARTICLE_66;
-	    else
-		    partparms.level = PARTICLE_33;
+        if ( p->alpha > 0.66 )
+            partparms.level = PARTICLE_OPAQUE;
+        else if ( p->alpha > 0.33 )
+            partparms.level = PARTICLE_66;
+        else
+            partparms.level = PARTICLE_33;
 
-	    partparms.particle = p;
-	    partparms.color    = p->color;
+        partparms.particle = p;
+        partparms.color    = p->color;
 
 #if id386 && !defined __linux__
-	    if ( i < r_newrefdef.num_particles-1 )
-		    s_prefetch_address = ( unsigned int ) ( p + 1 );
-	    else
-		    s_prefetch_address = ( unsigned int ) r_newrefdef.particles;
+        if ( i < r_newrefdef.num_particles-1 )
+            s_prefetch_address = ( unsigned int ) ( p + 1 );
+        else
+            s_prefetch_address = ( unsigned int ) r_newrefdef.particles;
 #endif
 
-	    R_DrawParticle();
-	}
+        R_DrawParticle();
+    }
 
 #if id386 && !defined __linux__
     __asm fldcw word ptr [fpu_chop_cw]

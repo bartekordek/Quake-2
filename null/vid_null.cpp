@@ -3,7 +3,7 @@
 
 #include "../client/client.h"
 
-viddef_t    viddef;				// global video state
+viddef_t    viddef;                // global video state
 
 refexport_t    re;
 
@@ -19,8 +19,8 @@ DIRECT LINK GLUE
 
 void VID_Printf (int print_level, char *fmt, ...)
 {
-        va_list	    argptr;
-        char	    msg[MAXPRINTMSG];
+        va_list        argptr;
+        char        msg[MAXPRINTMSG];
 
         va_start (argptr,fmt);
         vsprintf (msg,fmt,argptr);
@@ -34,14 +34,14 @@ void VID_Printf (int print_level, char *fmt, ...)
 
 void VID_Error (int err_level, char *fmt, ...)
 {
-        va_list	    argptr;
-        char	    msg[MAXPRINTMSG];
+        va_list        argptr;
+        char        msg[MAXPRINTMSG];
 
         va_start (argptr,fmt);
         vsprintf (msg,fmt,argptr);
         va_end (argptr);
 
-	    Com_Error (err_level, "%s", msg);
+        Com_Error (err_level, "%s", msg);
 }
 
 void VID_NewWindow (int width, int height)
@@ -117,13 +117,13 @@ void    VID_Init (void)
 
         // call the init function
     if (re.Init (NULL, NULL) == -1)
-	    Com_Error (ERR_FATAL, "Couldn't start refresh");
+        Com_Error (ERR_FATAL, "Couldn't start refresh");
 }
 
 void    VID_Shutdown (void)
 {
     if (re.Shutdown)
-	    re.Shutdown ();
+        re.Shutdown ();
 }
 
 void    VID_CheckChanges (void)

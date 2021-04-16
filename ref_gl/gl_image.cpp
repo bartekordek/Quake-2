@@ -316,7 +316,7 @@ void ref_gl_GL_ImageList_f(void)
         }
 
         ri.Con_Printf(PRINT_ALL, " %3i %3i %s: %s\n",
-		    image->upload_width, image->upload_height, palstrings[image->paletted], image->name);
+            image->upload_width, image->upload_height, palstrings[image->paletted], image->name);
     }
     ri.Con_Printf(PRINT_ALL, "Total texel count (not counting mipmaps): %i\n", texels);
 }

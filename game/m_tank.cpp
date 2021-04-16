@@ -166,7 +166,7 @@ mmove_t    tank_move_stop_walk = {FRAME_walk21, FRAME_walk25, tank_frames_stop_w
 
 void tank_walk (edict *self)
 {
-	    self->monsterinfo.currentmove = &tank_move_walk;
+        self->monsterinfo.currentmove = &tank_move_walk;
 }
 
 
@@ -219,25 +219,25 @@ mmove_t    tank_move_stop_run = {FRAME_walk21, FRAME_walk25, tank_frames_stop_ru
 void tank_run (edict *self)
 {
     if (self->enemy && self->enemy->client)
-	    self->monsterinfo.aiflags |= AI_BRUTAL;
+        self->monsterinfo.aiflags |= AI_BRUTAL;
     else
-	    self->monsterinfo.aiflags &= ~AI_BRUTAL;
+        self->monsterinfo.aiflags &= ~AI_BRUTAL;
 
     if (self->monsterinfo.aiflags & AI_STAND_GROUND)
-	{
-	    self->monsterinfo.currentmove = &tank_move_stand;
-	    return;
-	}
+    {
+        self->monsterinfo.currentmove = &tank_move_stand;
+        return;
+    }
 
     if (self->monsterinfo.currentmove == &tank_move_walk ||
-	    self->monsterinfo.currentmove == &tank_move_start_run)
-	{
-	    self->monsterinfo.currentmove = &tank_move_run;
-	}
+        self->monsterinfo.currentmove == &tank_move_start_run)
+    {
+        self->monsterinfo.currentmove = &tank_move_run;
+    }
     else
-	{
-	    self->monsterinfo.currentmove = &tank_move_start_run;
-	}
+    {
+        self->monsterinfo.currentmove = &tank_move_start_run;
+    }
 }
 
 //
@@ -288,39 +288,39 @@ mmove_t    tank_move_pain3 = {FRAME_pain301, FRAME_pain316, tank_frames_pain3, t
 void tank_pain (edict *self, edict *other, float kick, int damage)
 {
     if (self->health < (self->max_health / 2))
-		    self->s.skinnum |= 1;
+            self->s.skinnum |= 1;
 
     if (damage <= 10)
-	    return;
+        return;
 
     if (level.time < self->pain_debounce_time)
-		    return;
+            return;
 
     if (damage <= 30)
-	    if (random() > 0.2)
-		    return;
+        if (random() > 0.2)
+            return;
 
-	// If hard or nightmare, don't go into pain while attacking
+    // If hard or nightmare, don't go into pain while attacking
     if ( skill->value >= 2)
-	{
-	    if ( (self->s.frame >= FRAME_attak301) && (self->s.frame <= FRAME_attak330) )
-		    return;
-	    if ( (self->s.frame >= FRAME_attak101) && (self->s.frame <= FRAME_attak116) )
-		    return;
-	}
+    {
+        if ( (self->s.frame >= FRAME_attak301) && (self->s.frame <= FRAME_attak330) )
+            return;
+        if ( (self->s.frame >= FRAME_attak101) && (self->s.frame <= FRAME_attak116) )
+            return;
+    }
 
     self->pain_debounce_time = level.time + 3;
     gi.sound (self, CHAN_VOICE, sound_pain, 1, ATTN_NORM, 0);
 
     if (skill->value == 3)
-	    return;		// no pain anims in nightmare
+        return;        // no pain anims in nightmare
 
     if (damage <= 30)
-	    self->monsterinfo.currentmove = &tank_move_pain1;
+        self->monsterinfo.currentmove = &tank_move_pain1;
     else if (damage <= 60)
-	    self->monsterinfo.currentmove = &tank_move_pain2;
+        self->monsterinfo.currentmove = &tank_move_pain2;
     else
-	    self->monsterinfo.currentmove = &tank_move_pain3;
+        self->monsterinfo.currentmove = &tank_move_pain3;
 };
 
 
@@ -334,14 +334,14 @@ void TankBlaster (edict *self)
     vec3_t    start;
     vec3_t    end;
     vec3_t    dir;
-    int	    flash_number;
+    int        flash_number;
 
     if (self->s.frame == FRAME_attak110)
-	    flash_number = MZ2_TANK_BLASTER_1;
+        flash_number = MZ2_TANK_BLASTER_1;
     else if (self->s.frame == FRAME_attak113)
-	    flash_number = MZ2_TANK_BLASTER_2;
+        flash_number = MZ2_TANK_BLASTER_2;
     else // (self->s.frame == FRAME_attak116)
-	    flash_number = MZ2_TANK_BLASTER_3;
+        flash_number = MZ2_TANK_BLASTER_3;
 
     AngleVectors (self->s.angles, forward, right, NULL);
     G_ProjectSource (self->s.origin, monster_flash_offset[flash_number], forward, right, start);
@@ -364,14 +364,14 @@ void TankRocket (edict *self)
     vec3_t    start;
     vec3_t    dir;
     vec3_t    vec;
-    int	    flash_number;
+    int        flash_number;
 
     if (self->s.frame == FRAME_attak324)
-	    flash_number = MZ2_TANK_ROCKET_1;
+        flash_number = MZ2_TANK_ROCKET_1;
     else if (self->s.frame == FRAME_attak327)
-	    flash_number = MZ2_TANK_ROCKET_2;
+        flash_number = MZ2_TANK_ROCKET_2;
     else // (self->s.frame == FRAME_attak330)
-	    flash_number = MZ2_TANK_ROCKET_3;
+        flash_number = MZ2_TANK_ROCKET_3;
 
     AngleVectors (self->s.angles, forward, right, NULL);
     G_ProjectSource (self->s.origin, monster_flash_offset[flash_number], forward, right, start);
@@ -390,7 +390,7 @@ void TankMachineGun (edict *self)
     vec3_t    vec;
     vec3_t    start;
     vec3_t    forward, right;
-    int	    flash_number;
+    int        flash_number;
 
     flash_number = MZ2_TANK_MACHINEGUN_1 + (self->s.frame - FRAME_attak406);
 
@@ -398,21 +398,21 @@ void TankMachineGun (edict *self)
     G_ProjectSource (self->s.origin, monster_flash_offset[flash_number], forward, right, start);
 
     if (self->enemy)
-	{
-	    VectorCopy (self->enemy->s.origin, vec);
-	    vec[2] += self->enemy->viewheight;
-	    VectorSubtract (vec, start, vec);
-	    vectoangles (vec, vec);
-	    dir[0] = vec[0];
-	}
+    {
+        VectorCopy (self->enemy->s.origin, vec);
+        vec[2] += self->enemy->viewheight;
+        VectorSubtract (vec, start, vec);
+        vectoangles (vec, vec);
+        dir[0] = vec[0];
+    }
     else
-	{
-	    dir[0] = 0;
-	}
+    {
+        dir[0] = 0;
+    }
     if (self->s.frame <= FRAME_attak415)
-	    dir[1] = self->s.angles[1] - 8 * (self->s.frame - FRAME_attak411);
+        dir[1] = self->s.angles[1] - 8 * (self->s.frame - FRAME_attak411);
     else
-	    dir[1] = self->s.angles[1] + 8 * (self->s.frame - FRAME_attak419);
+        dir[1] = self->s.angles[1] + 8 * (self->s.frame - FRAME_attak419);
     dir[2] = 0;
 
     AngleVectors (dir, forward, NULL, NULL);
@@ -432,13 +432,13 @@ mframe_t tank_frames_attack_blast [] =
     ai_charge, -1,    NULL,
     ai_charge, -1,    NULL,
     ai_charge, 0,    NULL,
-    ai_charge, 0,    TankBlaster,		// 10
+    ai_charge, 0,    TankBlaster,        // 10
     ai_charge, 0,    NULL,
     ai_charge, 0,    NULL,
     ai_charge, 0,    TankBlaster,
     ai_charge, 0,    NULL,
     ai_charge, 0,    NULL,
-    ai_charge, 0,    TankBlaster			// 16
+    ai_charge, 0,    TankBlaster            // 16
 };
 mmove_t tank_move_attack_blast = {FRAME_attak101, FRAME_attak116, tank_frames_attack_blast, tank_reattack_blaster};
 
@@ -449,31 +449,31 @@ mframe_t tank_frames_reattack_blast [] =
     ai_charge, 0,    TankBlaster,
     ai_charge, 0,    NULL,
     ai_charge, 0,    NULL,
-    ai_charge, 0,    TankBlaster			// 16
+    ai_charge, 0,    TankBlaster            // 16
 };
 mmove_t tank_move_reattack_blast = {FRAME_attak111, FRAME_attak116, tank_frames_reattack_blast, tank_reattack_blaster};
 
 mframe_t tank_frames_attack_post_blast [] =
 {
-    ai_move, 0,	    NULL,				// 17
-    ai_move, 0,	    NULL,
-    ai_move, 2,	    NULL,
-    ai_move, 3,	    NULL,
-    ai_move, 2,	    NULL,
-    ai_move, -2,    tank_footstep		// 22
+    ai_move, 0,        NULL,                // 17
+    ai_move, 0,        NULL,
+    ai_move, 2,        NULL,
+    ai_move, 3,        NULL,
+    ai_move, 2,        NULL,
+    ai_move, -2,    tank_footstep        // 22
 };
 mmove_t tank_move_attack_post_blast = {FRAME_attak117, FRAME_attak122, tank_frames_attack_post_blast, tank_run};
 
 void tank_reattack_blaster (edict *self)
 {
     if (skill->value >= 2)
-	    if (visible (self, self->enemy))
-		    if (self->enemy->health > 0)
-			    if (random() <= 0.6)
-				{
-				    self->monsterinfo.currentmove = &tank_move_reattack_blast;
-				    return;
-				}
+        if (visible (self, self->enemy))
+            if (self->enemy->health > 0)
+                if (random() <= 0.6)
+                {
+                    self->monsterinfo.currentmove = &tank_move_reattack_blast;
+                    return;
+                }
     self->monsterinfo.currentmove = &tank_move_attack_post_blast;
 }
 
@@ -538,7 +538,7 @@ mframe_t tank_frames_attack_pre_rocket [] =
     ai_charge, 0,  NULL,
     ai_charge, 0,  NULL,
     ai_charge, 0,  NULL,
-    ai_charge, 0,  NULL,			// 10
+    ai_charge, 0,  NULL,            // 10
 
     ai_charge, 0,  NULL,
     ai_charge, 1,  NULL,
@@ -549,7 +549,7 @@ mframe_t tank_frames_attack_pre_rocket [] =
     ai_charge, 0,  NULL,
     ai_charge, 0,  NULL,
     ai_charge, 0,  NULL,
-    ai_charge, 0,  NULL,			// 20
+    ai_charge, 0,  NULL,            // 20
 
     ai_charge, -3, NULL
 };
@@ -557,21 +557,21 @@ mmove_t tank_move_attack_pre_rocket = {FRAME_attak301, FRAME_attak321, tank_fram
 
 mframe_t tank_frames_attack_fire_rocket [] =
 {
-    ai_charge, -3, NULL,			// Loop Start    22
+    ai_charge, -3, NULL,            // Loop Start    22
     ai_charge, 0,  NULL,
-    ai_charge, 0,  TankRocket,		// 24
+    ai_charge, 0,  TankRocket,        // 24
     ai_charge, 0,  NULL,
     ai_charge, 0,  NULL,
     ai_charge, 0,  TankRocket,
     ai_charge, 0,  NULL,
     ai_charge, 0,  NULL,
-    ai_charge, -1, TankRocket		// 30    Loop End
+    ai_charge, -1, TankRocket        // 30    Loop End
 };
 mmove_t tank_move_attack_fire_rocket = {FRAME_attak322, FRAME_attak330, tank_frames_attack_fire_rocket, tank_refire_rocket};
 
 mframe_t tank_frames_attack_post_rocket [] =
 {
-    ai_charge, 0,  NULL,			// 31
+    ai_charge, 0,  NULL,            // 31
     ai_charge, -1, NULL,
     ai_charge, -1, NULL,
     ai_charge, 0,  NULL,
@@ -580,7 +580,7 @@ mframe_t tank_frames_attack_post_rocket [] =
     ai_charge, 4,  NULL,
     ai_charge, 2,  NULL,
     ai_charge, 0,  NULL,
-    ai_charge, 0,  NULL,			// 40
+    ai_charge, 0,  NULL,            // 40
 
     ai_charge, 0,  NULL,
     ai_charge, -9, NULL,
@@ -591,7 +591,7 @@ mframe_t tank_frames_attack_post_rocket [] =
     ai_charge, 0,  NULL,
     ai_charge, 0,  NULL,
     ai_charge, 0,  NULL,
-    ai_charge, 0,  NULL,			// 50
+    ai_charge, 0,  NULL,            // 50
 
     ai_charge, 0,  NULL,
     ai_charge, 0,  NULL,
@@ -635,15 +635,15 @@ mmove_t tank_move_attack_chain = {FRAME_attak401, FRAME_attak429, tank_frames_at
 
 void tank_refire_rocket (edict *self)
 {
-	// Only on hard or nightmare
+    // Only on hard or nightmare
     if ( skill->value >= 2 )
-	    if (self->enemy->health > 0)
-		    if (visible(self, self->enemy) )
-			    if (random() <= 0.4)
-				{
-				    self->monsterinfo.currentmove = &tank_move_attack_fire_rocket;
-				    return;
-				}
+        if (self->enemy->health > 0)
+            if (visible(self, self->enemy) )
+                if (random() <= 0.4)
+                {
+                    self->monsterinfo.currentmove = &tank_move_attack_fire_rocket;
+                    return;
+                }
     self->monsterinfo.currentmove = &tank_move_attack_post_rocket;
 }
 
@@ -659,11 +659,11 @@ void tank_attack(edict *self)
     float    r;
 
     if (self->enemy->health < 0)
-	{
-	    self->monsterinfo.currentmove = &tank_move_attack_strike;
-	    self->monsterinfo.aiflags &= ~AI_BRUTAL;
-	    return;
-	}
+    {
+        self->monsterinfo.currentmove = &tank_move_attack_strike;
+        self->monsterinfo.aiflags &= ~AI_BRUTAL;
+        return;
+    }
 
     VectorSubtract (self->enemy->s.origin, self->s.origin, vec);
     range = VectorLength (vec);
@@ -671,31 +671,31 @@ void tank_attack(edict *self)
     r = random();
 
     if (range <= 125)
-	{
-	    if (r < 0.4)
-		    self->monsterinfo.currentmove = &tank_move_attack_chain;
-	    else
-		    self->monsterinfo.currentmove = &tank_move_attack_blast;
-	}
+    {
+        if (r < 0.4)
+            self->monsterinfo.currentmove = &tank_move_attack_chain;
+        else
+            self->monsterinfo.currentmove = &tank_move_attack_blast;
+    }
     else if (range <= 250)
-	{
-	    if (r < 0.5)
-		    self->monsterinfo.currentmove = &tank_move_attack_chain;
-	    else
-		    self->monsterinfo.currentmove = &tank_move_attack_blast;
-	}
+    {
+        if (r < 0.5)
+            self->monsterinfo.currentmove = &tank_move_attack_chain;
+        else
+            self->monsterinfo.currentmove = &tank_move_attack_blast;
+    }
     else
-	{
-	    if (r < 0.33)
-		    self->monsterinfo.currentmove = &tank_move_attack_chain;
-	    else if (r < 0.66)
-		{
-		    self->monsterinfo.currentmove = &tank_move_attack_pre_rocket;
-		    self->pain_debounce_time = level.time + 5.0;	// no pain for a while
-		}
-	    else
-		    self->monsterinfo.currentmove = &tank_move_attack_blast;
-	}
+    {
+        if (r < 0.33)
+            self->monsterinfo.currentmove = &tank_move_attack_chain;
+        else if (r < 0.66)
+        {
+            self->monsterinfo.currentmove = &tank_move_attack_pre_rocket;
+            self->pain_debounce_time = level.time + 5.0;    // no pain for a while
+        }
+        else
+            self->monsterinfo.currentmove = &tank_move_attack_blast;
+    }
 }
 
 
@@ -752,24 +752,24 @@ mmove_t    tank_move_death = {FRAME_death101, FRAME_death132, tank_frames_death1
 
 void tank_die (edict *self, edict *inflictor, edict *attacker, int damage, vec3_t point)
 {
-    int	    n;
+    int        n;
 
 // check for gib
     if (self->health <= self->gib_health)
-	{
-	    gi.sound (self, CHAN_VOICE, gi.soundindex ("misc/udeath.wav"), 1, ATTN_NORM, 0);
-	    for (n= 0; n < 1 /*4*/; n++)
-		    ThrowGib (self, "models/objects/gibs/sm_meat/tris.md2", damage, GIB_ORGANIC);
-	    for (n= 0; n < 4; n++)
-		    ThrowGib (self, "models/objects/gibs/sm_metal/tris.md2", damage, GIB_METALLIC);
-	    ThrowGib (self, "models/objects/gibs/chest/tris.md2", damage, GIB_ORGANIC);
-	    ThrowHead (self, "models/objects/gibs/gear/tris.md2", damage, GIB_METALLIC);
-	    self->deadflag = DEAD_DEAD;
-	    return;
-	}
+    {
+        gi.sound (self, CHAN_VOICE, gi.soundindex ("misc/udeath.wav"), 1, ATTN_NORM, 0);
+        for (n= 0; n < 1 /*4*/; n++)
+            ThrowGib (self, "models/objects/gibs/sm_meat/tris.md2", damage, GIB_ORGANIC);
+        for (n= 0; n < 4; n++)
+            ThrowGib (self, "models/objects/gibs/sm_metal/tris.md2", damage, GIB_METALLIC);
+        ThrowGib (self, "models/objects/gibs/chest/tris.md2", damage, GIB_ORGANIC);
+        ThrowHead (self, "models/objects/gibs/gear/tris.md2", damage, GIB_METALLIC);
+        self->deadflag = DEAD_DEAD;
+        return;
+    }
 
     if (self->deadflag == DEAD_DEAD)
-	    return;
+        return;
 
 // regular death
     gi.sound (self, CHAN_VOICE, sound_die, 1, ATTN_NORM, 0);
@@ -792,10 +792,10 @@ void tank_die (edict *self, edict *inflictor, edict *attacker, int damage, vec3_
 void SP_monster_tank (edict *self)
 {
     if (deathmatch->value)
-	{
-	    G_FreeEdict (self);
-	    return;
-	}
+    {
+        G_FreeEdict (self);
+        return;
+    }
 
     self->s.modelindex = gi.modelindex ("models/monsters/tank/tris.md2");
     VectorSet (self->mins, -32, -32, -16);
@@ -821,15 +821,15 @@ void SP_monster_tank (edict *self)
     gi.soundindex ("tank/tnkatck3.wav");
 
     if (strcmp(self->classname, "monster_tank_commander") == 0)
-	{
-	    self->health = 1000;
-	    self->gib_health = -225;
-	}
+    {
+        self->health = 1000;
+        self->gib_health = -225;
+    }
     else
-	{
-	    self->health = 750;
-	    self->gib_health = -200;
-	}
+    {
+        self->health = 750;
+        self->gib_health = -200;
+    }
 
     self->mass = 500;
 
@@ -852,5 +852,5 @@ void SP_monster_tank (edict *self)
     walkmonster_start(self);
 
     if (strcmp(self->classname, "monster_tank_commander") == 0)
-	    self->s.skinnum = 2;
+        self->s.skinnum = 2;
 }

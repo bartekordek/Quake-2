@@ -361,11 +361,11 @@ void ED_ParseField (char *key, char *value, edict *ent)
     for (f=fields ;! f->name.empty() ; f++)
     {
         if(
-			!(f->flags & FFL_NOSPAWN) &&
-			!Q_stricmp(
-				const_cast<char*>(f->name.c_str()),
-				key )
-		)
+            !(f->flags & FFL_NOSPAWN) &&
+            !Q_stricmp(
+                const_cast<char*>(f->name.c_str()),
+                key )
+        )
         {    // found it
             if (f->flags & FFL_SPAWNTEMP)
                 b = (byte *)&st;

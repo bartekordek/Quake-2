@@ -39,21 +39,21 @@ extern void    R_ClipAndDrawPoly( float alpha, bool isturbulent, bool textured )
 */
 void R_DrawSprite (void)
 {
-    vec5_t		*pverts;
-    vec3_t	    left, up, right, down;
-    dsprite_t	*s_psprite;
-    dsprframe_t	*s_psprframe;
+    vec5_t        *pverts;
+    vec3_t        left, up, right, down;
+    dsprite_t    *s_psprite;
+    dsprframe_t    *s_psprframe;
 
 
     s_psprite = (dsprite_t *)currentmodel->extradata;
 #if 0
     if (currententity->frame >= s_psprite->numframes
-		|| currententity->frame < 0)
-	{
-	    ri.Con_Printf (PRINT_ALL, "No such sprite frame %i\n",
-		    currententity->frame);
-	    currententity->frame = 0;
-	}
+        || currententity->frame < 0)
+    {
+        ri.Con_Printf (PRINT_ALL, "No such sprite frame %i\n",
+            currententity->frame);
+        currententity->frame = 0;
+    }
 #endif
     currententity->frame %= s_psprite->numframes;
 
@@ -64,22 +64,22 @@ void R_DrawSprite (void)
     r_polydesc.pixel_height = s_psprframe->height;
     r_polydesc.dist         = 0;
 
-	// generate the sprite's axes, completely parallel to the viewplane.
+    // generate the sprite's axes, completely parallel to the viewplane.
     VectorCopy (vup, r_polydesc.vup);
     VectorCopy (vright, r_polydesc.vright);
     VectorCopy (vpn, r_polydesc.vpn);
 
 // build the sprite poster in worldspace
     VectorScale (r_polydesc.vright,
-	    s_psprframe->width - s_psprframe->origin_x, right);
+        s_psprframe->width - s_psprframe->origin_x, right);
     VectorScale (r_polydesc.vup,
-	    s_psprframe->height - s_psprframe->origin_y, up);
+        s_psprframe->height - s_psprframe->origin_y, up);
     VectorScale (r_polydesc.vright,
-		-s_psprframe->origin_x, left);
+        -s_psprframe->origin_x, left);
     VectorScale (r_polydesc.vup,
-		-s_psprframe->origin_y, down);
+        -s_psprframe->origin_y, down);
 
-	// invert UP vector for sprites
+    // invert UP vector for sprites
     VectorInverse( r_polydesc.vup );
 
     pverts = r_clip_verts[0];
@@ -115,9 +115,9 @@ void R_DrawSprite (void)
 
     r_polydesc.stipple_parity = 1;
     if ( currententity->flags & RF_TRANSLUCENT )
-	    R_ClipAndDrawPoly ( currententity->alpha, false, true );
+        R_ClipAndDrawPoly ( currententity->alpha, false, true );
     else
-	    R_ClipAndDrawPoly ( 1.0F, false, true );
+        R_ClipAndDrawPoly ( 1.0F, false, true );
     r_polydesc.stipple_parity = 0;
 }
 

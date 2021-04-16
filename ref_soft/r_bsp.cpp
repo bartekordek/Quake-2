@@ -24,29 +24,29 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //
 // current entity info
 //
-bool	    insubmodel;
-entity_t		*currententity;
-vec3_t		    modelorg;		// modelorg is the viewpoint reletive to
-								// the currently rendering entity
-vec3_t		    r_entorigin;	// the currently rendering entity in world
-								// coordinates
+bool        insubmodel;
+entity_t        *currententity;
+vec3_t            modelorg;        // modelorg is the viewpoint reletive to
+                                // the currently rendering entity
+vec3_t            r_entorigin;    // the currently rendering entity in world
+                                // coordinates
 
-float		    entity_rotation[3][3];
+float            entity_rotation[3][3];
 
-int			    r_currentbkey;
+int                r_currentbkey;
 
 typedef enum {touchessolid, drawnode, nodrawnode} solidstate_t;
 
-#define MAX_BMODEL_VERTS    500			// 6K
-#define MAX_BMODEL_EDGES    1000		// 12K
+#define MAX_BMODEL_VERTS    500            // 6K
+#define MAX_BMODEL_EDGES    1000        // 12K
 
-static mvertex_t	*pbverts;
-static bedge_t		*pbedges;
-static int		    numbverts, numbedges;
+static mvertex_t    *pbverts;
+static bedge_t        *pbedges;
+static int            numbverts, numbedges;
 
-static mvertex_t	*pfrontenter, *pfrontexit;
+static mvertex_t    *pfrontenter, *pfrontexit;
 
-static bool	    makeclippededge;
+static bool        makeclippededge;
 
 
 //===========================================================================
@@ -155,13 +155,13 @@ Clip a bmodel poly down the world bsp tree
 */
 void R_RecursiveClipBPoly (bedge_t *pedges, mnode_t *pnode, msurface_t *psurf)
 {
-    bedge_t		*psideedges[2], *pnextedge, *ptedge;
-    int		    i, side, lastside;
-    float	    dist, frac, lastdist;
-    plane_t	*splitplane, tplane;
-    mvertex_t	*pvert, *plastvert, *ptvert;
-    mnode_t		*pn;
-    int		    area;
+    bedge_t        *psideedges[2], *pnextedge, *ptedge;
+    int            i, side, lastside;
+    float        dist, frac, lastdist;
+    plane_t    *splitplane, tplane;
+    mvertex_t    *pvert, *plastvert, *ptvert;
+    mnode_t        *pn;
+    int            area;
 
     psideedges[0] = psideedges[1] = NULL;
 
@@ -171,158 +171,158 @@ void R_RecursiveClipBPoly (bedge_t *pedges, mnode_t *pnode, msurface_t *psurf)
 // FIXME: cache these?
     splitplane = pnode->plane;
     tplane.dist = splitplane->dist -
-		    DotProduct(r_entorigin, splitplane->normal);
+            DotProduct(r_entorigin, splitplane->normal);
     tplane.normal[0] = DotProduct (entity_rotation[0], splitplane->normal);
     tplane.normal[1] = DotProduct (entity_rotation[1], splitplane->normal);
     tplane.normal[2] = DotProduct (entity_rotation[2], splitplane->normal);
 
 // clip edges to BSP plane
     for ( ; pedges ; pedges = pnextedge)
-	{
-	    pnextedge = pedges->pnext;
+    {
+        pnextedge = pedges->pnext;
 
-	// set the status for the last point as the previous point
-	// FIXME: cache this stuff somehow?
-	    plastvert = pedges->v[0];
-	    lastdist = DotProduct (plastvert->position, tplane.normal) -
-				   tplane.dist;
+    // set the status for the last point as the previous point
+    // FIXME: cache this stuff somehow?
+        plastvert = pedges->v[0];
+        lastdist = DotProduct (plastvert->position, tplane.normal) -
+                   tplane.dist;
 
-	    if (lastdist > 0)
-		    lastside = 0;
-	    else
-		    lastside = 1;
+        if (lastdist > 0)
+            lastside = 0;
+        else
+            lastside = 1;
 
-	    pvert = pedges->v[1];
+        pvert = pedges->v[1];
 
-	    dist = DotProduct (pvert->position, tplane.normal) - tplane.dist;
+        dist = DotProduct (pvert->position, tplane.normal) - tplane.dist;
 
-	    if (dist > 0)
-		    side = 0;
-	    else
-		    side = 1;
+        if (dist > 0)
+            side = 0;
+        else
+            side = 1;
 
-	    if (side != lastside)
-		{
-		// clipped
-		    if (numbverts >= MAX_BMODEL_VERTS)
-			    return;
+        if (side != lastside)
+        {
+        // clipped
+            if (numbverts >= MAX_BMODEL_VERTS)
+                return;
 
-		// generate the clipped vertex
-		    frac = lastdist / (lastdist - dist);
-		    ptvert = &pbverts[numbverts++];
-		    ptvert->position[0] = plastvert->position[0] +
-				    frac * (pvert->position[0] -
-				    plastvert->position[0]);
-		    ptvert->position[1] = plastvert->position[1] +
-				    frac * (pvert->position[1] -
-				    plastvert->position[1]);
-		    ptvert->position[2] = plastvert->position[2] +
-				    frac * (pvert->position[2] -
-				    plastvert->position[2]);
+        // generate the clipped vertex
+            frac = lastdist / (lastdist - dist);
+            ptvert = &pbverts[numbverts++];
+            ptvert->position[0] = plastvert->position[0] +
+                    frac * (pvert->position[0] -
+                    plastvert->position[0]);
+            ptvert->position[1] = plastvert->position[1] +
+                    frac * (pvert->position[1] -
+                    plastvert->position[1]);
+            ptvert->position[2] = plastvert->position[2] +
+                    frac * (pvert->position[2] -
+                    plastvert->position[2]);
 
-		// split into two edges, one on each side, and remember entering
-		// and exiting points
-		// FIXME: share the clip edge by having a winding direction flag?
-		    if (numbedges >= (MAX_BMODEL_EDGES - 1))
-			{
-			    ri.Con_Printf (PRINT_ALL,"Out of edges for bmodel\n");
-			    return;
-			}
+        // split into two edges, one on each side, and remember entering
+        // and exiting points
+        // FIXME: share the clip edge by having a winding direction flag?
+            if (numbedges >= (MAX_BMODEL_EDGES - 1))
+            {
+                ri.Con_Printf (PRINT_ALL,"Out of edges for bmodel\n");
+                return;
+            }
 
-		    ptedge = &pbedges[numbedges];
-		    ptedge->pnext = psideedges[lastside];
-		    psideedges[lastside] = ptedge;
-		    ptedge->v[0] = plastvert;
-		    ptedge->v[1] = ptvert;
+            ptedge = &pbedges[numbedges];
+            ptedge->pnext = psideedges[lastside];
+            psideedges[lastside] = ptedge;
+            ptedge->v[0] = plastvert;
+            ptedge->v[1] = ptvert;
 
-		    ptedge = &pbedges[numbedges + 1];
-		    ptedge->pnext = psideedges[side];
-		    psideedges[side] = ptedge;
-		    ptedge->v[0] = ptvert;
-		    ptedge->v[1] = pvert;
+            ptedge = &pbedges[numbedges + 1];
+            ptedge->pnext = psideedges[side];
+            psideedges[side] = ptedge;
+            ptedge->v[0] = ptvert;
+            ptedge->v[1] = pvert;
 
-		    numbedges += 2;
+            numbedges += 2;
 
-		    if (side == 0)
-			{
-			// entering for front, exiting for back
-			    pfrontenter = ptvert;
-			    makeclippededge = true;
-			}
-		    else
-			{
-			    pfrontexit = ptvert;
-			    makeclippededge = true;
-			}
-		}
-	    else
-		{
-		// add the edge to the appropriate side
-		    pedges->pnext = psideedges[side];
-		    psideedges[side] = pedges;
-		}
-	}
+            if (side == 0)
+            {
+            // entering for front, exiting for back
+                pfrontenter = ptvert;
+                makeclippededge = true;
+            }
+            else
+            {
+                pfrontexit = ptvert;
+                makeclippededge = true;
+            }
+        }
+        else
+        {
+        // add the edge to the appropriate side
+            pedges->pnext = psideedges[side];
+            psideedges[side] = pedges;
+        }
+    }
 
 // if anything was clipped, reconstitute and add the edges along the clip
 // plane to both sides (but in opposite directions)
     if (makeclippededge)
-	{
-	    if (numbedges >= (MAX_BMODEL_EDGES - 2))
-		{
-		    ri.Con_Printf (PRINT_ALL,"Out of edges for bmodel\n");
-		    return;
-		}
+    {
+        if (numbedges >= (MAX_BMODEL_EDGES - 2))
+        {
+            ri.Con_Printf (PRINT_ALL,"Out of edges for bmodel\n");
+            return;
+        }
 
-	    ptedge = &pbedges[numbedges];
-	    ptedge->pnext = psideedges[0];
-	    psideedges[0] = ptedge;
-	    ptedge->v[0] = pfrontexit;
-	    ptedge->v[1] = pfrontenter;
+        ptedge = &pbedges[numbedges];
+        ptedge->pnext = psideedges[0];
+        psideedges[0] = ptedge;
+        ptedge->v[0] = pfrontexit;
+        ptedge->v[1] = pfrontenter;
 
-	    ptedge = &pbedges[numbedges + 1];
-	    ptedge->pnext = psideedges[1];
-	    psideedges[1] = ptedge;
-	    ptedge->v[0] = pfrontenter;
-	    ptedge->v[1] = pfrontexit;
+        ptedge = &pbedges[numbedges + 1];
+        ptedge->pnext = psideedges[1];
+        psideedges[1] = ptedge;
+        ptedge->v[0] = pfrontenter;
+        ptedge->v[1] = pfrontexit;
 
-	    numbedges += 2;
-	}
+        numbedges += 2;
+    }
 
 // draw or recurse further
     for (i=0 ; i<2 ; i++)
-	{
-	    if (psideedges[i])
-		{
-		// draw if we've reached a non-solid leaf, done if all that's left is a
-		// solid leaf, and continue down the tree if it's not a leaf
-		    pn = pnode->children[i];
+    {
+        if (psideedges[i])
+        {
+        // draw if we've reached a non-solid leaf, done if all that's left is a
+        // solid leaf, and continue down the tree if it's not a leaf
+            pn = pnode->children[i];
 
-		// we're done with this branch if the node or leaf isn't in the PVS
-		    if (pn->visframe == r_visframecount)
-			{
-			    if (pn->contents != CONTENTS_NODE)
-				{
-				    if (pn->contents != CONTENTS_SOLID)
-					{
-					    if (r_newrefdef.areabits)
-						{
-						    area = ((mleaf_t *)pn)->area;
-						    if (! (r_newrefdef.areabits[area>>3] & (1<<(area&7)) ) )
-							    continue;		// not visible
-						}
+        // we're done with this branch if the node or leaf isn't in the PVS
+            if (pn->visframe == r_visframecount)
+            {
+                if (pn->contents != CONTENTS_NODE)
+                {
+                    if (pn->contents != CONTENTS_SOLID)
+                    {
+                        if (r_newrefdef.areabits)
+                        {
+                            area = ((mleaf_t *)pn)->area;
+                            if (! (r_newrefdef.areabits[area>>3] & (1<<(area&7)) ) )
+                                continue;        // not visible
+                        }
 
-					    r_currentbkey = ((mleaf_t *)pn)->key;
-					    ref_soft_R_RenderBmodelFace (psideedges[i], psurf);
-					}
-				}
-			    else
-				{
-				    R_RecursiveClipBPoly (psideedges[i], pnode->children[i],
-									  psurf);
-				}
-			}
-		}
-	}
+                        r_currentbkey = ((mleaf_t *)pn)->key;
+                        ref_soft_R_RenderBmodelFace (psideedges[i], psurf);
+                    }
+                }
+                else
+                {
+                    R_RecursiveClipBPoly (psideedges[i], pnode->children[i],
+                                      psurf);
+                }
+            }
+        }
+    }
 }
 
 
@@ -335,14 +335,14 @@ Bmodel crosses multiple leafs
 */
 void R_DrawSolidClippedSubmodelPolygons (model_t *pmodel, mnode_t *topnode)
 {
-    int		    i, j, lindex;
-    vec_t	    dot;
-    msurface_t	*psurf;
-    int		    numsurfaces;
-    plane_t	*pplane;
+    int            i, j, lindex;
+    vec_t        dot;
+    msurface_t    *psurf;
+    int            numsurfaces;
+    plane_t    *pplane;
     mvertex_t    bverts[MAX_BMODEL_VERTS];
-    bedge_t	    bedges[MAX_BMODEL_EDGES], *pbedge;
-    medge_t		*pedge, *pedges;
+    bedge_t        bedges[MAX_BMODEL_EDGES], *pbedge;
+    medge_t        *pedge, *pedges;
 
 // FIXME: use bounding-box-based frustum clipping info?
 
@@ -351,57 +351,57 @@ void R_DrawSolidClippedSubmodelPolygons (model_t *pmodel, mnode_t *topnode)
     pedges = pmodel->edges;
 
     for (i=0 ; i<numsurfaces ; i++, psurf++)
-	{
-	// find which side of the node we are on
-	    pplane = psurf->plane;
+    {
+    // find which side of the node we are on
+        pplane = psurf->plane;
 
-	    dot = DotProduct (modelorg, pplane->normal) - pplane->dist;
+        dot = DotProduct (modelorg, pplane->normal) - pplane->dist;
 
-	// draw the polygon
-	    if (( !(psurf->flags & SURF_PLANEBACK) && (dot < -BACKFACE_EPSILON)) ||
-			((psurf->flags & SURF_PLANEBACK) && (dot > BACKFACE_EPSILON)))
-		    continue;
+    // draw the polygon
+        if (( !(psurf->flags & SURF_PLANEBACK) && (dot < -BACKFACE_EPSILON)) ||
+            ((psurf->flags & SURF_PLANEBACK) && (dot > BACKFACE_EPSILON)))
+            continue;
 
-	// FIXME: use bounding-box-based frustum clipping info?
+    // FIXME: use bounding-box-based frustum clipping info?
 
-	// copy the edges to bedges, flipping if necessary so always
-	// clockwise winding
-	// FIXME: if edges and vertices get caches, these assignments must move
-	// outside the loop, and overflow checking must be done here
-	    pbverts = bverts;
-	    pbedges = bedges;
-	    numbverts = numbedges = 0;
-	    pbedge = &bedges[numbedges];
-	    numbedges += psurf->numedges;
+    // copy the edges to bedges, flipping if necessary so always
+    // clockwise winding
+    // FIXME: if edges and vertices get caches, these assignments must move
+    // outside the loop, and overflow checking must be done here
+        pbverts = bverts;
+        pbedges = bedges;
+        numbverts = numbedges = 0;
+        pbedge = &bedges[numbedges];
+        numbedges += psurf->numedges;
 
-	    for (j=0 ; j<psurf->numedges ; j++)
-		{
-		   lindex = pmodel->surfedges[psurf->firstedge+j];
+        for (j=0 ; j<psurf->numedges ; j++)
+        {
+           lindex = pmodel->surfedges[psurf->firstedge+j];
 
-		    if (lindex > 0)
-			{
-			    pedge = &pedges[lindex];
-			    pbedge[j].v[0] = &r_pcurrentvertbase[pedge->v[0]];
-			    pbedge[j].v[1] = &r_pcurrentvertbase[pedge->v[1]];
-			}
-		    else
-			{
-			    lindex = -lindex;
-			    pedge = &pedges[lindex];
-			    pbedge[j].v[0] = &r_pcurrentvertbase[pedge->v[1]];
-			    pbedge[j].v[1] = &r_pcurrentvertbase[pedge->v[0]];
-			}
+            if (lindex > 0)
+            {
+                pedge = &pedges[lindex];
+                pbedge[j].v[0] = &r_pcurrentvertbase[pedge->v[0]];
+                pbedge[j].v[1] = &r_pcurrentvertbase[pedge->v[1]];
+            }
+            else
+            {
+                lindex = -lindex;
+                pedge = &pedges[lindex];
+                pbedge[j].v[0] = &r_pcurrentvertbase[pedge->v[1]];
+                pbedge[j].v[1] = &r_pcurrentvertbase[pedge->v[0]];
+            }
 
-		    pbedge[j].pnext = &pbedge[j+1];
-		}
+            pbedge[j].pnext = &pbedge[j+1];
+        }
 
-	    pbedge[j-1].pnext = NULL;	// mark end of edges
+        pbedge[j-1].pnext = NULL;    // mark end of edges
 
-	    if ( !( psurf->texinfo->flags & ( SURF_TRANS66 | SURF_TRANS33 ) ) )
-		    R_RecursiveClipBPoly (pbedge, topnode, psurf);
-	    else
-		    ref_soft_R_RenderBmodelFace( pbedge, psurf );
-	}
+        if ( !( psurf->texinfo->flags & ( SURF_TRANS66 | SURF_TRANS33 ) ) )
+            R_RecursiveClipBPoly (pbedge, topnode, psurf);
+        else
+            ref_soft_R_RenderBmodelFace( pbedge, psurf );
+    }
 }
 
 
@@ -414,11 +414,11 @@ All in one leaf
 */
 void R_DrawSubmodelPolygons (model_t *pmodel, int clipflags, mnode_t *topnode)
 {
-    int		    i;
-    vec_t	    dot;
-    msurface_t	*psurf;
-    int		    numsurfaces;
-    plane_t	*pplane;
+    int            i;
+    vec_t        dot;
+    msurface_t    *psurf;
+    int            numsurfaces;
+    plane_t    *pplane;
 
 // FIXME: use bounding-box-based frustum clipping info?
 
@@ -426,22 +426,22 @@ void R_DrawSubmodelPolygons (model_t *pmodel, int clipflags, mnode_t *topnode)
     numsurfaces = pmodel->nummodelsurfaces;
 
     for (i=0 ; i<numsurfaces ; i++, psurf++)
-	{
-	// find which side of the node we are on
-	    pplane = psurf->plane;
+    {
+    // find which side of the node we are on
+        pplane = psurf->plane;
 
-	    dot = DotProduct (modelorg, pplane->normal) - pplane->dist;
+        dot = DotProduct (modelorg, pplane->normal) - pplane->dist;
 
-	// draw the polygon
-	    if (((psurf->flags & SURF_PLANEBACK) && (dot < -BACKFACE_EPSILON)) ||
-			(!(psurf->flags & SURF_PLANEBACK) && (dot > BACKFACE_EPSILON)))
-		{
-		    r_currentkey = ((mleaf_t *)topnode)->key;
+    // draw the polygon
+        if (((psurf->flags & SURF_PLANEBACK) && (dot < -BACKFACE_EPSILON)) ||
+            (!(psurf->flags & SURF_PLANEBACK) && (dot > BACKFACE_EPSILON)))
+        {
+            r_currentkey = ((mleaf_t *)topnode)->key;
 
-		// FIXME: use bounding-box-based frustum clipping info?
-		    ref_soft_R_RenderFace (psurf, clipflags);
-		}
-	}
+        // FIXME: use bounding-box-based frustum clipping info?
+            ref_soft_R_RenderFace (psurf, clipflags);
+        }
+    }
 }
 
 
@@ -449,156 +449,156 @@ int c_drawnode;
 
 void ref_soft_R_RecursiveWorldNode (mnode_t *node, int clipflags)
 {
-    int		    i, c, side, *pindex;
-    vec3_t	    acceptpt, rejectpt;
-    plane_t	*plane;
-    msurface_t	*surf, **mark;
-    float	    d, dot;
-    mleaf_t		*pleaf;
+    int            i, c, side, *pindex;
+    vec3_t        acceptpt, rejectpt;
+    plane_t    *plane;
+    msurface_t    *surf, **mark;
+    float        d, dot;
+    mleaf_t        *pleaf;
 
     if (node->contents == CONTENTS_SOLID)
-	    return;		// solid
+        return;        // solid
 
     if (node->visframe != r_visframecount)
-	    return;
+        return;
 
 // cull the clipping planes if not trivial accept
 // FIXME: the compiler is doing a lousy job of optimizing here; it could be
 //  twice as fast in ASM
     if (clipflags)
-	{
-	    for (i=0 ; i<4 ; i++)
-		{
-		    if (! (clipflags & (1<<i)) )
-			    continue;	// don't need to clip against it
+    {
+        for (i=0 ; i<4 ; i++)
+        {
+            if (! (clipflags & (1<<i)) )
+                continue;    // don't need to clip against it
 
-		// generate accept and reject points
-		// FIXME: do with fast look-ups or integer tests based on the sign bit
-		// of the floating point values
+        // generate accept and reject points
+        // FIXME: do with fast look-ups or integer tests based on the sign bit
+        // of the floating point values
 
-		    pindex = pfrustum_indexes[i];
+            pindex = pfrustum_indexes[i];
 
-		    rejectpt[0] = (float)node->minmaxs[pindex[0]];
-		    rejectpt[1] = (float)node->minmaxs[pindex[1]];
-		    rejectpt[2] = (float)node->minmaxs[pindex[2]];
+            rejectpt[0] = (float)node->minmaxs[pindex[0]];
+            rejectpt[1] = (float)node->minmaxs[pindex[1]];
+            rejectpt[2] = (float)node->minmaxs[pindex[2]];
 
-		    d = DotProduct (rejectpt, view_clipplanes[i].normal);
-		    d -= view_clipplanes[i].dist;
-		    if (d <= 0)
-			    return;
-		    acceptpt[0] = (float)node->minmaxs[pindex[3+0]];
-		    acceptpt[1] = (float)node->minmaxs[pindex[3+1]];
-		    acceptpt[2] = (float)node->minmaxs[pindex[3+2]];
+            d = DotProduct (rejectpt, view_clipplanes[i].normal);
+            d -= view_clipplanes[i].dist;
+            if (d <= 0)
+                return;
+            acceptpt[0] = (float)node->minmaxs[pindex[3+0]];
+            acceptpt[1] = (float)node->minmaxs[pindex[3+1]];
+            acceptpt[2] = (float)node->minmaxs[pindex[3+2]];
 
-		    d = DotProduct (acceptpt, view_clipplanes[i].normal);
-		    d -= view_clipplanes[i].dist;
+            d = DotProduct (acceptpt, view_clipplanes[i].normal);
+            d -= view_clipplanes[i].dist;
 
-		    if (d >= 0)
-			    clipflags &= ~(1<<i);	// node is entirely on screen
-		}
-	}
+            if (d >= 0)
+                clipflags &= ~(1<<i);    // node is entirely on screen
+        }
+    }
 
 c_drawnode++;
 
 // if a leaf node, draw stuff
     if (node->contents != -1)
-	{
-	    pleaf = (mleaf_t *)node;
+    {
+        pleaf = (mleaf_t *)node;
 
-		// check for door connected areas
-	    if (r_newrefdef.areabits)
-		{
-		    if (! (r_newrefdef.areabits[pleaf->area>>3] & (1<<(pleaf->area&7)) ) )
-			    return;		// not visible
-		}
+        // check for door connected areas
+        if (r_newrefdef.areabits)
+        {
+            if (! (r_newrefdef.areabits[pleaf->area>>3] & (1<<(pleaf->area&7)) ) )
+                return;        // not visible
+        }
 
-	    mark = pleaf->firstmarksurface;
-	    c = pleaf->nummarksurfaces;
+        mark = pleaf->firstmarksurface;
+        c = pleaf->nummarksurfaces;
 
-	    if (c)
-		{
-		    do
-			{
-				(*mark)->visframe = r_framecount;
-			    mark++;
-			} while (--c);
-		}
+        if (c)
+        {
+            do
+            {
+                (*mark)->visframe = r_framecount;
+                mark++;
+            } while (--c);
+        }
 
-	    pleaf->key = r_currentkey;
-	    r_currentkey++;		// all bmodels in a leaf share the same key
-	}
+        pleaf->key = r_currentkey;
+        r_currentkey++;        // all bmodels in a leaf share the same key
+    }
     else
-	{
-	// node is just a decision point, so go down the apropriate sides
+    {
+    // node is just a decision point, so go down the apropriate sides
 
-	// find which side of the node we are on
-	    plane = node->plane;
+    // find which side of the node we are on
+        plane = node->plane;
 
-	    switch (plane->type)
-		{
-	    case PLANE_X:
-		    dot = modelorg[0] - plane->dist;
-		    break;
-	    case PLANE_Y:
-		    dot = modelorg[1] - plane->dist;
-		    break;
-	    case PLANE_Z:
-		    dot = modelorg[2] - plane->dist;
-		    break;
-	    default:
-		    dot = DotProduct (modelorg, plane->normal) - plane->dist;
-		    break;
-		}
+        switch (plane->type)
+        {
+        case PLANE_X:
+            dot = modelorg[0] - plane->dist;
+            break;
+        case PLANE_Y:
+            dot = modelorg[1] - plane->dist;
+            break;
+        case PLANE_Z:
+            dot = modelorg[2] - plane->dist;
+            break;
+        default:
+            dot = DotProduct (modelorg, plane->normal) - plane->dist;
+            break;
+        }
 
-	    if (dot >= 0)
-		    side = 0;
-	    else
-		    side = 1;
+        if (dot >= 0)
+            side = 0;
+        else
+            side = 1;
 
-	// recurse down the children, front side first
-	    ref_soft_R_RecursiveWorldNode (node->children[side], clipflags);
+    // recurse down the children, front side first
+        ref_soft_R_RecursiveWorldNode (node->children[side], clipflags);
 
-	// draw stuff
-	    c = node->numsurfaces;
+    // draw stuff
+        c = node->numsurfaces;
 
-	    if (c)
-		{
-		    surf = r_worldmodel->surfaces + node->firstsurface;
+        if (c)
+        {
+            surf = r_worldmodel->surfaces + node->firstsurface;
 
-		    if (dot < -BACKFACE_EPSILON)
-			{
-			    do
-				{
-				    if ((surf->flags & SURF_PLANEBACK) &&
-						(surf->visframe == r_framecount))
-					{
-					    ref_soft_R_RenderFace (surf, clipflags);
-					}
+            if (dot < -BACKFACE_EPSILON)
+            {
+                do
+                {
+                    if ((surf->flags & SURF_PLANEBACK) &&
+                        (surf->visframe == r_framecount))
+                    {
+                        ref_soft_R_RenderFace (surf, clipflags);
+                    }
 
-				    surf++;
-				} while (--c);
-			}
-		    else if (dot > BACKFACE_EPSILON)
-			{
-			    do
-				{
-				    if (!(surf->flags & SURF_PLANEBACK) &&
-						(surf->visframe == r_framecount))
-					{
-					    ref_soft_R_RenderFace (surf, clipflags);
-					}
+                    surf++;
+                } while (--c);
+            }
+            else if (dot > BACKFACE_EPSILON)
+            {
+                do
+                {
+                    if (!(surf->flags & SURF_PLANEBACK) &&
+                        (surf->visframe == r_framecount))
+                    {
+                        ref_soft_R_RenderFace (surf, clipflags);
+                    }
 
-				    surf++;
-				} while (--c);
-			}
+                    surf++;
+                } while (--c);
+            }
 
-		// all surfaces on the same node share the same sequence number
-		    r_currentkey++;
-		}
+        // all surfaces on the same node share the same sequence number
+            r_currentkey++;
+        }
 
-	// recurse down the back side
-	    ref_soft_R_RecursiveWorldNode (node->children[!side], clipflags);
-	}
+    // recurse down the back side
+        ref_soft_R_RecursiveWorldNode (node->children[!side], clipflags);
+    }
 }
 
 
@@ -612,13 +612,13 @@ void R_RenderWorld (void)
 {
 
     if (!r_drawworld->value)
-	    return;
+        return;
     if ( r_newrefdef.rdflags & RDF_NOWORLDMODEL )
-	    return;
+        return;
 
     c_drawnode=0;
 
-	// auto cycle the world frame for texture animation
+    // auto cycle the world frame for texture animation
     r_worldentity.frame = (int)(r_newrefdef.time*2);
     currententity = &r_worldentity;
 

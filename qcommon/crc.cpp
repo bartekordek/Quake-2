@@ -66,12 +66,12 @@ static unsigned short crctable[256] =
 
 void CRC_Init(unsigned short *crcvalue)
 {
-	*crcvalue = CRC_INIT_VALUE;
+    *crcvalue = CRC_INIT_VALUE;
 }
 
 void CRC_ProcessByte(unsigned short *crcvalue, byte data)
 {
-	*crcvalue = (*crcvalue << 8) ^ crctable[(*crcvalue >> 8) ^ data];
+    *crcvalue = (*crcvalue << 8) ^ crctable[(*crcvalue >> 8) ^ data];
 }
 
 unsigned short CRC_Value(unsigned short crcvalue)
@@ -85,7 +85,7 @@ unsigned short CRC_Block (byte *start, int count)
 
     CRC_Init (&crc);
     while (count--)
-	    crc = (crc << 8) ^ crctable[(crc >> 8) ^ *start++];
+        crc = (crc << 8) ^ crctable[(crc >> 8) ^ *start++];
 
     return crc;
 }

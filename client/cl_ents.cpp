@@ -814,12 +814,12 @@ model_s *S_RegisterSexedModel(entity_state* ent, const std::string& base)
         if (!mdl) {
             // no, revert to the male model
             //Com_sprintf (buffer, sizeof(buffer), "players/%s/%s", "male", base+1);
-			buffer = std::string( "players/male/" ) + base;
+            buffer = std::string( "players/male/" ) + base;
             mdl = re.RegisterModel(buffer);
             if (!mdl) {
                 // last try, default male weapon.md2
                 //Com_sprintf (buffer, sizeof(buffer), "players/male/weapon.md2");
-				buffer = std::string( "players/male/weapon.md2");
+                buffer = std::string( "players/male/weapon.md2");
                 mdl = re.RegisterModel(buffer);
             }
         }

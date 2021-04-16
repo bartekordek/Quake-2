@@ -50,9 +50,9 @@ void TreadSound (edict *self)
 void supertank_search (edict *self)
 {
     if (random() < 0.5)
-	    gi.sound (self, CHAN_VOICE, sound_search1, 1, ATTN_NORM, 0);
+        gi.sound (self, CHAN_VOICE, sound_search1, 1, ATTN_NORM, 0);
     else
-	    gi.sound (self, CHAN_VOICE, sound_search2, 1, ATTN_NORM, 0);
+        gi.sound (self, CHAN_VOICE, sound_search2, 1, ATTN_NORM, 0);
 }
 
 
@@ -190,20 +190,20 @@ mmove_t    supertank_move_forward = {FRAME_forwrd_1, FRAME_forwrd_18, supertank_
 
 void supertank_forward (edict *self)
 {
-	    self->monsterinfo.currentmove = &supertank_move_forward;
+        self->monsterinfo.currentmove = &supertank_move_forward;
 }
 
 void supertank_walk (edict *self)
 {
-	    self->monsterinfo.currentmove = &supertank_move_forward;
+        self->monsterinfo.currentmove = &supertank_move_forward;
 }
 
 void supertank_run (edict *self)
 {
     if (self->monsterinfo.aiflags & AI_STAND_GROUND)
-	    self->monsterinfo.currentmove = &supertank_move_stand;
+        self->monsterinfo.currentmove = &supertank_move_stand;
     else
-	    self->monsterinfo.currentmove = &supertank_move_run;
+        self->monsterinfo.currentmove = &supertank_move_run;
 }
 
 mframe_t supertank_frames_turn_right [] =
@@ -442,53 +442,53 @@ mmove_t supertank_move_end_attack1 = {FRAME_attak1_7, FRAME_attak1_20, supertank
 void supertank_reattack1(edict *self)
 {
     if (visible(self, self->enemy))
-	    if (random() < 0.9)
-		    self->monsterinfo.currentmove = &supertank_move_attack1;
-	    else
-		    self->monsterinfo.currentmove = &supertank_move_end_attack1;
+        if (random() < 0.9)
+            self->monsterinfo.currentmove = &supertank_move_attack1;
+        else
+            self->monsterinfo.currentmove = &supertank_move_end_attack1;
     else
-	    self->monsterinfo.currentmove = &supertank_move_end_attack1;
+        self->monsterinfo.currentmove = &supertank_move_end_attack1;
 }
 
 void supertank_pain (edict *self, edict *other, float kick, int damage)
 {
 
     if (self->health < (self->max_health / 2))
-		    self->s.skinnum = 1;
+            self->s.skinnum = 1;
 
     if (level.time < self->pain_debounce_time)
-		    return;
+            return;
 
-	// Lessen the chance of him going into his pain frames
+    // Lessen the chance of him going into his pain frames
     if (damage <=25)
-	    if (random()<0.2)
-		    return;
+        if (random()<0.2)
+            return;
 
-	// Don't go into pain if he's firing his rockets
+    // Don't go into pain if he's firing his rockets
     if (skill->value >= 2)
-	    if ( (self->s.frame >= FRAME_attak2_1) && (self->s.frame <= FRAME_attak2_14) )
-		    return;
+        if ( (self->s.frame >= FRAME_attak2_1) && (self->s.frame <= FRAME_attak2_14) )
+            return;
 
     self->pain_debounce_time = level.time + 3;
 
     if (skill->value == 3)
-	    return;		// no pain anims in nightmare
+        return;        // no pain anims in nightmare
 
     if (damage <= 10)
-	{
-	    gi.sound (self, CHAN_VOICE, sound_pain1, 1, ATTN_NORM,0);
-	    self->monsterinfo.currentmove = &supertank_move_pain1;
-	}
+    {
+        gi.sound (self, CHAN_VOICE, sound_pain1, 1, ATTN_NORM,0);
+        self->monsterinfo.currentmove = &supertank_move_pain1;
+    }
     else if (damage <= 25)
-	{
-	    gi.sound (self, CHAN_VOICE, sound_pain3, 1, ATTN_NORM,0);
-	    self->monsterinfo.currentmove = &supertank_move_pain2;
-	}
+    {
+        gi.sound (self, CHAN_VOICE, sound_pain3, 1, ATTN_NORM,0);
+        self->monsterinfo.currentmove = &supertank_move_pain2;
+    }
     else
-	{
-	    gi.sound (self, CHAN_VOICE, sound_pain2, 1, ATTN_NORM,0);
-	    self->monsterinfo.currentmove = &supertank_move_pain3;
-	}
+    {
+        gi.sound (self, CHAN_VOICE, sound_pain2, 1, ATTN_NORM,0);
+        self->monsterinfo.currentmove = &supertank_move_pain3;
+    }
 };
 
 
@@ -498,14 +498,14 @@ void supertankRocket (edict *self)
     vec3_t    start;
     vec3_t    dir;
     vec3_t    vec;
-    int	    flash_number;
+    int        flash_number;
 
     if (self->s.frame == FRAME_attak2_8)
-	    flash_number = MZ2_SUPERTANK_ROCKET_1;
+        flash_number = MZ2_SUPERTANK_ROCKET_1;
     else if (self->s.frame == FRAME_attak2_11)
-	    flash_number = MZ2_SUPERTANK_ROCKET_2;
+        flash_number = MZ2_SUPERTANK_ROCKET_2;
     else // (self->s.frame == FRAME_attak2_14)
-	    flash_number = MZ2_SUPERTANK_ROCKET_3;
+        flash_number = MZ2_SUPERTANK_ROCKET_3;
 
     AngleVectors (self->s.angles, forward, right, NULL);
     G_ProjectSource (self->s.origin, monster_flash_offset[flash_number], forward, right, start);
@@ -524,11 +524,11 @@ void supertankMachineGun (edict *self)
     vec3_t    vec;
     vec3_t    start;
     vec3_t    forward, right;
-    int	    flash_number;
+    int        flash_number;
 
     flash_number = MZ2_SUPERTANK_MACHINEGUN_1 + (self->s.frame - FRAME_attak1_1);
 
-	//FIXME!!!
+    //FIXME!!!
     dir[0] = 0;
     dir[1] = self->s.angles[1];
     dir[2] = 0;
@@ -537,12 +537,12 @@ void supertankMachineGun (edict *self)
     G_ProjectSource (self->s.origin, monster_flash_offset[flash_number], forward, right, start);
 
     if (self->enemy)
-	{
-	    VectorCopy (self->enemy->s.origin, vec);
-	    VectorMA (vec, 0, self->enemy->velocity, vec);
-	    vec[2] += self->enemy->viewheight;
-	    VectorSubtract (vec, start, forward);
-	    VectorNormalize (forward);
+    {
+        VectorCopy (self->enemy->s.origin, vec);
+        VectorMA (vec, 0, self->enemy->velocity, vec);
+        vec[2] += self->enemy->viewheight;
+        VectorSubtract (vec, start, forward);
+        VectorNormalize (forward);
   }
 
     monster_fire_bullet (self, start, forward, 6, 4, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, flash_number);
@@ -553,27 +553,27 @@ void supertank_attack(edict *self)
 {
     vec3_t    vec;
     float    range;
-	//float    r;
+    //float    r;
 
     VectorSubtract (self->enemy->s.origin, self->s.origin, vec);
     range = VectorLength (vec);
 
-	//r = random();
+    //r = random();
 
-	// Attack 1 == Chaingun
-	// Attack 2 == Rocket Launcher
+    // Attack 1 == Chaingun
+    // Attack 2 == Rocket Launcher
 
     if (range <= 160)
-	{
-	    self->monsterinfo.currentmove = &supertank_move_attack1;
-	}
+    {
+        self->monsterinfo.currentmove = &supertank_move_attack1;
+    }
     else
-	{	// fire rockets more often at distance
-	    if (random() < 0.3)
-		    self->monsterinfo.currentmove = &supertank_move_attack1;
-	    else
-		    self->monsterinfo.currentmove = &supertank_move_attack2;
-	}
+    {    // fire rockets more often at distance
+        if (random() < 0.3)
+            self->monsterinfo.currentmove = &supertank_move_attack1;
+        else
+            self->monsterinfo.currentmove = &supertank_move_attack2;
+    }
 }
 
 
@@ -595,56 +595,56 @@ void supertank_dead (edict *self)
 void BossExplode (edict *self)
 {
     vec3_t    org;
-    int	    n;
+    int        n;
 
     self->think = BossExplode;
     VectorCopy (self->s.origin, org);
     org[2] += 24 + (rand()&15);
     switch (self->count++)
-	{
+    {
     case 0:
-	    org[0] -= 24;
-	    org[1] -= 24;
-	    break;
+        org[0] -= 24;
+        org[1] -= 24;
+        break;
     case 1:
-	    org[0] += 24;
-	    org[1] += 24;
-	    break;
+        org[0] += 24;
+        org[1] += 24;
+        break;
     case 2:
-	    org[0] += 24;
-	    org[1] -= 24;
-	    break;
+        org[0] += 24;
+        org[1] -= 24;
+        break;
     case 3:
-	    org[0] -= 24;
-	    org[1] += 24;
-	    break;
+        org[0] -= 24;
+        org[1] += 24;
+        break;
     case 4:
-	    org[0] -= 48;
-	    org[1] -= 48;
-	    break;
+        org[0] -= 48;
+        org[1] -= 48;
+        break;
     case 5:
-	    org[0] += 48;
-	    org[1] += 48;
-	    break;
+        org[0] += 48;
+        org[1] += 48;
+        break;
     case 6:
-	    org[0] -= 48;
-	    org[1] += 48;
-	    break;
+        org[0] -= 48;
+        org[1] += 48;
+        break;
     case 7:
-	    org[0] += 48;
-	    org[1] -= 48;
-	    break;
+        org[0] += 48;
+        org[1] -= 48;
+        break;
     case 8:
-	    self->s.sound = 0;
-	    for (n= 0; n < 4; n++)
-		    ThrowGib (self, "models/objects/gibs/sm_meat/tris.md2", 500, GIB_ORGANIC);
-	    for (n= 0; n < 8; n++)
-		    ThrowGib (self, "models/objects/gibs/sm_metal/tris.md2", 500, GIB_METALLIC);
-	    ThrowGib (self, "models/objects/gibs/chest/tris.md2", 500, GIB_ORGANIC);
-	    ThrowHead (self, "models/objects/gibs/gear/tris.md2", 500, GIB_METALLIC);
-	    self->deadflag = DEAD_DEAD;
-	    return;
-	}
+        self->s.sound = 0;
+        for (n= 0; n < 4; n++)
+            ThrowGib (self, "models/objects/gibs/sm_meat/tris.md2", 500, GIB_ORGANIC);
+        for (n= 0; n < 8; n++)
+            ThrowGib (self, "models/objects/gibs/sm_metal/tris.md2", 500, GIB_METALLIC);
+        ThrowGib (self, "models/objects/gibs/chest/tris.md2", 500, GIB_ORGANIC);
+        ThrowHead (self, "models/objects/gibs/gear/tris.md2", 500, GIB_METALLIC);
+        self->deadflag = DEAD_DEAD;
+        return;
+    }
 
     gi.WriteByte (svc_temp_entity);
     gi.WriteByte (TE_EXPLOSION1);
@@ -673,10 +673,10 @@ void supertank_die (edict *self, edict *inflictor, edict *attacker, int damage, 
 void SP_monster_supertank (edict *self)
 {
     if (deathmatch->value)
-	{
-	    G_FreeEdict (self);
-	    return;
-	}
+    {
+        G_FreeEdict (self);
+        return;
+    }
 
     sound_pain1 = gi.soundindex ("bosstank/btkpain1.wav");
     sound_pain2 = gi.soundindex ("bosstank/btkpain2.wav");

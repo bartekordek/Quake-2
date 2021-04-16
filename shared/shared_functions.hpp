@@ -12,9 +12,9 @@
 
 extern refimport_t ri;
 extern game_import gi;
-extern FILE	*logfile;
-extern cvar	*logfile_active;
-extern char	*rd_buffer;
+extern FILE    *logfile;
+extern cvar    *logfile_active;
+extern char    *rd_buffer;
 extern int    rd_buffersize;
 extern server_static_t    svs;
 

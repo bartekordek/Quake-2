@@ -287,13 +287,13 @@ void CL_ParseMuzzleFlash (void)
         S_StartSound (NULL, i, CHAN_WEAPON, S_RegisterSound("weapons/hyprbf1a.wav"), volume, ATTN_NORM, 0);
         break;
     case MZ_MACHINEGUN:
-		{
-			dl->color[0] = 1;dl->color[1] = 1;dl->color[2] = 0;
-			int number = (rand() % 5) + 1;
-			soundname ="weapons/machgf" + std::to_string( number ) + "b.wav";
-			//Com_sprintf(soundname, sizeof(soundname), "weapons/machgf%ib.wav",number );
-			S_StartSound (NULL, i, CHAN_WEAPON, S_RegisterSound(soundname), volume, ATTN_NORM, 0);
-		}
+        {
+            dl->color[0] = 1;dl->color[1] = 1;dl->color[2] = 0;
+            int number = (rand() % 5) + 1;
+            soundname ="weapons/machgf" + std::to_string( number ) + "b.wav";
+            //Com_sprintf(soundname, sizeof(soundname), "weapons/machgf%ib.wav",number );
+            S_StartSound (NULL, i, CHAN_WEAPON, S_RegisterSound(soundname), volume, ATTN_NORM, 0);
+        }
         break;
     case MZ_SHOTGUN:
         dl->color[0] = 1;dl->color[1] = 1;dl->color[2] = 0;

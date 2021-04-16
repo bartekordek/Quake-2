@@ -28,49 +28,49 @@ R_InitParticleTexture
 */
 byte    dottexture[8][8] =
 {
-	{0,0,0,0,0,0,0,0},
-	{0,0,1,1,0,0,0,0},
-	{0,1,1,1,1,0,0,0},
-	{0,1,1,1,1,0,0,0},
-	{0,0,1,1,0,0,0,0},
-	{0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0},
+    {0,0,0,0,0,0,0,0},
+    {0,0,1,1,0,0,0,0},
+    {0,1,1,1,1,0,0,0},
+    {0,1,1,1,1,0,0,0},
+    {0,0,1,1,0,0,0,0},
+    {0,0,0,0,0,0,0,0},
+    {0,0,0,0,0,0,0,0},
+    {0,0,0,0,0,0,0,0},
 };
 
 void R_InitParticleTexture (void)
 {
-    int	    x,y;
+    int        x,y;
     byte    data[8][8][4];
 
-	//
-	// particle texture
-	//
+    //
+    // particle texture
+    //
     for (x=0 ; x<8 ; x++)
-	{
-	    for (y=0 ; y<8 ; y++)
-		{
-		    data[y][x][0] = 255;
-		    data[y][x][1] = 255;
-		    data[y][x][2] = 255;
-		    data[y][x][3] = dottexture[x][y]*255;
-		}
-	}
+    {
+        for (y=0 ; y<8 ; y++)
+        {
+            data[y][x][0] = 255;
+            data[y][x][1] = 255;
+            data[y][x][2] = 255;
+            data[y][x][3] = dottexture[x][y]*255;
+        }
+    }
     r_particletexture = ref_gl_GL_LoadPic ("***particle***", (byte *)data, 8, 8, it_sprite, 32);
 
-	//
-	// also use this for bad textures, but without alpha
-	//
+    //
+    // also use this for bad textures, but without alpha
+    //
     for (x=0 ; x<8 ; x++)
-	{
-	    for (y=0 ; y<8 ; y++)
-		{
-		    data[y][x][0] = dottexture[x&3][y&3]*255;
-		    data[y][x][1] = 0; // dottexture[x&3][y&3]*255;
-		    data[y][x][2] = 0; //dottexture[x&3][y&3]*255;
-		    data[y][x][3] = 255;
-		}
-	}
+    {
+        for (y=0 ; y<8 ; y++)
+        {
+            data[y][x][0] = dottexture[x&3][y&3]*255;
+            data[y][x][1] = 0; // dottexture[x&3][y&3]*255;
+            data[y][x][2] = 0; //dottexture[x&3][y&3]*255;
+            data[y][x][3] = 255;
+        }
+    }
     r_notexture = ref_gl_GL_LoadPic ("***r_notexture***", (byte *)data, 8, 8, it_wall, 32);
 }
 
@@ -78,7 +78,7 @@ void R_InitParticleTexture (void)
 /*
 ==============================================================================
 
-					    SCREEN SHOTS
+                        SCREEN SHOTS
 
 ==============================================================================
 */
@@ -99,14 +99,14 @@ ref_gl_GL_ScreenShot_f
 */
 void ref_gl_GL_ScreenShot_f(void)
 {
-    byte		*buffer;
-    char	    picname[80];
-    char	    checkname[MAX_OSPATH];
-    int		    i, c, temp;
-    FILE		*f;
+    byte        *buffer;
+    char        picname[80];
+    char        checkname[MAX_OSPATH];
+    int            i, c, temp;
+    FILE        *f;
 
-	// create the scrnshots directory if it doesn't exist
-	//Com_sprintf (checkname, sizeof(checkname), "%s/scrnshot", ri.FS_Gamedir());
+    // create the scrnshots directory if it doesn't exist
+    //Com_sprintf (checkname, sizeof(checkname), "%s/scrnshot", ri.FS_Gamedir());
     Sys_Mkdir (checkname);
 
 //
@@ -115,41 +115,41 @@ void ref_gl_GL_ScreenShot_f(void)
     strcpy(picname,"quake00.tga");
 
     for (i=0 ; i<=99 ; i++)
-	{
-	    picname[5] = i/10 + '0';
-	    picname[6] = i%10 + '0';
-		//Com_sprintf (checkname, sizeof(checkname), "%s/scrnshot/%s", ri.FS_Gamedir(), picname);
-	    f = fopen (checkname, "rb");
-	    if (!f)
-		    break;	// file doesn't exist
-	    fclose (f);
-	}
+    {
+        picname[5] = i/10 + '0';
+        picname[6] = i%10 + '0';
+        //Com_sprintf (checkname, sizeof(checkname), "%s/scrnshot/%s", ri.FS_Gamedir(), picname);
+        f = fopen (checkname, "rb");
+        if (!f)
+            break;    // file doesn't exist
+        fclose (f);
+    }
     if (i==100)
-	{
-	    ri.Con_Printf (PRINT_ALL, "SCR_ScreenShot_f: Couldn't create a file\n");
-	    return;
- 	}
+    {
+        ri.Con_Printf (PRINT_ALL, "SCR_ScreenShot_f: Couldn't create a file\n");
+        return;
+     }
 
 
     buffer = malloc(vid.width*vid.height*3 + 18);
     memset (buffer, 0, 18);
-    buffer[2] = 2;		// uncompressed type
+    buffer[2] = 2;        // uncompressed type
     buffer[12] = vid.width&255;
     buffer[13] = vid.width>>8;
     buffer[14] = vid.height&255;
     buffer[15] = vid.height>>8;
-    buffer[16] = 24;	// pixel size
+    buffer[16] = 24;    // pixel size
 
     qglReadPixels (0, 0, vid.width, vid.height, GL_RGB, GL_UNSIGNED_BYTE, buffer+18 );
 
-	// swap rgb to bgr
+    // swap rgb to bgr
     c = 18+vid.width*vid.height*3;
     for (i=18 ; i<c ; i+=3)
-	{
-	    temp = buffer[i];
-	    buffer[i] = buffer[i+2];
-	    buffer[i+2] = temp;
-	}
+    {
+        temp = buffer[i];
+        buffer[i] = buffer[i+2];
+        buffer[i+2] = temp;
+    }
 
     f = fopen (checkname, "wb");
     fwrite (buffer, 1, c, f);
@@ -206,25 +206,25 @@ void GL_SetDefaultState( void )
     ref_gl_GL_TexEnv( GL_REPLACE );
 
     if ( qglPointParameterfEXT )
-	{
-	    float attenuations[3];
+    {
+        float attenuations[3];
 
-	    attenuations[0] = gl_particle_att_a->value;
-	    attenuations[1] = gl_particle_att_b->value;
-	    attenuations[2] = gl_particle_att_c->value;
+        attenuations[0] = gl_particle_att_a->value;
+        attenuations[1] = gl_particle_att_b->value;
+        attenuations[2] = gl_particle_att_c->value;
 
-	    qglEnable( GL_POINT_SMOOTH );
-	    qglPointParameterfEXT( GL_POINT_SIZE_MIN_EXT, gl_particle_min_size->value );
-	    qglPointParameterfEXT( GL_POINT_SIZE_MAX_EXT, gl_particle_max_size->value );
-	    qglPointParameterfvEXT( GL_DISTANCE_ATTENUATION_EXT, attenuations );
-	}
+        qglEnable( GL_POINT_SMOOTH );
+        qglPointParameterfEXT( GL_POINT_SIZE_MIN_EXT, gl_particle_min_size->value );
+        qglPointParameterfEXT( GL_POINT_SIZE_MAX_EXT, gl_particle_max_size->value );
+        qglPointParameterfvEXT( GL_DISTANCE_ATTENUATION_EXT, attenuations );
+    }
 
     if ( qglColorTableEXT && gl_ext_palettedtexture->value )
-	{
-	    qglEnable( GL_SHARED_TEXTURE_PALETTE_EXT );
+    {
+        qglEnable( GL_SHARED_TEXTURE_PALETTE_EXT );
 
-	    ref_gl_GL_SetTexturePalette( d_8to24table );
-	}
+        ref_gl_GL_SetTexturePalette( d_8to24table );
+    }
 
     GL_UpdateSwapInterval();
 }
@@ -232,15 +232,15 @@ void GL_SetDefaultState( void )
 void GL_UpdateSwapInterval( void )
 {
     if ( gl_swapinterval->modified )
-	{
-	    gl_swapinterval->modified = false;
+    {
+        gl_swapinterval->modified = false;
 
-	    if ( !gl_state.stereo_enabled )
-		{
+        if ( !gl_state.stereo_enabled )
+        {
 #ifdef _WIN32
-		    if ( qwglSwapIntervalEXT )
-			    qwglSwapIntervalEXT( gl_swapinterval->value );
+            if ( qwglSwapIntervalEXT )
+                qwglSwapIntervalEXT( gl_swapinterval->value );
 #endif
-		}
-	}
+        }
+    }
 }

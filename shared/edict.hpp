@@ -9,16 +9,16 @@
 // link_t is only used for entity area links now
 typedef struct link_s
 {
-    struct link_s	*prev, *next;
+    struct link_s    *prev, *next;
 } link_t;
 
 // edict->solid values
 typedef enum
 {
-SOLID_NOT,			// no interaction with other objects
-SOLID_TRIGGER,		// only touch when inside, after moving
-SOLID_BBOX,			// touch on edge
-SOLID_BSP			// bsp clip, touch on edge
+SOLID_NOT,            // no interaction with other objects
+SOLID_TRIGGER,        // only touch when inside, after moving
+SOLID_BBOX,            // touch on edge
+SOLID_BSP            // bsp clip, touch on edge
 } solid_t;
 
 struct edict;

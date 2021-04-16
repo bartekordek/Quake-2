@@ -49,14 +49,14 @@ static int findres(int *width, int *height)
     int i;
 
     for(i=0;i<NUM_RESOLUTIONS;i++)
-	    if((*width<=resolutions[i][0]) && (*height<=resolutions[i][1])) {
-			*width = resolutions[i][0];
-			*height = resolutions[i][1];
-		    return resolutions[i][2];
-		}
+        if((*width<=resolutions[i][0]) && (*height<=resolutions[i][1])) {
+            *width = resolutions[i][0];
+            *height = resolutions[i][1];
+            return resolutions[i][2];
+        }
 
-	*width = 640;
-	*height = 480;
+    *width = 640;
+    *height = 480;
     return GR_RESOLUTION_640x480;
 }
 
@@ -93,17 +93,17 @@ int GLimp_SetMode( int *pwidth, int *pheight, int mode, qboolean fullscreen )
     ri.Con_Printf (PRINT_ALL, "...setting mode %d:", mode );
 
     if ( !ri.Vid_GetModeInfo( &width, &height, mode ) )
-	{
-	    ri.Con_Printf( PRINT_ALL, " invalid mode\n" );
-	    return rserr_invalid_mode;
-	}
+    {
+        ri.Con_Printf( PRINT_ALL, " invalid mode\n" );
+        return rserr_invalid_mode;
+    }
 
     ri.Con_Printf( PRINT_ALL, " %d %d\n", width, height );
 
-	// destroy the existing window
+    // destroy the existing window
     GLimp_Shutdown ();
 
-	// set fx attribs
+    // set fx attribs
     attribs[0] = FXMESA_DOUBLEBUFFER;
     attribs[1] = FXMESA_ALPHA_SIZE;
     attribs[2] = 1;
@@ -112,14 +112,14 @@ int GLimp_SetMode( int *pwidth, int *pheight, int mode, qboolean fullscreen )
     attribs[5] = FXMESA_NONE;
 
     fc = fxMesaCreateContext(0, findres(&width, &height), GR_REFRESH_75Hz,
-	    attribs);
+        attribs);
     if (!fc)
-	    return rserr_invalid_mode;
+        return rserr_invalid_mode;
 
-	*pwidth = width;
-	*pheight = height;
+    *pwidth = width;
+    *pheight = height;
 
-	// let the sound and input subsystems know about the new window
+    // let the sound and input subsystems know about the new window
     ri.Vid_NewWindow (width, height);
 
     fxMesaMakeCurrent(fc);
@@ -139,9 +139,9 @@ int GLimp_SetMode( int *pwidth, int *pheight, int mode, qboolean fullscreen )
 void GLimp_Shutdown( void )
 {
     if (fc) {
-	    fxMesaDestroyContext(fc);
-	    fc = NULL;
-	}
+        fxMesaDestroyContext(fc);
+        fc = NULL;
+    }
 }
 
 /*
@@ -195,11 +195,11 @@ void Fake_glColorTableEXT( GLenum target, GLenum internalformat,
     int i;
 
     for (intbl = (byte *)table, i = 0; i < 256; i++) {
-	    temptable[i][2] = *intbl++;
-	    temptable[i][1] = *intbl++;
-	    temptable[i][0] = *intbl++;
-	    temptable[i][3] = 255;
-	}
+        temptable[i][2] = *intbl++;
+        temptable[i][1] = *intbl++;
+        temptable[i][0] = *intbl++;
+        temptable[i][3] = 255;
+    }
     gl3DfxSetPaletteEXT((GLuint *)temptable);
 }
 

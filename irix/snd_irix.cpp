@@ -15,7 +15,7 @@ Returns true and fills in the "dma" structure with information for the mixer.
 */
 
 // must be power of two!
-#define QSND_SKID	    2
+#define QSND_SKID        2
 #define QSND_BUFFER_FRAMES  8192
 #define QSND_BUFFER_SIZE    (QSND_BUFFER_FRAMES*2)
 
@@ -33,56 +33,56 @@ long long sgisnd_lastframewritten = 0;
 
 qboolean SNDDMA_Init(void)
 {
-    ALconfig	ac = NULL;
-    ALpv	pvbuf[2];
+    ALconfig    ac = NULL;
+    ALpv    pvbuf[2];
 
     s_loadas8bit = Cvar_Get("s_loadas8bit", "16", CVAR_ARCHIVE);
     if ((int)s_loadas8bit->value)
-	dma.samplebits = 8;
+    dma.samplebits = 8;
     else
-	dma.samplebits = 16;
+    dma.samplebits = 16;
 
     if (dma.samplebits != 16) {
-	Com_Printf_G("Don't currently support %i-bit data.  Forcing 16-bit.\n",
-		   dma.samplebits);
-	dma.samplebits = 16;
-	Cvar_SetValue( "s_loadas8bit", false );
+    Com_Printf_G("Don't currently support %i-bit data.  Forcing 16-bit.\n",
+           dma.samplebits);
+    dma.samplebits = 16;
+    Cvar_SetValue( "s_loadas8bit", false );
     }
 
     s_khz = Cvar_Get("s_khz", "0", CVAR_ARCHIVE);
     switch ((int)s_khz->value) {
     case 48:
-	dma.speed = AL_RATE_48000;
-	break;
+    dma.speed = AL_RATE_48000;
+    break;
     case 44:
-	dma.speed = AL_RATE_44100;
-	break;
+    dma.speed = AL_RATE_44100;
+    break;
     case 32:
-	dma.speed = AL_RATE_32000;
-	break;
+    dma.speed = AL_RATE_32000;
+    break;
     case 22:
-	dma.speed = AL_RATE_22050;
-	break;
+    dma.speed = AL_RATE_22050;
+    break;
     case 16:
-	dma.speed = AL_RATE_16000;
-	break;
+    dma.speed = AL_RATE_16000;
+    break;
     case 11:
-	dma.speed = AL_RATE_11025;
-	break;
+    dma.speed = AL_RATE_11025;
+    break;
     case 8:
-	dma.speed = AL_RATE_8000;
-	break;
+    dma.speed = AL_RATE_8000;
+    break;
     default:
-	dma.speed = AL_RATE_22050;
-	Com_Printf_G("Don't currently support %i kHz sample rate.  Using %i.\n",
-		   (int)s_khz->value, (int)(dma.speed/1000));
+    dma.speed = AL_RATE_22050;
+    Com_Printf_G("Don't currently support %i kHz sample rate.  Using %i.\n",
+           (int)s_khz->value, (int)(dma.speed/1000));
     }
 
     sndchannels = Cvar_Get("sndchannels", "2", CVAR_ARCHIVE);
     dma.channels = (int)sndchannels->value;
     if (dma.channels != 2)
-	Com_Printf_G("Don't currently support %i sound channels.  Try 2.\n",
-		   sndchannels);
+    Com_Printf_G("Don't currently support %i sound channels.  Try 2.\n",
+           sndchannels);
 
     /***********************/
 
@@ -91,14 +91,14 @@ qboolean SNDDMA_Init(void)
     alSetSampFmt( ac, AL_SAMPFMT_TWOSCOMP );
     alSetQueueSize( ac, QSND_BUFFER_FRAMES );
     if (dma.samplebits == 8)
-	alSetWidth( ac, AL_SAMPLE_8 );
+    alSetWidth( ac, AL_SAMPLE_8 );
     else
-	alSetWidth( ac, AL_SAMPLE_16 );
+    alSetWidth( ac, AL_SAMPLE_16 );
 
     sgisnd_aport = alOpenPort( "Quake", "w", ac );
     if (!sgisnd_aport)
     {
-	printf( "failed to open audio port!\n" );
+    printf( "failed to open audio port!\n" );
     }
 
     // set desired sample rate
@@ -108,7 +108,7 @@ qboolean SNDDMA_Init(void)
     pvbuf[1].value.ll = alIntToFixed( dma.speed );
     alSetParams( alGetResource( sgisnd_aport ), pvbuf, 2 );
     if (pvbuf[1].sizeOut < 0)
-	printf( "illegal sample rate %d\n", dma.speed );
+    printf( "illegal sample rate %d\n", dma.speed );
 
     sgisnd_frames_per_ns = dma.speed * 1.0e-9;
 
@@ -182,7 +182,7 @@ void SNDDMA_Submit(void)
     nFrames = dma.samples >> (dma.channels - 1);
 
     if (paintedtime - soundtime < nFrames)
-	nFrames = paintedtime - soundtime;
+    nFrames = paintedtime - soundtime;
 
     if (nFrames <= QSND_SKID) return;
 
@@ -191,12 +191,12 @@ void SNDDMA_Submit(void)
     // dump re-written contents of the buffer
     if (sgisnd_lastframewritten > sgisnd_startframe)
     {
-	alDiscardFrames( sgisnd_aport, sgisnd_lastframewritten - sgisnd_startframe );
+    alDiscardFrames( sgisnd_aport, sgisnd_lastframewritten - sgisnd_startframe );
     }
     else if ((int)(sgisnd_startframe - sgisnd_lastframewritten) >= QSND_BUFFER_FRAMES)
     {
-	// blow away everything if we've underflowed
-	alDiscardFrames( sgisnd_aport, QSND_BUFFER_FRAMES );
+    // blow away everything if we've underflowed
+    alDiscardFrames( sgisnd_aport, QSND_BUFFER_FRAMES );
     }
 
     // don't block
@@ -206,11 +206,11 @@ void SNDDMA_Submit(void)
     nFramesLeft = nFrames;
     if (nPos + nFrames * dma.channels > QSND_BUFFER_SIZE)
     {
-	int nFramesAtEnd = (QSND_BUFFER_SIZE - nPos) >> (dma.channels - 1);
+    int nFramesAtEnd = (QSND_BUFFER_SIZE - nPos) >> (dma.channels - 1);
 
-	alWriteFrames( sgisnd_aport, &dma_buffer[nPos], nFramesAtEnd );
-	nPos = 0;
-	nFramesLeft -= nFramesAtEnd;
+    alWriteFrames( sgisnd_aport, &dma_buffer[nPos], nFramesAtEnd );
+    nPos = 0;
+    nFramesLeft -= nFramesAtEnd;
     }
     alWriteFrames( sgisnd_aport, &dma_buffer[nPos], nFramesLeft );
 

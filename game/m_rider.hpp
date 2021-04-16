@@ -66,6 +66,6 @@
 #define FRAME_stand259            58
 #define FRAME_stand260            59
 
-#define MODEL_SCALE	    1.000000
+#define MODEL_SCALE        1.000000
 
 #endif // ____GAME_M_RIDER_H__

@@ -396,9 +396,9 @@ VARS
 
 extern int              d_spanpixcount;
 extern int              r_framecount;           // sequence # of current frame since Quake
-									//  started
+                                    //  started
 extern float    r_aliasuvscale;         // scale-up factor for screen u and v
-									//  on Alias vertices passed to driver
+                                    //  on Alias vertices passed to driver
 extern bool r_dowarp;
 
 extern affinetridesc_t  r_affinetridesc;

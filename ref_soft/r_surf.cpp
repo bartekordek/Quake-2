@@ -23,25 +23,25 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 drawsurf_t    r_drawsurf;
 
-int			    lightleft, sourcesstep, blocksize, sourcetstep;
-int			    lightdelta, lightdeltastep;
-int			    lightright, lightleftstep, lightrightstep, blockdivshift;
-unsigned	    blockdivmask;
-void			*prowdestbase;
-unsigned char	*pbasesource;
-int			    surfrowbytes;	// used by ASM files
-unsigned		*r_lightptr;
-int			    r_stepback;
-int			    r_lightwidth;
-int			    r_numhblocks, r_numvblocks;
-unsigned char	*r_source, *r_sourcemax;
+int                lightleft, sourcesstep, blocksize, sourcetstep;
+int                lightdelta, lightdeltastep;
+int                lightright, lightleftstep, lightrightstep, blockdivshift;
+unsigned        blockdivmask;
+void            *prowdestbase;
+unsigned char    *pbasesource;
+int                surfrowbytes;    // used by ASM files
+unsigned        *r_lightptr;
+int                r_stepback;
+int                r_lightwidth;
+int                r_numhblocks, r_numvblocks;
+unsigned char    *r_source, *r_sourcemax;
 
 void R_DrawSurfaceBlock8_mip0 (void);
 void R_DrawSurfaceBlock8_mip1 (void);
 void R_DrawSurfaceBlock8_mip2 (void);
 void R_DrawSurfaceBlock8_mip3 (void);
 
-static void	(*surfmiptable[4])(void) = {
+static void    (*surfmiptable[4])(void) = {
     R_DrawSurfaceBlock8_mip0,
     R_DrawSurfaceBlock8_mip1,
     R_DrawSurfaceBlock8_mip2,
@@ -49,13 +49,13 @@ static void	(*surfmiptable[4])(void) = {
 };
 
 void ref_soft_R_BuildLightMap (void);
-extern    unsigned	    blocklights[1024];	// allow some very large lightmaps
+extern    unsigned        blocklights[1024];    // allow some very large lightmaps
 
 float           surfscale;
 bool        r_cache_thrash;         // set if surface cache is thrashing
 
 int         sc_size;
-surfcache_t	*sc_rover, *sc_base;
+surfcache_t    *sc_rover, *sc_base;
 
 /*
 ===============
@@ -66,17 +66,17 @@ Returns the proper texture for a given time and base texture
 */
 image_t *ref_soft_R_TextureAnimation (mtexinfo_t *tex)
 {
-    int	    c;
+    int        c;
 
     if (!tex->next)
-	    return tex->image;
+        return tex->image;
 
     c = currententity->frame % tex->numframes;
     while (c)
-	{
-	    tex = tex->next;
-	    c--;
-	}
+    {
+        tex = tex->next;
+        c--;
+    }
 
     return tex->image;
 }
@@ -89,14 +89,14 @@ R_DrawSurface
 */
 void R_DrawSurface (void)
 {
-    unsigned char	*basetptr;
-    int			    smax, tmax, twidth;
-    int			    u;
-    int			    soffset, basetoffset, texwidth;
-    int			    horzblockstep;
-    unsigned char	*pcolumndest;
-    void			(*pblockdrawer)(void);
-    image_t			*mt;
+    unsigned char    *basetptr;
+    int                smax, tmax, twidth;
+    int                u;
+    int                soffset, basetoffset, texwidth;
+    int                horzblockstep;
+    unsigned char    *pcolumndest;
+    void            (*pblockdrawer)(void);
+    image_t            *mt;
 
     surfrowbytes = r_drawsurf.rowbytes;
 
@@ -138,32 +138,32 @@ void R_DrawSurface (void)
 // << 16 components are to guarantee positive values for %
     soffset = ((soffset >> r_drawsurf.surfmip) + (smax << 16)) % smax;
     basetptr = &r_source[((((basetoffset >> r_drawsurf.surfmip)
-		+ (tmax << 16)) % tmax) * twidth)];
+        + (tmax << 16)) % tmax) * twidth)];
 
     pcolumndest = r_drawsurf.surfdat;
 
     for (u=0 ; u<r_numhblocks; u++)
-	{
-	    r_lightptr = blocklights + u;
+    {
+        r_lightptr = blocklights + u;
 
-	    prowdestbase = pcolumndest;
+        prowdestbase = pcolumndest;
 
-	    pbasesource = basetptr + soffset;
+        pbasesource = basetptr + soffset;
 
-		(*pblockdrawer)();
+        (*pblockdrawer)();
 
-	    soffset = soffset + blocksize;
-	    if (soffset >= smax)
-		    soffset = 0;
+        soffset = soffset + blocksize;
+        if (soffset >= smax)
+            soffset = 0;
 
-	    pcolumndest += horzblockstep;
-	}
+        pcolumndest += horzblockstep;
+    }
 }
 
 
 //=============================================================================
 
-#if	!id386
+#if    !id386
 
 /*
 ================
@@ -172,46 +172,46 @@ R_DrawSurfaceBlock8_mip0
 */
 void R_DrawSurfaceBlock8_mip0 (void)
 {
-    int			    v, i, b, lightstep, lighttemp, light;
+    int                v, i, b, lightstep, lighttemp, light;
     unsigned char    pix, *psource, *prowdest;
 
     psource = pbasesource;
     prowdest = prowdestbase;
 
     for (v=0 ; v<r_numvblocks ; v++)
-	{
-	// FIXME: make these locals?
-	// FIXME: use delta rather than both right and left, like ASM?
-	    lightleft = r_lightptr[0];
-	    lightright = r_lightptr[1];
-	    r_lightptr += r_lightwidth;
-	    lightleftstep = (r_lightptr[0] - lightleft) >> 4;
-	    lightrightstep = (r_lightptr[1] - lightright) >> 4;
+    {
+    // FIXME: make these locals?
+    // FIXME: use delta rather than both right and left, like ASM?
+        lightleft = r_lightptr[0];
+        lightright = r_lightptr[1];
+        r_lightptr += r_lightwidth;
+        lightleftstep = (r_lightptr[0] - lightleft) >> 4;
+        lightrightstep = (r_lightptr[1] - lightright) >> 4;
 
-	    for (i=0 ; i<16 ; i++)
-		{
-		    lighttemp = lightleft - lightright;
-		    lightstep = lighttemp >> 4;
+        for (i=0 ; i<16 ; i++)
+        {
+            lighttemp = lightleft - lightright;
+            lightstep = lighttemp >> 4;
 
-		    light = lightright;
+            light = lightright;
 
-		    for (b=15; b>=0; b--)
-			{
-			    pix = psource[b];
-			    prowdest[b] = ((unsigned char *)vid.colormap)
-						[(light & 0xFF00) + pix];
-			    light += lightstep;
-			}
+            for (b=15; b>=0; b--)
+            {
+                pix = psource[b];
+                prowdest[b] = ((unsigned char *)vid.colormap)
+                        [(light & 0xFF00) + pix];
+                light += lightstep;
+            }
 
-		    psource += sourcetstep;
-		    lightright += lightrightstep;
-		    lightleft += lightleftstep;
-		    prowdest += surfrowbytes;
-		}
+            psource += sourcetstep;
+            lightright += lightrightstep;
+            lightleft += lightleftstep;
+            prowdest += surfrowbytes;
+        }
 
-	    if (psource >= r_sourcemax)
-		    psource -= r_stepback;
-	}
+        if (psource >= r_sourcemax)
+            psource -= r_stepback;
+    }
 }
 
 
@@ -222,46 +222,46 @@ R_DrawSurfaceBlock8_mip1
 */
 void R_DrawSurfaceBlock8_mip1 (void)
 {
-    int			    v, i, b, lightstep, lighttemp, light;
+    int                v, i, b, lightstep, lighttemp, light;
     unsigned char    pix, *psource, *prowdest;
 
     psource = pbasesource;
     prowdest = prowdestbase;
 
     for (v=0 ; v<r_numvblocks ; v++)
-	{
-	// FIXME: make these locals?
-	// FIXME: use delta rather than both right and left, like ASM?
-	    lightleft = r_lightptr[0];
-	    lightright = r_lightptr[1];
-	    r_lightptr += r_lightwidth;
-	    lightleftstep = (r_lightptr[0] - lightleft) >> 3;
-	    lightrightstep = (r_lightptr[1] - lightright) >> 3;
+    {
+    // FIXME: make these locals?
+    // FIXME: use delta rather than both right and left, like ASM?
+        lightleft = r_lightptr[0];
+        lightright = r_lightptr[1];
+        r_lightptr += r_lightwidth;
+        lightleftstep = (r_lightptr[0] - lightleft) >> 3;
+        lightrightstep = (r_lightptr[1] - lightright) >> 3;
 
-	    for (i=0 ; i<8 ; i++)
-		{
-		    lighttemp = lightleft - lightright;
-		    lightstep = lighttemp >> 3;
+        for (i=0 ; i<8 ; i++)
+        {
+            lighttemp = lightleft - lightright;
+            lightstep = lighttemp >> 3;
 
-		    light = lightright;
+            light = lightright;
 
-		    for (b=7; b>=0; b--)
-			{
-			    pix = psource[b];
-			    prowdest[b] = ((unsigned char *)vid.colormap)
-						[(light & 0xFF00) + pix];
-			    light += lightstep;
-			}
+            for (b=7; b>=0; b--)
+            {
+                pix = psource[b];
+                prowdest[b] = ((unsigned char *)vid.colormap)
+                        [(light & 0xFF00) + pix];
+                light += lightstep;
+            }
 
-		    psource += sourcetstep;
-		    lightright += lightrightstep;
-		    lightleft += lightleftstep;
-		    prowdest += surfrowbytes;
-		}
+            psource += sourcetstep;
+            lightright += lightrightstep;
+            lightleft += lightleftstep;
+            prowdest += surfrowbytes;
+        }
 
-	    if (psource >= r_sourcemax)
-		    psource -= r_stepback;
-	}
+        if (psource >= r_sourcemax)
+            psource -= r_stepback;
+    }
 }
 
 
@@ -272,46 +272,46 @@ R_DrawSurfaceBlock8_mip2
 */
 void R_DrawSurfaceBlock8_mip2 (void)
 {
-    int			    v, i, b, lightstep, lighttemp, light;
+    int                v, i, b, lightstep, lighttemp, light;
     unsigned char    pix, *psource, *prowdest;
 
     psource = pbasesource;
     prowdest = prowdestbase;
 
     for (v=0 ; v<r_numvblocks ; v++)
-	{
-	// FIXME: make these locals?
-	// FIXME: use delta rather than both right and left, like ASM?
-	    lightleft = r_lightptr[0];
-	    lightright = r_lightptr[1];
-	    r_lightptr += r_lightwidth;
-	    lightleftstep = (r_lightptr[0] - lightleft) >> 2;
-	    lightrightstep = (r_lightptr[1] - lightright) >> 2;
+    {
+    // FIXME: make these locals?
+    // FIXME: use delta rather than both right and left, like ASM?
+        lightleft = r_lightptr[0];
+        lightright = r_lightptr[1];
+        r_lightptr += r_lightwidth;
+        lightleftstep = (r_lightptr[0] - lightleft) >> 2;
+        lightrightstep = (r_lightptr[1] - lightright) >> 2;
 
-	    for (i=0 ; i<4 ; i++)
-		{
-		    lighttemp = lightleft - lightright;
-		    lightstep = lighttemp >> 2;
+        for (i=0 ; i<4 ; i++)
+        {
+            lighttemp = lightleft - lightright;
+            lightstep = lighttemp >> 2;
 
-		    light = lightright;
+            light = lightright;
 
-		    for (b=3; b>=0; b--)
-			{
-			    pix = psource[b];
-			    prowdest[b] = ((unsigned char *)vid.colormap)
-						[(light & 0xFF00) + pix];
-			    light += lightstep;
-			}
+            for (b=3; b>=0; b--)
+            {
+                pix = psource[b];
+                prowdest[b] = ((unsigned char *)vid.colormap)
+                        [(light & 0xFF00) + pix];
+                light += lightstep;
+            }
 
-		    psource += sourcetstep;
-		    lightright += lightrightstep;
-		    lightleft += lightleftstep;
-		    prowdest += surfrowbytes;
-		}
+            psource += sourcetstep;
+            lightright += lightrightstep;
+            lightleft += lightleftstep;
+            prowdest += surfrowbytes;
+        }
 
-	    if (psource >= r_sourcemax)
-		    psource -= r_stepback;
-	}
+        if (psource >= r_sourcemax)
+            psource -= r_stepback;
+    }
 }
 
 
@@ -322,46 +322,46 @@ R_DrawSurfaceBlock8_mip3
 */
 void R_DrawSurfaceBlock8_mip3 (void)
 {
-    int			    v, i, b, lightstep, lighttemp, light;
+    int                v, i, b, lightstep, lighttemp, light;
     unsigned char    pix, *psource, *prowdest;
 
     psource = pbasesource;
     prowdest = prowdestbase;
 
     for (v=0 ; v<r_numvblocks ; v++)
-	{
-	// FIXME: make these locals?
-	// FIXME: use delta rather than both right and left, like ASM?
-	    lightleft = r_lightptr[0];
-	    lightright = r_lightptr[1];
-	    r_lightptr += r_lightwidth;
-	    lightleftstep = (r_lightptr[0] - lightleft) >> 1;
-	    lightrightstep = (r_lightptr[1] - lightright) >> 1;
+    {
+    // FIXME: make these locals?
+    // FIXME: use delta rather than both right and left, like ASM?
+        lightleft = r_lightptr[0];
+        lightright = r_lightptr[1];
+        r_lightptr += r_lightwidth;
+        lightleftstep = (r_lightptr[0] - lightleft) >> 1;
+        lightrightstep = (r_lightptr[1] - lightright) >> 1;
 
-	    for (i=0 ; i<2 ; i++)
-		{
-		    lighttemp = lightleft - lightright;
-		    lightstep = lighttemp >> 1;
+        for (i=0 ; i<2 ; i++)
+        {
+            lighttemp = lightleft - lightright;
+            lightstep = lighttemp >> 1;
 
-		    light = lightright;
+            light = lightright;
 
-		    for (b=1; b>=0; b--)
-			{
-			    pix = psource[b];
-			    prowdest[b] = ((unsigned char *)vid.colormap)
-						[(light & 0xFF00) + pix];
-			    light += lightstep;
-			}
+            for (b=1; b>=0; b--)
+            {
+                pix = psource[b];
+                prowdest[b] = ((unsigned char *)vid.colormap)
+                        [(light & 0xFF00) + pix];
+                light += lightstep;
+            }
 
-		    psource += sourcetstep;
-		    lightright += lightrightstep;
-		    lightleft += lightleftstep;
-		    prowdest += surfrowbytes;
-		}
+            psource += sourcetstep;
+            lightright += lightrightstep;
+            lightleft += lightleftstep;
+            prowdest += surfrowbytes;
+        }
 
-	    if (psource >= r_sourcemax)
-		    psource -= r_stepback;
-	}
+        if (psource >= r_sourcemax)
+            psource -= r_stepback;
+    }
 }
 
 #endif
@@ -378,24 +378,24 @@ R_InitCaches
 */
 void R_InitCaches (void)
 {
-    int	    size;
-    int	    pix;
+    int        size;
+    int        pix;
 
-	// calculate size to allocate
+    // calculate size to allocate
     if (sw_surfcacheoverride->value)
-	{
-	    size = sw_surfcacheoverride->value;
-	}
+    {
+        size = sw_surfcacheoverride->value;
+    }
     else
-	{
-	    size = SURFCACHE_SIZE_AT_320X240;
+    {
+        size = SURFCACHE_SIZE_AT_320X240;
 
-	    pix = vid.width*vid.height;
-	    if (pix > 64000)
-		    size += (pix-64000)*3;
-	}
+        pix = vid.width*vid.height;
+        if (pix > 64000)
+            size += (pix-64000)*3;
+    }
 
-	// round up to page size
+    // round up to page size
     size = (size + 8191) & ~8191;
 
     ri.Con_Printf (PRINT_ALL,"%ik surface cache\n", size/1024);
@@ -420,13 +420,13 @@ void D_FlushCaches (void)
     surfcache_t * c;
 
     if (!sc_base)
-	    return;
+        return;
 
     for (c = sc_base ; c ; c = c->next)
-	{
-	    if (c->owner)
-			*c->owner = NULL;
-	}
+    {
+        if (c->owner)
+            *c->owner = NULL;
+    }
 
     sc_rover = sc_base;
     sc_base->next = NULL;
@@ -445,76 +445,76 @@ surfcache_t * D_SCAlloc (int width, int size)
     bool                wrapped_this_time;
 
     if ((width < 0) || (width > 256))
-	    ri.Sys_Error (ERR_FATAL,"D_SCAlloc: bad cache width %d\n", width);
+        ri.Sys_Error (ERR_FATAL,"D_SCAlloc: bad cache width %d\n", width);
 
     if ((size <= 0) || (size > 0x10000))
-	    ri.Sys_Error (ERR_FATAL,"D_SCAlloc: bad cache size %d\n", size);
+        ri.Sys_Error (ERR_FATAL,"D_SCAlloc: bad cache size %d\n", size);
 
     size = (int)&((surfcache_t *)0)->data[size];
     size = (size + 3) & ~3;
     if (size > sc_size)
-	    ri.Sys_Error (ERR_FATAL,"D_SCAlloc: %i > cache size of %i",size, sc_size);
+        ri.Sys_Error (ERR_FATAL,"D_SCAlloc: %i > cache size of %i",size, sc_size);
 
 // if there is not size bytes after the rover, reset to the start
     wrapped_this_time = false;
 
     if ( !sc_rover || (byte *)sc_rover - (byte *)sc_base > sc_size - size)
-	{
-	    if (sc_rover)
-		{
-		    wrapped_this_time = true;
-		}
-	    sc_rover = sc_base;
-	}
+    {
+        if (sc_rover)
+        {
+            wrapped_this_time = true;
+        }
+        sc_rover = sc_base;
+    }
 
 // colect and free surfcache_t blocks until the rover block is large enough
     new = sc_rover;
     if (sc_rover->owner)
-		*sc_rover->owner = NULL;
+        *sc_rover->owner = NULL;
 
     while (new->size < size)
-	{
-	// free another
-	    sc_rover = sc_rover->next;
-	    if (!sc_rover)
-		    ri.Sys_Error (ERR_FATAL,"D_SCAlloc: hit the end of memory");
-	    if (sc_rover->owner)
-			*sc_rover->owner = NULL;
+    {
+    // free another
+        sc_rover = sc_rover->next;
+        if (!sc_rover)
+            ri.Sys_Error (ERR_FATAL,"D_SCAlloc: hit the end of memory");
+        if (sc_rover->owner)
+            *sc_rover->owner = NULL;
 
-	    new->size += sc_rover->size;
-	    new->next = sc_rover->next;
-	}
+        new->size += sc_rover->size;
+        new->next = sc_rover->next;
+    }
 
 // create a fragment out of any leftovers
     if (new->size - size > 256)
-	{
-	    sc_rover = (surfcache_t *)( (byte *)new + size);
-	    sc_rover->size = new->size - size;
-	    sc_rover->next = new->next;
-	    sc_rover->width = 0;
-	    sc_rover->owner = NULL;
-	    new->next = sc_rover;
-	    new->size = size;
-	}
+    {
+        sc_rover = (surfcache_t *)( (byte *)new + size);
+        sc_rover->size = new->size - size;
+        sc_rover->next = new->next;
+        sc_rover->width = 0;
+        sc_rover->owner = NULL;
+        new->next = sc_rover;
+        new->size = size;
+    }
     else
-	    sc_rover = new->next;
+        sc_rover = new->next;
 
     new->width = width;
 // DEBUG
     if (width > 0)
-	    new->height = (size - sizeof(*new) + sizeof(new->data)) / width;
+        new->height = (size - sizeof(*new) + sizeof(new->data)) / width;
 
     new->owner = NULL;              // should be set properly after return
 
     if (d_roverwrapped)
-	{
-	    if (wrapped_this_time || (sc_rover >= d_initial_rover))
-		    r_cache_thrash = true;
-	}
+    {
+        if (wrapped_this_time || (sc_rover >= d_initial_rover))
+            r_cache_thrash = true;
+    }
     else if (wrapped_this_time)
-	{
-	    d_roverwrapped = true;
-	}
+    {
+        d_roverwrapped = true;
+    }
 
     return new;
 }
@@ -530,11 +530,11 @@ void D_SCDump (void)
     surfcache_t         * test;
 
     for (test = sc_base ; test ; test = test->next)
-	{
-	    if (test == sc_rover)
-		    ri.Con_Printf (PRINT_ALL,"ROVER:\n");
-	    ri.Con_Printf (PRINT_ALL,"%p : %i bytes     %i width\n",test, test->size, test->width);
-	}
+    {
+        if (test == sc_rover)
+            ri.Con_Printf (PRINT_ALL,"ROVER:\n");
+        ri.Con_Printf (PRINT_ALL,"%p : %i bytes     %i width\n",test, test->size, test->width);
+    }
 }
 
 //=============================================================================
@@ -544,13 +544,13 @@ void D_SCDump (void)
 int     MaskForNum (int num)
 {
     if (num==128)
-	    return 127;
+        return 127;
     if (num==64)
-	    return 63;
+        return 63;
     if (num==32)
-	    return 31;
+        return 31;
     if (num==16)
-	    return 15;
+        return 15;
     return 255;
 }
 
@@ -561,7 +561,7 @@ int D_log2 (int num)
     c = 0;
 
     while (num>>=1)
-	    c++;
+        c++;
     return c;
 }
 
@@ -591,12 +591,12 @@ surfcache_t *D_CacheSurface (msurface_t *surface, int miplevel)
     cache = surface->cachespots[miplevel];
 
     if (cache && !cache->dlight && surface->dlightframe != r_framecount
-			&& cache->image == r_drawsurf.image
-			&& cache->lightadj[0] == r_drawsurf.lightadj[0]
-			&& cache->lightadj[1] == r_drawsurf.lightadj[1]
-			&& cache->lightadj[2] == r_drawsurf.lightadj[2]
-			&& cache->lightadj[3] == r_drawsurf.lightadj[3] )
-	    return cache;
+            && cache->image == r_drawsurf.image
+            && cache->lightadj[0] == r_drawsurf.lightadj[0]
+            && cache->lightadj[1] == r_drawsurf.lightadj[1]
+            && cache->lightadj[2] == r_drawsurf.lightadj[2]
+            && cache->lightadj[3] == r_drawsurf.lightadj[3] )
+        return cache;
 
 //
 // determine shape of surface
@@ -611,18 +611,18 @@ surfcache_t *D_CacheSurface (msurface_t *surface, int miplevel)
 // allocate memory if needed
 //
     if (!cache)     // if a texture just animated, don't reallocate it
-	{
-	    cache = D_SCAlloc (r_drawsurf.surfwidth,
-						   r_drawsurf.surfwidth * r_drawsurf.surfheight);
-	    surface->cachespots[miplevel] = cache;
-	    cache->owner = &surface->cachespots[miplevel];
-	    cache->mipscale = surfscale;
-	}
+    {
+        cache = D_SCAlloc (r_drawsurf.surfwidth,
+                           r_drawsurf.surfwidth * r_drawsurf.surfheight);
+        surface->cachespots[miplevel] = cache;
+        cache->owner = &surface->cachespots[miplevel];
+        cache->mipscale = surfscale;
+    }
 
     if (surface->dlightframe == r_framecount)
-	    cache->dlight = 1;
+        cache->dlight = 1;
     else
-	    cache->dlight = 0;
+        cache->dlight = 0;
 
     r_drawsurf.surfdat = (pixel_t *)cache->data;
 
@@ -639,10 +639,10 @@ surfcache_t *D_CacheSurface (msurface_t *surface, int miplevel)
 
     c_surf++;
 
-	// calculate the lightings
+    // calculate the lightings
     ref_soft_R_BuildLightMap ();
 
-	// rasterize the surface into the cache
+    // rasterize the surface into the cache
     R_DrawSurface ();
 
     return cache;

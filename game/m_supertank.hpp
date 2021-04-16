@@ -279,6 +279,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define FRAME_stand_59            252
 #define FRAME_stand_60            253
 
-#define MODEL_SCALE	    1.000000
+#define MODEL_SCALE        1.000000
 
 #endif // ____GAME_M_SUPERTANK_H__
