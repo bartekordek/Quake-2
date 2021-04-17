@@ -29,9 +29,9 @@ int    r_dlightframecount;
 DYNAMIC LIGHTS
 =============================================================================
 */
-void   ref_soft_R_MarkLights (dlight_t *light, int bit, mnode_t *node)
+void   ref_soft_R_MarkLights (dlight_t *light, int bit, mnode_s *node)
 {
-    plane_t* splitplane;
+    plane_s* splitplane;
     float        dist;
     msurface_t* surf;
     int            i;
@@ -100,14 +100,14 @@ LIGHT SAMPLING
 */
 
 vec3_t    pointcolor;
-plane_t    * lightplane;        // used as shadow plane
+plane_s    * lightplane;        // used as shadow plane
 vec3_t            lightspot;
 
-int ref_soft_RecursiveLightPoint (mnode_t *node, vec3_t start, vec3_t end)
+int ref_soft_RecursiveLightPoint (mnode_s *node, vec3_t start, vec3_t end)
 {
     float        front, back, frac;
     int            side;
-    plane_t* plane;
+    plane_s* plane;
     vec3_t        mid;
     msurface_t* surf;
     int            s, t, ds, dt;
@@ -245,7 +245,7 @@ void ref_soft_R_LightPoint (vec3_t p, vec3_t color)
     for (lnum=0 ; lnum<r_newrefdef.num_dlights ; lnum++)
     {
         dl = &r_newrefdef.dlights[lnum];
-        VectorSubtract (currententity->origin,
+        VectorSubtract (quake2::getInstance()->currententity->origin,
                         dl->origin,
                         dist);
         add = dl->intensity - VectorLength(dist);

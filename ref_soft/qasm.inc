@@ -251,7 +251,7 @@ endif
 	externdef _vpn:dword
 	externdef _BOPS_Error:dword
 
-; plane_t structure
+; plane_s structure
 ; !!! if this is changed, it must be changed in model.h too !!!
 ; !!! if the size of this is changed, the array lookup in SV_HullPointContents
 ;     must be changed too !!!
@@ -343,7 +343,7 @@ spanpackage_t_sfrac				equ		16
 spanpackage_t_tfrac				equ		20
 spanpackage_t_light				equ		24
 spanpackage_t_zi				equ		28
-spanpackage_t_size				equ		32 
+spanpackage_t_size				equ		32
 
 ; edge_t structure
 ; !!! if this is changed, it must be changed in r_shared.h too !!!
@@ -377,7 +377,7 @@ st_d_zistepv	equ		52
 st_pad			equ		56
 st_size			equ		64
 
-; clipplane_t structure
+; clipplane_s structure
 ; !!! if this is changed, it must be changed in r_local.h too !!!
 cp_normal		equ		0
 cp_dist			equ		12

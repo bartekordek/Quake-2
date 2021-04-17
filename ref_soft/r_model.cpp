@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // on the same machine.
 
 #include "r_local.hpp"
+#include "CUL/GenericUtils/SimpleAssert.hpp"
 
 model_t* loadmodel;
 char    loadname[32];    // for hunk tags
@@ -214,9 +215,9 @@ ref_soft_Mod_PointInLeaf
 */
 mleaf_t *ref_soft_Mod_PointInLeaf (vec3_t p, model_t *model)
 {
-    mnode_t    * node;
+    mnode_s    * node;
     float        d;
-    plane_t* plane;
+    plane_s* plane;
 
     if (!model || !model->nodes)
         ri.Sys_Error (ERR_DROP, "ref_soft_Mod_PointInLeaf: bad model");
@@ -322,7 +323,6 @@ by taking the brightest component
 void ref_soft_Mod_LoadLighting (lump_t *l)
 {
     int        i, size;
-    byte* in;
 
     if (!l->filelen)
     {
@@ -330,8 +330,8 @@ void ref_soft_Mod_LoadLighting (lump_t *l)
         return;
     }
     size = l->filelen/3;
-    loadmodel->lightdata = Hunk_Alloc (size);
-    in = (void *)(mod_base + l->fileofs);
+    loadmodel->lightdata = (byte*) Hunk_Alloc (size);
+    byte* in = (byte *)(mod_base + l->fileofs);
     for (i=0 ; i<size ; i++, in+=3)
     {
         if (in[0] > in[1] && in[0] > in[2])
@@ -348,7 +348,7 @@ int        r_leaftovis[MAX_MAP_LEAFS];
 int        r_vistoleaf[MAX_MAP_LEAFS];
 int        r_numvisleafs;
 
-void    R_NumberLeafs (mnode_t *node)
+void    R_NumberLeafs (mnode_s *node)
 {
     mleaf_t* leaf;
     int        leafnum;
@@ -384,8 +384,8 @@ void ref_soft_Mod_LoadVisibility (lump_t *l)
         loadmodel->vis = NULL;
         return;
     }
-    loadmodel->vis = Hunk_Alloc ( l->filelen);
-    memcpy (loadmodel->vis, mod_base + l->fileofs, l->filelen);
+    loadmodel->vis = (dvis_t*)Hunk_Alloc ( l->filelen);
+    memcpy (loadmodel->vis, (void*)( mod_base + l->fileofs ), l->filelen);
 
     loadmodel->vis->numclusters = LittleLong (loadmodel->vis->numclusters);
     for (i=0 ; i<loadmodel->vis->numclusters ; i++)
@@ -403,17 +403,15 @@ ref_soft_Mod_LoadVertexes
 */
 void ref_soft_Mod_LoadVertexes (lump_t *l)
 {
-    dvertex_t* in;
-    mvertex_t* out;
     int            i, count;
 
-    in = (void *)(mod_base + l->fileofs);
+    dvertex_t* in = (dvertex_t *)(mod_base + l->fileofs);
     if (l->filelen % sizeof(*in))
-        ri.Sys_Error (ERR_DROP,"MOD_LoadBmodel: funny lump size in %s",loadmodel->name);
+        //ri.Sys_Error (ERR_DROP,"MOD_LoadBmodel: funny lump size in %s",loadmodel->name);
     count = l->filelen / sizeof(*in);
-    out = Hunk_Alloc ( (count+8)*sizeof(*out));        // extra for skybox
+    mvertex_t* out = (mvertex_t*)Hunk_Alloc ( (count+8)*sizeof(*out));        // extra for skybox
 
-    loadmodel->vertexes = out;
+    loadmodel->vertexes = (mvertex_t *)out;
     loadmodel->numvertexes = count;
 
     for ( i=0 ; i<count ; i++, in++, out++)
@@ -431,15 +429,13 @@ ref_soft_Mod_LoadSubmodels
 */
 void ref_soft_Mod_LoadSubmodels (lump_t *l)
 {
-    dmodel_t* in;
-    dmodel_t* out;
     int            i, j, count;
 
-    in = (void *)(mod_base + l->fileofs);
+    dmodel_t* in = (dmodel_t *)(mod_base + l->fileofs);
     if (l->filelen % sizeof(*in))
         ri.Sys_Error (ERR_DROP,"MOD_LoadBmodel: funny lump size in %s",loadmodel->name);
     count = l->filelen / sizeof(*in);
-    out = Hunk_Alloc ( count*sizeof(*out));
+    dmodel_t* out = (dmodel_t*)Hunk_Alloc ( count*sizeof(*out));
 
     loadmodel->submodels = out;
     loadmodel->numsubmodels = count;
@@ -465,15 +461,13 @@ ref_soft_Mod_LoadEdges
 */
 void ref_soft_Mod_LoadEdges (lump_t *l)
 {
-    dedge_t *in;
-    medge_t *out;
     int     i, count;
 
-    in = (void *)(mod_base + l->fileofs);
+    dedge_t* in = (dedge_t*)(mod_base + l->fileofs);
     if (l->filelen % sizeof(*in))
         ri.Sys_Error (ERR_DROP,"MOD_LoadBmodel: funny lump size in %s",loadmodel->name);
     count = l->filelen / sizeof(*in);
-    out = Hunk_Alloc ( (count + 13) * sizeof(*out));    // extra for skybox
+    medge_t* out = (medge_t*) Hunk_Alloc ( (count + 13) * sizeof(*out));    // extra for skybox
 
     loadmodel->edges = out;
     loadmodel->numedges = count;
@@ -492,18 +486,16 @@ ref_soft_Mod_LoadTexinfo
 */
 void ref_soft_Mod_LoadTexinfo (lump_t *l)
 {
-    texinfo_t *in;
-    mtexinfo_t *out, *step;
     int     i, j, count;
     float    len1, len2;
     char    name[MAX_QPATH];
     int        next;
 
-    in = (void *)(mod_base + l->fileofs);
+    auto in = (texinfo_t *)(mod_base + l->fileofs);
     if (l->filelen % sizeof(*in))
         ri.Sys_Error (ERR_DROP,"MOD_LoadBmodel: funny lump size in %s",loadmodel->name);
     count = l->filelen / sizeof(*in);
-    out = Hunk_Alloc ( (count+6)*sizeof(*out));    // extra for skybox
+    mtexinfo_t* out = (mtexinfo_t*)Hunk_Alloc ( (count+6)*sizeof(*out));    // extra for skybox
 
     loadmodel->texinfo = out;
     loadmodel->numtexinfo = count;
@@ -545,6 +537,7 @@ void ref_soft_Mod_LoadTexinfo (lump_t *l)
         }
     }
 
+    mtexinfo_t* step;
     // count animation frames
     for (i=0 ; i<count ; i++)
     {
@@ -618,16 +611,14 @@ ref_soft_Mod_LoadFaces
 */
 void ref_soft_Mod_LoadFaces (lump_t *l)
 {
-    dface_t    * in;
-    msurface_t * out;
     int            i, count, surfnum;
     int            planenum, side;
 
-    in = (void *)(mod_base + l->fileofs);
+    dface_t* in = (dface_t*)(mod_base + l->fileofs);
     if (l->filelen % sizeof(*in))
         ri.Sys_Error (ERR_DROP,"MOD_LoadBmodel: funny lump size in %s",loadmodel->name);
     count = l->filelen / sizeof(*in);
-    out = Hunk_Alloc ( (count+6)*sizeof(*out));    // extra for skybox
+    msurface_t* out =(msurface_t*) Hunk_Alloc ( (count+6)*sizeof(*out));    // extra for skybox
 
     loadmodel->surfaces = out;
     loadmodel->numsurfaces = count;
@@ -706,7 +697,7 @@ void ref_soft_Mod_LoadFaces (lump_t *l)
 ref_soft_Mod_SetParent
 =================
 */
-void ref_soft_Mod_SetParent (mnode_t *node, mnode_t *parent)
+void ref_soft_Mod_SetParent (mnode_s *node, mnode_s *parent)
 {
     node->parent = parent;
     if (node->contents != -1)
@@ -723,14 +714,12 @@ ref_soft_Mod_LoadNodes
 void ref_soft_Mod_LoadNodes (lump_t *l)
 {
     int            i, j, count, p;
-    dnode_t    * in;
-    mnode_t * out;
 
-    in = (void *)(mod_base + l->fileofs);
+    dnode_t* in = (dnode_t*)(mod_base + l->fileofs);
     if (l->filelen % sizeof(*in))
         ri.Sys_Error (ERR_DROP,"MOD_LoadBmodel: funny lump size in %s",loadmodel->name);
     count = l->filelen / sizeof(*in);
-    out = Hunk_Alloc ( count*sizeof(*out));
+    mnode_s* out = (mnode_s*) Hunk_Alloc ( count*sizeof(*out));
 
     loadmodel->nodes = out;
     loadmodel->numnodes = count;
@@ -756,7 +745,7 @@ void ref_soft_Mod_LoadNodes (lump_t *l)
             if (p >= 0)
                 out->children[j] = loadmodel->nodes + p;
             else
-                out->children[j] = (mnode_t *)(loadmodel->leafs + (-1 - p));
+                out->children[j] = (mnode_s *)(loadmodel->leafs + (-1 - p));
         }
     }
 
@@ -770,15 +759,17 @@ ref_soft_Mod_LoadLeafs
 */
 void ref_soft_Mod_LoadLeafs (lump_t *l)
 {
-    dleaf_t * in;
-    mleaf_t * out;
     int            i, j, count;
 
-    in = (void *)(mod_base + l->fileofs);
+    dleaf_t * in = (dleaf_t *)(mod_base + l->fileofs);
     if (l->filelen % sizeof(*in))
-        ri.Sys_Error (ERR_DROP,"MOD_LoadBmodel: funny lump size in %s",loadmodel->name);
+    {
+        //ri.Sys_Error (ERR_DROP,"MOD_LoadBmodel: funny lump size in %s",loadmodel->name);
+        CUL::Assert::simple( false, "MOD_LoadBmodel: funny lump size in " + std::string( loadmodel->name ) );
+    }
+
     count = l->filelen / sizeof(*in);
-    out = Hunk_Alloc ( count*sizeof(*out));
+    mleaf_t * out = (mleaf_t*) Hunk_Alloc ( count*sizeof(*out));
 
     loadmodel->leafs = out;
     loadmodel->numleafs = count;
@@ -810,14 +801,12 @@ ref_soft_Mod_LoadMarksurfaces
 void ref_soft_Mod_LoadMarksurfaces (lump_t *l)
 {
     int        i, j, count;
-    short    * in;
-    msurface_t **out;
 
-    in = (void *)(mod_base + l->fileofs);
+    short* in = (short *)(mod_base + l->fileofs);
     if (l->filelen % sizeof(*in))
         ri.Sys_Error (ERR_DROP,"MOD_LoadBmodel: funny lump size in %s",loadmodel->name);
     count = l->filelen / sizeof(*in);
-    out = Hunk_Alloc ( count*sizeof(*out));
+    msurface_t** out = (msurface_t**)Hunk_Alloc ( count*sizeof(*out));
 
     loadmodel->marksurfaces = out;
     loadmodel->nummarksurfaces = count;
@@ -838,48 +827,41 @@ ref_soft_Mod_LoadSurfedges
 */
 void ref_soft_Mod_LoadSurfedges (lump_t *l)
 {
-    int        i, count;
-    int    * in, *out;
-
-    in = (void *)(mod_base + l->fileofs);
-    if (l->filelen % sizeof(*in))
-        ri.Sys_Error (ERR_DROP,"MOD_LoadBmodel: funny lump size in %s",loadmodel->name);
-    count = l->filelen / sizeof(*in);
-    out = Hunk_Alloc ( (count+24)*sizeof(*out));    // extra for skybox
+    int* in = (int *)(mod_base + l->fileofs);
+    if( l->filelen % sizeof( *in ) )
+    {
+        CUL::Assert::simple( false, "ERROR!" );
+        //ri.Sys_Error( ERR_DROP, "MOD_LoadBmodel: funny lump size in %s", loadmodel->name );
+    }
+    int count = l->filelen / sizeof(*in);
+    int* out = (int*)Hunk_Alloc ( (count+24)*sizeof(*out));    // extra for skybox
 
     loadmodel->surfedges = out;
     loadmodel->numsurfedges = count;
 
-    for ( i=0 ; i<count ; i++)
-        out[i] = LittleLong (in[i]);
+    for( int i = 0; i < count; i++ )
+        out[i] = LittleLong( in[i] );
 }
 
-/*
-=================
-ref_soft_Mod_LoadPlanes
-=================
-*/
 void ref_soft_Mod_LoadPlanes (lump_t *l)
 {
-    int            i, j;
-    plane_t* out;
-    dplane_t * in;
-    int            count;
-    int            bits;
-
-    in = (void *)(mod_base + l->fileofs);
+    dplane_s * in = (dplane_s *)(mod_base + l->fileofs);
     if (l->filelen % sizeof(*in))
-        ri.Sys_Error (ERR_DROP,"MOD_LoadBmodel: funny lump size in %s",loadmodel->name);
-    count = l->filelen / sizeof(*in);
-    out = Hunk_Alloc ( (count+6)*sizeof(*out));        // extra for skybox
+    {
+        CUL::Assert::simple( false, "MOD_LoadBmodel" );
+        // ri.Sys_Error (ERR_DROP,"MOD_LoadBmodel: funny lump size in %s",loadmodel->name);
+    }
+    int count = l->filelen / sizeof(*in);
+    plane_s* out = (plane_s*)Hunk_Alloc ( (count+6)*sizeof(*out));        // extra for skybox
 
     loadmodel->planes = out;
     loadmodel->numplanes = count;
 
-    for ( i=0 ; i<count ; i++, in++, out++)
+    int bits = 0;
+    for (int i=0 ; i<count ; i++, in++, out++)
     {
         bits = 0;
-        for (j=0 ; j<3 ; j++)
+        for (int j=0 ; j<3 ; j++)
         {
             out->normal[j] = LittleFloat (in->normal[j]);
             if (out->normal[j] < 0)
@@ -892,12 +874,6 @@ void ref_soft_Mod_LoadPlanes (lump_t *l)
     }
 }
 
-
-/*
-=================
-ref_soft_Mod_LoadBrushModel
-=================
-*/
 void ref_soft_Mod_LoadBrushModel (model_t *mod, void *buffer)
 {
     int            i;
@@ -962,7 +938,7 @@ void ref_soft_Mod_LoadBrushModel (model_t *mod, void *buffer)
         * loadmodel = *starmod;
     }
 
-    R_InitSkyBox ();
+    ref_soft_R_InitSkyBox ();
 }
 
 /*
@@ -981,21 +957,19 @@ ref_soft_Mod_LoadAliasModel
 void ref_soft_Mod_LoadAliasModel (model_t *mod, void *buffer)
 {
     int                    i, j;
-    dmdl_t            * pinmodel, *pheader;
     dstvert_t        * pinst, *poutst;
     dtriangle_t        * pintri, *pouttri;
     daliasframe_t    * pinframe, *poutframe;
     int                * pincmd, *poutcmd;
-    int                    version;
 
-    pinmodel = (dmdl_t *)buffer;
+    dmdl_t* pinmodel = (dmdl_t *)buffer;
 
-    version = LittleLong (pinmodel->version);
+    int version = LittleLong (pinmodel->version);
     if (version != ALIAS_VERSION)
         ri.Sys_Error (ERR_DROP, "%s has wrong version number (%i should be %i)",
                  mod->name, version, ALIAS_VERSION);
 
-    pheader = Hunk_Alloc (LittleLong(pinmodel->ofs_end));
+    dmdl_t* pheader = ( dmdl_t * )Hunk_Alloc (LittleLong(pinmodel->ofs_end));
 
     // byte swap the header fields and sanity check
     for (i=0 ; i<sizeof(dmdl_t)/4 ; i++)
@@ -1104,11 +1078,8 @@ ref_soft_Mod_LoadSpriteModel
 */
 void ref_soft_Mod_LoadSpriteModel (model_t *mod, void *buffer)
 {
-    dsprite_t* sprin, *sprout;
-    int            i;
-
-    sprin = (dsprite_t *)buffer;
-    sprout = Hunk_Alloc (modfilelen);
+    dsprite_t* sprin = (dsprite_t *)buffer;
+    dsprite_t* sprout = (dsprite_t *)Hunk_Alloc (modfilelen);
 
     sprout->ident = LittleLong (sprin->ident);
     sprout->version = LittleLong (sprin->version);
@@ -1123,7 +1094,7 @@ void ref_soft_Mod_LoadSpriteModel (model_t *mod, void *buffer)
                  mod->name, sprout->numframes, MAX_MD2SKINS);
 
     // byte swap everything
-    for (i=0 ; i<sprout->numframes ; i++)
+    for (int i=0 ; i<sprout->numframes ; i++)
     {
         sprout->frames[i].width = LittleLong (sprin->frames[i].width);
         sprout->frames[i].height = LittleLong (sprin->frames[i].height);
@@ -1135,8 +1106,6 @@ void ref_soft_Mod_LoadSpriteModel (model_t *mod, void *buffer)
 
     mod->type = mod_sprite;
 }
-
-//=============================================================================
 
 /*
 Specifies the model that will be used as the world
@@ -1150,7 +1119,7 @@ void ref_soft_R_BeginRegistration (char *model)
     r_oldviewcluster = -1;        // force markleafs
     //Com_sprintf (fullname, sizeof(fullname), "maps/%s.bsp", model);
 
-    D_FlushCaches ();
+    ref_soft_D_FlushCaches ();
     // explicitly free the old map if different
     // this guarantees that mod_known[0] is the world map
     flushmap = ri.Cvar_Get ("flushmap", "0", 0);
@@ -1219,7 +1188,7 @@ void ref_soft_R_EndRegistration (void)
         }
         else
         {    // make sure it is paged in
-            Com_PageInMemory (mod->extradata, mod->extradatasize);
+            Com_PageInMemory ((byte*)mod->extradata, mod->extradatasize);
         }
     }
 

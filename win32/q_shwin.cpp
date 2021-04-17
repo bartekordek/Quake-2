@@ -45,13 +45,13 @@ void *Hunk_Begin (int maxsize)
     cursize = 0;
     hunkmaxsize = maxsize;
 #ifdef VIRTUAL_ALLOC
-    membase = VirtualAlloc (NULL, maxsize, MEM_RESERVE, PAGE_NOACCESS);
+    membase = (byte*) VirtualAlloc (NULL, maxsize, MEM_RESERVE, PAGE_NOACCESS);
 #else
     membase = malloc (maxsize);
     memset (membase, 0, maxsize);
 #endif
     if (!membase)
-        Sys_Error ("VirtualAlloc reserve failed");
+        win32_Sys_Error ("VirtualAlloc reserve failed");
     return (void *)membase;
 }
 
@@ -69,12 +69,12 @@ void *Hunk_Alloc (int size)
     if (!buf)
     {
         FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPTSTR) &buf, 0, NULL);
-        Sys_Error ("VirtualAlloc commit failed.\n%s", buf);
+        win32_Sys_Error ("VirtualAlloc commit failed.\n%s", buf);
     }
 #endif
     cursize += size;
     if (cursize > hunkmaxsize)
-        Sys_Error ("Hunk_Alloc overflow");
+        win32_Sys_Error ("Hunk_Alloc overflow");
 
     return (void *)(membase+cursize-size);
 }
@@ -112,7 +112,7 @@ void Hunk_Free (void *base)
 //===============================================================================
 
 int curtime;
-int win32_Sys_Milliseconds(void)
+int win32_Sys_Milliseconds()
 {
     static int        base;
     static bool    initialized = false;
@@ -169,8 +169,10 @@ char *Sys_FindFirst (char *path, unsigned musthave, unsigned canthave )
 {
     struct _finddata_t findinfo;
 
-    if (findhandle)
-        Sys_Error ("Sys_BeginFind without close");
+    if( findhandle )
+    {
+        win32_Sys_Error( "Sys_BeginFind without close" );
+    }
     findhandle = 0;
 
     COM_FilePath (path, findbase);

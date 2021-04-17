@@ -31,10 +31,10 @@ boss3
 
 void Use_Boss3 (edict *ent, edict *other, edict *activator)
 {
-    gi.WriteByte (svc_temp_entity);
-    gi.WriteByte (TE_BOSSTPORT);
-    gi.WritePosition (ent->s.origin);
-    gi.multicast (ent->s.origin, MULTICAST_PVS);
+    quake2::getInstance()->gi.WriteByte (svc_temp_entity);
+    quake2::getInstance()->gi.WriteByte (TE_BOSSTPORT);
+    quake2::getInstance()->gi.WritePosition (ent->s.origin);
+    quake2::getInstance()->gi.multicast (ent->s.origin, multicast_t::MULTICAST_PVS);
     G_FreeEdict (ent);
 }
 
@@ -62,10 +62,10 @@ void SP_monster_boss3_stand (edict *self)
     self->movetype = MOVETYPE_STEP;
     self->solid = SOLID_BBOX;
     self->model = "models/monsters/boss3/rider/tris.md2";
-    self->s.modelindex = gi.modelindex (self->model);
+    self->s.modelindex = quake2::getInstance()->gi.modelindex (self->model);
     self->s.frame = FRAME_stand201;
 
-    gi.soundindex ("misc/bigtele.wav");
+    quake2::getInstance()->gi.soundindex ("misc/bigtele.wav");
 
     VectorSet (self->mins, -32, -32, 0);
     VectorSet (self->maxs, 32, 32, 90);
@@ -73,5 +73,5 @@ void SP_monster_boss3_stand (edict *self)
     self->use = Use_Boss3;
     self->think = Think_Boss3Stand;
     self->nextthink = level.time + FRAMETIME;
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 }

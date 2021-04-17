@@ -146,69 +146,69 @@ is loaded.
 */
 void InitGame (void)
 {
-    gi.dprintf ("==== InitGame ====\n");
+    quake2::getInstance()->gi.dprintf ("==== InitGame ====\n");
 
-    gun_x = gi.cvar_obj ("gun_x", "0", 0);
-    gun_y = gi.cvar_obj ("gun_y", "0", 0);
-    gun_z = gi.cvar_obj ("gun_z", "0", 0);
+    gun_x = quake2::getInstance()->gi.cvar_obj ("gun_x", "0", 0);
+    gun_y = quake2::getInstance()->gi.cvar_obj ("gun_y", "0", 0);
+    gun_z = quake2::getInstance()->gi.cvar_obj ("gun_z", "0", 0);
 
     //FIXME: sv_ prefix is wrong for these
-    sv_rollspeed = gi.cvar_obj ("sv_rollspeed", "200", 0);
-    sv_rollangle = gi.cvar_obj ("sv_rollangle", "2", 0);
-    sv_maxvelocity = gi.cvar_obj ("sv_maxvelocity", "2000", 0);
-    sv_gravity = gi.cvar_obj ("sv_gravity", "800", 0);
+    sv_rollspeed = quake2::getInstance()->gi.cvar_obj ("sv_rollspeed", "200", 0);
+    sv_rollangle = quake2::getInstance()->gi.cvar_obj ("sv_rollangle", "2", 0);
+    sv_maxvelocity = quake2::getInstance()->gi.cvar_obj ("sv_maxvelocity", "2000", 0);
+    sv_gravity = quake2::getInstance()->gi.cvar_obj ("sv_gravity", "800", 0);
 
     // noset vars
-    dedicated = gi.cvar_obj ("dedicated", "0", CVAR_NOSET);
+    quake2::getInstance()->dedicated = quake2::getInstance()->gi.cvar_obj ("quake2::getInstance()->dedicated", "0", CVAR_NOSET);
 
     // latched vars
-    sv_cheats = gi.cvar_obj ("cheats", "0", CVAR_SERVERINFO|CVAR_LATCH);
-    gi.cvar_obj ("gamename", GAMEVERSION , CVAR_SERVERINFO | CVAR_LATCH);
-    gi.cvar_obj ("gamedate", __DATE__ , CVAR_SERVERINFO | CVAR_LATCH);
+    sv_cheats = quake2::getInstance()->gi.cvar_obj ("cheats", "0", CVAR_SERVERINFO|CVAR_LATCH);
+    quake2::getInstance()->gi.cvar_obj ("gamename", GAMEVERSION , CVAR_SERVERINFO | CVAR_LATCH);
+    quake2::getInstance()->gi.cvar_obj ("gamedate", __DATE__ , CVAR_SERVERINFO | CVAR_LATCH);
 
-    maxclients = gi.cvar_obj ("maxclients", "4", CVAR_SERVERINFO | CVAR_LATCH);
-    deathmatch = gi.cvar_obj ("deathmatch", "0", CVAR_LATCH);
-    coop = gi.cvar_obj ("coop", "0", CVAR_LATCH);
-    skill = gi.cvar_obj ("skill", "1", CVAR_LATCH);
-    maxentities = gi.cvar_obj ("maxentities", "1024", CVAR_LATCH);
+    maxclients = quake2::getInstance()->gi.cvar_obj ("maxclients", "4", CVAR_SERVERINFO | CVAR_LATCH);
+    deathmatch = quake2::getInstance()->gi.cvar_obj ("deathmatch", "0", CVAR_LATCH);
+    coop = quake2::getInstance()->gi.cvar_obj ("coop", "0", CVAR_LATCH);
+    skill = quake2::getInstance()->gi.cvar_obj ("skill", "1", CVAR_LATCH);
+    maxentities = quake2::getInstance()->gi.cvar_obj ("maxentities", "1024", CVAR_LATCH);
 
 //ZOID
 //This game.dll only supports deathmatch
     if (!deathmatch->value) {
-        gi.dprintf("Forcing deathmatch.");
-        gi.cvar_set("deathmatch", "1");
+        quake2::getInstance()->gi.dprintf("Forcing deathmatch.");
+        quake2::getInstance()->gi.cvar_set("deathmatch", "1");
     }
     //force coop off
     if (coop->value)
-        gi.cvar_set("coop", "0");
+        quake2::getInstance()->gi.cvar_set("coop", "0");
 //ZOID
 
 
     // change anytime vars
-    dmflags = gi.cvar_obj ("dmflags", "0", CVAR_SERVERINFO);
-    fraglimit = gi.cvar_obj ("fraglimit", "0", CVAR_SERVERINFO);
-    timelimit = gi.cvar_obj ("timelimit", "0", CVAR_SERVERINFO);
+    dmflags = quake2::getInstance()->gi.cvar_obj ("dmflags", "0", CVAR_SERVERINFO);
+    fraglimit = quake2::getInstance()->gi.cvar_obj ("fraglimit", "0", CVAR_SERVERINFO);
+    timelimit = quake2::getInstance()->gi.cvar_obj ("timelimit", "0", CVAR_SERVERINFO);
 //ZOID
-    capturelimit = gi.cvar_obj ("capturelimit", "0", CVAR_SERVERINFO);
-    instantweap = gi.cvar_obj ("instantweap", "0", CVAR_SERVERINFO);
+    capturelimit = quake2::getInstance()->gi.cvar_obj ("capturelimit", "0", CVAR_SERVERINFO);
+    instantweap = quake2::getInstance()->gi.cvar_obj ("instantweap", "0", CVAR_SERVERINFO);
 //ZOID
-     password = gi.cvar_obj ("password", "", CVAR_USERINFO);
+     password = quake2::getInstance()->gi.cvar_obj ("password", "", CVAR_USERINFO);
 
-    g_select_empty = gi.cvar_obj ("g_select_empty", "0", CVAR_ARCHIVE);
+    g_select_empty = quake2::getInstance()->gi.cvar_obj ("g_select_empty", "0", CVAR_ARCHIVE);
 
-    run_pitch = gi.cvar_obj ("run_pitch", "0.002", 0);
-    run_roll = gi.cvar_obj ("run_roll", "0.005", 0);
-    bob_up  = gi.cvar_obj ("bob_up", "0.005", 0);
-    bob_pitch = gi.cvar_obj ("bob_pitch", "0.002", 0);
-    bob_roll = gi.cvar_obj ("bob_roll", "0.002", 0);
+    run_pitch = quake2::getInstance()->gi.cvar_obj ("run_pitch", "0.002", 0);
+    run_roll = quake2::getInstance()->gi.cvar_obj ("run_roll", "0.005", 0);
+    bob_up  = quake2::getInstance()->gi.cvar_obj ("bob_up", "0.005", 0);
+    bob_pitch = quake2::getInstance()->gi.cvar_obj ("bob_pitch", "0.002", 0);
+    bob_roll = quake2::getInstance()->gi.cvar_obj ("bob_roll", "0.002", 0);
 
     // flood control
-    flood_msgs = gi.cvar_obj ("flood_msgs", "4", 0);
-    flood_persecond = gi.cvar_obj ("flood_persecond", "4", 0);
-    flood_waitdelay = gi.cvar_obj ("flood_waitdelay", "10", 0);
+    flood_msgs = quake2::getInstance()->gi.cvar_obj ("flood_msgs", "4", 0);
+    flood_persecond = quake2::getInstance()->gi.cvar_obj ("flood_persecond", "4", 0);
+    flood_waitdelay = quake2::getInstance()->gi.cvar_obj ("flood_waitdelay", "10", 0);
 
     // dm map list
-    sv_maplist = gi.cvar_obj ("sv_maplist", "", 0);
+    sv_maplist = quake2::getInstance()->gi.cvar_obj ("sv_maplist", "", 0);
 
     // items
     InitItems ();
@@ -219,13 +219,13 @@ void InitGame (void)
 
     // initialize all entities for this game
     game.maxentities = maxentities->value;
-    g_edicts =  gi.TagMalloc (game.maxentities * sizeof(g_edicts[0]), TAG_GAME);
+    g_edicts =  quake2::getInstance()->gi.TagMalloc (game.maxentities * sizeof(g_edicts[0]), TAG_GAME);
     globals.edicts = g_edicts;
     globals.max_edicts = game.maxentities;
 
     // initialize all clients for this game
     game.maxclients = maxclients->value;
-    game.clients = gi.TagMalloc (game.maxclients * sizeof(game.clients[0]), TAG_GAME);
+    game.clients = quake2::getInstance()->gi.TagMalloc (game.maxclients * sizeof(game.clients[0]), TAG_GAME);
     globals.num_edicts = game.maxclients+1;
 
 //ZOID
@@ -282,7 +282,7 @@ void WriteField1 (FILE *f, field *field, byte *base)
         break;
 
     default:
-        gi.error ("WriteEdict: unknown field type");
+        quake2::getInstance()->gi.error ("WriteEdict: unknown field type");
     }
 }
 
@@ -327,7 +327,7 @@ void ReadField (FILE *f, field *field, byte *base)
             *(char **)p = NULL;
         else
         {
-            *(char **)p = gi.TagMalloc (len, TAG_LEVEL);
+            *(char **)p = quake2::getInstance()->gi.TagMalloc (len, TAG_LEVEL);
             fread (*(char **)p, len, 1, f);
         }
         break;
@@ -337,7 +337,7 @@ void ReadField (FILE *f, field *field, byte *base)
             *(char **)p = NULL;
         else
         {
-            *(char **)p = gi.TagMalloc (len, TAG_GAME);
+            *(char **)p = quake2::getInstance()->gi.TagMalloc (len, TAG_GAME);
             fread (*(char **)p, len, 1, f);
         }
         break;
@@ -364,7 +364,7 @@ void ReadField (FILE *f, field *field, byte *base)
         break;
 
     default:
-        gi.error ("ReadEdict: unknown field type");
+        quake2::getInstance()->gi.error ("ReadEdict: unknown field type");
     }
 }
 
@@ -445,7 +445,7 @@ void WriteGame (char *filename, bool autosave)
 
     f = fopen (filename, "wb");
     if (!f)
-        gi.error ("Couldn't open %s", filename);
+        quake2::getInstance()->gi.error ("Couldn't open %s", filename);
 
     memset (str, 0, sizeof(str));
     strcpy (str, __DATE__);
@@ -467,24 +467,24 @@ void ReadGame (char *filename)
     int        i;
     char    str[16];
 
-    gi.FreeTags (TAG_GAME);
+    quake2::getInstance()->gi.FreeTags (TAG_GAME);
 
     f = fopen (filename, "rb");
     if (!f)
-        gi.error ("Couldn't open %s", filename);
+        quake2::getInstance()->gi.error ("Couldn't open %s", filename);
 
     fread (str, sizeof(str), 1, f);
     if (strcmp (str, __DATE__))
     {
         fclose (f);
-        gi.error ("Savegame from an older version.\n");
+        quake2::getInstance()->gi.error ("Savegame from an older version.\n");
     }
 
-    g_edicts =  gi.TagMalloc (game.maxentities * sizeof(g_edicts[0]), TAG_GAME);
+    g_edicts =  quake2::getInstance()->gi.TagMalloc (game.maxentities * sizeof(g_edicts[0]), TAG_GAME);
     globals.edicts = g_edicts;
 
     fread (&game, sizeof(game), 1, f);
-    game.clients = gi.TagMalloc (game.maxclients * sizeof(game.clients[0]), TAG_GAME);
+    game.clients = quake2::getInstance()->gi.TagMalloc (game.maxclients * sizeof(game.clients[0]), TAG_GAME);
     for (i=0 ; i<game.maxclients ; i++)
         ReadClient (f, &game.clients[i]);
 
@@ -611,7 +611,7 @@ void WriteLevel (char *filename)
 
     f = fopen (filename, "wb");
     if (!f)
-        gi.error ("Couldn't open %s", filename);
+        quake2::getInstance()->gi.error ("Couldn't open %s", filename);
 
     // write out edict size for checking
     i = sizeof(edict);
@@ -666,11 +666,11 @@ void ReadLevel (char *filename)
 
     f = fopen (filename, "rb");
     if (!f)
-        gi.error ("Couldn't open %s", filename);
+        quake2::getInstance()->gi.error ("Couldn't open %s", filename);
 
     // free any dynamic memory allocated by loading the level
     // base state
-    gi.FreeTags (TAG_LEVEL);
+    quake2::getInstance()->gi.FreeTags (TAG_LEVEL);
 
     // wipe all the entities
     memset (g_edicts, 0, game.maxentities*sizeof(g_edicts[0]));
@@ -681,7 +681,7 @@ void ReadLevel (char *filename)
     if (i != sizeof(edict))
     {
         fclose (f);
-        gi.error ("ReadLevel: mismatched edict size");
+        quake2::getInstance()->gi.error ("ReadLevel: mismatched edict size");
     }
 
     // check function pointer base address
@@ -689,7 +689,7 @@ void ReadLevel (char *filename)
     if (base != (void *)InitGame)
     {
         fclose (f);
-        gi.error ("ReadLevel: function pointers have moved");
+        quake2::getInstance()->gi.error ("ReadLevel: function pointers have moved");
     }
 
     // load the level locals
@@ -701,7 +701,7 @@ void ReadLevel (char *filename)
         if (fread (&entnum, sizeof(entnum), 1, f) != 1)
         {
             fclose (f);
-            gi.error ("ReadLevel: failed to read entnum");
+            quake2::getInstance()->gi.error ("ReadLevel: failed to read entnum");
         }
         if (entnum == -1)
             break;
@@ -713,7 +713,7 @@ void ReadLevel (char *filename)
 
         // let the server rebuild world links for this ent
         memset (&ent->area, 0, sizeof(ent->area));
-        gi.linkentity (ent);
+        quake2::getInstance()->gi.linkentity (ent);
     }
 
     fclose (f);

@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "ref_soft/r_local.hpp"
 #include "win32/winquake.hpp"
+#include "win32/q_shwin.hpp"
 
 #define NUM_MIPS    4
 
@@ -265,7 +266,7 @@ __declspec( naked ) void TransformVector( vec3_t vin, vec3_t vout )
 R_TransformPlane
 ================
 */
-void R_TransformPlane (plane_t *p, float *normal, float *dist)
+void R_TransformPlane (plane_s *p, float *normal, float *dist)
 {
     float    d;
 
@@ -420,7 +421,7 @@ void R_SetupFrame (void)
     if (r_fullbright->modified)
     {
         r_fullbright->modified = false;
-        D_FlushCaches ();    // so all lighting changes
+        ref_soft_D_FlushCaches ();    // so all lighting changes
     }
 
     r_framecount++;
@@ -461,7 +462,7 @@ void R_SetupFrame (void)
         vrect.width = r_newrefdef.width;
         vrect.height = r_newrefdef.height;
 
-        d_viewbuffer = (void *)vid.buffer;
+        d_viewbuffer = (pixel_t *)vid.buffer;
         r_screenwidth = vid.rowbytes;
     }
 

@@ -33,7 +33,7 @@ pmenuhnd_t *PMenu_Open(edict *ent, pmenu_t *entries, int cur, int num, void *arg
         return NULL;
 
     if (ent->client->menu) {
-        gi.dprintf("warning, ent already has a menu\n");
+        quake2::getInstance()->gi.dprintf("warning, ent already has a menu\n");
         PMenu_Close(ent);
     }
 
@@ -66,7 +66,7 @@ pmenuhnd_t *PMenu_Open(edict *ent, pmenu_t *entries, int cur, int num, void *arg
     ent->client->menu = hnd;
 
     PMenu_Do_Update(ent);
-    gi.unicast (ent, true);
+    quake2::getInstance()->gi.unicast (ent, true);
 
     return hnd;
 }
@@ -112,7 +112,7 @@ void PMenu_Do_Update(edict *ent)
     bool alt = false;
 
     if (!ent->client->menu) {
-        gi.dprintf("warning:  ent has no menu\n");
+        quake2::getInstance()->gi.dprintf("warning:  ent has no menu\n");
         return;
     }
 
@@ -148,21 +148,21 @@ void PMenu_Do_Update(edict *ent)
         alt = false;
     }
 
-    gi.WriteByte (svc_layout);
-    gi.WriteString (string);
+    quake2::getInstance()->gi.WriteByte (svc_layout);
+    quake2::getInstance()->gi.WriteString (string);
 }
 
 void PMenu_Update(edict *ent)
 {
     if (!ent->client->menu) {
-        gi.dprintf("warning:  ent has no menu\n");
+        quake2::getInstance()->gi.dprintf("warning:  ent has no menu\n");
         return;
     }
 
     if (level.time - ent->client->menutime >= 1.0) {
         // been a second or more since last update, update now
         PMenu_Do_Update(ent);
-        gi.unicast (ent, true);
+        quake2::getInstance()->gi.unicast (ent, true);
         ent->client->menutime = level.time;
         ent->client->menudirty = false;
     }
@@ -177,7 +177,7 @@ void PMenu_Next(edict *ent)
     pmenu_t *p;
 
     if (!ent->client->menu) {
-        gi.dprintf("warning:  ent has no menu\n");
+        quake2::getInstance()->gi.dprintf("warning:  ent has no menu\n");
         return;
     }
 
@@ -208,7 +208,7 @@ void PMenu_Prev(edict *ent)
     pmenu_t *p;
 
     if (!ent->client->menu) {
-        gi.dprintf("warning:  ent has no menu\n");
+        quake2::getInstance()->gi.dprintf("warning:  ent has no menu\n");
         return;
     }
 
@@ -240,7 +240,7 @@ void PMenu_Select(edict *ent)
     pmenu_t *p;
 
     if (!ent->client->menu) {
-        gi.dprintf("warning:  ent has no menu\n");
+        quake2::getInstance()->gi.dprintf("warning:  ent has no menu\n");
         return;
     }
 

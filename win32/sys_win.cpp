@@ -22,6 +22,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "qcommon/qcommon.hpp"
 #include "win32/winquake.hpp"
+#include "win32/q_shwin.hpp"
+
 #include "resource.hpp"
 #include <errno.h>
 #include <float.h>
@@ -33,6 +35,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "win32/conproc.hpp"
 #include <stdio.h>
 
+#include "CUL/GenericUtils/SimpleAssert.hpp"
+
 #define MINIMUM_WIN_MEMORY    0x0a00000
 #define MAXIMUM_WIN_MEMORY    0x1000000
 
@@ -40,9 +44,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 bool s_win95;
 
-int            starttime;
-int            ActiveApp;
-bool    Minimized;
+int starttime;
+bool ActiveApp;
+bool Minimized;
 
 static HANDLE        hinput, houtput;
 
@@ -96,7 +100,7 @@ void win32_Sys_Quit (void)
     CL_Shutdown();
     Qcommon_Shutdown ();
     CloseHandle (qwclsemaphore);
-    if (dedicated && dedicated->value)
+    if (quake2::getInstance()->dedicated && quake2::getInstance()->dedicated->value)
         FreeConsole ();
 
 // shut down QHOST hooks if necessary
@@ -121,7 +125,8 @@ void win32_WinError (void)
     );
 
     // Display the string.
-    MessageBox( NULL, lpMsgBuf, "GetLastError", MB_OK|MB_ICONINFORMATION );
+    CUL::Assert::simple( false, "ERROR!" );
+    //MessageBox( NULL, lpMsgBuf, "GetLastError", MB_OK|MB_ICONINFORMATION );
 
     // Free the buffer.
     LocalFree( lpMsgBuf );
@@ -243,10 +248,10 @@ void win32_Sys_Init (void)
     else if ( vinfo.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS )
         s_win95 = true;
 
-    if (dedicated->value)
+    if (quake2::getInstance()->dedicated->value)
     {
         if (!AllocConsole ())
-            win32_Sys_Error ("Couldn't create dedicated server console");
+            win32_Sys_Error ("Couldn't create quake2::getInstance()->dedicated server console");
         hinput = GetStdHandle (STD_INPUT_HANDLE);
         houtput = GetStdHandle (STD_OUTPUT_HANDLE);
 
@@ -255,34 +260,28 @@ void win32_Sys_Init (void)
     }
 }
 
-
 static char    console_text[256];
 static int    console_textlen;
 
-/*
-================
-win32_Sys_ConsoleInput
-================
-*/
-char *win32_Sys_ConsoleInput (void)
+std::string win32_Sys_ConsoleInput()
 {
     INPUT_RECORD    recs[1024];
     int        dummy;
     int        ch, numread, numevents;
 
-    if (!dedicated || !dedicated->value)
+    if (!quake2::getInstance()->dedicated || !quake2::getInstance()->dedicated->value)
         return NULL;
 
 
     for ( ;; )
     {
-        if (!GetNumberOfConsoleInputEvents (hinput, &numevents))
+        if (!GetNumberOfConsoleInputEvents (hinput,(LPDWORD) &numevents))
             win32_Sys_Error ("Error getting # of console events");
 
         if (numevents <= 0)
             break;
 
-        if (!ReadConsoleInput(hinput, recs, 1, &numread))
+        if (!ReadConsoleInput(hinput, recs, 1, (LPDWORD)&numread))
             win32_Sys_Error ("Error reading console input");
 
         if (numread != 1)
@@ -297,7 +296,7 @@ char *win32_Sys_ConsoleInput (void)
                 switch (ch)
                 {
                     case '\r':
-                        WriteFile(houtput, "\r\n", 2, &dummy, NULL);
+                        WriteFile(houtput, "\r\n", 2, (LPDWORD)&dummy, NULL);
 
                         if (console_textlen)
                         {
@@ -311,7 +310,7 @@ char *win32_Sys_ConsoleInput (void)
                         if (console_textlen)
                         {
                             console_textlen--;
-                            WriteFile(houtput, "\b \b", 3, &dummy, NULL);
+                            WriteFile(houtput, "\b \b", 3,(LPDWORD) &dummy, NULL);
                         }
                         break;
 
@@ -320,7 +319,7 @@ char *win32_Sys_ConsoleInput (void)
                         {
                             if (console_textlen < sizeof(console_text)-2)
                             {
-                                WriteFile(houtput, &ch, 1, &dummy, NULL);
+                                WriteFile(houtput, &ch, 1,(LPDWORD) &dummy, nullptr );
                                 console_text[console_textlen] = ch;
                                 console_textlen++;
                             }
@@ -337,30 +336,31 @@ char *win32_Sys_ConsoleInput (void)
 }
 
 /*
-Print text to the dedicated console
+Print text to the quake2::getInstance()->dedicated console
 */
 void win32_Sys_ConsoleOutput (char *string)
 {
-    int        dummy;
-    char    text[256];
+    //TODO:
+    // int        dummy;
+    // char    text[256];
 
-    if( !dedicated || !dedicated->value )
-        printf( string );
-        return;
+    // if( !quake2::getInstance()->dedicated || !quake2::getInstance()->dedicated->value )
+    //     printf( string );
+    //     return;
 
-    if (console_textlen)
-    {
-        text[0] = '\r';
-        memset(&text[1], ' ', console_textlen);
-        text[console_textlen+1] = '\r';
-        text[console_textlen+2] = 0;
-        WriteFile(houtput, text, console_textlen+2, &dummy, NULL);
-    }
+    // if (console_textlen)
+    // {
+    //     text[0] = '\r';
+    //     memset(&text[1], ' ', console_textlen);
+    //     text[console_textlen+1] = '\r';
+    //     text[console_textlen+2] = 0;
+    //     WriteFile(houtput, text, console_textlen+2, &dummy, NULL);
+    // }
 
-    WriteFile(houtput, string, strlen(string), &dummy, NULL);
+    // WriteFile(houtput, string, strlen(string), &dummy, NULL);
 
-    if (console_textlen)
-        WriteFile(houtput, console_text, console_textlen, &dummy, NULL);
+    // if (console_textlen)
+    //     WriteFile(houtput, console_text, console_textlen, &dummy, NULL);
 }
 
 
@@ -388,7 +388,7 @@ void win32_Sys_SendKeyEvents (void)
     sys_frame_time = timeGetTime();    // FIXME: should this be at start?
 }
 
-char* win32_Sys_GetClipboardData()
+std::string win32_Sys_GetClipboardData()
 {
     char *data = NULL;
     char *cliptext;
@@ -438,91 +438,6 @@ void win32_Sys_UnloadGame (void)
     if (!FreeLibrary (game_library))
         Com_Error (ERR_FATAL, "FreeLibrary failed for game library");
     game_library = NULL;
-}
-
-/*
-=================
-Sys_GetGameAPI
-
-Loads the game dll
-=================
-*/
-void* Sys_GetGameAPI (void *parms)
-{
-    void* (*GetGameAPI) (void *);
-    char    name[MAX_OSPATH];
-    char* path;
-    char    cwd[MAX_OSPATH];
-#if defined _M_IX86
-    const char *gamename = "gamex86.dll";
-#elif defined _M_ALPHA
-    const char *gamename = "gameaxp.dll";
-
-    #ifdef NDEBUG
-        const char *debugdir = "releaseaxp";
-    #else
-        const char *debugdir = "debugaxp";
-    #endif
-
-#else
-    const char *gamename = "Quake-2.exe";
-    #ifdef NDEBUG
-        const char *debugdir = "release";
-    #else
-        const char *debugdir = "debug";
-    #endif
-#endif
-
-    if (game_library)
-        Com_Error (ERR_FATAL, "Sys_GetGameAPI without win32_Sys_UnloadingGame");
-
-    // check the current debug directory first for development purposes
-    _getcwd (cwd, sizeof(cwd));
-    //Com_sprintf (name, sizeof(name), "%s/%s/%s", cwd, debugdir, gamename);
-    game_library = LoadLibrary ( name );
-    if (game_library)
-    {
-        Com_DPrintf ("LoadLibrary (%s)\n", name);
-    }
-    else
-    {
-        // check the current directory for other development purposes
-        //Com_sprintf (name, sizeof(name), "%s/%s", cwd, gamename);
-        game_library = LoadLibrary ( name );
-        if (game_library)
-        {
-            Com_DPrintf ("LoadLibrary (%s)\n", name);
-        }
-        else
-        {
-            // now run through the search paths
-            path = NULL;
-            while (1)
-            {
-                path = FS_NextPath (path);
-                if (!path)
-                    return NULL;        // couldn't find one anywhere
-                //Com_sprintf (name, sizeof(name), "%s/%s", path, gamename);
-                game_library = LoadLibrary (name);
-                if (game_library)
-                {
-                    Com_DPrintf ("LoadLibrary (%s)\n",name);
-                    break;
-                }
-            }
-        }
-    }
-
-    GetGameAPI = (void *)GetProcAddress (game_library, "GetGameAPI");
-    if (!GetGameAPI)
-    {
-        #ifdef _WIN32
-        win32_Sys_UnloadGame ();
-        #endif
-        return NULL;
-    }
-
-    return GetGameAPI (parms);
 }
 
 //=======================================================================
@@ -597,14 +512,14 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
         }
     }
 
-    Qcommon_Init (argc, argv);
+    Qcommon_Init (argc, (const char**) argv);
     oldtime = win32_Sys_Milliseconds ();
 
     /* main window message loop */
     while (1)
     {
         // if at a full screen console, don't update unless needed
-        if (Minimized || (dedicated && dedicated->value) )
+        if (Minimized || (quake2::getInstance()->dedicated && quake2::getInstance()->dedicated->value) )
         {
             Sleep (1);
         }

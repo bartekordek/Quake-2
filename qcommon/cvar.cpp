@@ -233,7 +233,7 @@ cvar *Cvar_Set2(const std::string& var_name, const std::string& value, bool forc
                 //if (!strcmp(var->name, "game"))
                 if( var->name == "game" )
                 {
-                    FS_SetGamedir (var->string);
+                    FS_SetGamedir (toChar( var->string ));
                     FS_ExecAutoexec ();
                 }
             }
@@ -266,7 +266,7 @@ cvar *Cvar_Set2(const std::string& var_name, const std::string& value, bool forc
 Cvar_ForceSet
 ============
 */
-cvar *Cvar_ForceSet (const std::string& var_name, const std::string& value)
+cvar *Cvar_ForceSet (char* var_name, const std::string& value)
 {
     return Cvar_Set2 (var_name, value, true);
 }
@@ -276,7 +276,7 @@ cvar *Cvar_ForceSet (const std::string& var_name, const std::string& value)
 Cvar_Set
 ============
 */
-cvar *Cvar_Set (const std::string& var_name, const std::string& value)
+cvar *Cvar_Set (char* var_name, char* value)
 {
     return Cvar_Set2 (var_name, value, false);
 }
@@ -291,7 +291,7 @@ cvar *Cvar_FullSet (const std::string& var_name, const std::string& value, int f
     cvar* var = Cvar_FindVar (var_name);
     if (!var)
     {    // create it
-        return Cvar_Get (var_name, value, flags);
+        return Cvar_Get (toChar( var_name ), toChar( value ), flags);
     }
 
     var->modified = true;
@@ -299,7 +299,7 @@ cvar *Cvar_FullSet (const std::string& var_name, const std::string& value, int f
     if (var->flags & CVAR_USERINFO)
         userinfo_modified = true;    // transmit at next oportunity
 
-    var->string = CopyString(value);
+    var->string = value;
     var->value = std::stof (var->string);
     var->flags = flags;
 
@@ -311,7 +311,7 @@ cvar *Cvar_FullSet (const std::string& var_name, const std::string& value, int f
 Cvar_SetValue
 ============
 */
-void Cvar_SetValue (const std::string& var_name, float value)
+void Cvar_SetValue ( char* var_name, float value)
 {
     char    val[32];
 
@@ -342,7 +342,7 @@ void Cvar_GetLatchedVars (void)
         var->value = std::stof(var->string);
         if (var->name=="game")
         {
-            FS_SetGamedir (var->string);
+            FS_SetGamedir (toChar( var->string ));
             FS_ExecAutoexec();
         }
     }
@@ -371,7 +371,7 @@ bool Cvar_Command (void)
         return true;
     }
 
-    Cvar_Set (v->name, Cmd_Argv(1));
+    Cvar_Set( toChar( v->name ), Cmd_Argv( 1 ) );
     return true;
 }
 

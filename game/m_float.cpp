@@ -40,12 +40,12 @@ static int    sound_sight;
 
 void floater_sight (edict *self, edict *other)
 {
-    gi.sound (self, CHAN_VOICE, sound_sight, 1, ATTN_NORM, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_sight, 1, ATTN_NORM, 0);
 }
 
 void floater_idle (edict *self)
 {
-    gi.sound (self, CHAN_VOICE, sound_idle, 1, ATTN_IDLE, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_idle, 1, ATTN_IDLE, 0);
 }
 
 
@@ -515,7 +515,7 @@ void floater_walk (edict *self)
 void floater_wham (edict *self)
 {
     static    vec3_t    aim = {MELEE_DISTANCE, 0, 0};
-    gi.sound (self, CHAN_WEAPON, sound_attack3, 1, ATTN_NORM, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_WEAPON, sound_attack3, 1, ATTN_NORM, 0);
     fire_hit (self, aim, 5 + rand() % 6, -50);
 }
 
@@ -534,16 +534,16 @@ void floater_zap (edict *self)
     G_ProjectSource (self->s.origin, offset, forward, right, origin);
 //    G_ProjectSource (self->s.origin, monster_flash_offset[flash_number], forward, right, origin);
 
-    gi.sound (self, CHAN_WEAPON, sound_attack2, 1, ATTN_NORM, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_WEAPON, sound_attack2, 1, ATTN_NORM, 0);
 
     //FIXME use the flash, Luke
-    gi.WriteByte (svc_temp_entity);
-    gi.WriteByte (TE_SPLASH);
-    gi.WriteByte (32);
-    gi.WritePosition (origin);
-    gi.WriteDir (dir);
-    gi.WriteByte (1);    //sparks
-    gi.multicast (origin, MULTICAST_PVS);
+    quake2::getInstance()->gi.WriteByte (svc_temp_entity);
+    quake2::getInstance()->gi.WriteByte (TE_SPLASH);
+    quake2::getInstance()->gi.WriteByte (32);
+    quake2::getInstance()->gi.WritePosition (origin);
+    quake2::getInstance()->gi.WriteDir (dir);
+    quake2::getInstance()->gi.WriteByte (1);    //sparks
+    quake2::getInstance()->gi.multicast (origin, multicast_t::MULTICAST_PVS);
 
     T_Damage (self->enemy, self, self, dir, self->enemy->s.origin, vec3_origin, 5 + rand() % 6, -10, DAMAGE_ENERGY, MOD_UNKNOWN);
 }
@@ -580,12 +580,12 @@ void floater_pain (edict *self, edict *other, float kick, int damage)
     n = (rand() + 1) % 3;
     if (n == 0)
     {
-        gi.sound (self, CHAN_VOICE, sound_pain1, 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain1, 1, ATTN_NORM, 0);
         self->monsterinfo.currentmove = &floater_move_pain1;
     }
     else
     {
-        gi.sound (self, CHAN_VOICE, sound_pain2, 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain2, 1, ATTN_NORM, 0);
         self->monsterinfo.currentmove = &floater_move_pain2;
     }
 }
@@ -597,12 +597,12 @@ void floater_dead (edict *self)
     self->movetype = MOVETYPE_TOSS;
     self->svflags |= SVF_DEADMONSTER;
     self->nextthink = 0;
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 }
 
 void floater_die (edict *self, edict *inflictor, edict *attacker, int damage, vec3_t point)
 {
-    gi.sound (self, CHAN_VOICE, sound_death1, 1, ATTN_NORM, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_death1, 1, ATTN_NORM, 0);
     BecomeExplosion1(self);
 }
 
@@ -616,21 +616,21 @@ void SP_monster_floater (edict *self)
         return;
     }
 
-    sound_attack2 = gi.soundindex ("floater/fltatck2.wav");
-    sound_attack3 = gi.soundindex ("floater/fltatck3.wav");
-    sound_death1 = gi.soundindex ("floater/fltdeth1.wav");
-    sound_idle = gi.soundindex ("floater/fltidle1.wav");
-    sound_pain1 = gi.soundindex ("floater/fltpain1.wav");
-    sound_pain2 = gi.soundindex ("floater/fltpain2.wav");
-    sound_sight = gi.soundindex ("floater/fltsght1.wav");
+    sound_attack2 = quake2::getInstance()->gi.soundindex ("floater/fltatck2.wav");
+    sound_attack3 = quake2::getInstance()->gi.soundindex ("floater/fltatck3.wav");
+    sound_death1 = quake2::getInstance()->gi.soundindex ("floater/fltdeth1.wav");
+    sound_idle = quake2::getInstance()->gi.soundindex ("floater/fltidle1.wav");
+    sound_pain1 = quake2::getInstance()->gi.soundindex ("floater/fltpain1.wav");
+    sound_pain2 = quake2::getInstance()->gi.soundindex ("floater/fltpain2.wav");
+    sound_sight = quake2::getInstance()->gi.soundindex ("floater/fltsght1.wav");
 
-    gi.soundindex ("floater/fltatck1.wav");
+    quake2::getInstance()->gi.soundindex ("floater/fltatck1.wav");
 
-    self->s.sound = gi.soundindex ("floater/fltsrch1.wav");
+    self->s.sound = quake2::getInstance()->gi.soundindex ("floater/fltsrch1.wav");
 
     self->movetype = MOVETYPE_STEP;
     self->solid = SOLID_BBOX;
-    self->s.modelindex = gi.modelindex ("models/monsters/float/tris.md2");
+    self->s.modelindex = quake2::getInstance()->gi.modelindex ("models/monsters/float/tris.md2");
     VectorSet (self->mins, -24, -24, -24);
     VectorSet (self->maxs, 24, 24, 32);
 
@@ -650,7 +650,7 @@ void SP_monster_floater (edict *self)
     self->monsterinfo.sight = floater_sight;
     self->monsterinfo.idle = floater_idle;
 
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 
     if (random() <= 0.5)
         self->monsterinfo.currentmove = &floater_move_stand1;

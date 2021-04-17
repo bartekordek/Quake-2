@@ -43,7 +43,7 @@ static void check_dodge (edict *self, vec3_t start, vec3_t dir, int speed)
             return;
     }
     VectorMA (start, 8192, dir, end);
-    tr = gi.trace (start, NULL, NULL, end, self, MASK_SHOT);
+    tr = quake2::getInstance()->gi.trace (start, NULL, NULL, end, self, MASK_SHOT);
     if ((tr.ent) && (tr.ent->svflags & SVF_MONSTER) && (tr.ent->health > 0) && (tr.ent->monsterinfo.dodge) && infront(tr.ent, self))
     {
         VectorSubtract (tr.endpos, start, v);
@@ -91,7 +91,7 @@ bool fire_hit (edict *self, vec3_t aim, int damage, int kick)
 
     VectorMA (self->s.origin, range, dir, point);
 
-    tr = gi.trace (self->s.origin, NULL, NULL, point, self, MASK_SHOT);
+    tr = quake2::getInstance()->gi.trace (self->s.origin, NULL, NULL, point, self, MASK_SHOT);
     if (tr.fraction < 1)
     {
         if (!tr.ent->takedamage)
@@ -143,7 +143,7 @@ static void fire_lead (edict *self, vec3_t start, vec3_t aimdir, int damage, int
     bool    water = false;
     int            content_mask = MASK_SHOT | MASK_WATER;
 
-    tr = gi.trace (self->s.origin, NULL, NULL, start, self, MASK_SHOT);
+    tr = quake2::getInstance()->gi.trace (self->s.origin, NULL, NULL, start, self, MASK_SHOT);
     if (!(tr.fraction < 1.0))
     {
         vectoangles (aimdir, dir);
@@ -155,14 +155,14 @@ static void fire_lead (edict *self, vec3_t start, vec3_t aimdir, int damage, int
         VectorMA (end, r, right, end);
         VectorMA (end, u, up, end);
 
-        if (gi.pointcontents (start) & MASK_WATER)
+        if (quake2::getInstance()->gi.pointcontents (start) & MASK_WATER)
         {
             water = true;
             VectorCopy (start, water_start);
             content_mask &= ~MASK_WATER;
         }
 
-        tr = gi.trace (start, NULL, NULL, end, self, content_mask);
+        tr = quake2::getInstance()->gi.trace (start, NULL, NULL, end, self, content_mask);
 
         // see if we hit water
         if (tr.contents & MASK_WATER)
@@ -190,13 +190,13 @@ static void fire_lead (edict *self, vec3_t start, vec3_t aimdir, int damage, int
 
                 if (color != SPLASH_UNKNOWN)
                 {
-                    gi.WriteByte (svc_temp_entity);
-                    gi.WriteByte (TE_SPLASH);
-                    gi.WriteByte (8);
-                    gi.WritePosition (tr.endpos);
-                    gi.WriteDir (tr.plane.normal);
-                    gi.WriteByte (color);
-                    gi.multicast (tr.endpos, MULTICAST_PVS);
+                    quake2::getInstance()->gi.WriteByte (svc_temp_entity);
+                    quake2::getInstance()->gi.WriteByte (TE_SPLASH);
+                    quake2::getInstance()->gi.WriteByte (8);
+                    quake2::getInstance()->gi.WritePosition (tr.endpos);
+                    quake2::getInstance()->gi.WriteDir (tr.plane.normal);
+                    quake2::getInstance()->gi.WriteByte (color);
+                    quake2::getInstance()->gi.multicast (tr.endpos, multicast_t::MULTICAST_PVS);
                 }
 
                 // change bullet's course when it enters water
@@ -211,7 +211,7 @@ static void fire_lead (edict *self, vec3_t start, vec3_t aimdir, int damage, int
             }
 
             // re-trace ignoring water this time
-            tr = gi.trace (water_start, NULL, NULL, end, self, MASK_SHOT);
+            tr = quake2::getInstance()->gi.trace (water_start, NULL, NULL, end, self, MASK_SHOT);
         }
     }
 
@@ -228,11 +228,11 @@ static void fire_lead (edict *self, vec3_t start, vec3_t aimdir, int damage, int
             {
                 if (strncmp (tr.surface->name, "sky", 3) != 0)
                 {
-                    gi.WriteByte (svc_temp_entity);
-                    gi.WriteByte (te_impact);
-                    gi.WritePosition (tr.endpos);
-                    gi.WriteDir (tr.plane.normal);
-                    gi.multicast (tr.endpos, MULTICAST_PVS);
+                    quake2::getInstance()->gi.WriteByte (svc_temp_entity);
+                    quake2::getInstance()->gi.WriteByte (te_impact);
+                    quake2::getInstance()->gi.WritePosition (tr.endpos);
+                    quake2::getInstance()->gi.WriteDir (tr.plane.normal);
+                    quake2::getInstance()->gi.multicast (tr.endpos, multicast_t::MULTICAST_PVS);
 
                     if (self->client)
                         PlayerNoise(self, tr.endpos, PNOISE_IMPACT);
@@ -249,19 +249,19 @@ static void fire_lead (edict *self, vec3_t start, vec3_t aimdir, int damage, int
         VectorSubtract (tr.endpos, water_start, dir);
         VectorNormalize (dir);
         VectorMA (tr.endpos, -2, dir, pos);
-        if (gi.pointcontents (pos) & MASK_WATER)
+        if (quake2::getInstance()->gi.pointcontents (pos) & MASK_WATER)
             VectorCopy (pos, tr.endpos);
         else
-            tr = gi.trace (pos, NULL, NULL, water_start, tr.ent, MASK_WATER);
+            tr = quake2::getInstance()->gi.trace (pos, NULL, NULL, water_start, tr.ent, MASK_WATER);
 
         VectorAdd (water_start, tr.endpos, pos);
         VectorScale (pos, 0.5, pos);
 
-        gi.WriteByte (svc_temp_entity);
-        gi.WriteByte (TE_BUBBLETRAIL);
-        gi.WritePosition (water_start);
-        gi.WritePosition (tr.endpos);
-        gi.multicast (pos, MULTICAST_PVS);
+        quake2::getInstance()->gi.WriteByte (svc_temp_entity);
+        quake2::getInstance()->gi.WriteByte (TE_BUBBLETRAIL);
+        quake2::getInstance()->gi.WritePosition (water_start);
+        quake2::getInstance()->gi.WritePosition (tr.endpos);
+        quake2::getInstance()->gi.multicast (pos, multicast_t::MULTICAST_PVS);
     }
 }
 
@@ -303,7 +303,7 @@ fire_blaster
 Fires a single blaster bolt.  Used by the blaster and hyper blaster.
 =================
 */
-void blaster_touch (edict *self, edict *other, plane_t *plane, csurface_t *surf)
+void blaster_touch (edict *self, edict *other, plane_s *plane, csurface_s *surf)
 {
     int        mod;
 
@@ -329,14 +329,14 @@ void blaster_touch (edict *self, edict *other, plane_t *plane, csurface_t *surf)
     }
     else
     {
-        gi.WriteByte (svc_temp_entity);
-        gi.WriteByte (TE_BLASTER);
-        gi.WritePosition (self->s.origin);
+        quake2::getInstance()->gi.WriteByte (svc_temp_entity);
+        quake2::getInstance()->gi.WriteByte (TE_BLASTER);
+        quake2::getInstance()->gi.WritePosition (self->s.origin);
         if (!plane)
-            gi.WriteDir (vec3_origin);
+            quake2::getInstance()->gi.WriteDir (vec3_origin);
         else
-            gi.WriteDir (plane->normal);
-        gi.multicast (self->s.origin, MULTICAST_PVS);
+            quake2::getInstance()->gi.WriteDir (plane->normal);
+        quake2::getInstance()->gi.multicast (self->s.origin, multicast_t::MULTICAST_PVS);
     }
 
     G_FreeEdict (self);
@@ -366,8 +366,8 @@ void fire_blaster (edict *self, vec3_t start, vec3_t dir, int damage, int speed,
     bolt->s.effects |= effect;
     VectorClear (bolt->mins);
     VectorClear (bolt->maxs);
-    bolt->s.modelindex = gi.modelindex ("models/objects/laser/tris.md2");
-    bolt->s.sound = gi.soundindex ("misc/lasfly.wav");
+    bolt->s.modelindex = quake2::getInstance()->gi.modelindex ("models/objects/laser/tris.md2");
+    bolt->s.sound = quake2::getInstance()->gi.soundindex ("misc/lasfly.wav");
     bolt->owner = self;
     bolt->touch = blaster_touch;
     bolt->nextthink = level.time + 2;
@@ -376,12 +376,12 @@ void fire_blaster (edict *self, vec3_t start, vec3_t dir, int damage, int speed,
     bolt->classname = "bolt";
     if (hyper)
         bolt->spawnflags = 1;
-    gi.linkentity (bolt);
+    quake2::getInstance()->gi.linkentity (bolt);
 
     if (self->client)
         check_dodge (self, bolt->s.origin, dir, speed);
 
-    tr = gi.trace (self->s.origin, NULL, NULL, bolt->s.origin, bolt, MASK_SHOT);
+    tr = quake2::getInstance()->gi.trace (self->s.origin, NULL, NULL, bolt->s.origin, bolt, MASK_SHOT);
     if (tr.fraction < 1.0)
     {
         VectorMA (bolt->s.origin, -10, dir, bolt->s.origin);
@@ -431,28 +431,28 @@ static void Grenade_Explode (edict *ent)
     T_RadiusDamage(ent, ent->owner, ent->dmg, ent->enemy, ent->dmg_radius, mod);
 
     VectorMA (ent->s.origin, -0.02, ent->velocity, origin);
-    gi.WriteByte (svc_temp_entity);
+    quake2::getInstance()->gi.WriteByte (svc_temp_entity);
     if (ent->waterlevel)
     {
         if (ent->groundentity)
-            gi.WriteByte (TE_GRENADE_EXPLOSION_WATER);
+            quake2::getInstance()->gi.WriteByte (TE_GRENADE_EXPLOSION_WATER);
         else
-            gi.WriteByte (TE_ROCKET_EXPLOSION_WATER);
+            quake2::getInstance()->gi.WriteByte (TE_ROCKET_EXPLOSION_WATER);
     }
     else
     {
         if (ent->groundentity)
-            gi.WriteByte (TE_GRENADE_EXPLOSION);
+            quake2::getInstance()->gi.WriteByte (TE_GRENADE_EXPLOSION);
         else
-            gi.WriteByte (TE_ROCKET_EXPLOSION);
+            quake2::getInstance()->gi.WriteByte (TE_ROCKET_EXPLOSION);
     }
-    gi.WritePosition (origin);
-    gi.multicast (ent->s.origin, MULTICAST_PHS);
+    quake2::getInstance()->gi.WritePosition (origin);
+    quake2::getInstance()->gi.multicast (ent->s.origin, multicast_t::MULTICAST_PHS);
 
     G_FreeEdict (ent);
 }
 
-static void Grenade_Touch (edict *ent, edict *other, plane_t *plane, csurface_t *surf)
+static void Grenade_Touch (edict *ent, edict *other, plane_s *plane, csurface_s *surf)
 {
     if (other == ent->owner)
         return;
@@ -468,13 +468,13 @@ static void Grenade_Touch (edict *ent, edict *other, plane_t *plane, csurface_t 
         if (ent->spawnflags & 1)
         {
             if (random() > 0.5)
-                gi.sound (ent, CHAN_VOICE, gi.soundindex ("weapons/hgrenb1a.wav"), 1, ATTN_NORM, 0);
+                quake2::getInstance()->gi.sound (ent, CHAN_VOICE, quake2::getInstance()->gi.soundindex ("weapons/hgrenb1a.wav"), 1, ATTN_NORM, 0);
             else
-                gi.sound (ent, CHAN_VOICE, gi.soundindex ("weapons/hgrenb2a.wav"), 1, ATTN_NORM, 0);
+                quake2::getInstance()->gi.sound (ent, CHAN_VOICE, quake2::getInstance()->gi.soundindex ("weapons/hgrenb2a.wav"), 1, ATTN_NORM, 0);
         }
         else
         {
-            gi.sound (ent, CHAN_VOICE, gi.soundindex ("weapons/grenlb1b.wav"), 1, ATTN_NORM, 0);
+            quake2::getInstance()->gi.sound (ent, CHAN_VOICE, quake2::getInstance()->gi.soundindex ("weapons/grenlb1b.wav"), 1, ATTN_NORM, 0);
         }
         return;
     }
@@ -504,7 +504,7 @@ void fire_grenade (edict *self, vec3_t start, vec3_t aimdir, int damage, int spe
     grenade->s.effects |= EF_GRENADE;
     VectorClear (grenade->mins);
     VectorClear (grenade->maxs);
-    grenade->s.modelindex = gi.modelindex ("models/objects/grenade/tris.md2");
+    grenade->s.modelindex = quake2::getInstance()->gi.modelindex ("models/objects/grenade/tris.md2");
     grenade->owner = self;
     grenade->touch = Grenade_Touch;
     grenade->nextthink = level.time + timer;
@@ -513,7 +513,7 @@ void fire_grenade (edict *self, vec3_t start, vec3_t aimdir, int damage, int spe
     grenade->dmg_radius = damage_radius;
     grenade->classname = "grenade";
 
-    gi.linkentity (grenade);
+    quake2::getInstance()->gi.linkentity (grenade);
 }
 
 void fire_grenade2 (edict *self, vec3_t start, vec3_t aimdir, int damage, int speed, float timer, float damage_radius, bool held)
@@ -537,7 +537,7 @@ void fire_grenade2 (edict *self, vec3_t start, vec3_t aimdir, int damage, int sp
     grenade->s.effects |= EF_GRENADE;
     VectorClear (grenade->mins);
     VectorClear (grenade->maxs);
-    grenade->s.modelindex = gi.modelindex ("models/objects/grenade2/tris.md2");
+    grenade->s.modelindex = quake2::getInstance()->gi.modelindex ("models/objects/grenade2/tris.md2");
     grenade->owner = self;
     grenade->touch = Grenade_Touch;
     grenade->nextthink = level.time + timer;
@@ -549,14 +549,14 @@ void fire_grenade2 (edict *self, vec3_t start, vec3_t aimdir, int damage, int sp
         grenade->spawnflags = 3;
     else
         grenade->spawnflags = 1;
-    grenade->s.sound = gi.soundindex("weapons/hgrenc1b.wav");
+    grenade->s.sound = quake2::getInstance()->gi.soundindex("weapons/hgrenc1b.wav");
 
     if (timer <= 0.0)
         Grenade_Explode (grenade);
     else
     {
-        gi.sound (self, CHAN_WEAPON, gi.soundindex ("weapons/hgrent1a.wav"), 1, ATTN_NORM, 0);
-        gi.linkentity (grenade);
+        quake2::getInstance()->gi.sound (self, CHAN_WEAPON, quake2::getInstance()->gi.soundindex ("weapons/hgrent1a.wav"), 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.linkentity (grenade);
     }
 }
 
@@ -566,7 +566,7 @@ void fire_grenade2 (edict *self, vec3_t start, vec3_t aimdir, int damage, int sp
 fire_rocket
 =================
 */
-void rocket_touch (edict *ent, edict *other, plane_t *plane, csurface_t *surf)
+void rocket_touch (edict *ent, edict *other, plane_s *plane, csurface_s *surf)
 {
     vec3_t        origin;
     int            n;
@@ -606,13 +606,13 @@ void rocket_touch (edict *ent, edict *other, plane_t *plane, csurface_t *surf)
 
     T_RadiusDamage(ent, ent->owner, ent->radius_dmg, other, ent->dmg_radius, MOD_R_SPLASH);
 
-    gi.WriteByte (svc_temp_entity);
+    quake2::getInstance()->gi.WriteByte (svc_temp_entity);
     if (ent->waterlevel)
-        gi.WriteByte (TE_ROCKET_EXPLOSION_WATER);
+        quake2::getInstance()->gi.WriteByte (TE_ROCKET_EXPLOSION_WATER);
     else
-        gi.WriteByte (TE_ROCKET_EXPLOSION);
-    gi.WritePosition (origin);
-    gi.multicast (ent->s.origin, MULTICAST_PHS);
+        quake2::getInstance()->gi.WriteByte (TE_ROCKET_EXPLOSION);
+    quake2::getInstance()->gi.WritePosition (origin);
+    quake2::getInstance()->gi.multicast (ent->s.origin, multicast_t::MULTICAST_PHS);
 
     G_FreeEdict (ent);
 }
@@ -632,7 +632,7 @@ void fire_rocket (edict *self, vec3_t start, vec3_t dir, int damage, int speed, 
     rocket->s.effects |= EF_ROCKET;
     VectorClear (rocket->mins);
     VectorClear (rocket->maxs);
-    rocket->s.modelindex = gi.modelindex ("models/objects/rocket/tris.md2");
+    rocket->s.modelindex = quake2::getInstance()->gi.modelindex ("models/objects/rocket/tris.md2");
     rocket->owner = self;
     rocket->touch = rocket_touch;
     rocket->nextthink = level.time + 8000/speed;
@@ -640,13 +640,13 @@ void fire_rocket (edict *self, vec3_t start, vec3_t dir, int damage, int speed, 
     rocket->dmg = damage;
     rocket->radius_dmg = radius_damage;
     rocket->dmg_radius = damage_radius;
-    rocket->s.sound = gi.soundindex ("weapons/rockfly.wav");
+    rocket->s.sound = quake2::getInstance()->gi.soundindex ("weapons/rockfly.wav");
     rocket->classname = "rocket";
 
     if (self->client)
         check_dodge (self, rocket->s.origin, dir, speed);
 
-    gi.linkentity (rocket);
+    quake2::getInstance()->gi.linkentity (rocket);
 }
 
 
@@ -671,7 +671,7 @@ void fire_rail (edict *self, vec3_t start, vec3_t aimdir, int damage, int kick)
     mask = MASK_SHOT|CONTENTS_SLIME|CONTENTS_LAVA;
     while (ignore)
     {
-        tr = gi.trace (from, NULL, NULL, end, ignore, mask);
+        tr = quake2::getInstance()->gi.trace (from, NULL, NULL, end, ignore, mask);
 
         if (tr.contents & (CONTENTS_SLIME|CONTENTS_LAVA))
         {
@@ -693,19 +693,19 @@ void fire_rail (edict *self, vec3_t start, vec3_t aimdir, int damage, int kick)
     }
 
     // send gun puff / flash
-    gi.WriteByte (svc_temp_entity);
-    gi.WriteByte (TE_RAILTRAIL);
-    gi.WritePosition (start);
-    gi.WritePosition (tr.endpos);
-    gi.multicast (self->s.origin, MULTICAST_PHS);
-//    gi.multicast (start, MULTICAST_PHS);
+    quake2::getInstance()->gi.WriteByte (svc_temp_entity);
+    quake2::getInstance()->gi.WriteByte (TE_RAILTRAIL);
+    quake2::getInstance()->gi.WritePosition (start);
+    quake2::getInstance()->gi.WritePosition (tr.endpos);
+    quake2::getInstance()->gi.multicast (self->s.origin, multicast_t::MULTICAST_PHS);
+//    quake2::getInstance()->gi.multicast (start, multicast_t::MULTICAST_PHS);
     if (water)
     {
-        gi.WriteByte (svc_temp_entity);
-        gi.WriteByte (TE_RAILTRAIL);
-        gi.WritePosition (start);
-        gi.WritePosition (tr.endpos);
-        gi.multicast (tr.endpos, MULTICAST_PHS);
+        quake2::getInstance()->gi.WriteByte (svc_temp_entity);
+        quake2::getInstance()->gi.WriteByte (TE_RAILTRAIL);
+        quake2::getInstance()->gi.WritePosition (start);
+        quake2::getInstance()->gi.WritePosition (tr.endpos);
+        quake2::getInstance()->gi.multicast (tr.endpos, multicast_t::MULTICAST_PHS);
     }
 
     if (self->client)
@@ -748,10 +748,10 @@ void bfg_explode (edict *self)
             if (ent == self->owner)
                 points = points * 0.5;
 
-            gi.WriteByte (svc_temp_entity);
-            gi.WriteByte (TE_BFG_EXPLOSION);
-            gi.WritePosition (ent->s.origin);
-            gi.multicast (ent->s.origin, MULTICAST_PHS);
+            quake2::getInstance()->gi.WriteByte (svc_temp_entity);
+            quake2::getInstance()->gi.WriteByte (TE_BFG_EXPLOSION);
+            quake2::getInstance()->gi.WritePosition (ent->s.origin);
+            quake2::getInstance()->gi.multicast (ent->s.origin, multicast_t::MULTICAST_PHS);
             T_Damage (ent, self, self->owner, self->velocity, ent->s.origin, vec3_origin, (int)points, 0, DAMAGE_ENERGY, MOD_BFG_EFFECT);
         }
     }
@@ -762,7 +762,7 @@ void bfg_explode (edict *self)
         self->think = G_FreeEdict;
 }
 
-void bfg_touch (edict *self, edict *other, plane_t *plane, csurface_t *surf)
+void bfg_touch (edict *self, edict *other, plane_s *plane, csurface_s *surf)
 {
     if (other == self->owner)
         return;
@@ -781,12 +781,12 @@ void bfg_touch (edict *self, edict *other, plane_t *plane, csurface_t *surf)
         T_Damage (other, self, self->owner, self->velocity, self->s.origin, plane->normal, 200, 0, 0, MOD_BFG_BLAST);
     T_RadiusDamage(self, self->owner, 200, other, 100, MOD_BFG_BLAST);
 
-    gi.sound (self, CHAN_VOICE, gi.soundindex ("weapons/bfg__x1b.wav"), 1, ATTN_NORM, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_VOICE, quake2::getInstance()->gi.soundindex ("weapons/bfg__x1b.wav"), 1, ATTN_NORM, 0);
     self->solid = SOLID_NOT;
     self->touch = NULL;
     VectorMA (self->s.origin, -1 * FRAMETIME, self->velocity, self->s.origin);
     VectorClear (self->velocity);
-    self->s.modelindex = gi.modelindex ("sprites/s_bfg3.sp2");
+    self->s.modelindex = quake2::getInstance()->gi.modelindex ("sprites/s_bfg3.sp2");
     self->s.frame = 0;
     self->s.sound = 0;
     self->s.effects &= ~EF_ANIM_ALLFAST;
@@ -794,10 +794,10 @@ void bfg_touch (edict *self, edict *other, plane_t *plane, csurface_t *surf)
     self->nextthink = level.time + FRAMETIME;
     self->enemy = other;
 
-    gi.WriteByte (svc_temp_entity);
-    gi.WriteByte (TE_BFG_BIGEXPLOSION);
-    gi.WritePosition (self->s.origin);
-    gi.multicast (self->s.origin, MULTICAST_PVS);
+    quake2::getInstance()->gi.WriteByte (svc_temp_entity);
+    quake2::getInstance()->gi.WriteByte (TE_BFG_BIGEXPLOSION);
+    quake2::getInstance()->gi.WritePosition (self->s.origin);
+    quake2::getInstance()->gi.multicast (self->s.origin, multicast_t::MULTICAST_PVS);
 }
 
 
@@ -842,7 +842,7 @@ void bfg_think (edict *self)
         VectorMA (start, 2048, dir, end);
         while(1)
         {
-            tr = gi.trace (start, NULL, NULL, end, ignore, CONTENTS_SOLID|CONTENTS_MONSTER|CONTENTS_DEADMONSTER);
+            tr = quake2::getInstance()->gi.trace (start, NULL, NULL, end, ignore, CONTENTS_SOLID|CONTENTS_MONSTER|CONTENTS_DEADMONSTER);
 
             if (!tr.ent)
                 break;
@@ -854,13 +854,13 @@ void bfg_think (edict *self)
             // if we hit something that's not a monster or player we're done
             if (!(tr.ent->svflags & SVF_MONSTER) && (!tr.ent->client))
             {
-                gi.WriteByte (svc_temp_entity);
-                gi.WriteByte (TE_LASER_SPARKS);
-                gi.WriteByte (4);
-                gi.WritePosition (tr.endpos);
-                gi.WriteDir (tr.plane.normal);
-                gi.WriteByte (self->s.skinnum);
-                gi.multicast (tr.endpos, MULTICAST_PVS);
+                quake2::getInstance()->gi.WriteByte (svc_temp_entity);
+                quake2::getInstance()->gi.WriteByte (TE_LASER_SPARKS);
+                quake2::getInstance()->gi.WriteByte (4);
+                quake2::getInstance()->gi.WritePosition (tr.endpos);
+                quake2::getInstance()->gi.WriteDir (tr.plane.normal);
+                quake2::getInstance()->gi.WriteByte (self->s.skinnum);
+                quake2::getInstance()->gi.multicast (tr.endpos, multicast_t::MULTICAST_PVS);
                 break;
             }
 
@@ -868,11 +868,11 @@ void bfg_think (edict *self)
             VectorCopy (tr.endpos, start);
         }
 
-        gi.WriteByte (svc_temp_entity);
-        gi.WriteByte (TE_BFG_LASER);
-        gi.WritePosition (self->s.origin);
-        gi.WritePosition (tr.endpos);
-        gi.multicast (self->s.origin, MULTICAST_PHS);
+        quake2::getInstance()->gi.WriteByte (svc_temp_entity);
+        quake2::getInstance()->gi.WriteByte (TE_BFG_LASER);
+        quake2::getInstance()->gi.WritePosition (self->s.origin);
+        quake2::getInstance()->gi.WritePosition (tr.endpos);
+        quake2::getInstance()->gi.multicast (self->s.origin, multicast_t::MULTICAST_PHS);
     }
 
     self->nextthink = level.time + FRAMETIME;
@@ -894,7 +894,7 @@ void fire_bfg (edict *self, vec3_t start, vec3_t dir, int damage, int speed, flo
     bfg->s.effects |= EF_BFG | EF_ANIM_ALLFAST;
     VectorClear (bfg->mins);
     VectorClear (bfg->maxs);
-    bfg->s.modelindex = gi.modelindex ("sprites/s_bfg1.sp2");
+    bfg->s.modelindex = quake2::getInstance()->gi.modelindex ("sprites/s_bfg1.sp2");
     bfg->owner = self;
     bfg->touch = bfg_touch;
     bfg->nextthink = level.time + 8000/speed;
@@ -902,7 +902,7 @@ void fire_bfg (edict *self, vec3_t start, vec3_t dir, int damage, int speed, flo
     bfg->radius_dmg = damage;
     bfg->dmg_radius = damage_radius;
     bfg->classname = "bfg blast";
-    bfg->s.sound = gi.soundindex ("weapons/bfg__l1a.wav");
+    bfg->s.sound = quake2::getInstance()->gi.soundindex ("weapons/bfg__l1a.wav");
 
     bfg->think = bfg_think;
     bfg->nextthink = level.time + FRAMETIME;
@@ -912,5 +912,5 @@ void fire_bfg (edict *self, vec3_t start, vec3_t dir, int damage, int speed, flo
     if (self->client)
         check_dodge (self, bfg->s.origin, dir, speed);
 
-    gi.linkentity (bfg);
+    quake2::getInstance()->gi.linkentity (bfg);
 }

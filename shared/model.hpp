@@ -44,7 +44,7 @@ typedef struct model_s
     dmodel_t* submodels;
 
     int            numplanes;
-    plane_t* planes;
+    plane_s* planes;
 
     int            numleafs;        // number of visible leafs, not counting 0
     mleaf_t    * leafs;
@@ -57,7 +57,7 @@ typedef struct model_s
 
     int            numnodes;
     int            firstnode;
-    mnode_t    * nodes;
+    mnode_s    * nodes;
 
     int            numtexinfo;
     mtexinfo_t* texinfo;

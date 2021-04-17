@@ -152,7 +152,7 @@ void DoRespawn (edict *ent)
 
     ent->svflags &= ~SVF_NOCLIENT;
     ent->solid = SOLID_TRIGGER;
-    gi.linkentity (ent);
+    quake2::getInstance()->gi.linkentity (ent);
 
     // send an effect
     ent->s.event = EV_ITEM_RESPAWN;
@@ -165,7 +165,7 @@ void SetRespawn (edict *ent, float delay)
     ent->solid = SOLID_NOT;
     ent->nextthink = level.time + delay;
     ent->think = DoRespawn;
-    gi.linkentity (ent);
+    quake2::getInstance()->gi.linkentity (ent);
 }
 
 
@@ -373,7 +373,7 @@ void Use_Quad (edict *ent, gitem *item)
     else
         ent->client->quad_framenum = level.framenum + timeout;
 
-    gi.sound(ent, CHAN_ITEM, gi.soundindex("items/damage.wav"), 1, ATTN_NORM, 0);
+    quake2::getInstance()->gi.sound(ent, CHAN_ITEM, quake2::getInstance()->gi.soundindex("items/damage.wav"), 1, ATTN_NORM, 0);
 }
 
 //======================================================================
@@ -388,7 +388,7 @@ void Use_Breather (edict *ent, gitem *item)
     else
         ent->client->breather_framenum = level.framenum + 300;
 
-//    gi.sound(ent, CHAN_ITEM, gi.soundindex("items/damage.wav"), 1, ATTN_NORM, 0);
+//    quake2::getInstance()->gi.sound(ent, CHAN_ITEM, quake2::getInstance()->gi.soundindex("items/damage.wav"), 1, ATTN_NORM, 0);
 }
 
 //======================================================================
@@ -403,7 +403,7 @@ void Use_Envirosuit (edict *ent, gitem *item)
     else
         ent->client->enviro_framenum = level.framenum + 300;
 
-//    gi.sound(ent, CHAN_ITEM, gi.soundindex("items/damage.wav"), 1, ATTN_NORM, 0);
+//    quake2::getInstance()->gi.sound(ent, CHAN_ITEM, quake2::getInstance()->gi.soundindex("items/damage.wav"), 1, ATTN_NORM, 0);
 }
 
 //======================================================================
@@ -418,7 +418,7 @@ void    Use_Invulnerability (edict *ent, gitem *item)
     else
         ent->client->invincible_framenum = level.framenum + 300;
 
-    gi.sound(ent, CHAN_ITEM, gi.soundindex("items/protect.wav"), 1, ATTN_NORM, 0);
+    quake2::getInstance()->gi.sound(ent, CHAN_ITEM, quake2::getInstance()->gi.soundindex("items/protect.wav"), 1, ATTN_NORM, 0);
 }
 
 //======================================================================
@@ -429,7 +429,7 @@ void    Use_Silencer (edict *ent, gitem *item)
     ValidateSelectedItem (ent);
     ent->client->silencer_shots += 30;
 
-//    gi.sound(ent, CHAN_ITEM, gi.soundindex("items/damage.wav"), 1, ATTN_NORM, 0);
+//    quake2::getInstance()->gi.sound(ent, CHAN_ITEM, quake2::getInstance()->gi.soundindex("items/damage.wav"), 1, ATTN_NORM, 0);
 }
 
 //======================================================================
@@ -732,18 +732,18 @@ void Use_PowerArmor (edict *ent, gitem *item)
     if (ent->flags & FL_POWER_ARMOR)
     {
         ent->flags &= ~FL_POWER_ARMOR;
-        gi.sound(ent, CHAN_AUTO, gi.soundindex("misc/power2.wav"), 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound(ent, CHAN_AUTO, quake2::getInstance()->gi.soundindex("misc/power2.wav"), 1, ATTN_NORM, 0);
     }
     else
     {
         index = ITEM_INDEX(FindItem("cells"));
         if (!ent->client->pers.inventory[index])
         {
-            gi.cprintf (ent, PRINT_HIGH, "No cells for power armor.\n");
+            quake2::getInstance()->gi.cprintf (ent, PRINT_HIGH, "No cells for power armor.\n");
             return;
         }
         ent->flags |= FL_POWER_ARMOR;
-        gi.sound(ent, CHAN_AUTO, gi.soundindex("misc/power1.wav"), 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound(ent, CHAN_AUTO, quake2::getInstance()->gi.soundindex("misc/power1.wav"), 1, ATTN_NORM, 0);
     }
 }
 
@@ -781,7 +781,7 @@ void Drop_PowerArmor (edict *ent, gitem *item)
 Touch_Item
 ===============
 */
-void Touch_Item (edict *ent, edict *other, plane_t *plane, csurface_t *surf)
+void Touch_Item (edict *ent, edict *other, plane_s *plane, csurface_s *surf)
 {
     bool    taken;
 
@@ -803,7 +803,7 @@ void Touch_Item (edict *ent, edict *other, plane_t *plane, csurface_t *surf)
         other->client->bonus_alpha = 0.25;
 
         // show icon and name on status bar
-        other->client->ps.stats[STAT_PICKUP_ICON] = gi.imageindex(ent->item->icon);
+        other->client->ps.stats[STAT_PICKUP_ICON] = quake2::getInstance()->gi.imageindex(ent->item->icon);
         other->client->ps.stats[STAT_PICKUP_STRING] = CS_ITEMS+ITEM_INDEX(ent->item);
         other->client->pickup_msg_time = level.time + 3.0;
 
@@ -814,17 +814,17 @@ void Touch_Item (edict *ent, edict *other, plane_t *plane, csurface_t *surf)
         if (ent->item->pickup == Pickup_Health)
         {
             if (ent->count == 2)
-                gi.sound(other, CHAN_ITEM, gi.soundindex("items/s_health.wav"), 1, ATTN_NORM, 0);
+                quake2::getInstance()->gi.sound(other, CHAN_ITEM, quake2::getInstance()->gi.soundindex("items/s_health.wav"), 1, ATTN_NORM, 0);
             else if (ent->count == 10)
-                gi.sound(other, CHAN_ITEM, gi.soundindex("items/n_health.wav"), 1, ATTN_NORM, 0);
+                quake2::getInstance()->gi.sound(other, CHAN_ITEM, quake2::getInstance()->gi.soundindex("items/n_health.wav"), 1, ATTN_NORM, 0);
             else if (ent->count == 25)
-                gi.sound(other, CHAN_ITEM, gi.soundindex("items/l_health.wav"), 1, ATTN_NORM, 0);
+                quake2::getInstance()->gi.sound(other, CHAN_ITEM, quake2::getInstance()->gi.soundindex("items/l_health.wav"), 1, ATTN_NORM, 0);
             else // (ent->count == 100)
-                gi.sound(other, CHAN_ITEM, gi.soundindex("items/m_health.wav"), 1, ATTN_NORM, 0);
+                quake2::getInstance()->gi.sound(other, CHAN_ITEM, quake2::getInstance()->gi.soundindex("items/m_health.wav"), 1, ATTN_NORM, 0);
         }
         else if (ent->item->pickup_sound)
         {
-            gi.sound(other, CHAN_ITEM, gi.soundindex(ent->item->pickup_sound), 1, ATTN_NORM, 0);
+            quake2::getInstance()->gi.sound(other, CHAN_ITEM, quake2::getInstance()->gi.soundindex(ent->item->pickup_sound), 1, ATTN_NORM, 0);
         }
     }
 
@@ -848,7 +848,7 @@ void Touch_Item (edict *ent, edict *other, plane_t *plane, csurface_t *surf)
 
 //======================================================================
 
-static void drop_temp_touch (edict *ent, edict *other, plane_t *plane, csurface_t *surf)
+static void drop_temp_touch (edict *ent, edict *other, plane_s *plane, csurface_s *surf)
 {
     if (other == ent->owner)
         return;
@@ -881,7 +881,7 @@ edict *Drop_Item (edict *ent, gitem *item)
     dropped->s.renderfx = RF_GLOW;
     VectorSet (dropped->mins, -15, -15, -15);
     VectorSet (dropped->maxs, 15, 15, 15);
-    gi.setmodel (dropped, dropped->item->world_model);
+    quake2::getInstance()->gi.setmodel (dropped, dropped->item->world_model);
     dropped->solid = SOLID_TRIGGER;
     dropped->movetype = MOVETYPE_TOSS;
     dropped->touch = drop_temp_touch;
@@ -894,7 +894,7 @@ edict *Drop_Item (edict *ent, gitem *item)
         AngleVectors (ent->client->v_angle, forward, right, NULL);
         VectorSet(offset, 24, 0, -16);
         G_ProjectSource (ent->s.origin, offset, forward, right, dropped->s.origin);
-        trace = gi.trace (ent->s.origin, dropped->mins, dropped->maxs,
+        trace = quake2::getInstance()->gi.trace (ent->s.origin, dropped->mins, dropped->maxs,
             dropped->s.origin, ent, CONTENTS_SOLID);
         VectorCopy (trace.endpos, dropped->s.origin);
     }
@@ -910,7 +910,7 @@ edict *Drop_Item (edict *ent, gitem *item)
     dropped->think = drop_make_touchable;
     dropped->nextthink = level.time + 1;
 
-    gi.linkentity (dropped);
+    quake2::getInstance()->gi.linkentity (dropped);
 
     return dropped;
 }
@@ -931,7 +931,7 @@ void Use_Item (edict *ent, edict *other, edict *activator)
         ent->touch = Touch_Item;
     }
 
-    gi.linkentity (ent);
+    quake2::getInstance()->gi.linkentity (ent);
 }
 
 //======================================================================
@@ -953,9 +953,9 @@ void droptofloor (edict *ent)
     VectorCopy (v, ent->maxs);
 
     if (ent->model)
-        gi.setmodel (ent, ent->model);
+        quake2::getInstance()->gi.setmodel (ent, ent->model);
     else
-        gi.setmodel (ent, ent->item->world_model);
+        quake2::getInstance()->gi.setmodel (ent, ent->item->world_model);
     ent->solid = SOLID_TRIGGER;
     ent->movetype = MOVETYPE_TOSS;
     ent->touch = Touch_Item;
@@ -963,10 +963,10 @@ void droptofloor (edict *ent)
     v = tv(0,0,-128);
     VectorAdd (ent->s.origin, v, dest);
 
-    tr = gi.trace (ent->s.origin, ent->mins, ent->maxs, dest, ent, MASK_SOLID);
+    tr = quake2::getInstance()->gi.trace (ent->s.origin, ent->mins, ent->maxs, dest, ent, MASK_SOLID);
     if (tr.startsolid)
     {
-        gi.dprintf ("droptofloor: %s startsolid at %s\n", ent->classname, vtos(ent->s.origin));
+        quake2::getInstance()->gi.dprintf ("droptofloor: %s startsolid at %s\n", ent->classname, vtos(ent->s.origin));
         G_FreeEdict (ent);
         return;
     }
@@ -1003,7 +1003,7 @@ void droptofloor (edict *ent)
         ent->use = Use_Item;
     }
 
-    gi.linkentity (ent);
+    quake2::getInstance()->gi.linkentity (ent);
 }
 
 
@@ -1027,13 +1027,13 @@ void PrecacheItem (gitem *it)
         return;
 
     if (it->pickup_sound)
-        gi.soundindex (it->pickup_sound);
+        quake2::getInstance()->gi.soundindex (it->pickup_sound);
     if (it->world_model)
-        gi.modelindex (it->world_model);
+        quake2::getInstance()->gi.modelindex (it->world_model);
     if (it->view_model)
-        gi.modelindex (it->view_model);
+        quake2::getInstance()->gi.modelindex (it->view_model);
     if (it->icon)
-        gi.imageindex (it->icon);
+        quake2::getInstance()->gi.imageindex (it->icon);
 
     // parse everything for its ammo
     if (it->ammo && it->ammo[0])
@@ -1056,7 +1056,7 @@ void PrecacheItem (gitem *it)
 
         len = s-start;
         if (len >= MAX_QPATH || len < 5)
-            gi.error ("PrecacheItem: %s has bad precache string", it->classname);
+            quake2::getInstance()->gi.error ("PrecacheItem: %s has bad precache string", it->classname);
         memcpy (data, start, len);
         data[len] = 0;
         if (*s)
@@ -1064,13 +1064,13 @@ void PrecacheItem (gitem *it)
 
         // determine type based on extension
         if (!strcmp(data+len-3, "md2"))
-            gi.modelindex (data);
+            quake2::getInstance()->gi.modelindex (data);
         else if (!strcmp(data+len-3, "sp2"))
-            gi.modelindex (data);
+            quake2::getInstance()->gi.modelindex (data);
         else if (!strcmp(data+len-3, "wav"))
-            gi.soundindex (data);
+            quake2::getInstance()->gi.soundindex (data);
         if (!strcmp(data+len-3, "pcx"))
-            gi.imageindex (data);
+            quake2::getInstance()->gi.imageindex (data);
     }
 }
 
@@ -1093,7 +1093,7 @@ void SpawnItem (edict *ent, gitem *item)
         if (strcmp(ent->classname, "key_power_cube") != 0)
         {
             ent->spawnflags = 0;
-            gi.dprintf("%s at %s has invalid spawnflags set\n", ent->classname, vtos(ent->s.origin));
+            quake2::getInstance()->gi.dprintf("%s at %s has invalid spawnflags set\n", ent->classname, vtos(ent->s.origin));
         }
     }
 
@@ -1162,7 +1162,7 @@ void SpawnItem (edict *ent, gitem *item)
     ent->s.effects = item->world_model_flags;
     ent->s.renderfx = RF_GLOW;
     if (ent->model)
-        gi.modelindex (ent->model);
+        quake2::getInstance()->gi.modelindex (ent->model);
 
 //ZOID
 //flags are server animated and have special handling
@@ -2363,7 +2363,7 @@ void SP_item_health (edict *self)
     self->model = "models/items/healing/medium/tris.md2";
     self->count = 10;
     SpawnItem (self, FindItem ("Health"));
-    gi.soundindex ("items/n_health.wav");
+    quake2::getInstance()->gi.soundindex ("items/n_health.wav");
 }
 
 /*QUAKED item_health_small (.3 .3 1) (-16 -16 -16) (16 16 16)
@@ -2380,7 +2380,7 @@ void SP_item_health_small (edict *self)
     self->count = 2;
     SpawnItem (self, FindItem ("Health"));
     self->style = HEALTH_IGNORE_MAX;
-    gi.soundindex ("items/s_health.wav");
+    quake2::getInstance()->gi.soundindex ("items/s_health.wav");
 }
 
 /*QUAKED item_health_large (.3 .3 1) (-16 -16 -16) (16 16 16)
@@ -2396,7 +2396,7 @@ void SP_item_health_large (edict *self)
     self->model = "models/items/healing/large/tris.md2";
     self->count = 25;
     SpawnItem (self, FindItem ("Health"));
-    gi.soundindex ("items/l_health.wav");
+    quake2::getInstance()->gi.soundindex ("items/l_health.wav");
 }
 
 /*QUAKED item_health_mega (.3 .3 1) (-16 -16 -16) (16 16 16)
@@ -2412,7 +2412,7 @@ void SP_item_health_mega (edict *self)
     self->model = "models/items/mega_h/tris.md2";
     self->count = 100;
     SpawnItem (self, FindItem ("Health"));
-    gi.soundindex ("items/m_health.wav");
+    quake2::getInstance()->gi.soundindex ("items/m_health.wav");
     self->style = HEALTH_IGNORE_MAX|HEALTH_TIMED;
 }
 
@@ -2439,7 +2439,7 @@ void SetItemNames (void)
     for (i=0 ; i<game.num_items ; i++)
     {
         it = &itemlist[i];
-        gi.configstring (CS_ITEMS+i, it->pickup_name);
+        quake2::getInstance()->gi.configstring (CS_ITEMS+i, it->pickup_name);
     }
 
     jacket_armor_index = ITEM_INDEX(FindItem("Jacket Armor"));

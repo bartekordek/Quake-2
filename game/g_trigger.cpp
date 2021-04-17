@@ -27,7 +27,7 @@ void InitTrigger (edict *self)
 
     self->solid = SOLID_TRIGGER;
     self->movetype = MOVETYPE_NONE;
-    gi.setmodel (self, self->model);
+    quake2::getInstance()->gi.setmodel (self, self->model);
     self->svflags = SVF_NOCLIENT;
 }
 
@@ -69,7 +69,7 @@ void Use_Multi (edict *ent, edict *other, edict *activator)
     multi_trigger (ent);
 }
 
-void Touch_Multi (edict *self, edict *other, plane_t *plane, csurface_t *surf)
+void Touch_Multi (edict *self, edict *other, plane_s *plane, csurface_s *surf)
 {
     if(other->client)
     {
@@ -112,17 +112,17 @@ void trigger_enable (edict *self, edict *other, edict *activator)
 {
     self->solid = SOLID_TRIGGER;
     self->use = Use_Multi;
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 }
 
 void SP_trigger_multiple (edict *ent)
 {
     if (ent->sounds == 1)
-        ent->noise_index = gi.soundindex ("misc/secret.wav");
+        ent->noise_index = quake2::getInstance()->gi.soundindex ("misc/secret.wav");
     else if (ent->sounds == 2)
-        ent->noise_index = gi.soundindex ("misc/talk.wav");
+        ent->noise_index = quake2::getInstance()->gi.soundindex ("misc/talk.wav");
     else if (ent->sounds == 3)
-        ent->noise_index = gi.soundindex ("misc/trigger1.wav");
+        ent->noise_index = quake2::getInstance()->gi.soundindex ("misc/trigger1.wav");
 
     if (!ent->wait)
         ent->wait = 0.2;
@@ -145,8 +145,8 @@ void SP_trigger_multiple (edict *ent)
     if (!VectorCompare(ent->s.angles, vec3_origin))
         G_SetMovedir (ent->s.angles, ent->movedir);
 
-    gi.setmodel (ent, ent->model);
-    gi.linkentity (ent);
+    quake2::getInstance()->gi.setmodel (ent, ent->model);
+    quake2::getInstance()->gi.linkentity (ent);
 }
 
 
@@ -176,7 +176,7 @@ void SP_trigger_once(edict *ent)
         VectorMA (ent->mins, 0.5, ent->size, v);
         ent->spawnflags &= ~1;
         ent->spawnflags |= 4;
-        gi.dprintf("fixed TRIGGERED flag on %s at %s\n", ent->classname, vtos(v));
+        quake2::getInstance()->gi.dprintf("fixed TRIGGERED flag on %s at %s\n", ent->classname, vtos(v));
     }
 
     ent->wait = -1;
@@ -224,12 +224,12 @@ void trigger_key_use (edict *self, edict *other, edict *activator)
         if (level.time < self->touch_debounce_time)
             return;
         self->touch_debounce_time = level.time + 5.0;
-        gi.centerprintf (activator, "You need the %s", self->item->pickup_name);
-        gi.sound (activator, CHAN_AUTO, gi.soundindex ("misc/keytry.wav"), 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.centerprintf (activator, "You need the %s", self->item->pickup_name);
+        quake2::getInstance()->gi.sound (activator, CHAN_AUTO, quake2::getInstance()->gi.soundindex ("misc/keytry.wav"), 1, ATTN_NORM, 0);
         return;
     }
 
-    gi.sound (activator, CHAN_AUTO, gi.soundindex ("misc/keyuse.wav"), 1, ATTN_NORM, 0);
+    quake2::getInstance()->gi.sound (activator, CHAN_AUTO, quake2::getInstance()->gi.soundindex ("misc/keyuse.wav"), 1, ATTN_NORM, 0);
     if (coop->value)
     {
         int        player;
@@ -283,25 +283,25 @@ void SP_trigger_key (edict *self)
 {
     if (!st.item)
     {
-        gi.dprintf("no key item for trigger_key at %s\n", vtos(self->s.origin));
+        quake2::getInstance()->gi.dprintf("no key item for trigger_key at %s\n", vtos(self->s.origin));
         return;
     }
     self->item = FindItemByClassname (st.item);
 
     if (!self->item)
     {
-        gi.dprintf("item %s not found for trigger_key at %s\n", st.item, vtos(self->s.origin));
+        quake2::getInstance()->gi.dprintf("item %s not found for trigger_key at %s\n", st.item, vtos(self->s.origin));
         return;
     }
 
     if (!self->target)
     {
-        gi.dprintf("%s at %s has no target\n", self->classname, vtos(self->s.origin));
+        quake2::getInstance()->gi.dprintf("%s at %s has no target\n", self->classname, vtos(self->s.origin));
         return;
     }
 
-    gi.soundindex ("misc/keytry.wav");
-    gi.soundindex ("misc/keyuse.wav");
+    quake2::getInstance()->gi.soundindex ("misc/keytry.wav");
+    quake2::getInstance()->gi.soundindex ("misc/keyuse.wav");
 
     self->use = trigger_key_use;
 }
@@ -334,16 +334,16 @@ void trigger_counter_use(edict *self, edict *other, edict *activator)
     {
         if (! (self->spawnflags & 1))
         {
-            gi.centerprintf(activator, "%i more to go...", self->count);
-            gi.sound (activator, CHAN_AUTO, gi.soundindex ("misc/talk1.wav"), 1, ATTN_NORM, 0);
+            quake2::getInstance()->gi.centerprintf(activator, "%i more to go...", self->count);
+            quake2::getInstance()->gi.sound (activator, CHAN_AUTO, quake2::getInstance()->gi.soundindex ("misc/talk1.wav"), 1, ATTN_NORM, 0);
         }
         return;
     }
 
     if (! (self->spawnflags & 1))
     {
-        gi.centerprintf(activator, "Sequence completed!");
-        gi.sound (activator, CHAN_AUTO, gi.soundindex ("misc/talk1.wav"), 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.centerprintf(activator, "Sequence completed!");
+        quake2::getInstance()->gi.sound (activator, CHAN_AUTO, quake2::getInstance()->gi.soundindex ("misc/talk1.wav"), 1, ATTN_NORM, 0);
     }
     self->activator = activator;
     multi_trigger (self);
@@ -391,7 +391,7 @@ trigger_push
 
 static int windsound;
 
-void trigger_push_touch (edict *self, edict *other, plane_t *plane, csurface_t *surf)
+void trigger_push_touch (edict *self, edict *other, plane_s *plane, csurface_s *surf)
 {
     if (strcmp(other->classname, "grenade") == 0)
     {
@@ -408,7 +408,7 @@ void trigger_push_touch (edict *self, edict *other, plane_t *plane, csurface_t *
             if (other->fly_sound_debounce_time < level.time)
             {
                 other->fly_sound_debounce_time = level.time + 1.5;
-                gi.sound (other, CHAN_AUTO, windsound, 1, ATTN_NORM, 0);
+                quake2::getInstance()->gi.sound (other, CHAN_AUTO, windsound, 1, ATTN_NORM, 0);
             }
         }
     }
@@ -424,11 +424,11 @@ Pushes the player
 void SP_trigger_push (edict *self)
 {
     InitTrigger (self);
-    windsound = gi.soundindex ("misc/windfly.wav");
+    windsound = quake2::getInstance()->gi.soundindex ("misc/windfly.wav");
     self->touch = trigger_push_touch;
     if (!self->speed)
         self->speed = 1000;
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 }
 
 
@@ -458,14 +458,14 @@ void hurt_use (edict *self, edict *other, edict *activator)
         self->solid = SOLID_TRIGGER;
     else
         self->solid = SOLID_NOT;
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 
     if (!(self->spawnflags & 2))
         self->use = NULL;
 }
 
 
-void hurt_touch (edict *self, edict *other, plane_t *plane, csurface_t *surf)
+void hurt_touch (edict *self, edict *other, plane_s *plane, csurface_s *surf)
 {
     int        dflags;
 
@@ -483,7 +483,7 @@ void hurt_touch (edict *self, edict *other, plane_t *plane, csurface_t *surf)
     if (!(self->spawnflags & 4))
     {
         if ((level.framenum % 10) == 0)
-            gi.sound (other, CHAN_AUTO, self->noise_index, 1, ATTN_NORM, 0);
+            quake2::getInstance()->gi.sound (other, CHAN_AUTO, self->noise_index, 1, ATTN_NORM, 0);
     }
 
     if (self->spawnflags & 8)
@@ -497,7 +497,7 @@ void SP_trigger_hurt (edict *self)
 {
     InitTrigger (self);
 
-    self->noise_index = gi.soundindex ("world/electro.wav");
+    self->noise_index = quake2::getInstance()->gi.soundindex ("world/electro.wav");
     self->touch = hurt_touch;
 
     if (!self->dmg)
@@ -511,7 +511,7 @@ void SP_trigger_hurt (edict *self)
     if (self->spawnflags & 2)
         self->use = hurt_use;
 
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 }
 
 
@@ -529,7 +529,7 @@ the value of "gravity".  1.0 is standard
 gravity for the level.
 */
 
-void trigger_gravity_touch (edict *self, edict *other, plane_t *plane, csurface_t *surf)
+void trigger_gravity_touch (edict *self, edict *other, plane_s *plane, csurface_s *surf)
 {
     other->gravity = self->gravity;
 }
@@ -538,7 +538,7 @@ void SP_trigger_gravity (edict *self)
 {
     if (st.gravity == 0)
     {
-        gi.dprintf("trigger_gravity without gravity set at %s\n", vtos(self->s.origin));
+        quake2::getInstance()->gi.dprintf("trigger_gravity without gravity set at %s\n", vtos(self->s.origin));
         G_FreeEdict  (self);
         return;
     }
@@ -563,7 +563,7 @@ Walking monsters that touch this will jump in the direction of the trigger's ang
 "height" default to 200, the speed thrown upwards
 */
 
-void trigger_monsterjump_touch (edict *self, edict *other, plane_t *plane, csurface_t *surf)
+void trigger_monsterjump_touch (edict *self, edict *other, plane_s *plane, csurface_s *surf)
 {
     if (other->flags & (FL_FLY | FL_SWIM) )
         return;

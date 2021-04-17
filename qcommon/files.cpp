@@ -607,7 +607,7 @@ void FS_SetGamedir (const std::string& dir)
     //
     // flush all data, so it will be forced to reload
     //
-    if (dedicated && !dedicated->value)
+    if (quake2::getInstance()->dedicated && !quake2::getInstance()->dedicated->value)
         Cbuf_AddText ("vid_restart\nsnd_restart\n");
 
     //Com_sprintf (fs_gamedir, sizeof(fs_gamedir), "%s/%s", fs_basedir->string, dir);

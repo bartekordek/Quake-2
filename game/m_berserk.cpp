@@ -38,12 +38,12 @@ static int sound_search;
 
 void berserk_sight (edict *self, edict *other)
 {
-    gi.sound (self, CHAN_VOICE, sound_sight, 1, ATTN_NORM, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_sight, 1, ATTN_NORM, 0);
 }
 
 void berserk_search (edict *self)
 {
-    gi.sound (self, CHAN_VOICE, sound_search, 1, ATTN_NORM, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_search, 1, ATTN_NORM, 0);
 }
 
 
@@ -96,7 +96,7 @@ void berserk_fidget (edict *self)
         return;
 
     self->monsterinfo.currentmove = &berserk_move_stand_fidget;
-    gi.sound (self, CHAN_WEAPON, sound_idle, 1, ATTN_IDLE, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_WEAPON, sound_idle, 1, ATTN_IDLE, 0);
 }
 
 
@@ -176,7 +176,7 @@ void berserk_attack_spike (edict *self)
 
 void berserk_swing (edict *self)
 {
-    gi.sound (self, CHAN_WEAPON, sound_punch, 1, ATTN_NORM, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_WEAPON, sound_punch, 1, ATTN_NORM, 0);
 }
 
 mframe_t berserk_frames_attack_spike [] =
@@ -321,7 +321,7 @@ void berserk_pain (edict *self, edict *other, float kick, int damage)
         return;
 
     self->pain_debounce_time = level.time + 3;
-    gi.sound (self, CHAN_VOICE, sound_pain, 1, ATTN_NORM, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain, 1, ATTN_NORM, 0);
 
     if (skill->value == 3)
         return;        // no pain anims in nightmare
@@ -340,7 +340,7 @@ void berserk_dead (edict *self)
     self->movetype = MOVETYPE_TOSS;
     self->svflags |= SVF_DEADMONSTER;
     self->nextthink = 0;
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 }
 
 
@@ -384,7 +384,7 @@ void berserk_die (edict *self, edict *inflictor, edict *attacker, int damage, ve
 
     if (self->health <= self->gib_health)
     {
-        gi.sound (self, CHAN_VOICE, gi.soundindex ("misc/udeath.wav"), 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, quake2::getInstance()->gi.soundindex ("misc/udeath.wav"), 1, ATTN_NORM, 0);
         for (n= 0; n < 2; n++)
             ThrowGib (self, "models/objects/gibs/bone/tris.md2", damage, GIB_ORGANIC);
         for (n= 0; n < 4; n++)
@@ -397,7 +397,7 @@ void berserk_die (edict *self, edict *inflictor, edict *attacker, int damage, ve
     if (self->deadflag == DEAD_DEAD)
         return;
 
-    gi.sound (self, CHAN_VOICE, sound_die, 1, ATTN_NORM, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_die, 1, ATTN_NORM, 0);
     self->deadflag = DEAD_DEAD;
     self->takedamage = DAMAGE_YES;
 
@@ -419,14 +419,14 @@ void SP_monster_berserk (edict *self)
     }
 
     // pre-caches
-    sound_pain  = gi.soundindex ("berserk/berpain2.wav");
-    sound_die   = gi.soundindex ("berserk/berdeth2.wav");
-    sound_idle  = gi.soundindex ("berserk/beridle1.wav");
-    sound_punch = gi.soundindex ("berserk/attack.wav");
-    sound_search = gi.soundindex ("berserk/bersrch1.wav");
-    sound_sight = gi.soundindex ("berserk/sight.wav");
+    sound_pain  = quake2::getInstance()->gi.soundindex ("berserk/berpain2.wav");
+    sound_die   = quake2::getInstance()->gi.soundindex ("berserk/berdeth2.wav");
+    sound_idle  = quake2::getInstance()->gi.soundindex ("berserk/beridle1.wav");
+    sound_punch = quake2::getInstance()->gi.soundindex ("berserk/attack.wav");
+    sound_search = quake2::getInstance()->gi.soundindex ("berserk/bersrch1.wav");
+    sound_sight = quake2::getInstance()->gi.soundindex ("berserk/sight.wav");
 
-    self->s.modelindex = gi.modelindex("models/monsters/berserk/tris.md2");
+    self->s.modelindex = quake2::getInstance()->gi.modelindex("models/monsters/berserk/tris.md2");
     VectorSet (self->mins, -16, -16, -24);
     VectorSet (self->maxs, 16, 16, 32);
     self->movetype = MOVETYPE_STEP;
@@ -451,7 +451,7 @@ void SP_monster_berserk (edict *self)
     self->monsterinfo.currentmove = &berserk_move_stand;
     self->monsterinfo.scale = MODEL_SCALE;
 
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 
     walkmonster_start (self);
 }

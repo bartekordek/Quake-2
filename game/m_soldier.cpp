@@ -44,15 +44,15 @@ static int    sound_cock;
 void soldier_idle (edict *self)
 {
     if (random() > 0.8)
-        gi.sound (self, CHAN_VOICE, sound_idle, 1, ATTN_IDLE, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_idle, 1, ATTN_IDLE, 0);
 }
 
 void soldier_cock (edict *self)
 {
     if (self->s.frame == FRAME_stand322)
-        gi.sound (self, CHAN_WEAPON, sound_cock, 1, ATTN_IDLE, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_WEAPON, sound_cock, 1, ATTN_IDLE, 0);
     else
-        gi.sound (self, CHAN_WEAPON, sound_cock, 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_WEAPON, sound_cock, 1, ATTN_NORM, 0);
 }
 
 
@@ -425,11 +425,11 @@ void soldier_pain (edict *self, edict *other, float kick, int damage)
 
     n = self->s.skinnum | 1;
     if (n == 1)
-        gi.sound (self, CHAN_VOICE, sound_pain_light, 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain_light, 1, ATTN_NORM, 0);
     else if (n == 3)
-        gi.sound (self, CHAN_VOICE, sound_pain, 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain, 1, ATTN_NORM, 0);
     else
-        gi.sound (self, CHAN_VOICE, sound_pain_ss, 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain_ss, 1, ATTN_NORM, 0);
 
     if (self->velocity[2] > 100)
     {
@@ -639,7 +639,7 @@ void soldier_duck_down (edict *self)
     self->maxs[2] -= 32;
     self->takedamage = DAMAGE_YES;
     self->monsterinfo.pausetime = level.time + 1;
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 }
 
 void soldier_duck_up (edict *self)
@@ -647,7 +647,7 @@ void soldier_duck_up (edict *self)
     self->monsterinfo.aiflags &= ~AI_DUCKED;
     self->maxs[2] += 32;
     self->takedamage = DAMAGE_AIM;
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 }
 
 void soldier_fire3 (edict *self)
@@ -792,9 +792,9 @@ void soldier_attack(edict *self)
 void soldier_sight(edict *self, edict *other)
 {
     if (random() < 0.5)
-        gi.sound (self, CHAN_VOICE, sound_sight1, 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_sight1, 1, ATTN_NORM, 0);
     else
-        gi.sound (self, CHAN_VOICE, sound_sight2, 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_sight2, 1, ATTN_NORM, 0);
 
     if ((skill->value > 0) && (range(self, self->enemy) >= RANGE_MID))
     {
@@ -888,7 +888,7 @@ void soldier_dead (edict *self)
     self->movetype = MOVETYPE_TOSS;
     self->svflags |= SVF_DEADMONSTER;
     self->nextthink = 0;
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 }
 
 mframe_t soldier_frames_death1 [] =
@@ -1148,7 +1148,7 @@ void soldier_die (edict *self, edict *inflictor, edict *attacker, int damage, ve
 // check for gib
     if (self->health <= self->gib_health)
     {
-        gi.sound (self, CHAN_VOICE, gi.soundindex ("misc/udeath.wav"), 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, quake2::getInstance()->gi.soundindex ("misc/udeath.wav"), 1, ATTN_NORM, 0);
         for (n= 0; n < 3; n++)
             ThrowGib (self, "models/objects/gibs/sm_meat/tris.md2", damage, GIB_ORGANIC);
         ThrowGib (self, "models/objects/gibs/chest/tris.md2", damage, GIB_ORGANIC);
@@ -1166,11 +1166,11 @@ void soldier_die (edict *self, edict *inflictor, edict *attacker, int damage, ve
     self->s.skinnum |= 1;
 
     if (self->s.skinnum == 1)
-        gi.sound (self, CHAN_VOICE, sound_death_light, 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_death_light, 1, ATTN_NORM, 0);
     else if (self->s.skinnum == 3)
-        gi.sound (self, CHAN_VOICE, sound_death, 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_death, 1, ATTN_NORM, 0);
     else // (self->s.skinnum == 5)
-        gi.sound (self, CHAN_VOICE, sound_death_ss, 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_death_ss, 1, ATTN_NORM, 0);
 
     if (fabs((self->s.origin[2] + self->viewheight) - point[2]) <= 4)
     {
@@ -1200,17 +1200,17 @@ void soldier_die (edict *self, edict *inflictor, edict *attacker, int damage, ve
 void SP_monster_soldier_x (edict *self)
 {
 
-    self->s.modelindex = gi.modelindex ("models/monsters/soldier/tris.md2");
+    self->s.modelindex = quake2::getInstance()->gi.modelindex ("models/monsters/soldier/tris.md2");
     self->monsterinfo.scale = MODEL_SCALE;
     VectorSet (self->mins, -16, -16, -24);
     VectorSet (self->maxs, 16, 16, 32);
     self->movetype = MOVETYPE_STEP;
     self->solid = SOLID_BBOX;
 
-    sound_idle =    gi.soundindex ("soldier/solidle1.wav");
-    sound_sight1 =    gi.soundindex ("soldier/solsght1.wav");
-    sound_sight2 =    gi.soundindex ("soldier/solsrch1.wav");
-    sound_cock =    gi.soundindex ("infantry/infatck3.wav");
+    sound_idle =    quake2::getInstance()->gi.soundindex ("soldier/solidle1.wav");
+    sound_sight1 =    quake2::getInstance()->gi.soundindex ("soldier/solsght1.wav");
+    sound_sight2 =    quake2::getInstance()->gi.soundindex ("soldier/solsrch1.wav");
+    sound_cock =    quake2::getInstance()->gi.soundindex ("infantry/infatck3.wav");
 
     self->mass = 100;
 
@@ -1225,7 +1225,7 @@ void SP_monster_soldier_x (edict *self)
     self->monsterinfo.melee = NULL;
     self->monsterinfo.sight = soldier_sight;
 
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 
     self->monsterinfo.stand (self);
 
@@ -1245,11 +1245,11 @@ void SP_monster_soldier_light (edict *self)
 
     SP_monster_soldier_x (self);
 
-    sound_pain_light = gi.soundindex ("soldier/solpain2.wav");
-    sound_death_light =    gi.soundindex ("soldier/soldeth2.wav");
-    gi.modelindex ("models/objects/laser/tris.md2");
-    gi.soundindex ("misc/lasfly.wav");
-    gi.soundindex ("soldier/solatck2.wav");
+    sound_pain_light = quake2::getInstance()->gi.soundindex ("soldier/solpain2.wav");
+    sound_death_light =    quake2::getInstance()->gi.soundindex ("soldier/soldeth2.wav");
+    quake2::getInstance()->gi.modelindex ("models/objects/laser/tris.md2");
+    quake2::getInstance()->gi.soundindex ("misc/lasfly.wav");
+    quake2::getInstance()->gi.soundindex ("soldier/solatck2.wav");
 
     self->s.skinnum = 0;
     self->health = 20;
@@ -1268,9 +1268,9 @@ void SP_monster_soldier (edict *self)
 
     SP_monster_soldier_x (self);
 
-    sound_pain = gi.soundindex ("soldier/solpain1.wav");
-    sound_death = gi.soundindex ("soldier/soldeth1.wav");
-    gi.soundindex ("soldier/solatck1.wav");
+    sound_pain = quake2::getInstance()->gi.soundindex ("soldier/solpain1.wav");
+    sound_death = quake2::getInstance()->gi.soundindex ("soldier/soldeth1.wav");
+    quake2::getInstance()->gi.soundindex ("soldier/solatck1.wav");
 
     self->s.skinnum = 2;
     self->health = 30;
@@ -1289,9 +1289,9 @@ void SP_monster_soldier_ss (edict *self)
 
     SP_monster_soldier_x (self);
 
-    sound_pain_ss = gi.soundindex ("soldier/solpain3.wav");
-    sound_death_ss = gi.soundindex ("soldier/soldeth3.wav");
-    gi.soundindex ("soldier/solatck3.wav");
+    sound_pain_ss = quake2::getInstance()->gi.soundindex ("soldier/solpain3.wav");
+    sound_death_ss = quake2::getInstance()->gi.soundindex ("soldier/soldeth3.wav");
+    quake2::getInstance()->gi.soundindex ("soldier/solatck3.wav");
 
     self->s.skinnum = 4;
     self->health = 40;

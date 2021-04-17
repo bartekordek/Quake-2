@@ -12,7 +12,7 @@ typedef struct msurface_s
     int dlightframe;
     int dlightbits;
 
-    plane_t *plane;
+    plane_s *plane;
     int flags;
 
     int firstedge;// look up in model->surfedges[], negative numbers

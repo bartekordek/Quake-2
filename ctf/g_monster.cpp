@@ -32,70 +32,70 @@ void monster_fire_bullet (edict *self, vec3_t start, vec3_t dir, int damage, int
 {
     fire_bullet (self, start, dir, damage, kick, hspread, vspread, MOD_UNKNOWN);
 
-    gi.WriteByte (svc_muzzleflash2);
-    gi.WriteShort (self - g_edicts);
-    gi.WriteByte (flashtype);
-    gi.multicast (start, MULTICAST_PVS);
+    quake2::getInstance()->gi.WriteByte (svc_muzzleflash2);
+    quake2::getInstance()->gi.WriteShort (self - g_edicts);
+    quake2::getInstance()->gi.WriteByte (flashtype);
+    quake2::getInstance()->gi.multicast (start, multicast_t::MULTICAST_PVS);
 }
 
 void monster_fire_shotgun (edict *self, vec3_t start, vec3_t aimdir, int damage, int kick, int hspread, int vspread, int count, int flashtype)
 {
     fire_shotgun (self, start, aimdir, damage, kick, hspread, vspread, count, MOD_UNKNOWN);
 
-    gi.WriteByte (svc_muzzleflash2);
-    gi.WriteShort (self - g_edicts);
-    gi.WriteByte (flashtype);
-    gi.multicast (start, MULTICAST_PVS);
+    quake2::getInstance()->gi.WriteByte (svc_muzzleflash2);
+    quake2::getInstance()->gi.WriteShort (self - g_edicts);
+    quake2::getInstance()->gi.WriteByte (flashtype);
+    quake2::getInstance()->gi.multicast (start, multicast_t::MULTICAST_PVS);
 }
 
 void monster_fire_blaster (edict *self, vec3_t start, vec3_t dir, int damage, int speed, int flashtype, int effect)
 {
     fire_blaster (self, start, dir, damage, speed, effect, false);
 
-    gi.WriteByte (svc_muzzleflash2);
-    gi.WriteShort (self - g_edicts);
-    gi.WriteByte (flashtype);
-    gi.multicast (start, MULTICAST_PVS);
+    quake2::getInstance()->gi.WriteByte (svc_muzzleflash2);
+    quake2::getInstance()->gi.WriteShort (self - g_edicts);
+    quake2::getInstance()->gi.WriteByte (flashtype);
+    quake2::getInstance()->gi.multicast (start, multicast_t::MULTICAST_PVS);
 }
 
 void monster_fire_grenade (edict *self, vec3_t start, vec3_t aimdir, int damage, int speed, int flashtype)
 {
     fire_grenade (self, start, aimdir, damage, speed, 2.5, damage+40);
 
-    gi.WriteByte (svc_muzzleflash2);
-    gi.WriteShort (self - g_edicts);
-    gi.WriteByte (flashtype);
-    gi.multicast (start, MULTICAST_PVS);
+    quake2::getInstance()->gi.WriteByte (svc_muzzleflash2);
+    quake2::getInstance()->gi.WriteShort (self - g_edicts);
+    quake2::getInstance()->gi.WriteByte (flashtype);
+    quake2::getInstance()->gi.multicast (start, multicast_t::MULTICAST_PVS);
 }
 
 void monster_fire_rocket (edict *self, vec3_t start, vec3_t dir, int damage, int speed, int flashtype)
 {
     fire_rocket (self, start, dir, damage, speed, damage+20, damage);
 
-    gi.WriteByte (svc_muzzleflash2);
-    gi.WriteShort (self - g_edicts);
-    gi.WriteByte (flashtype);
-    gi.multicast (start, MULTICAST_PVS);
+    quake2::getInstance()->gi.WriteByte (svc_muzzleflash2);
+    quake2::getInstance()->gi.WriteShort (self - g_edicts);
+    quake2::getInstance()->gi.WriteByte (flashtype);
+    quake2::getInstance()->gi.multicast (start, multicast_t::MULTICAST_PVS);
 }
 
 void monster_fire_railgun (edict *self, vec3_t start, vec3_t aimdir, int damage, int kick, int flashtype)
 {
     fire_rail (self, start, aimdir, damage, kick);
 
-    gi.WriteByte (svc_muzzleflash2);
-    gi.WriteShort (self - g_edicts);
-    gi.WriteByte (flashtype);
-    gi.multicast (start, MULTICAST_PVS);
+    quake2::getInstance()->gi.WriteByte (svc_muzzleflash2);
+    quake2::getInstance()->gi.WriteShort (self - g_edicts);
+    quake2::getInstance()->gi.WriteByte (flashtype);
+    quake2::getInstance()->gi.multicast (start, multicast_t::MULTICAST_PVS);
 }
 
 void monster_fire_bfg (edict *self, vec3_t start, vec3_t aimdir, int damage, int speed, int kick, float damage_radius, int flashtype)
 {
     fire_bfg (self, start, aimdir, damage, speed, damage_radius);
 
-    gi.WriteByte (svc_muzzleflash2);
-    gi.WriteShort (self - g_edicts);
-    gi.WriteByte (flashtype);
-    gi.multicast (start, MULTICAST_PVS);
+    quake2::getInstance()->gi.WriteByte (svc_muzzleflash2);
+    quake2::getInstance()->gi.WriteShort (self - g_edicts);
+    quake2::getInstance()->gi.WriteByte (flashtype);
+    quake2::getInstance()->gi.multicast (start, multicast_t::MULTICAST_PVS);
 }
 
 
@@ -115,7 +115,7 @@ static void M_FliesOn (edict *self)
     if (self->waterlevel)
         return;
     self->s.effects |= EF_FLIES;
-    self->s.sound = gi.soundindex ("infantry/inflies1.wav");
+    self->s.sound = quake2::getInstance()->gi.soundindex ("infantry/inflies1.wav");
     self->think = M_FliesOff;
     self->nextthink = level.time + 60;
 }
@@ -157,7 +157,7 @@ void M_CheckGround (edict *ent)
     point[1] = ent->s.origin[1];
     point[2] = ent->s.origin[2] - 0.25;
 
-    trace = gi.trace (ent->s.origin, ent->mins, ent->maxs, point, ent, MASK_MONSTERSOLID);
+    trace = quake2::getInstance()->gi.trace (ent->s.origin, ent->mins, ent->maxs, point, ent, MASK_MONSTERSOLID);
 
     // check steepness
     if ( trace.plane.normal[2] < 0.7 && !trace.startsolid)
@@ -191,7 +191,7 @@ void M_CatagorizePosition (edict *ent)
     point[0] = ent->s.origin[0];
     point[1] = ent->s.origin[1];
     point[2] = ent->s.origin[2] + ent->mins[2] + 1;
-    cont = gi.pointcontents (point);
+    cont = quake2::getInstance()->gi.pointcontents (point);
 
     if (!(cont & MASK_WATER))
     {
@@ -203,13 +203,13 @@ void M_CatagorizePosition (edict *ent)
     ent->watertype = cont;
     ent->waterlevel = 1;
     point[2] += 26;
-    cont = gi.pointcontents (point);
+    cont = quake2::getInstance()->gi.pointcontents (point);
     if (!(cont & MASK_WATER))
         return;
 
     ent->waterlevel = 2;
     point[2] += 22;
-    cont = gi.pointcontents (point);
+    cont = quake2::getInstance()->gi.pointcontents (point);
     if (cont & MASK_WATER)
         ent->waterlevel = 3;
 }
@@ -263,7 +263,7 @@ void M_WorldEffects (edict *ent)
     {
         if (ent->flags & FL_INWATER)
         {
-            gi.sound (ent, CHAN_BODY, gi.soundindex("player/watr_out.wav"), 1, ATTN_NORM, 0);
+            quake2::getInstance()->gi.sound (ent, CHAN_BODY, quake2::getInstance()->gi.soundindex("player/watr_out.wav"), 1, ATTN_NORM, 0);
             ent->flags &= ~FL_INWATER;
         }
         return;
@@ -292,13 +292,13 @@ void M_WorldEffects (edict *ent)
         {
             if (ent->watertype & CONTENTS_LAVA)
                 if (random() <= 0.5)
-                    gi.sound (ent, CHAN_BODY, gi.soundindex("player/lava1.wav"), 1, ATTN_NORM, 0);
+                    quake2::getInstance()->gi.sound (ent, CHAN_BODY, quake2::getInstance()->gi.soundindex("player/lava1.wav"), 1, ATTN_NORM, 0);
                 else
-                    gi.sound (ent, CHAN_BODY, gi.soundindex("player/lava2.wav"), 1, ATTN_NORM, 0);
+                    quake2::getInstance()->gi.sound (ent, CHAN_BODY, quake2::getInstance()->gi.soundindex("player/lava2.wav"), 1, ATTN_NORM, 0);
             else if (ent->watertype & CONTENTS_SLIME)
-                gi.sound (ent, CHAN_BODY, gi.soundindex("player/watr_in.wav"), 1, ATTN_NORM, 0);
+                quake2::getInstance()->gi.sound (ent, CHAN_BODY, quake2::getInstance()->gi.soundindex("player/watr_in.wav"), 1, ATTN_NORM, 0);
             else if (ent->watertype & CONTENTS_WATER)
-                gi.sound (ent, CHAN_BODY, gi.soundindex("player/watr_in.wav"), 1, ATTN_NORM, 0);
+                quake2::getInstance()->gi.sound (ent, CHAN_BODY, quake2::getInstance()->gi.soundindex("player/watr_in.wav"), 1, ATTN_NORM, 0);
         }
 
         ent->flags |= FL_INWATER;
@@ -316,14 +316,14 @@ void M_droptofloor (edict *ent)
     VectorCopy (ent->s.origin, end);
     end[2] -= 256;
 
-    trace = gi.trace (ent->s.origin, ent->mins, ent->maxs, end, ent, MASK_MONSTERSOLID);
+    trace = quake2::getInstance()->gi.trace (ent->s.origin, ent->mins, ent->maxs, end, ent, MASK_MONSTERSOLID);
 
     if (trace.fraction == 1 || trace.allsolid)
         return;
 
     VectorCopy (trace.endpos, ent->s.origin);
 
-    gi.linkentity (ent);
+    quake2::getInstance()->gi.linkentity (ent);
     M_CheckGround (ent);
     M_CatagorizePosition (ent);
 }
@@ -466,7 +466,7 @@ void monster_triggered_spawn (edict *self)
     self->movetype = MOVETYPE_STEP;
     self->svflags &= ~SVF_NOCLIENT;
     self->air_finished = level.time + 12;
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 
     monster_start_go (self);
 
@@ -543,7 +543,7 @@ bool monster_start (edict *self)
     {
         self->spawnflags &= ~4;
         self->spawnflags |= 1;
-//        gi.dprintf("fixed spawnflags on %s at %s\n", self->classname, vtos(self->s.origin));
+//        quake2::getInstance()->gi.dprintf("fixed spawnflags on %s at %s\n", self->classname, vtos(self->s.origin));
     }
 
     if (!(self->monsterinfo.aiflags & AI_GOOD_GUY))
@@ -570,7 +570,7 @@ bool monster_start (edict *self)
     {
         self->item = FindItemByClassname (st.item);
         if (!self->item)
-            gi.dprintf("%s at %s has bad item: %s\n", self->classname, vtos(self->s.origin), st.item);
+            quake2::getInstance()->gi.dprintf("%s at %s has bad item: %s\n", self->classname, vtos(self->s.origin), st.item);
     }
 
     // randomize what frame they start on
@@ -610,7 +610,7 @@ void monster_start_go (edict *self)
             }
         }
         if (notcombat && self->combattarget)
-            gi.dprintf("%s at %s has target with mixed types\n", self->classname, vtos(self->s.origin));
+            quake2::getInstance()->gi.dprintf("%s at %s has target with mixed types\n", self->classname, vtos(self->s.origin));
         if (fixup)
             self->target = NULL;
     }
@@ -625,7 +625,7 @@ void monster_start_go (edict *self)
         {
             if (strcmp(target->classname, "point_combat") != 0)
             {
-                gi.dprintf("%s at (%i %i %i) has a bad combattarget %s : %s at (%i %i %i)\n",
+                quake2::getInstance()->gi.dprintf("%s at (%i %i %i) has a bad combattarget %s : %s at (%i %i %i)\n",
                     self->classname, (int)self->s.origin[0], (int)self->s.origin[1], (int)self->s.origin[2],
                     self->combattarget, target->classname, (int)target->s.origin[0], (int)target->s.origin[1],
                     (int)target->s.origin[2]);
@@ -638,7 +638,7 @@ void monster_start_go (edict *self)
         self->goalentity = self->movetarget = G_PickTarget(self->target);
         if (!self->movetarget)
         {
-            gi.dprintf ("%s can't find target %s at %s\n", self->classname, self->target, vtos(self->s.origin));
+            quake2::getInstance()->gi.dprintf ("%s can't find target %s at %s\n", self->classname, self->target, vtos(self->s.origin));
             self->target = NULL;
             self->monsterinfo.pausetime = 100000000;
             self->monsterinfo.stand (self);
@@ -676,7 +676,7 @@ void walkmonster_start_go (edict *self)
 
         if (self->groundentity)
             if (!M_walkmove (self, 0, 0))
-                gi.dprintf ("%s in solid at %s\n", self->classname, vtos(self->s.origin));
+                quake2::getInstance()->gi.dprintf ("%s in solid at %s\n", self->classname, vtos(self->s.origin));
     }
 
     if (!self->yaw_speed)
@@ -699,7 +699,7 @@ void walkmonster_start (edict *self)
 void flymonster_start_go (edict *self)
 {
     if (!M_walkmove (self, 0, 0))
-        gi.dprintf ("%s in solid at %s\n", self->classname, vtos(self->s.origin));
+        quake2::getInstance()->gi.dprintf ("%s in solid at %s\n", self->classname, vtos(self->s.origin));
 
     if (!self->yaw_speed)
         self->yaw_speed = 10;

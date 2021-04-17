@@ -36,7 +36,7 @@ void CL_CheckPredictionError (void)
     if (!cl_predict->value || (cl.frame.playerstate.pmove.pm_flags & PMF_NO_PREDICTION))
         return;
 
-    // calculate the last usercmd_t we sent that the server has processed
+    // calculate the last usercmd_s we sent that the server has processed
     frame = cls.netchan.incoming_acknowledged;
     frame &= (CMD_BACKUP-1);
 
@@ -201,7 +201,7 @@ void CL_PredictMovement (void)
     int            ack, current;
     int            frame;
     int            oldframe;
-    usercmd_t    *cmd;
+    usercmd_s    *cmd;
     pmove_t        pm;
     int            i;
     int            step;

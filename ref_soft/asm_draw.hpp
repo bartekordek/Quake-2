@@ -66,7 +66,7 @@
 #define st_pad            56
 #define st_size            64
 
-// clipplane_t structure
+// clipplane_s structure
 // !!! if this is changed, it must be changed in r_local.h too !!!
 #define cp_normal        0
 #define cp_dist            12

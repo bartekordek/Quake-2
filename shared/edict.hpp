@@ -5,12 +5,14 @@
 #include "shared/moveinfo.hpp"
 #include "shared/monsterinfo.hpp"
 #include "shared/g_client.hpp"
+#include "shared/plane.hpp"
+#include "shared/surface.hpp"
 
-// link_t is only used for entity area links now
-typedef struct link_s
+// link_s is only used for entity area links now
+struct link_s
 {
-    struct link_s    *prev, *next;
-} link_t;
+    link_s* prev,* next;
+};
 
 // edict->solid values
 typedef enum
@@ -35,7 +37,7 @@ struct edict
     int linkcount;
 
     // FIXME: move these fields to a server private sv_entity_t
-    link_t area;// linked to a division node or leaf
+    link_s area;// linked to a division node or leaf
 
     int num_clusters;// if -1, use headnode instead
     int clusternums[MAX_ENT_CLUSTERS];
@@ -99,7 +101,7 @@ struct edict
     void        (*prethink) (edict *ent);
     void        (*think)(edict *self);
     void        (*blocked)(edict *self, edict *other);    //move to moveinfo?
-    void        (*touch)(edict *self, edict *other, plane_t *plane, csurface_t *surf);
+    void        (*touch)(edict *self, edict *other, plane_s *plane, csurface_s *surf);
     void        (*use)(edict *self, edict *other, edict *activator);
     void        (*pain)(edict *self, edict *other, float kick, int damage);
     void        (*die)(edict *self, edict *inflictor, edict *attacker, int damage, vec3_t point);

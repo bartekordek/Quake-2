@@ -170,21 +170,21 @@ void Cmd_Give_f (edict *ent)
 
     if (deathmatch->value && !sv_cheats->value)
     {
-        gi.cprintf (ent, PRINT_HIGH, "You must run the server with '+set cheats 1' to enable this command.\n");
+        quake2::getInstance()->gi.cprintf (ent, PRINT_HIGH, "You must run the server with '+set cheats 1' to enable this command.\n");
         return;
     }
 
-    name = gi.args();
+    name = quake2::getInstance()->gi.args();
 
     if (Q_stricmp(name, "all") == 0)
         give_all = true;
     else
         give_all = false;
 
-    if (give_all || Q_stricmp(gi.argv(1), "health") == 0)
+    if (give_all || Q_stricmp(quake2::getInstance()->gi.argv(1), "health") == 0)
     {
-        if (gi.argc() == 3)
-            ent->health = atoi(gi.argv(2));
+        if (quake2::getInstance()->gi.argc() == 3)
+            ent->health = atoi(quake2::getInstance()->gi.argv(2));
         else
             ent->health = ent->max_health;
         if (!give_all)
@@ -270,18 +270,18 @@ void Cmd_Give_f (edict *ent)
     it = FindItem (name);
     if (!it)
     {
-        name = gi.argv(1);
+        name = quake2::getInstance()->gi.argv(1);
         it = FindItem (name);
         if (!it)
         {
-            gi.cprintf (ent, PRINT_HIGH, "unknown item\n");
+            quake2::getInstance()->gi.cprintf (ent, PRINT_HIGH, "unknown item\n");
             return;
         }
     }
 
     if (!it->pickup)
     {
-        gi.cprintf (ent, PRINT_HIGH, "non-pickup item\n");
+        quake2::getInstance()->gi.cprintf (ent, PRINT_HIGH, "non-pickup item\n");
         return;
     }
 
@@ -289,8 +289,8 @@ void Cmd_Give_f (edict *ent)
 
     if (it->flags & IT_AMMO)
     {
-        if (gi.argc() == 3)
-            ent->client->pers.inventory[index] = atoi(gi.argv(2));
+        if (quake2::getInstance()->gi.argc() == 3)
+            ent->client->pers.inventory[index] = atoi(quake2::getInstance()->gi.argv(2));
         else
             ent->client->pers.inventory[index] += it->quantity;
     }
@@ -321,7 +321,7 @@ void Cmd_God_f (edict *ent)
 
     if (deathmatch->value && !sv_cheats->value)
     {
-        gi.cprintf (ent, PRINT_HIGH, "You must run the server with '+set cheats 1' to enable this command.\n");
+        quake2::getInstance()->gi.cprintf (ent, PRINT_HIGH, "You must run the server with '+set cheats 1' to enable this command.\n");
         return;
     }
 
@@ -331,7 +331,7 @@ void Cmd_God_f (edict *ent)
     else
         msg = "godmode ON\n";
 
-    gi.cprintf (ent, PRINT_HIGH, msg);
+    quake2::getInstance()->gi.cprintf (ent, PRINT_HIGH, msg);
 }
 
 
@@ -350,7 +350,7 @@ void Cmd_Notarget_f (edict *ent)
 
     if (deathmatch->value && !sv_cheats->value)
     {
-        gi.cprintf (ent, PRINT_HIGH, "You must run the server with '+set cheats 1' to enable this command.\n");
+        quake2::getInstance()->gi.cprintf (ent, PRINT_HIGH, "You must run the server with '+set cheats 1' to enable this command.\n");
         return;
     }
 
@@ -360,7 +360,7 @@ void Cmd_Notarget_f (edict *ent)
     else
         msg = "notarget ON\n";
 
-    gi.cprintf (ent, PRINT_HIGH, msg);
+    quake2::getInstance()->gi.cprintf (ent, PRINT_HIGH, msg);
 }
 
 
@@ -377,7 +377,7 @@ void Cmd_Noclip_f (edict *ent)
 
     if (deathmatch->value && !sv_cheats->value)
     {
-        gi.cprintf (ent, PRINT_HIGH, "You must run the server with '+set cheats 1' to enable this command.\n");
+        quake2::getInstance()->gi.cprintf (ent, PRINT_HIGH, "You must run the server with '+set cheats 1' to enable this command.\n");
         return;
     }
 
@@ -392,7 +392,7 @@ void Cmd_Noclip_f (edict *ent)
         msg = "noclip ON\n";
     }
 
-    gi.cprintf (ent, PRINT_HIGH, msg);
+    quake2::getInstance()->gi.cprintf (ent, PRINT_HIGH, msg);
 }
 
 
@@ -409,22 +409,22 @@ void Cmd_Use_f (edict *ent)
     gitem        *it;
     char        *s;
 
-    s = gi.args();
+    s = quake2::getInstance()->gi.args();
     it = FindItem (s);
     if (!it)
     {
-        gi.cprintf (ent, PRINT_HIGH, "unknown item: %s\n", s);
+        quake2::getInstance()->gi.cprintf (ent, PRINT_HIGH, "unknown item: %s\n", s);
         return;
     }
     if (!it->use)
     {
-        gi.cprintf (ent, PRINT_HIGH, "Item is not usable.\n");
+        quake2::getInstance()->gi.cprintf (ent, PRINT_HIGH, "Item is not usable.\n");
         return;
     }
     index = ITEM_INDEX(it);
     if (!ent->client->pers.inventory[index])
     {
-        gi.cprintf (ent, PRINT_HIGH, "Out of item: %s\n", s);
+        quake2::getInstance()->gi.cprintf (ent, PRINT_HIGH, "Out of item: %s\n", s);
         return;
     }
 
@@ -446,28 +446,28 @@ void Cmd_Drop_f (edict *ent)
     char        *s;
 
 //ZOID--special case for tech powerups
-    if (Q_stricmp(gi.args(), "tech") == 0 && (it = CTFWhat_Tech(ent)) != NULL) {
+    if (Q_stricmp(quake2::getInstance()->gi.args(), "tech") == 0 && (it = CTFWhat_Tech(ent)) != NULL) {
         it->drop (ent, it);
         return;
     }
 //ZOID
 
-    s = gi.args();
+    s = quake2::getInstance()->gi.args();
     it = FindItem (s);
     if (!it)
     {
-        gi.cprintf (ent, PRINT_HIGH, "unknown item: %s\n", s);
+        quake2::getInstance()->gi.cprintf (ent, PRINT_HIGH, "unknown item: %s\n", s);
         return;
     }
     if (!it->drop)
     {
-        gi.cprintf (ent, PRINT_HIGH, "Item is not dropable.\n");
+        quake2::getInstance()->gi.cprintf (ent, PRINT_HIGH, "Item is not dropable.\n");
         return;
     }
     index = ITEM_INDEX(it);
     if (!ent->client->pers.inventory[index])
     {
-        gi.cprintf (ent, PRINT_HIGH, "Out of item: %s\n", s);
+        quake2::getInstance()->gi.cprintf (ent, PRINT_HIGH, "Out of item: %s\n", s);
         return;
     }
 
@@ -513,12 +513,12 @@ void Cmd_Inven_f (edict *ent)
 
     cl->showinventory = true;
 
-    gi.WriteByte (svc_inventory);
+    quake2::getInstance()->gi.WriteByte (svc_inventory);
     for (i=0 ; i<MAX_ITEMS ; i++)
     {
-        gi.WriteShort (cl->pers.inventory[i]);
+        quake2::getInstance()->gi.WriteShort (cl->pers.inventory[i]);
     }
-    gi.unicast (ent, true);
+    quake2::getInstance()->gi.unicast (ent, true);
 }
 
 /*
@@ -541,14 +541,14 @@ void Cmd_InvUse_f (edict *ent)
 
     if (ent->client->pers.selected_item == -1)
     {
-        gi.cprintf (ent, PRINT_HIGH, "No item to use.\n");
+        quake2::getInstance()->gi.cprintf (ent, PRINT_HIGH, "No item to use.\n");
         return;
     }
 
     it = &itemlist[ent->client->pers.selected_item];
     if (!it->use)
     {
-        gi.cprintf (ent, PRINT_HIGH, "Item is not usable.\n");
+        quake2::getInstance()->gi.cprintf (ent, PRINT_HIGH, "Item is not usable.\n");
         return;
     }
     it->use (ent, it);
@@ -685,14 +685,14 @@ void Cmd_InvDrop_f (edict *ent)
 
     if (ent->client->pers.selected_item == -1)
     {
-        gi.cprintf (ent, PRINT_HIGH, "No item to drop.\n");
+        quake2::getInstance()->gi.cprintf (ent, PRINT_HIGH, "No item to drop.\n");
         return;
     }
 
     it = &itemlist[ent->client->pers.selected_item];
     if (!it->drop)
     {
-        gi.cprintf (ent, PRINT_HIGH, "Item is not dropable.\n");
+        quake2::getInstance()->gi.cprintf (ent, PRINT_HIGH, "Item is not dropable.\n");
         return;
     }
     it->drop (ent, it);
@@ -793,7 +793,7 @@ void Cmd_Players_f (edict *ent)
         strcat (large, small);
     }
 
-    gi.cprintf (ent, PRINT_HIGH, "%s\n%i players\n", large, count);
+    quake2::getInstance()->gi.cprintf (ent, PRINT_HIGH, "%s\n%i players\n", large, count);
 }
 
 /*
@@ -805,7 +805,7 @@ void Cmd_Wave_f (edict *ent)
 {
     int        i;
 
-    i = atoi (gi.argv(1));
+    i = atoi (quake2::getInstance()->gi.argv(1));
 
     // can't wave when ducked
     if (ent->client->ps.pmove.pm_flags & PMF_DUCKED)
@@ -819,28 +819,28 @@ void Cmd_Wave_f (edict *ent)
     switch (i)
     {
     case 0:
-        gi.cprintf (ent, PRINT_HIGH, "flipoff\n");
+        quake2::getInstance()->gi.cprintf (ent, PRINT_HIGH, "flipoff\n");
         ent->s.frame = FRAME_flip01-1;
         ent->client->anim_end = FRAME_flip12;
         break;
     case 1:
-        gi.cprintf (ent, PRINT_HIGH, "salute\n");
+        quake2::getInstance()->gi.cprintf (ent, PRINT_HIGH, "salute\n");
         ent->s.frame = FRAME_salute01-1;
         ent->client->anim_end = FRAME_salute11;
         break;
     case 2:
-        gi.cprintf (ent, PRINT_HIGH, "taunt\n");
+        quake2::getInstance()->gi.cprintf (ent, PRINT_HIGH, "taunt\n");
         ent->s.frame = FRAME_taunt01-1;
         ent->client->anim_end = FRAME_taunt17;
         break;
     case 3:
-        gi.cprintf (ent, PRINT_HIGH, "wave\n");
+        quake2::getInstance()->gi.cprintf (ent, PRINT_HIGH, "wave\n");
         ent->s.frame = FRAME_wave01-1;
         ent->client->anim_end = FRAME_wave11;
         break;
     case 4:
     default:
-        gi.cprintf (ent, PRINT_HIGH, "point\n");
+        quake2::getInstance()->gi.cprintf (ent, PRINT_HIGH, "point\n");
         ent->s.frame = FRAME_point01-1;
         ent->client->anim_end = FRAME_point12;
         break;
@@ -856,7 +856,7 @@ bool CheckFlood(edict *ent)
         cl = ent->client;
 
         if (level.time < cl->flood_locktill) {
-            gi.cprintf(ent, PRINT_HIGH, "You can't talk for %d more seconds\n",
+            quake2::getInstance()->gi.cprintf(ent, PRINT_HIGH, "You can't talk for %d more seconds\n",
                 (int)(cl->flood_locktill - level.time));
             return true;
         }
@@ -866,7 +866,7 @@ bool CheckFlood(edict *ent)
         if (cl->flood_when[i] &&
             level.time - cl->flood_when[i] < flood_persecond->value) {
             cl->flood_locktill = level.time + flood_waitdelay->value;
-            gi.cprintf(ent, PRINT_CHAT, "Flood protection:  You can't talk for %d seconds.\n",
+            quake2::getInstance()->gi.cprintf(ent, PRINT_CHAT, "Flood protection:  You can't talk for %d seconds.\n",
                 (int)flood_waitdelay->value);
             return true;
         }
@@ -889,7 +889,7 @@ void Cmd_Say_f (edict *ent, bool team, bool arg0)
     char    *p;
     char    text[2048];
 
-    if (gi.argc () < 2 && !arg0)
+    if (quake2::getInstance()->gi.argc () < 2 && !arg0)
         return;
 
     if (!((int)(dmflags->value) & (DF_MODELTEAMS | DF_SKINTEAMS)))
@@ -902,13 +902,13 @@ void Cmd_Say_f (edict *ent, bool team, bool arg0)
 
     if (arg0)
     {
-        strcat (text, gi.argv(0));
+        strcat (text, quake2::getInstance()->gi.argv(0));
         strcat (text, " ");
-        strcat (text, gi.args());
+        strcat (text, quake2::getInstance()->gi.args());
     }
     else
     {
-        p = gi.args();
+        p = quake2::getInstance()->gi.args();
 
         if (*p == '"')
         {
@@ -927,8 +927,8 @@ void Cmd_Say_f (edict *ent, bool team, bool arg0)
     if (CheckFlood(ent))
         return;
 
-    if (dedicated->value)
-        gi.cprintf(NULL, PRINT_CHAT, "%s", text);
+    if (quake2::getInstance()->dedicated->value)
+        quake2::getInstance()->gi.cprintf(NULL, PRINT_CHAT, "%s", text);
 
     for (j = 1; j <= game.maxclients; j++)
     {
@@ -942,7 +942,7 @@ void Cmd_Say_f (edict *ent, bool team, bool arg0)
             if (!OnSameTeam(ent, other))
                 continue;
         }
-        gi.cprintf(other, PRINT_CHAT, "%s", text);
+        quake2::getInstance()->gi.cprintf(other, PRINT_CHAT, "%s", text);
     }
 }
 
@@ -958,7 +958,7 @@ void ClientCommand (edict *ent)
     if (!ent->client)
         return;        // not fully in game yet
 
-    cmd = gi.argv(0);
+    cmd = quake2::getInstance()->gi.argv(0);
 
     if (Q_stricmp (cmd, "players") == 0)
     {
@@ -972,7 +972,7 @@ void ClientCommand (edict *ent)
     }
     if (Q_stricmp (cmd, "say_team") == 0 || Q_stricmp (cmd, "steam") == 0)
     {
-        CTFSay_Team(ent, gi.args());
+        CTFSay_Team(ent, quake2::getInstance()->gi.args());
         return;
     }
     if (Q_stricmp (cmd, "score") == 0)

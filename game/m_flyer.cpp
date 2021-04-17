@@ -51,17 +51,17 @@ void flyer_nextmove (edict *self);
 
 void flyer_sight (edict *self, edict *other)
 {
-    gi.sound (self, CHAN_VOICE, sound_sight, 1, ATTN_NORM, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_sight, 1, ATTN_NORM, 0);
 }
 
 void flyer_idle (edict *self)
 {
-    gi.sound (self, CHAN_VOICE, sound_idle, 1, ATTN_IDLE, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_idle, 1, ATTN_IDLE, 0);
 }
 
 void flyer_pop_blades (edict *self)
 {
-    gi.sound (self, CHAN_VOICE, sound_sproing, 1, ATTN_NORM, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_sproing, 1, ATTN_NORM, 0);
 }
 
 
@@ -426,7 +426,7 @@ void flyer_slash_left (edict *self)
 
     VectorSet (aim, MELEE_DISTANCE, self->mins[0], 0);
     fire_hit (self, aim, 5, 0);
-    gi.sound (self, CHAN_WEAPON, sound_slash, 1, ATTN_NORM, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_WEAPON, sound_slash, 1, ATTN_NORM, 0);
 }
 
 void flyer_slash_right (edict *self)
@@ -435,7 +435,7 @@ void flyer_slash_right (edict *self)
 
     VectorSet (aim, MELEE_DISTANCE, self->maxs[0], 0);
     fire_hit (self, aim, 5, 0);
-    gi.sound (self, CHAN_WEAPON, sound_slash, 1, ATTN_NORM, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_WEAPON, sound_slash, 1, ATTN_NORM, 0);
 }
 
 mframe_t flyer_frames_start_melee [] =
@@ -545,17 +545,17 @@ void flyer_pain (edict *self, edict *other, float kick, int damage)
     n = rand() % 3;
     if (n == 0)
     {
-        gi.sound (self, CHAN_VOICE, sound_pain1, 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain1, 1, ATTN_NORM, 0);
         self->monsterinfo.currentmove = &flyer_move_pain1;
     }
     else if (n == 1)
     {
-        gi.sound (self, CHAN_VOICE, sound_pain2, 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain2, 1, ATTN_NORM, 0);
         self->monsterinfo.currentmove = &flyer_move_pain2;
     }
     else
     {
-        gi.sound (self, CHAN_VOICE, sound_pain1, 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain1, 1, ATTN_NORM, 0);
         self->monsterinfo.currentmove = &flyer_move_pain3;
     }
 }
@@ -563,7 +563,7 @@ void flyer_pain (edict *self, edict *other, float kick, int damage)
 
 void flyer_die(edict *self, edict *inflictor, edict *attacker, int damage, vec3_t point)
 {
-    gi.sound (self, CHAN_VOICE, sound_die, 1, ATTN_NORM, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_die, 1, ATTN_NORM, 0);
     BecomeExplosion1(self);
 }
 
@@ -585,23 +585,23 @@ void SP_monster_flyer (edict *self)
         self->target = NULL;
     }
 
-    sound_sight = gi.soundindex ("flyer/flysght1.wav");
-    sound_idle = gi.soundindex ("flyer/flysrch1.wav");
-    sound_pain1 = gi.soundindex ("flyer/flypain1.wav");
-    sound_pain2 = gi.soundindex ("flyer/flypain2.wav");
-    sound_slash = gi.soundindex ("flyer/flyatck2.wav");
-    sound_sproing = gi.soundindex ("flyer/flyatck1.wav");
-    sound_die = gi.soundindex ("flyer/flydeth1.wav");
+    sound_sight = quake2::getInstance()->gi.soundindex ("flyer/flysght1.wav");
+    sound_idle = quake2::getInstance()->gi.soundindex ("flyer/flysrch1.wav");
+    sound_pain1 = quake2::getInstance()->gi.soundindex ("flyer/flypain1.wav");
+    sound_pain2 = quake2::getInstance()->gi.soundindex ("flyer/flypain2.wav");
+    sound_slash = quake2::getInstance()->gi.soundindex ("flyer/flyatck2.wav");
+    sound_sproing = quake2::getInstance()->gi.soundindex ("flyer/flyatck1.wav");
+    sound_die = quake2::getInstance()->gi.soundindex ("flyer/flydeth1.wav");
 
-    gi.soundindex ("flyer/flyatck3.wav");
+    quake2::getInstance()->gi.soundindex ("flyer/flyatck3.wav");
 
-    self->s.modelindex = gi.modelindex ("models/monsters/flyer/tris.md2");
+    self->s.modelindex = quake2::getInstance()->gi.modelindex ("models/monsters/flyer/tris.md2");
     VectorSet (self->mins, -16, -16, -24);
     VectorSet (self->maxs, 16, 16, 32);
     self->movetype = MOVETYPE_STEP;
     self->solid = SOLID_BBOX;
 
-    self->s.sound = gi.soundindex ("flyer/flyidle1.wav");
+    self->s.sound = quake2::getInstance()->gi.soundindex ("flyer/flyidle1.wav");
 
     self->health = 50;
     self->mass = 50;
@@ -617,7 +617,7 @@ void SP_monster_flyer (edict *self)
     self->monsterinfo.sight = flyer_sight;
     self->monsterinfo.idle = flyer_idle;
 
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 
     self->monsterinfo.currentmove = &flyer_move_stand;
     self->monsterinfo.scale = MODEL_SCALE;

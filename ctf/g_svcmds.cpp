@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 void    Svcmd_Test_f (void)
 {
-    gi.cprintf (NULL, PRINT_HIGH, "Svcmd_Test_f()\n");
+    quake2::getInstance()->gi.cprintf (NULL, PRINT_HIGH, "Svcmd_Test_f()\n");
 }
 
 /*
@@ -31,7 +31,7 @@ void    Svcmd_Test_f (void)
 ServerCommand
 
 ServerCommand will be called when an "sv" command is issued.
-The game can issue gi.argc() / gi.argv() commands to get the rest
+The game can issue quake2::getInstance()->gi.argc() / quake2::getInstance()->gi.argv() commands to get the rest
 of the parameters
 =================
 */
@@ -39,10 +39,10 @@ void    ServerCommand (void)
 {
     char    *cmd;
 
-    cmd = gi.argv(1);
+    cmd = quake2::getInstance()->gi.argv(1);
     if (Q_stricmp (cmd, "test") == 0)
         Svcmd_Test_f ();
     else
-        gi.cprintf (NULL, PRINT_HIGH, "Unknown server command \"%s\"\n", cmd);
+        quake2::getInstance()->gi.cprintf (NULL, PRINT_HIGH, "Unknown server command \"%s\"\n", cmd);
 }
 

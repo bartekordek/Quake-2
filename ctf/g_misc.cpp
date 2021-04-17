@@ -34,8 +34,8 @@ Used to group brushes together just for editor convenience.
 void Use_Areaportal (edict *ent, edict *other, edict *activator)
 {
     ent->count ^= 1;        // toggle state
-//    gi.dprintf ("portalstate: %i = %i\n", ent->style, ent->count);
-    gi.SetAreaPortalState (ent->style, ent->count);
+//    quake2::getInstance()->gi.dprintf ("portalstate: %i = %i\n", ent->style, ent->count);
+    quake2::getInstance()->gi.SetAreaPortalState (ent->style, ent->count);
 }
 
 /*QUAKED func_areaportal (0 0 0) ?
@@ -104,7 +104,7 @@ void gib_think (edict *self)
     }
 }
 
-void gib_touch (edict *self, edict *other, plane_t *plane, csurface_t *surf)
+void gib_touch (edict *self, edict *other, plane_s *plane, csurface_s *surf)
 {
     vec3_t    normal_angles, right;
 
@@ -115,7 +115,7 @@ void gib_touch (edict *self, edict *other, plane_t *plane, csurface_t *surf)
 
     if (plane)
     {
-        gi.sound (self, CHAN_VOICE, gi.soundindex ("misc/fhit3.wav"), 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, quake2::getInstance()->gi.soundindex ("misc/fhit3.wav"), 1, ATTN_NORM, 0);
 
         vectoangles (plane->normal, normal_angles);
         AngleVectors (normal_angles, NULL, right, NULL);
@@ -151,7 +151,7 @@ void ThrowGib (edict *self, char *gibname, int damage, int type)
     gib->s.origin[1] = origin[1] + crandom() * size[1];
     gib->s.origin[2] = origin[2] + crandom() * size[2];
 
-    gi.setmodel (gib, gibname);
+    quake2::getInstance()->gi.setmodel (gib, gibname);
     gib->solid = SOLID_NOT;
     gib->s.effects |= EF_GIB;
     gib->flags |= FL_NO_KNOCKBACK;
@@ -180,7 +180,7 @@ void ThrowGib (edict *self, char *gibname, int damage, int type)
     gib->think = G_FreeEdict;
     gib->nextthink = level.time + 10 + random()*10;
 
-    gi.linkentity (gib);
+    quake2::getInstance()->gi.linkentity (gib);
 }
 
 void ThrowHead (edict *self, char *gibname, int damage, int type)
@@ -194,7 +194,7 @@ void ThrowHead (edict *self, char *gibname, int damage, int type)
     VectorClear (self->maxs);
 
     self->s.modelindex2 = 0;
-    gi.setmodel (self, gibname);
+    quake2::getInstance()->gi.setmodel (self, gibname);
     self->solid = SOLID_NOT;
     self->s.effects |= EF_GIB;
     self->s.effects &= ~EF_FLIES;
@@ -225,7 +225,7 @@ void ThrowHead (edict *self, char *gibname, int damage, int type)
     self->think = G_FreeEdict;
     self->nextthink = level.time + 10 + random()*10;
 
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 }
 
 
@@ -247,7 +247,7 @@ void ThrowClientHead (edict *self, int damage)
 
     self->s.origin[2] += 32;
     self->s.frame = 0;
-    gi.setmodel (self, gibname);
+    quake2::getInstance()->gi.setmodel (self, gibname);
     VectorSet (self->mins, -16, -16, 0);
     VectorSet (self->maxs, 16, 16, 16);
 
@@ -267,7 +267,7 @@ void ThrowClientHead (edict *self, int damage)
         self->client->anim_end = self->s.frame;
     }
 
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 }
 
 
@@ -288,7 +288,7 @@ void ThrowDebris (edict *self, char *modelname, float speed, vec3_t origin)
 
     chunk = G_Spawn();
     VectorCopy (origin, chunk->s.origin);
-    gi.setmodel (chunk, modelname);
+    quake2::getInstance()->gi.setmodel (chunk, modelname);
     v[0] = 100 * crandom();
     v[1] = 100 * crandom();
     v[2] = 100 + 100 * crandom();
@@ -305,7 +305,7 @@ void ThrowDebris (edict *self, char *modelname, float speed, vec3_t origin)
     chunk->classname = "debris";
     chunk->takedamage = DAMAGE_YES;
     chunk->die = debris_die;
-    gi.linkentity (chunk);
+    quake2::getInstance()->gi.linkentity (chunk);
 }
 
 
@@ -315,13 +315,13 @@ void BecomeExplosion1 (edict *self)
     //flags are important
     if (strcmp(self->classname, "item_flag_team1") == 0) {
         CTFResetFlag(CTF_TEAM1); // this will free self!
-        gi.bprintf(PRINT_HIGH, "The %s flag has returned!\n",
+        quake2::getInstance()->gi.bprintf(PRINT_HIGH, "The %s flag has returned!\n",
             CTFTeamName(CTF_TEAM1));
         return;
     }
     if (strcmp(self->classname, "item_flag_team2") == 0) {
         CTFResetFlag(CTF_TEAM2); // this will free self!
-        gi.bprintf(PRINT_HIGH, "The %s flag has returned!\n",
+        quake2::getInstance()->gi.bprintf(PRINT_HIGH, "The %s flag has returned!\n",
             CTFTeamName(CTF_TEAM1));
         return;
     }
@@ -332,10 +332,10 @@ void BecomeExplosion1 (edict *self)
     }
 //ZOID
 
-    gi.WriteByte (svc_temp_entity);
-    gi.WriteByte (TE_EXPLOSION1);
-    gi.WritePosition (self->s.origin);
-    gi.multicast (self->s.origin, MULTICAST_PVS);
+    quake2::getInstance()->gi.WriteByte (svc_temp_entity);
+    quake2::getInstance()->gi.WriteByte (TE_EXPLOSION1);
+    quake2::getInstance()->gi.WritePosition (self->s.origin);
+    quake2::getInstance()->gi.multicast (self->s.origin, multicast_t::MULTICAST_PVS);
 
     G_FreeEdict (self);
 }
@@ -343,10 +343,10 @@ void BecomeExplosion1 (edict *self)
 
 void BecomeExplosion2 (edict *self)
 {
-    gi.WriteByte (svc_temp_entity);
-    gi.WriteByte (TE_EXPLOSION2);
-    gi.WritePosition (self->s.origin);
-    gi.multicast (self->s.origin, MULTICAST_PVS);
+    quake2::getInstance()->gi.WriteByte (svc_temp_entity);
+    quake2::getInstance()->gi.WriteByte (TE_EXPLOSION2);
+    quake2::getInstance()->gi.WritePosition (self->s.origin);
+    quake2::getInstance()->gi.multicast (self->s.origin, multicast_t::MULTICAST_PVS);
 
     G_FreeEdict (self);
 }
@@ -358,7 +358,7 @@ Pathtarget: gets used when an entity that has
     this path_corner targeted touches it
 */
 
-void path_corner_touch (edict *self, edict *other, plane_t *plane, csurface_t *surf)
+void path_corner_touch (edict *self, edict *other, plane_s *plane, csurface_s *surf)
 {
     vec3_t        v;
     edict        *next;
@@ -418,7 +418,7 @@ void SP_path_corner (edict *self)
 {
     if (!self->targetname)
     {
-        gi.dprintf ("path_corner with no targetname at %s\n", vtos(self->s.origin));
+        quake2::getInstance()->gi.dprintf ("path_corner with no targetname at %s\n", vtos(self->s.origin));
         G_FreeEdict (self);
         return;
     }
@@ -428,7 +428,7 @@ void SP_path_corner (edict *self)
     VectorSet (self->mins, -8, -8, -8);
     VectorSet (self->maxs, 8, 8, 8);
     self->svflags |= SVF_NOCLIENT;
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 }
 
 
@@ -437,7 +437,7 @@ Makes this the target of a monster and it will head here
 when first activated before going after the activator.  If
 hold is selected, it will stay here.
 */
-void point_combat_touch (edict *self, edict *other, plane_t *plane, csurface_t *surf)
+void point_combat_touch (edict *self, edict *other, plane_s *plane, csurface_s *surf)
 {
     edict    *activator;
 
@@ -450,7 +450,7 @@ void point_combat_touch (edict *self, edict *other, plane_t *plane, csurface_t *
         other->goalentity = other->movetarget = G_PickTarget(other->target);
         if (!other->goalentity)
         {
-            gi.dprintf("%s at %s target %s does not exist\n", self->classname, vtos(self->s.origin), self->target);
+            quake2::getInstance()->gi.dprintf("%s at %s target %s does not exist\n", self->classname, vtos(self->s.origin), self->target);
             other->movetarget = self;
         }
         self->target = NULL;
@@ -501,7 +501,7 @@ void SP_point_combat (edict *self)
     VectorSet (self->mins, -8, -8, -16);
     VectorSet (self->maxs, 8, 8, 16);
     self->svflags = SVF_NOCLIENT;
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 };
 
 
@@ -529,16 +529,16 @@ void TH_viewthing(edict *ent)
 
 void SP_viewthing(edict *ent)
 {
-    gi.dprintf ("viewthing spawned\n");
+    quake2::getInstance()->gi.dprintf ("viewthing spawned\n");
 
     ent->movetype = MOVETYPE_NONE;
     ent->solid = SOLID_BBOX;
     ent->s.renderfx = RF_FRAMELERP;
     VectorSet (ent->mins, -16, -16, -24);
     VectorSet (ent->maxs, 16, 16, 32);
-//    ent->s.modelindex = gi.modelindex ("models/player_y/tris.md2");
-    ent->s.modelindex = gi.modelindex ("models/objects/banner/tris.md2");
-    gi.linkentity (ent);
+//    ent->s.modelindex = quake2::getInstance()->gi.modelindex ("models/player_y/tris.md2");
+    ent->s.modelindex = quake2::getInstance()->gi.modelindex ("models/objects/banner/tris.md2");
+    quake2::getInstance()->gi.linkentity (ent);
     ent->nextthink = level.time + 0.5;
     ent->think = TH_viewthing;
     return;
@@ -578,12 +578,12 @@ static void light_use (edict *self, edict *other, edict *activator)
 {
     if (self->spawnflags & START_OFF)
     {
-        gi.configstring (CS_LIGHTS+self->style, "m");
+        quake2::getInstance()->gi.configstring (CS_LIGHTS+self->style, "m");
         self->spawnflags &= ~START_OFF;
     }
     else
     {
-        gi.configstring (CS_LIGHTS+self->style, "a");
+        quake2::getInstance()->gi.configstring (CS_LIGHTS+self->style, "a");
         self->spawnflags |= START_OFF;
     }
 }
@@ -601,9 +601,9 @@ void SP_light (edict *self)
     {
         self->use = light_use;
         if (self->spawnflags & START_OFF)
-            gi.configstring (CS_LIGHTS+self->style, "a");
+            quake2::getInstance()->gi.configstring (CS_LIGHTS+self->style, "a");
         else
-            gi.configstring (CS_LIGHTS+self->style, "m");
+            quake2::getInstance()->gi.configstring (CS_LIGHTS+self->style, "m");
     }
 }
 
@@ -635,7 +635,7 @@ void func_wall_use (edict *self, edict *other, edict *activator)
         self->solid = SOLID_NOT;
         self->svflags |= SVF_NOCLIENT;
     }
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 
     if (!(self->spawnflags & 2))
         self->use = NULL;
@@ -644,7 +644,7 @@ void func_wall_use (edict *self, edict *other, edict *activator)
 void SP_func_wall (edict *self)
 {
     self->movetype = MOVETYPE_PUSH;
-    gi.setmodel (self, self->model);
+    quake2::getInstance()->gi.setmodel (self, self->model);
 
     if (self->spawnflags & 8)
         self->s.effects |= EF_ANIM_ALL;
@@ -655,14 +655,14 @@ void SP_func_wall (edict *self)
     if ((self->spawnflags & 7) == 0)
     {
         self->solid = SOLID_BSP;
-        gi.linkentity (self);
+        quake2::getInstance()->gi.linkentity (self);
         return;
     }
 
     // it must be TRIGGER_SPAWN
     if (!(self->spawnflags & 1))
     {
-//        gi.dprintf("func_wall missing TRIGGER_SPAWN\n");
+//        quake2::getInstance()->gi.dprintf("func_wall missing TRIGGER_SPAWN\n");
         self->spawnflags |= 1;
     }
 
@@ -671,7 +671,7 @@ void SP_func_wall (edict *self)
     {
         if (!(self->spawnflags & 2))
         {
-            gi.dprintf("func_wall START_ON without TOGGLE\n");
+            quake2::getInstance()->gi.dprintf("func_wall START_ON without TOGGLE\n");
             self->spawnflags |= 2;
         }
     }
@@ -686,7 +686,7 @@ void SP_func_wall (edict *self)
         self->solid = SOLID_NOT;
         self->svflags |= SVF_NOCLIENT;
     }
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 }
 
 
@@ -694,7 +694,7 @@ void SP_func_wall (edict *self)
 This is solid bmodel that will fall if it's support it removed.
 */
 
-void func_object_touch (edict *self, edict *other, plane_t *plane, csurface_t *surf)
+void func_object_touch (edict *self, edict *other, plane_s *plane, csurface_s *surf)
 {
     // only squash thing we fall on top of
     if (!plane)
@@ -723,7 +723,7 @@ void func_object_use (edict *self, edict *other, edict *activator)
 
 void SP_func_object (edict *self)
 {
-    gi.setmodel (self, self->model);
+    quake2::getInstance()->gi.setmodel (self, self->model);
 
     self->mins[0] += 1;
     self->mins[1] += 1;
@@ -757,7 +757,7 @@ void SP_func_object (edict *self)
 
     self->clipmask = MASK_MONSTERSOLID;
 
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 }
 
 
@@ -849,7 +849,7 @@ void func_explosive_spawn (edict *self, edict *other, edict *activator)
     self->svflags &= ~SVF_NOCLIENT;
     self->use = NULL;
     KillBox (self);
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 }
 
 void SP_func_explosive (edict *self)
@@ -862,10 +862,10 @@ void SP_func_explosive (edict *self)
 
     self->movetype = MOVETYPE_PUSH;
 
-    gi.modelindex ("models/objects/debris1/tris.md2");
-    gi.modelindex ("models/objects/debris2/tris.md2");
+    quake2::getInstance()->gi.modelindex ("models/objects/debris1/tris.md2");
+    quake2::getInstance()->gi.modelindex ("models/objects/debris2/tris.md2");
 
-    gi.setmodel (self, self->model);
+    quake2::getInstance()->gi.setmodel (self, self->model);
 
     if (self->spawnflags & 1)
     {
@@ -893,7 +893,7 @@ void SP_func_explosive (edict *self)
         self->takedamage = DAMAGE_YES;
     }
 
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 }
 
 
@@ -902,7 +902,7 @@ Large exploding box.  You can override its mass (100),
 health (80), and dmg (150).
 */
 
-void barrel_touch (edict *self, edict *other, plane_t *plane, csurface_t *surf)
+void barrel_touch (edict *self, edict *other, plane_s *plane, csurface_s *surf)
 
 {
     float    ratio;
@@ -1011,15 +1011,15 @@ void SP_misc_explobox (edict *self)
         return;
     }
 
-    gi.modelindex ("models/objects/debris1/tris.md2");
-    gi.modelindex ("models/objects/debris2/tris.md2");
-    gi.modelindex ("models/objects/debris3/tris.md2");
+    quake2::getInstance()->gi.modelindex ("models/objects/debris1/tris.md2");
+    quake2::getInstance()->gi.modelindex ("models/objects/debris2/tris.md2");
+    quake2::getInstance()->gi.modelindex ("models/objects/debris3/tris.md2");
 
     self->solid = SOLID_BBOX;
     self->movetype = MOVETYPE_STEP;
 
     self->model = "models/objects/barrels/tris.md2";
-    self->s.modelindex = gi.modelindex (self->model);
+    self->s.modelindex = quake2::getInstance()->gi.modelindex (self->model);
     VectorSet (self->mins, -16, -16, 0);
     VectorSet (self->maxs, 16, 16, 40);
 
@@ -1039,7 +1039,7 @@ void SP_misc_explobox (edict *self)
     self->think = M_droptofloor;
     self->nextthink = level.time + 2 * FRAMETIME;
 
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 }
 
 
@@ -1053,10 +1053,10 @@ void SP_misc_explobox (edict *self)
 void misc_blackhole_use (edict *ent, edict *other, edict *activator)
 {
     /*
-    gi.WriteByte (svc_temp_entity);
-    gi.WriteByte (TE_BOSSTPORT);
-    gi.WritePosition (ent->s.origin);
-    gi.multicast (ent->s.origin, MULTICAST_PVS);
+    quake2::getInstance()->gi.WriteByte (svc_temp_entity);
+    quake2::getInstance()->gi.WriteByte (TE_BOSSTPORT);
+    quake2::getInstance()->gi.WritePosition (ent->s.origin);
+    quake2::getInstance()->gi.multicast (ent->s.origin, multicast_t::MULTICAST_PVS);
     */
     G_FreeEdict (ent);
 }
@@ -1078,12 +1078,12 @@ void SP_misc_blackhole (edict *ent)
     ent->solid = SOLID_NOT;
     VectorSet (ent->mins, -64, -64, 0);
     VectorSet (ent->maxs, 64, 64, 8);
-    ent->s.modelindex = gi.modelindex ("models/objects/black/tris.md2");
+    ent->s.modelindex = quake2::getInstance()->gi.modelindex ("models/objects/black/tris.md2");
     ent->s.renderfx = RF_TRANSLUCENT;
     ent->use = misc_blackhole_use;
     ent->think = misc_blackhole_think;
     ent->nextthink = level.time + 2 * FRAMETIME;
-    gi.linkentity (ent);
+    quake2::getInstance()->gi.linkentity (ent);
 }
 
 /*QUAKED misc_eastertank (1 .5 0) (-32 -32 -16) (32 32 32)
@@ -1106,11 +1106,11 @@ void SP_misc_eastertank (edict *ent)
     ent->solid = SOLID_BBOX;
     VectorSet (ent->mins, -32, -32, -16);
     VectorSet (ent->maxs, 32, 32, 32);
-    ent->s.modelindex = gi.modelindex ("models/monsters/tank/tris.md2");
+    ent->s.modelindex = quake2::getInstance()->gi.modelindex ("models/monsters/tank/tris.md2");
     ent->s.frame = 254;
     ent->think = misc_eastertank_think;
     ent->nextthink = level.time + 2 * FRAMETIME;
-    gi.linkentity (ent);
+    quake2::getInstance()->gi.linkentity (ent);
 }
 
 /*QUAKED misc_easterchick (1 .5 0) (-32 -32 0) (32 32 32)
@@ -1134,11 +1134,11 @@ void SP_misc_easterchick (edict *ent)
     ent->solid = SOLID_BBOX;
     VectorSet (ent->mins, -32, -32, 0);
     VectorSet (ent->maxs, 32, 32, 32);
-    ent->s.modelindex = gi.modelindex ("models/monsters/bitch/tris.md2");
+    ent->s.modelindex = quake2::getInstance()->gi.modelindex ("models/monsters/bitch/tris.md2");
     ent->s.frame = 208;
     ent->think = misc_easterchick_think;
     ent->nextthink = level.time + 2 * FRAMETIME;
-    gi.linkentity (ent);
+    quake2::getInstance()->gi.linkentity (ent);
 }
 
 /*QUAKED misc_easterchick2 (1 .5 0) (-32 -32 0) (32 32 32)
@@ -1162,11 +1162,11 @@ void SP_misc_easterchick2 (edict *ent)
     ent->solid = SOLID_BBOX;
     VectorSet (ent->mins, -32, -32, 0);
     VectorSet (ent->maxs, 32, 32, 32);
-    ent->s.modelindex = gi.modelindex ("models/monsters/bitch/tris.md2");
+    ent->s.modelindex = quake2::getInstance()->gi.modelindex ("models/monsters/bitch/tris.md2");
     ent->s.frame = 248;
     ent->think = misc_easterchick2_think;
     ent->nextthink = level.time + 2 * FRAMETIME;
-    gi.linkentity (ent);
+    quake2::getInstance()->gi.linkentity (ent);
 }
 
 
@@ -1183,14 +1183,14 @@ void commander_body_think (edict *self)
         self->nextthink = 0;
 
     if (self->s.frame == 22)
-        gi.sound (self, CHAN_BODY, gi.soundindex ("tank/thud.wav"), 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_BODY, quake2::getInstance()->gi.soundindex ("tank/thud.wav"), 1, ATTN_NORM, 0);
 }
 
 void commander_body_use (edict *self, edict *other, edict *activator)
 {
     self->think = commander_body_think;
     self->nextthink = level.time + FRAMETIME;
-    gi.sound (self, CHAN_BODY, gi.soundindex ("tank/pain.wav"), 1, ATTN_NORM, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_BODY, quake2::getInstance()->gi.soundindex ("tank/pain.wav"), 1, ATTN_NORM, 0);
 }
 
 void commander_body_drop (edict *self)
@@ -1204,17 +1204,17 @@ void SP_monster_commander_body (edict *self)
     self->movetype = MOVETYPE_NONE;
     self->solid = SOLID_BBOX;
     self->model = "models/monsters/commandr/tris.md2";
-    self->s.modelindex = gi.modelindex (self->model);
+    self->s.modelindex = quake2::getInstance()->gi.modelindex (self->model);
     VectorSet (self->mins, -32, -32, 0);
     VectorSet (self->maxs, 32, 32, 48);
     self->use = commander_body_use;
     self->takedamage = DAMAGE_YES;
     self->flags = FL_GODMODE;
     self->s.renderfx |= RF_FRAMELERP;
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 
-    gi.soundindex ("tank/thud.wav");
-    gi.soundindex ("tank/pain.wav");
+    quake2::getInstance()->gi.soundindex ("tank/thud.wav");
+    quake2::getInstance()->gi.soundindex ("tank/pain.wav");
 
     self->think = commander_body_drop;
     self->nextthink = level.time + 5 * FRAMETIME;
@@ -1235,9 +1235,9 @@ void SP_misc_banner (edict *ent)
 {
     ent->movetype = MOVETYPE_NONE;
     ent->solid = SOLID_NOT;
-    ent->s.modelindex = gi.modelindex ("models/objects/banner/tris.md2");
+    ent->s.modelindex = quake2::getInstance()->gi.modelindex ("models/objects/banner/tris.md2");
     ent->s.frame = rand() % 16;
-    gi.linkentity (ent);
+    quake2::getInstance()->gi.linkentity (ent);
 
     ent->think = misc_banner_think;
     ent->nextthink = level.time + FRAMETIME;
@@ -1253,7 +1253,7 @@ void misc_deadsoldier_die (edict *self, edict *inflictor, edict *attacker, int d
     if (self->health > -80)
         return;
 
-    gi.sound (self, CHAN_BODY, gi.soundindex ("misc/udeath.wav"), 1, ATTN_NORM, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_BODY, quake2::getInstance()->gi.soundindex ("misc/udeath.wav"), 1, ATTN_NORM, 0);
     for (n= 0; n < 4; n++)
         ThrowGib (self, "models/objects/gibs/sm_meat/tris.md2", damage, GIB_ORGANIC);
     ThrowHead (self, "models/objects/gibs/head2/tris.md2", damage, GIB_ORGANIC);
@@ -1269,7 +1269,7 @@ void SP_misc_deadsoldier (edict *ent)
 
     ent->movetype = MOVETYPE_NONE;
     ent->solid = SOLID_BBOX;
-    ent->s.modelindex=gi.modelindex ("models/deadbods/dude/tris.md2");
+    ent->s.modelindex=quake2::getInstance()->gi.modelindex ("models/deadbods/dude/tris.md2");
 
     // Defaults to frame 0
     if (ent->spawnflags & 2)
@@ -1293,7 +1293,7 @@ void SP_misc_deadsoldier (edict *ent)
     ent->die = misc_deadsoldier_die;
     ent->monsterinfo.aiflags |= AI_GOOD_GUY;
 
-    gi.linkentity (ent);
+    quake2::getInstance()->gi.linkentity (ent);
 }
 
 /*QUAKED misc_viper (1 .5 0) (-16 -16 0) (16 16 32)
@@ -1318,7 +1318,7 @@ void SP_misc_viper (edict *ent)
 {
     if (!ent->target)
     {
-        gi.dprintf ("misc_viper without a target at %s\n", vtos(ent->absmin));
+        quake2::getInstance()->gi.dprintf ("misc_viper without a target at %s\n", vtos(ent->absmin));
         G_FreeEdict (ent);
         return;
     }
@@ -1328,7 +1328,7 @@ void SP_misc_viper (edict *ent)
 
     ent->movetype = MOVETYPE_PUSH;
     ent->solid = SOLID_NOT;
-    ent->s.modelindex = gi.modelindex ("models/ships/viper/tris.md2");
+    ent->s.modelindex = quake2::getInstance()->gi.modelindex ("models/ships/viper/tris.md2");
     VectorSet (ent->mins, -16, -16, 0);
     VectorSet (ent->maxs, 16, 16, 32);
 
@@ -1338,7 +1338,7 @@ void SP_misc_viper (edict *ent)
     ent->svflags |= SVF_NOCLIENT;
     ent->moveinfo.accel = ent->moveinfo.decel = ent->moveinfo.speed = ent->speed;
 
-    gi.linkentity (ent);
+    quake2::getInstance()->gi.linkentity (ent);
 }
 
 
@@ -1351,15 +1351,15 @@ void SP_misc_bigviper (edict *ent)
     ent->solid = SOLID_BBOX;
     VectorSet (ent->mins, -176, -120, -24);
     VectorSet (ent->maxs, 176, 120, 72);
-    ent->s.modelindex = gi.modelindex ("models/ships/bigviper/tris.md2");
-    gi.linkentity (ent);
+    ent->s.modelindex = quake2::getInstance()->gi.modelindex ("models/ships/bigviper/tris.md2");
+    quake2::getInstance()->gi.linkentity (ent);
 }
 
 
 /*QUAKED misc_viper_bomb (1 0 0) (-8 -8 -8) (8 8 8)
 "dmg"    how much boom should the bomb make?
 */
-void misc_viper_bomb_touch (edict *self, edict *other, plane_t *plane, csurface_t *surf)
+void misc_viper_bomb_touch (edict *self, edict *other, plane_s *plane, csurface_s *surf)
 {
     G_UseTargets (self, self->activator);
 
@@ -1414,7 +1414,7 @@ void SP_misc_viper_bomb (edict *self)
     VectorSet (self->mins, -8, -8, -8);
     VectorSet (self->maxs, 8, 8, 8);
 
-    self->s.modelindex = gi.modelindex ("models/objects/bomb/tris.md2");
+    self->s.modelindex = quake2::getInstance()->gi.modelindex ("models/objects/bomb/tris.md2");
 
     if (!self->dmg)
         self->dmg = 1000;
@@ -1422,7 +1422,7 @@ void SP_misc_viper_bomb (edict *self)
     self->use = misc_viper_bomb_use;
     self->svflags |= SVF_NOCLIENT;
 
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 }
 
 
@@ -1448,7 +1448,7 @@ void SP_misc_strogg_ship (edict *ent)
 {
     if (!ent->target)
     {
-        gi.dprintf ("%s without a target at %s\n", ent->classname, vtos(ent->absmin));
+        quake2::getInstance()->gi.dprintf ("%s without a target at %s\n", ent->classname, vtos(ent->absmin));
         G_FreeEdict (ent);
         return;
     }
@@ -1458,7 +1458,7 @@ void SP_misc_strogg_ship (edict *ent)
 
     ent->movetype = MOVETYPE_PUSH;
     ent->solid = SOLID_NOT;
-    ent->s.modelindex = gi.modelindex ("models/ships/strogg1/tris.md2");
+    ent->s.modelindex = quake2::getInstance()->gi.modelindex ("models/ships/strogg1/tris.md2");
     VectorSet (ent->mins, -16, -16, 0);
     VectorSet (ent->maxs, 16, 16, 32);
 
@@ -1468,7 +1468,7 @@ void SP_misc_strogg_ship (edict *ent)
     ent->svflags |= SVF_NOCLIENT;
     ent->moveinfo.accel = ent->moveinfo.decel = ent->moveinfo.speed = ent->speed;
 
-    gi.linkentity (ent);
+    quake2::getInstance()->gi.linkentity (ent);
 }
 
 
@@ -1494,9 +1494,9 @@ void SP_misc_satellite_dish (edict *ent)
     ent->solid = SOLID_BBOX;
     VectorSet (ent->mins, -64, -64, 0);
     VectorSet (ent->maxs, 64, 64, 128);
-    ent->s.modelindex = gi.modelindex ("models/objects/satellite/tris.md2");
+    ent->s.modelindex = quake2::getInstance()->gi.modelindex ("models/objects/satellite/tris.md2");
     ent->use = misc_satellite_dish_use;
-    gi.linkentity (ent);
+    quake2::getInstance()->gi.linkentity (ent);
 }
 
 
@@ -1506,8 +1506,8 @@ void SP_light_mine1 (edict *ent)
 {
     ent->movetype = MOVETYPE_NONE;
     ent->solid = SOLID_BBOX;
-    ent->s.modelindex = gi.modelindex ("models/objects/minelite/light1/tris.md2");
-    gi.linkentity (ent);
+    ent->s.modelindex = quake2::getInstance()->gi.modelindex ("models/objects/minelite/light1/tris.md2");
+    quake2::getInstance()->gi.linkentity (ent);
 }
 
 
@@ -1517,8 +1517,8 @@ void SP_light_mine2 (edict *ent)
 {
     ent->movetype = MOVETYPE_NONE;
     ent->solid = SOLID_BBOX;
-    ent->s.modelindex = gi.modelindex ("models/objects/minelite/light2/tris.md2");
-    gi.linkentity (ent);
+    ent->s.modelindex = quake2::getInstance()->gi.modelindex ("models/objects/minelite/light2/tris.md2");
+    quake2::getInstance()->gi.linkentity (ent);
 }
 
 
@@ -1527,7 +1527,7 @@ Intended for use with the target_spawner
 */
 void SP_misc_gib_arm (edict *ent)
 {
-    gi.setmodel (ent, "models/objects/gibs/arm/tris.md2");
+    quake2::getInstance()->gi.setmodel (ent, "models/objects/gibs/arm/tris.md2");
     ent->solid = SOLID_NOT;
     ent->s.effects |= EF_GIB;
     ent->takedamage = DAMAGE_YES;
@@ -1540,7 +1540,7 @@ void SP_misc_gib_arm (edict *ent)
     ent->avelocity[2] = random()*200;
     ent->think = G_FreeEdict;
     ent->nextthink = level.time + 30;
-    gi.linkentity (ent);
+    quake2::getInstance()->gi.linkentity (ent);
 }
 
 /*QUAKED misc_gib_leg (1 0 0) (-8 -8 -8) (8 8 8)
@@ -1548,7 +1548,7 @@ Intended for use with the target_spawner
 */
 void SP_misc_gib_leg (edict *ent)
 {
-    gi.setmodel (ent, "models/objects/gibs/leg/tris.md2");
+    quake2::getInstance()->gi.setmodel (ent, "models/objects/gibs/leg/tris.md2");
     ent->solid = SOLID_NOT;
     ent->s.effects |= EF_GIB;
     ent->takedamage = DAMAGE_YES;
@@ -1561,7 +1561,7 @@ void SP_misc_gib_leg (edict *ent)
     ent->avelocity[2] = random()*200;
     ent->think = G_FreeEdict;
     ent->nextthink = level.time + 30;
-    gi.linkentity (ent);
+    quake2::getInstance()->gi.linkentity (ent);
 }
 
 /*QUAKED misc_gib_head (1 0 0) (-8 -8 -8) (8 8 8)
@@ -1569,7 +1569,7 @@ Intended for use with the target_spawner
 */
 void SP_misc_gib_head (edict *ent)
 {
-    gi.setmodel (ent, "models/objects/gibs/head/tris.md2");
+    quake2::getInstance()->gi.setmodel (ent, "models/objects/gibs/head/tris.md2");
     ent->solid = SOLID_NOT;
     ent->s.effects |= EF_GIB;
     ent->takedamage = DAMAGE_YES;
@@ -1582,7 +1582,7 @@ void SP_misc_gib_head (edict *ent)
     ent->avelocity[2] = random()*200;
     ent->think = G_FreeEdict;
     ent->nextthink = level.time + 30;
-    gi.linkentity (ent);
+    quake2::getInstance()->gi.linkentity (ent);
 }
 
 //=====================================================
@@ -1595,10 +1595,10 @@ used with target_string (must be on same "team")
 void SP_target_character (edict *self)
 {
     self->movetype = MOVETYPE_PUSH;
-    gi.setmodel (self, self->model);
+    quake2::getInstance()->gi.setmodel (self, self->model);
     self->solid = SOLID_BSP;
     self->s.frame = 12;
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
     return;
 }
 
@@ -1783,14 +1783,14 @@ void SP_func_clock (edict *self)
 {
     if (!self->target)
     {
-        gi.dprintf("%s with no target at %s\n", self->classname, vtos(self->s.origin));
+        quake2::getInstance()->gi.dprintf("%s with no target at %s\n", self->classname, vtos(self->s.origin));
         G_FreeEdict (self);
         return;
     }
 
     if ((self->spawnflags & 2) && (!self->count))
     {
-        gi.dprintf("%s with no count at %s\n", self->classname, vtos(self->s.origin));
+        quake2::getInstance()->gi.dprintf("%s with no count at %s\n", self->classname, vtos(self->s.origin));
         G_FreeEdict (self);
         return;
     }
@@ -1800,7 +1800,7 @@ void SP_func_clock (edict *self)
 
     func_clock_reset (self);
 
-    self->message = gi.TagMalloc (CLOCK_MESSAGE_SIZE, TAG_LEVEL);
+    self->message = quake2::getInstance()->gi.TagMalloc (CLOCK_MESSAGE_SIZE, TAG_LEVEL);
 
     self->think = func_clock_think;
 
@@ -1812,7 +1812,7 @@ void SP_func_clock (edict *self)
 
 //=================================================================================
 
-void teleporter_touch (edict *self, edict *other, plane_t *plane, csurface_t *surf)
+void teleporter_touch (edict *self, edict *other, plane_s *plane, csurface_s *surf)
 {
     edict        *dest;
     int            i;
@@ -1822,7 +1822,7 @@ void teleporter_touch (edict *self, edict *other, plane_t *plane, csurface_t *su
     dest = G_Find (NULL, FOFS(targetname), self->target);
     if (!dest)
     {
-        gi.dprintf ("Couldn't find destination\n");
+        quake2::getInstance()->gi.dprintf ("Couldn't find destination\n");
         return;
     }
 
@@ -1831,7 +1831,7 @@ void teleporter_touch (edict *self, edict *other, plane_t *plane, csurface_t *su
 //ZOID
 
     // unlink to make sure it can't possibly interfere with KillBox
-    gi.unlinkentity (other);
+    quake2::getInstance()->gi.unlinkentity (other);
 
     VectorCopy (dest->s.origin, other->s.origin);
     VectorCopy (dest->s.origin, other->s.old_origin);
@@ -1857,7 +1857,7 @@ void teleporter_touch (edict *self, edict *other, plane_t *plane, csurface_t *su
     // kill anything at the destination
     KillBox (other);
 
-    gi.linkentity (other);
+    quake2::getInstance()->gi.linkentity (other);
 }
 
 /*QUAKED misc_teleporter (1 0 0) (-32 -32 -24) (32 32 -16)
@@ -1869,20 +1869,20 @@ void SP_misc_teleporter (edict *ent)
 
     if (!ent->target)
     {
-        gi.dprintf ("teleporter without a target.\n");
+        quake2::getInstance()->gi.dprintf ("teleporter without a target.\n");
         G_FreeEdict (ent);
         return;
     }
 
-    gi.setmodel (ent, "models/objects/dmspot/tris.md2");
+    quake2::getInstance()->gi.setmodel (ent, "models/objects/dmspot/tris.md2");
     ent->s.skinnum = 1;
     ent->s.effects = EF_TELEPORTER;
-    ent->s.sound = gi.soundindex ("world/amb10.wav");
+    ent->s.sound = quake2::getInstance()->gi.soundindex ("world/amb10.wav");
     ent->solid = SOLID_BBOX;
 
     VectorSet (ent->mins, -32, -32, -24);
     VectorSet (ent->maxs, 32, 32, -16);
-    gi.linkentity (ent);
+    quake2::getInstance()->gi.linkentity (ent);
 
     trig = G_Spawn ();
     trig->touch = teleporter_touch;
@@ -1892,7 +1892,7 @@ void SP_misc_teleporter (edict *ent)
     VectorCopy (ent->s.origin, trig->s.origin);
     VectorSet (trig->mins, -8, -8, 8);
     VectorSet (trig->maxs, 8, 8, 24);
-    gi.linkentity (trig);
+    quake2::getInstance()->gi.linkentity (trig);
 
 }
 
@@ -1901,12 +1901,12 @@ Point teleporters at these.
 */
 void SP_misc_teleporter_dest (edict *ent)
 {
-    gi.setmodel (ent, "models/objects/dmspot/tris.md2");
+    quake2::getInstance()->gi.setmodel (ent, "models/objects/dmspot/tris.md2");
     ent->s.skinnum = 0;
     ent->solid = SOLID_BBOX;
 //    ent->s.effects |= EF_FLIES;
     VectorSet (ent->mins, -32, -32, -24);
     VectorSet (ent->maxs, 32, 32, -16);
-    gi.linkentity (ent);
+    quake2::getInstance()->gi.linkentity (ent);
 }
 

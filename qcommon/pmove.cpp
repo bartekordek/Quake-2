@@ -37,8 +37,8 @@ typedef struct
     float        frametime;
 
 
-    csurface_t    *groundsurface;
-    plane_t    groundplane;
+    csurface_s    *groundsurface;
+    plane_s    groundplane;
     int            groundcontents;
 
     vec3_t        previous_origin;

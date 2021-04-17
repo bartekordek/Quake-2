@@ -33,13 +33,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <assert.h>
 #include <windows.h>
 #include "ref_gl/gl_local.hpp"
-#include "glw_win.hpp"
-#include "winquake.hpp"
-#include "shared/defines.hpp"
+#include "win32/glw_win.hpp"
+#include "win32/winquake.hpp"
+#include "shared/shared_functions.hpp"
 #include "shared/enum_rserr.hpp"
 
 static bool GLimp_SwitchFullscreen( int width, int height );
-bool GLimp_InitGL (void);
 
 glwstate_t glw_state;
 
@@ -50,7 +49,7 @@ static bool VerifyDriver( void )
 {
     char buffer[1024];
 
-    strcpy( buffer, qglGetString( GL_RENDERER ) );
+    strcpy( buffer, (const char*) qglGetString( GL_RENDERER ) );
     strlwr( buffer );
     if ( strcmp( buffer, "gdi generic" ) == 0 )
         if ( !glw_state.mcd_accelerated )
@@ -58,10 +57,6 @@ static bool VerifyDriver( void )
     return true;
 }
 
-
-/*
-** GLimp_SetMode
-*/
 rserr_t GLimp_SetMode( int *pwidth, int *pheight, int mode, bool fullscreen )
 {
     int width, height;
@@ -250,7 +245,7 @@ void GLimp_Shutdown( void )
 ** of OpenGL.  Under Win32 this means dealing with the pixelformats and
 ** doing the wgl interface stuff.
 */
-bool GLimp_Init( void *hinstance, void *wndproc )
+int GLimp_Init( void *hinstance, void *wndproc )
 {
 #define OSR2_BUILD_NUMBER 1111
 
@@ -293,7 +288,7 @@ bool GLimp_Init( void *hinstance, void *wndproc )
     return true;
 }
 
-bool GLimp_InitGL (void)
+int GLimp_InitGL()
 {
     PIXELFORMATDESCRIPTOR pfd =
     {
@@ -338,10 +333,10 @@ bool GLimp_InitGL (void)
     /*
     ** figure out if we're running on a minidriver or not
     */
-    if ( strstr( gl_driver->string, "opengl32" ) != 0 )
-        glw_state.minidriver = false;
-    else
+    if ( gl_driver->string.find( "opengl32" ) == std::string::npos )
         glw_state.minidriver = true;
+    else
+        glw_state.minidriver = false;
 
     /*
     ** Get a DC for the specified window
@@ -497,9 +492,9 @@ void GLimp_EndFrame (void)
     err = qglGetError();
     assert( err == GL_NO_ERROR );
 
-    if ( stricmp( gl_drawbuffer->string, "GL_BACK" ) == 0 )
+    if( gl_drawbuffer->string == "GL_BACK" )
     {
-        if ( !qwglSwapBuffers( glw_state.hDC ) )
+        if( !qwglSwapBuffers( glw_state.hDC ) )
             ri.Sys_Error( ERR_FATAL, "GLimp_EndFrame() - SwapBuffers() failed!\n" );
     }
 }

@@ -102,7 +102,7 @@ static void BrightnessCallback( void *s )
     else
         s_brightness_slider[0].curvalue = s_brightness_slider[1].curvalue;
 
-    if ( stricmp( vid_ref->string, "soft" ) == 0 )
+    if ( vid_ref->string == "soft" )
     {
         float gamma = ( 0.8 - ( slider->curvalue/10.0 - 0.5 ) ) + 0.5;
 
@@ -167,12 +167,12 @@ static void ApplyChanges( void *unused )
     ** update appropriate stuff if we're running OpenGL and gamma
     ** has been modified
     */
-    if ( stricmp( vid_ref->string, "gl" ) == 0 )
+    if ( vid_ref->string == "gl" )
     {
         if ( vid_gamma->modified )
         {
             vid_ref->modified = true;
-            if ( stricmp( gl_driver->string, "3dfxgl" ) == 0 )
+            if ( gl_driver->string == "3dfxgl" )
             {
                 char envbuffer[1024];
                 float g;
@@ -264,19 +264,19 @@ void VID_MenuInit( void )
     s_screensize_slider[SOFTWARE_MENU].curvalue = scr_viewsize->value/10;
     s_screensize_slider[OPENGL_MENU].curvalue = scr_viewsize->value/10;
 
-    if ( strcmp( vid_ref->string, "soft" ) == 0 )
+    if ( vid_ref->string == "soft"  )
     {
         s_current_menu_index = SOFTWARE_MENU;
         s_ref_list[0].curvalue = s_ref_list[1].curvalue = REF_SOFT;
     }
-    else if ( strcmp( vid_ref->string, "gl" ) == 0 )
+    else if ( vid_ref->string == "gl" )
     {
         s_current_menu_index = OPENGL_MENU;
-        if ( strcmp( gl_driver->string, "3dfxgl" ) == 0 )
+        if ( gl_driver->string == "3dfxgl" )
             s_ref_list[s_current_menu_index].curvalue = REF_3DFX;
-        else if ( strcmp( gl_driver->string, "pvrgl" ) == 0 )
+        else if ( gl_driver->string == "pvrgl" )
             s_ref_list[s_current_menu_index].curvalue = REF_POWERVR;
-        else if ( strcmp( gl_driver->string, "opengl32" ) == 0 )
+        else if ( gl_driver->string == "opengl32" )
             s_ref_list[s_current_menu_index].curvalue = REF_OPENGL;
         else
 //            s_ref_list[s_current_menu_index].curvalue = REF_VERITE;
@@ -295,13 +295,13 @@ void VID_MenuInit( void )
         s_ref_list[i].generic.x = 0;
         s_ref_list[i].generic.y = 0;
         s_ref_list[i].generic.callback = DriverCallback;
-        s_ref_list[i].itemnames = refs;
+        s_ref_list[i].itemnames = (char**)refs;
 
         s_mode_list[i].generic.type = MTYPE_SPINCONTROL;
         s_mode_list[i].generic.name = "video mode";
         s_mode_list[i].generic.x = 0;
         s_mode_list[i].generic.y = 10;
-        s_mode_list[i].itemnames = resolutions;
+        s_mode_list[i].itemnames = (char**)resolutions;
 
         s_screensize_slider[i].generic.type    = MTYPE_SLIDER;
         s_screensize_slider[i].generic.x        = 0;
@@ -324,7 +324,7 @@ void VID_MenuInit( void )
         s_fs_box[i].generic.x    = 0;
         s_fs_box[i].generic.y    = 40;
         s_fs_box[i].generic.name    = "fullscreen";
-        s_fs_box[i].itemnames = yesno_names;
+        s_fs_box[i].itemnames = (char**)yesno_names;
         s_fs_box[i].curvalue = vid_fullscreen->value;
 
         s_defaults_action[i].generic.type = MTYPE_ACTION;
@@ -345,7 +345,7 @@ void VID_MenuInit( void )
     s_stipple_box.generic.y    = 60;
     s_stipple_box.generic.name    = "stipple alpha";
     s_stipple_box.curvalue = sw_stipplealpha->value;
-    s_stipple_box.itemnames = yesno_names;
+    s_stipple_box.itemnames = (char**)yesno_names;
 
     s_tq_slider.generic.type    = MTYPE_SLIDER;
     s_tq_slider.generic.x        = 0;
@@ -359,7 +359,7 @@ void VID_MenuInit( void )
     s_paletted_texture_box.generic.x    = 0;
     s_paletted_texture_box.generic.y    = 70;
     s_paletted_texture_box.generic.name    = "8-bit textures";
-    s_paletted_texture_box.itemnames = yesno_names;
+    s_paletted_texture_box.itemnames = (char**)yesno_names;
     s_paletted_texture_box.curvalue = gl_ext_palettedtexture->value;
 
     s_finish_box.generic.type = MTYPE_SPINCONTROL;
@@ -367,7 +367,7 @@ void VID_MenuInit( void )
     s_finish_box.generic.y    = 80;
     s_finish_box.generic.name    = "sync every frame";
     s_finish_box.curvalue = gl_finish->value;
-    s_finish_box.itemnames = yesno_names;
+    s_finish_box.itemnames = (char**)yesno_names;
 
     Menu_AddItem( &s_software_menu, ( void * ) &s_ref_list[SOFTWARE_MENU] );
     Menu_AddItem( &s_software_menu, ( void * ) &s_mode_list[SOFTWARE_MENU] );

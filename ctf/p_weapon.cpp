@@ -111,7 +111,7 @@ void PlayerNoise(edict *who, vec3_t where, int type)
     VectorSubtract (where, noise->maxs, noise->absmin);
     VectorAdd (where, noise->maxs, noise->absmax);
     noise->teleport_time = level.time;
-    gi.linkentity (noise);
+    quake2::getInstance()->gi.linkentity (noise);
 }
 
 
@@ -210,7 +210,7 @@ void ChangeWeapon (edict *ent)
 
     ent->client->weaponstate = WEAPON_ACTIVATING;
     ent->client->ps.gunframe = 0;
-    ent->client->ps.gunindex = gi.modelindex(ent->client->pers.weapon->view_model);
+    ent->client->ps.gunindex = quake2::getInstance()->gi.modelindex(ent->client->pers.weapon->view_model);
 
     ent->client->anim_priority = ANIM_PAIN;
     if(ent->client->ps.pmove.pm_flags & PMF_DUCKED)
@@ -324,13 +324,13 @@ void Use_Weapon (edict *ent, gitem *item)
 
         if (!ent->client->pers.inventory[ammo_index])
         {
-            gi.cprintf (ent, PRINT_HIGH, "No %s for %s.\n", ammo_item->pickup_name, item->pickup_name);
+            quake2::getInstance()->gi.cprintf (ent, PRINT_HIGH, "No %s for %s.\n", ammo_item->pickup_name, item->pickup_name);
             return;
         }
 
         if (ent->client->pers.inventory[ammo_index] < item->quantity)
         {
-            gi.cprintf (ent, PRINT_HIGH, "Not enough %s for %s.\n", ammo_item->pickup_name, item->pickup_name);
+            quake2::getInstance()->gi.cprintf (ent, PRINT_HIGH, "Not enough %s for %s.\n", ammo_item->pickup_name, item->pickup_name);
             return;
         }
     }
@@ -357,7 +357,7 @@ void Drop_Weapon (edict *ent, gitem *item)
     // see if we're already using it
     if ( ((item == ent->client->pers.weapon) || (item == ent->client->newweapon))&& (ent->client->pers.inventory[index] == 1) )
     {
-        gi.cprintf (ent, PRINT_HIGH, "Can't drop current weapon\n");
+        quake2::getInstance()->gi.cprintf (ent, PRINT_HIGH, "Can't drop current weapon\n");
         return;
     }
 
@@ -485,7 +485,7 @@ static void Weapon_Generic2 (edict *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE
             {
                 if (level.time >= ent->pain_debounce_time)
                 {
-                    gi.sound(ent, CHAN_VOICE, gi.soundindex("weapons/noammo.wav"), 1, ATTN_NORM, 0);
+                    quake2::getInstance()->gi.sound(ent, CHAN_VOICE, quake2::getInstance()->gi.soundindex("weapons/noammo.wav"), 1, ATTN_NORM, 0);
                     ent->pain_debounce_time = level.time + 1;
                 }
                 NoAmmoWeaponChange (ent);
@@ -526,7 +526,7 @@ static void Weapon_Generic2 (edict *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE
                 if (!CTFApplyStrengthSound(ent))
 //ZOID
                 if (ent->client->quad_framenum > level.framenum)
-                    gi.sound(ent, CHAN_ITEM, gi.soundindex("items/damage3.wav"), 1, ATTN_NORM, 0);
+                    quake2::getInstance()->gi.sound(ent, CHAN_ITEM, quake2::getInstance()->gi.soundindex("items/damage3.wav"), 1, ATTN_NORM, 0);
 //ZOID
                 CTFApplyHasteSound(ent);
 //ZOID
@@ -657,7 +657,7 @@ void Weapon_Grenade (edict *ent)
             {
                 if (level.time >= ent->pain_debounce_time)
                 {
-                    gi.sound(ent, CHAN_VOICE, gi.soundindex("weapons/noammo.wav"), 1, ATTN_NORM, 0);
+                    quake2::getInstance()->gi.sound(ent, CHAN_VOICE, quake2::getInstance()->gi.soundindex("weapons/noammo.wav"), 1, ATTN_NORM, 0);
                     ent->pain_debounce_time = level.time + 1;
                 }
                 NoAmmoWeaponChange (ent);
@@ -679,14 +679,14 @@ void Weapon_Grenade (edict *ent)
     if (ent->client->weaponstate == WEAPON_FIRING)
     {
         if (ent->client->ps.gunframe == 5)
-            gi.sound(ent, CHAN_WEAPON, gi.soundindex("weapons/hgrena1b.wav"), 1, ATTN_NORM, 0);
+            quake2::getInstance()->gi.sound(ent, CHAN_WEAPON, quake2::getInstance()->gi.soundindex("weapons/hgrena1b.wav"), 1, ATTN_NORM, 0);
 
         if (ent->client->ps.gunframe == 11)
         {
             if (!ent->client->grenade_time)
             {
                 ent->client->grenade_time = level.time + GRENADE_TIMER + 0.2;
-                ent->client->weapon_sound = gi.soundindex("weapons/hgrenc1b.wav");
+                ent->client->weapon_sound = quake2::getInstance()->gi.soundindex("weapons/hgrenc1b.wav");
             }
 
             // they waited too long, detonate it in their hand
@@ -762,10 +762,10 @@ void weapon_grenadelauncher_fire (edict *ent)
 
     fire_grenade (ent, start, forward, damage, 600, 2.5, radius);
 
-    gi.WriteByte (svc_muzzleflash);
-    gi.WriteShort (ent-g_edicts);
-    gi.WriteByte (MZ_GRENADE | is_silenced);
-    gi.multicast (ent->s.origin, MULTICAST_PVS);
+    quake2::getInstance()->gi.WriteByte (svc_muzzleflash);
+    quake2::getInstance()->gi.WriteShort (ent-g_edicts);
+    quake2::getInstance()->gi.WriteByte (MZ_GRENADE | is_silenced);
+    quake2::getInstance()->gi.multicast (ent->s.origin, multicast_t::MULTICAST_PVS);
 
     ent->client->ps.gunframe++;
 
@@ -818,10 +818,10 @@ void Weapon_RocketLauncher_Fire (edict *ent)
     fire_rocket (ent, start, forward, damage, 650, damage_radius, radius_damage);
 
     // send muzzle flash
-    gi.WriteByte (svc_muzzleflash);
-    gi.WriteShort (ent-g_edicts);
-    gi.WriteByte (MZ_ROCKET | is_silenced);
-    gi.multicast (ent->s.origin, MULTICAST_PVS);
+    quake2::getInstance()->gi.WriteByte (svc_muzzleflash);
+    quake2::getInstance()->gi.WriteShort (ent-g_edicts);
+    quake2::getInstance()->gi.WriteByte (MZ_ROCKET | is_silenced);
+    quake2::getInstance()->gi.multicast (ent->s.origin, multicast_t::MULTICAST_PVS);
 
     ent->client->ps.gunframe++;
 
@@ -867,13 +867,13 @@ void Blaster_Fire (edict *ent, vec3_t g_offset, int damage, bool hyper, int effe
     fire_blaster (ent, start, forward, damage, 1000, effect, hyper);
 
     // send muzzle flash
-    gi.WriteByte (svc_muzzleflash);
-    gi.WriteShort (ent-g_edicts);
+    quake2::getInstance()->gi.WriteByte (svc_muzzleflash);
+    quake2::getInstance()->gi.WriteShort (ent-g_edicts);
     if (hyper)
-        gi.WriteByte (MZ_HYPERBLASTER | is_silenced);
+        quake2::getInstance()->gi.WriteByte (MZ_HYPERBLASTER | is_silenced);
     else
-        gi.WriteByte (MZ_BLASTER | is_silenced);
-    gi.multicast (ent->s.origin, MULTICAST_PVS);
+        quake2::getInstance()->gi.WriteByte (MZ_BLASTER | is_silenced);
+    quake2::getInstance()->gi.multicast (ent->s.origin, multicast_t::MULTICAST_PVS);
 
     PlayerNoise(ent, start, PNOISE_WEAPON);
 }
@@ -907,7 +907,7 @@ void Weapon_HyperBlaster_Fire (edict *ent)
     int        effect;
     int        damage;
 
-    ent->client->weapon_sound = gi.soundindex("weapons/hyprbl1a.wav");
+    ent->client->weapon_sound = quake2::getInstance()->gi.soundindex("weapons/hyprbl1a.wav");
 
     if (!(ent->client->buttons & BUTTON_ATTACK))
     {
@@ -919,7 +919,7 @@ void Weapon_HyperBlaster_Fire (edict *ent)
         {
             if (level.time >= ent->pain_debounce_time)
             {
-                gi.sound(ent, CHAN_VOICE, gi.soundindex("weapons/noammo.wav"), 1, ATTN_NORM, 0);
+                quake2::getInstance()->gi.sound(ent, CHAN_VOICE, quake2::getInstance()->gi.soundindex("weapons/noammo.wav"), 1, ATTN_NORM, 0);
                 ent->pain_debounce_time = level.time + 1;
             }
             NoAmmoWeaponChange (ent);
@@ -963,7 +963,7 @@ void Weapon_HyperBlaster_Fire (edict *ent)
 
     if (ent->client->ps.gunframe == 12)
     {
-        gi.sound(ent, CHAN_AUTO, gi.soundindex("weapons/hyprbd1a.wav"), 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound(ent, CHAN_AUTO, quake2::getInstance()->gi.soundindex("weapons/hyprbd1a.wav"), 1, ATTN_NORM, 0);
         ent->client->weapon_sound = 0;
     }
 
@@ -1012,7 +1012,7 @@ void Machinegun_Fire (edict *ent)
         ent->client->ps.gunframe = 6;
         if (level.time >= ent->pain_debounce_time)
         {
-            gi.sound(ent, CHAN_VOICE, gi.soundindex("weapons/noammo.wav"), 1, ATTN_NORM, 0);
+            quake2::getInstance()->gi.sound(ent, CHAN_VOICE, quake2::getInstance()->gi.soundindex("weapons/noammo.wav"), 1, ATTN_NORM, 0);
             ent->pain_debounce_time = level.time + 1;
         }
         NoAmmoWeaponChange (ent);
@@ -1048,10 +1048,10 @@ void Machinegun_Fire (edict *ent)
     P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
     fire_bullet (ent, start, forward, damage, kick, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MOD_MACHINEGUN);
 
-    gi.WriteByte (svc_muzzleflash);
-    gi.WriteShort (ent-g_edicts);
-    gi.WriteByte (MZ_MACHINEGUN | is_silenced);
-    gi.multicast (ent->s.origin, MULTICAST_PVS);
+    quake2::getInstance()->gi.WriteByte (svc_muzzleflash);
+    quake2::getInstance()->gi.WriteShort (ent-g_edicts);
+    quake2::getInstance()->gi.WriteByte (MZ_MACHINEGUN | is_silenced);
+    quake2::getInstance()->gi.multicast (ent->s.origin, multicast_t::MULTICAST_PVS);
 
     PlayerNoise(ent, start, PNOISE_WEAPON);
 
@@ -1096,7 +1096,7 @@ void Chaingun_Fire (edict *ent)
         damage = 8;
 
     if (ent->client->ps.gunframe == 5)
-        gi.sound(ent, CHAN_AUTO, gi.soundindex("weapons/chngnu1a.wav"), 1, ATTN_IDLE, 0);
+        quake2::getInstance()->gi.sound(ent, CHAN_AUTO, quake2::getInstance()->gi.soundindex("weapons/chngnu1a.wav"), 1, ATTN_IDLE, 0);
 
     if ((ent->client->ps.gunframe == 14) && !(ent->client->buttons & BUTTON_ATTACK))
     {
@@ -1117,11 +1117,11 @@ void Chaingun_Fire (edict *ent)
     if (ent->client->ps.gunframe == 22)
     {
         ent->client->weapon_sound = 0;
-        gi.sound(ent, CHAN_AUTO, gi.soundindex("weapons/chngnd1a.wav"), 1, ATTN_IDLE, 0);
+        quake2::getInstance()->gi.sound(ent, CHAN_AUTO, quake2::getInstance()->gi.soundindex("weapons/chngnd1a.wav"), 1, ATTN_IDLE, 0);
     }
     else
     {
-        ent->client->weapon_sound = gi.soundindex("weapons/chngnl1a.wav");
+        ent->client->weapon_sound = quake2::getInstance()->gi.soundindex("weapons/chngnl1a.wav");
     }
 
     ent->client->anim_priority = ANIM_ATTACK;
@@ -1155,7 +1155,7 @@ void Chaingun_Fire (edict *ent)
     {
         if (level.time >= ent->pain_debounce_time)
         {
-            gi.sound(ent, CHAN_VOICE, gi.soundindex("weapons/noammo.wav"), 1, ATTN_NORM, 0);
+            quake2::getInstance()->gi.sound(ent, CHAN_VOICE, quake2::getInstance()->gi.soundindex("weapons/noammo.wav"), 1, ATTN_NORM, 0);
             ent->pain_debounce_time = level.time + 1;
         }
         NoAmmoWeaponChange (ent);
@@ -1187,10 +1187,10 @@ void Chaingun_Fire (edict *ent)
     }
 
     // send muzzle flash
-    gi.WriteByte (svc_muzzleflash);
-    gi.WriteShort (ent-g_edicts);
-    gi.WriteByte ((MZ_CHAINGUN1 + shots - 1) | is_silenced);
-    gi.multicast (ent->s.origin, MULTICAST_PVS);
+    quake2::getInstance()->gi.WriteByte (svc_muzzleflash);
+    quake2::getInstance()->gi.WriteShort (ent-g_edicts);
+    quake2::getInstance()->gi.WriteByte ((MZ_CHAINGUN1 + shots - 1) | is_silenced);
+    quake2::getInstance()->gi.multicast (ent->s.origin, multicast_t::MULTICAST_PVS);
 
     PlayerNoise(ent, start, PNOISE_WEAPON);
 
@@ -1250,10 +1250,10 @@ void weapon_shotgun_fire (edict *ent)
         fire_shotgun (ent, start, forward, damage, kick, 500, 500, DEFAULT_SHOTGUN_COUNT, MOD_SHOTGUN);
 
     // send muzzle flash
-    gi.WriteByte (svc_muzzleflash);
-    gi.WriteShort (ent-g_edicts);
-    gi.WriteByte (MZ_SHOTGUN | is_silenced);
-    gi.multicast (ent->s.origin, MULTICAST_PVS);
+    quake2::getInstance()->gi.WriteByte (svc_muzzleflash);
+    quake2::getInstance()->gi.WriteShort (ent-g_edicts);
+    quake2::getInstance()->gi.WriteByte (MZ_SHOTGUN | is_silenced);
+    quake2::getInstance()->gi.multicast (ent->s.origin, multicast_t::MULTICAST_PVS);
 
     ent->client->ps.gunframe++;
     PlayerNoise(ent, start, PNOISE_WEAPON);
@@ -1304,10 +1304,10 @@ void weapon_supershotgun_fire (edict *ent)
     fire_shotgun (ent, start, forward, damage, kick, DEFAULT_SHOTGUN_HSPREAD, DEFAULT_SHOTGUN_VSPREAD, DEFAULT_SSHOTGUN_COUNT/2, MOD_SSHOTGUN);
 
     // send muzzle flash
-    gi.WriteByte (svc_muzzleflash);
-    gi.WriteShort (ent-g_edicts);
-    gi.WriteByte (MZ_SSHOTGUN | is_silenced);
-    gi.multicast (ent->s.origin, MULTICAST_PVS);
+    quake2::getInstance()->gi.WriteByte (svc_muzzleflash);
+    quake2::getInstance()->gi.WriteShort (ent-g_edicts);
+    quake2::getInstance()->gi.WriteByte (MZ_SSHOTGUN | is_silenced);
+    quake2::getInstance()->gi.multicast (ent->s.origin, multicast_t::MULTICAST_PVS);
 
     ent->client->ps.gunframe++;
     PlayerNoise(ent, start, PNOISE_WEAPON);
@@ -1369,10 +1369,10 @@ void weapon_railgun_fire (edict *ent)
     fire_rail (ent, start, forward, damage, kick);
 
     // send muzzle flash
-    gi.WriteByte (svc_muzzleflash);
-    gi.WriteShort (ent-g_edicts);
-    gi.WriteByte (MZ_RAILGUN | is_silenced);
-    gi.multicast (ent->s.origin, MULTICAST_PVS);
+    quake2::getInstance()->gi.WriteByte (svc_muzzleflash);
+    quake2::getInstance()->gi.WriteShort (ent-g_edicts);
+    quake2::getInstance()->gi.WriteByte (MZ_RAILGUN | is_silenced);
+    quake2::getInstance()->gi.multicast (ent->s.origin, multicast_t::MULTICAST_PVS);
 
     ent->client->ps.gunframe++;
     PlayerNoise(ent, start, PNOISE_WEAPON);
@@ -1414,10 +1414,10 @@ void weapon_bfg_fire (edict *ent)
     if (ent->client->ps.gunframe == 9)
     {
         // send muzzle flash
-        gi.WriteByte (svc_muzzleflash);
-        gi.WriteShort (ent-g_edicts);
-        gi.WriteByte (MZ_BFG | is_silenced);
-        gi.multicast (ent->s.origin, MULTICAST_PVS);
+        quake2::getInstance()->gi.WriteByte (svc_muzzleflash);
+        quake2::getInstance()->gi.WriteShort (ent-g_edicts);
+        quake2::getInstance()->gi.WriteByte (MZ_BFG | is_silenced);
+        quake2::getInstance()->gi.multicast (ent->s.origin, multicast_t::MULTICAST_PVS);
 
         ent->client->ps.gunframe++;
 

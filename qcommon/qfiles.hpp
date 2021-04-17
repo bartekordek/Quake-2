@@ -306,7 +306,7 @@ typedef struct
     float    normal[3];
     float    dist;
     int        type;        // PLANE_X - PLANE_ANYZ ?remove? trivial to regenerate
-} dplane_t;
+} dplane_s;
 
 
 // contents flags are seperate bits

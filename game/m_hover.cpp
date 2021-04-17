@@ -42,15 +42,15 @@ static int    sound_search2;
 
 void hover_sight (edict *self, edict *other)
 {
-    gi.sound (self, CHAN_VOICE, sound_sight, 1, ATTN_NORM, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_sight, 1, ATTN_NORM, 0);
 }
 
 void hover_search (edict *self)
 {
     if (random() < 0.5)
-        gi.sound (self, CHAN_VOICE, sound_search1, 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_search1, 1, ATTN_NORM, 0);
     else
-        gi.sound (self, CHAN_VOICE, sound_search2, 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_search2, 1, ATTN_NORM, 0);
 }
 
 
@@ -501,18 +501,18 @@ void hover_pain (edict *self, edict *other, float kick, int damage)
     {
         if (random() < 0.5)
         {
-            gi.sound (self, CHAN_VOICE, sound_pain1, 1, ATTN_NORM, 0);
+            quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain1, 1, ATTN_NORM, 0);
             self->monsterinfo.currentmove = &hover_move_pain3;
         }
         else
         {
-            gi.sound (self, CHAN_VOICE, sound_pain2, 1, ATTN_NORM, 0);
+            quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain2, 1, ATTN_NORM, 0);
             self->monsterinfo.currentmove = &hover_move_pain2;
         }
     }
     else
     {
-        gi.sound (self, CHAN_VOICE, sound_pain1, 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain1, 1, ATTN_NORM, 0);
         self->monsterinfo.currentmove = &hover_move_pain1;
     }
 }
@@ -535,7 +535,7 @@ void hover_dead (edict *self)
     self->think = hover_deadthink;
     self->nextthink = level.time + FRAMETIME;
     self->timestamp = level.time + 15;
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 }
 
 void hover_die (edict *self, edict *inflictor, edict *attacker, int damage, vec3_t point)
@@ -545,7 +545,7 @@ void hover_die (edict *self, edict *inflictor, edict *attacker, int damage, vec3
 // check for gib
     if (self->health <= self->gib_health)
     {
-        gi.sound (self, CHAN_VOICE, gi.soundindex ("misc/udeath.wav"), 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, quake2::getInstance()->gi.soundindex ("misc/udeath.wav"), 1, ATTN_NORM, 0);
         for (n= 0; n < 2; n++)
             ThrowGib (self, "models/objects/gibs/bone/tris.md2", damage, GIB_ORGANIC);
         for (n= 0; n < 2; n++)
@@ -560,9 +560,9 @@ void hover_die (edict *self, edict *inflictor, edict *attacker, int damage, vec3
 
 // regular death
     if (random() < 0.5)
-        gi.sound (self, CHAN_VOICE, sound_death1, 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_death1, 1, ATTN_NORM, 0);
     else
-        gi.sound (self, CHAN_VOICE, sound_death2, 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_death2, 1, ATTN_NORM, 0);
     self->deadflag = DEAD_DEAD;
     self->takedamage = DAMAGE_YES;
     self->monsterinfo.currentmove = &hover_move_death1;
@@ -578,21 +578,21 @@ void SP_monster_hover (edict *self)
         return;
     }
 
-    sound_pain1 = gi.soundindex ("hover/hovpain1.wav");
-    sound_pain2 = gi.soundindex ("hover/hovpain2.wav");
-    sound_death1 = gi.soundindex ("hover/hovdeth1.wav");
-    sound_death2 = gi.soundindex ("hover/hovdeth2.wav");
-    sound_sight = gi.soundindex ("hover/hovsght1.wav");
-    sound_search1 = gi.soundindex ("hover/hovsrch1.wav");
-    sound_search2 = gi.soundindex ("hover/hovsrch2.wav");
+    sound_pain1 = quake2::getInstance()->gi.soundindex ("hover/hovpain1.wav");
+    sound_pain2 = quake2::getInstance()->gi.soundindex ("hover/hovpain2.wav");
+    sound_death1 = quake2::getInstance()->gi.soundindex ("hover/hovdeth1.wav");
+    sound_death2 = quake2::getInstance()->gi.soundindex ("hover/hovdeth2.wav");
+    sound_sight = quake2::getInstance()->gi.soundindex ("hover/hovsght1.wav");
+    sound_search1 = quake2::getInstance()->gi.soundindex ("hover/hovsrch1.wav");
+    sound_search2 = quake2::getInstance()->gi.soundindex ("hover/hovsrch2.wav");
 
-    gi.soundindex ("hover/hovatck1.wav");
+    quake2::getInstance()->gi.soundindex ("hover/hovatck1.wav");
 
-    self->s.sound = gi.soundindex ("hover/hovidle1.wav");
+    self->s.sound = quake2::getInstance()->gi.soundindex ("hover/hovidle1.wav");
 
     self->movetype = MOVETYPE_STEP;
     self->solid = SOLID_BBOX;
-    self->s.modelindex = gi.modelindex("models/monsters/hover/tris.md2");
+    self->s.modelindex = quake2::getInstance()->gi.modelindex("models/monsters/hover/tris.md2");
     VectorSet (self->mins, -24, -24, -24);
     VectorSet (self->maxs, 24, 24, 32);
 
@@ -611,7 +611,7 @@ void SP_monster_hover (edict *self)
     self->monsterinfo.sight = hover_sight;
     self->monsterinfo.search = hover_search;
 
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 
     self->monsterinfo.currentmove = &hover_move_stand;
     self->monsterinfo.scale = MODEL_SCALE;

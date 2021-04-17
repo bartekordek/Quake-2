@@ -93,7 +93,7 @@ bool    in_appactive;
 // forward-referenced functions
 void IN_StartupJoystick (void);
 void Joy_AdvancedUpdate_f (void);
-void IN_JoyMove (usercmd_t *cmd);
+void IN_JoyMove (usercmd_s *cmd);
 
 /*
 ============================================================
@@ -269,7 +269,7 @@ void IN_MouseEvent (int mstate)
 IN_MouseMove
 ===========
 */
-void IN_MouseMove (usercmd_t *cmd)
+void IN_MouseMove (usercmd_s *cmd)
 {
     int        mx, my;
 
@@ -448,7 +448,7 @@ void IN_Frame (void)
 IN_Move
 ===========
 */
-void IN_Move (usercmd_t *cmd)
+void IN_Move (usercmd_s *cmd)
 {
     IN_MouseMove (cmd);
 
@@ -606,7 +606,7 @@ void Joy_AdvancedUpdate_f (void)
     }
     else
     {
-        if (strcmp (joy_name->string, "joystick") != 0)
+        if( joy_name->string == "joystick" )
         {
             // notify user of advanced controller
             Com_Printf_G ("\n%s configured\n\n", joy_name->string);
@@ -749,7 +749,7 @@ bool IN_ReadJoystick (void)
 IN_JoyMove
 ===========
 */
-void IN_JoyMove (usercmd_t *cmd)
+void IN_JoyMove (usercmd_s *cmd)
 {
     float    speed, aspeed;
     float    fAxisValue;

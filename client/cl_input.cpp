@@ -273,7 +273,7 @@ CL_BaseMove
 Send the intended movement message to the server
 ================
 */
-void CL_BaseMove (usercmd_t *cmd)
+void CL_BaseMove (usercmd_s *cmd)
 {
     CL_AdjustAngles ();
 
@@ -327,7 +327,7 @@ void CL_ClampPitch (void)
 CL_FinishMove
 ==============
 */
-void CL_FinishMove (usercmd_t *cmd)
+void CL_FinishMove (usercmd_s *cmd)
 {
     int        ms;
     int        i;
@@ -368,9 +368,9 @@ void CL_FinishMove (usercmd_t *cmd)
 CL_CreateCmd
 =================
 */
-usercmd_t CL_CreateCmd (void)
+usercmd_s CL_CreateCmd (void)
 {
-    usercmd_t    cmd;
+    usercmd_s    cmd;
 
     frame_msec = sys_frame_time - old_sys_frame_time;
     if (frame_msec < 1)
@@ -455,8 +455,8 @@ void CL_SendCmd (void)
     sizebuf_t    buf;
     byte        data[128];
     int            i;
-    usercmd_t    *cmd, *oldcmd;
-    usercmd_t    nullcmd;
+    usercmd_s    *cmd, *oldcmd;
+    usercmd_s    nullcmd;
     int            checksumIndex;
 
     // build a command even if not connected

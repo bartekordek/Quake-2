@@ -57,7 +57,7 @@ void UpdateChaseCam(edict *ent)
     if (!targ->groundentity)
         o[2] += 16;
 
-    trace = gi.trace(ownerv, vec3_origin, vec3_origin, o, targ, MASK_SOLID);
+    trace = quake2::getInstance()->gi.trace(ownerv, vec3_origin, vec3_origin, o, targ, MASK_SOLID);
 
     VectorCopy(trace.endpos, goal);
 
@@ -66,7 +66,7 @@ void UpdateChaseCam(edict *ent)
     // pad for floors and ceilings
     VectorCopy(goal, o);
     o[2] += 6;
-    trace = gi.trace(goal, vec3_origin, vec3_origin, o, targ, MASK_SOLID);
+    trace = quake2::getInstance()->gi.trace(goal, vec3_origin, vec3_origin, o, targ, MASK_SOLID);
     if (trace.fraction < 1) {
         VectorCopy(trace.endpos, goal);
         goal[2] -= 6;
@@ -74,7 +74,7 @@ void UpdateChaseCam(edict *ent)
 
     VectorCopy(goal, o);
     o[2] -= 6;
-    trace = gi.trace(goal, vec3_origin, vec3_origin, o, targ, MASK_SOLID);
+    trace = quake2::getInstance()->gi.trace(goal, vec3_origin, vec3_origin, o, targ, MASK_SOLID);
     if (trace.fraction < 1) {
         VectorCopy(trace.endpos, goal);
         goal[2] += 6;
@@ -91,7 +91,7 @@ void UpdateChaseCam(edict *ent)
 
     ent->viewheight = 0;
     ent->client->ps.pmove.pm_flags |= PMF_NO_PREDICTION;
-    gi.linkentity(ent);
+    quake2::getInstance()->gi.linkentity(ent);
 
     if ((!ent->client->showscores && !ent->client->menu &&
         !ent->client->showinventory && !ent->client->showhelp &&
@@ -101,9 +101,9 @@ void UpdateChaseCam(edict *ent)
         ent->client->update_chase = false;
         sprintf(s, "xv 0 yb -68 string2 \"Chasing %s\"",
             targ->client->pers.netname);
-        gi.WriteByte (svc_layout);
-        gi.WriteString (s);
-        gi.unicast(ent, false);
+        quake2::getInstance()->gi.WriteByte (svc_layout);
+        quake2::getInstance()->gi.WriteString (s);
+        quake2::getInstance()->gi.unicast(ent, false);
     }
 
 }

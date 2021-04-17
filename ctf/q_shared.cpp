@@ -1367,13 +1367,13 @@ void Info_SetValueForKey (const std::string& s, const std::string& key, const st
 
     if (strstr (key, "\\") || strstr (value, "\\") )
     {
-        Com_Printf_G ("Can't use keys or values with a \\\n");
+        //Com_Printf_G ("Can't use keys or values with a \\\n");
         return;
     }
 
     if (strstr (key, ";") )
     {
-        Com_Printf_G ("Can't use keys or values with a semicolon\n");
+        //Com_Printf_G ("Can't use keys or values with a semicolon\n");
         return;
     }
 

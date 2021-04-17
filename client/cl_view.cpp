@@ -44,7 +44,7 @@ int            r_numdlights;
 dlight_t    r_dlights[MAX_DLIGHTS];
 
 int            r_numentities;
-entity_t    r_entities[MAX_ENTITIES];
+entity_s    r_entities[MAX_ENTITIES];
 
 int            r_numparticles;
 particle_t    r_particles[MAX_PARTICLES];
@@ -75,7 +75,7 @@ V_AddEntity
 
 =====================
 */
-void V_AddEntity (entity_t *ent)
+void V_AddEntity (entity_s *ent)
 {
     if (r_numentities >= MAX_ENTITIES)
         return;
@@ -183,7 +183,7 @@ void V_TestEntities (void)
 {
     int            i, j;
     float        f, r;
-    entity_t* ent;
+    entity_s* ent;
 
     r_numentities = 32;
     memset (r_entities, 0, sizeof(r_entities));
@@ -442,7 +442,7 @@ V_RenderView
 */
 void V_RenderView( float stereo_separation )
 {
-    extern int entitycmpfnc( const entity_t *, const entity_t * );
+    extern int entitycmpfnc( const entity_s *, const entity_s * );
 
     if (cls.state != ca_active)
         return;

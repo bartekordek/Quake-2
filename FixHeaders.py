@@ -47,10 +47,17 @@ def FixHeaderFile( filePath, isCpp ):
                     file.write("\n\n#endif // " + guard)
 
 for root, dirs, files in os.walk("."):
+    if ".git" in root:
+        continue
+    if "deps" in root:
+        continue
+    if "Build-" in root:
+        continue
+
     for file in files:
         if file.endswith(".h"):
             headerPath = os.path.join(root, file)
-            FixHeaderFile( headerPath )
+            FixHeaderFile( headerPath, False )
         elif file.endswith(".hpp"):
             headerPath = os.path.join(root, file)
             FixHeaderFile( headerPath, True )

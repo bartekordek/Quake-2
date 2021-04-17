@@ -34,7 +34,7 @@ extern void    R_ClipAndDrawPoly( float alpha, bool isturbulent, bool textured )
 /*
 ** R_DrawSprite
 **
-** Draw currententity / currentmodel as a single texture
+** Draw quake2::getInstance()->currententity / currentmodel as a single texture
 ** mapped polygon
 */
 void R_DrawSprite (void)
@@ -47,19 +47,19 @@ void R_DrawSprite (void)
 
     s_psprite = (dsprite_t *)currentmodel->extradata;
 #if 0
-    if (currententity->frame >= s_psprite->numframes
-        || currententity->frame < 0)
+    if (quake2::getInstance()->currententity->frame >= s_psprite->numframes
+        || quake2::getInstance()->currententity->frame < 0)
     {
         ri.Con_Printf (PRINT_ALL, "No such sprite frame %i\n",
-            currententity->frame);
-        currententity->frame = 0;
+            quake2::getInstance()->currententity->frame);
+        quake2::getInstance()->currententity->frame = 0;
     }
 #endif
-    currententity->frame %= s_psprite->numframes;
+    quake2::getInstance()->currententity->frame %= s_psprite->numframes;
 
-    s_psprframe = &s_psprite->frames[currententity->frame];
+    s_psprframe = &s_psprite->frames[quake2::getInstance()->currententity->frame];
 
-    r_polydesc.pixels       = currentmodel->skins[currententity->frame]->pixels[0];
+    r_polydesc.pixels       = currentmodel->skins[quake2::getInstance()->currententity->frame]->pixels[0];
     r_polydesc.pixel_width  = s_psprframe->width;
     r_polydesc.pixel_height = s_psprframe->height;
     r_polydesc.dist         = 0;
@@ -114,8 +114,8 @@ void R_DrawSprite (void)
     VectorCopy( modelorg, r_polydesc.viewer_position );
 
     r_polydesc.stipple_parity = 1;
-    if ( currententity->flags & RF_TRANSLUCENT )
-        R_ClipAndDrawPoly ( currententity->alpha, false, true );
+    if ( quake2::getInstance()->currententity->flags & RF_TRANSLUCENT )
+        R_ClipAndDrawPoly ( quake2::getInstance()->currententity->alpha, false, true );
     else
         R_ClipAndDrawPoly ( 1.0F, false, true );
     r_polydesc.stipple_parity = 0;

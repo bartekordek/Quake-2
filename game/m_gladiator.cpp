@@ -43,22 +43,22 @@ static int    sound_sight;
 
 void gladiator_idle (edict *self)
 {
-    gi.sound (self, CHAN_VOICE, sound_idle, 1, ATTN_IDLE, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_idle, 1, ATTN_IDLE, 0);
 }
 
 void gladiator_sight (edict *self, edict *other)
 {
-    gi.sound (self, CHAN_VOICE, sound_sight, 1, ATTN_NORM, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_sight, 1, ATTN_NORM, 0);
 }
 
 void gladiator_search (edict *self)
 {
-    gi.sound (self, CHAN_VOICE, sound_search, 1, ATTN_NORM, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_search, 1, ATTN_NORM, 0);
 }
 
 void gladiator_cleaver_swing (edict *self)
 {
-    gi.sound (self, CHAN_WEAPON, sound_cleaver_swing, 1, ATTN_NORM, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_WEAPON, sound_cleaver_swing, 1, ATTN_NORM, 0);
 }
 
 mframe_t gladiator_frames_stand [] =
@@ -132,9 +132,9 @@ void GaldiatorMelee (edict *self)
 
     VectorSet (aim, MELEE_DISTANCE, self->mins[0], -4);
     if (fire_hit (self, aim, (20 + (rand() %5)), 300))
-        gi.sound (self, CHAN_AUTO, sound_cleaver_hit, 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_AUTO, sound_cleaver_hit, 1, ATTN_NORM, 0);
     else
-        gi.sound (self, CHAN_AUTO, sound_cleaver_miss, 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_AUTO, sound_cleaver_miss, 1, ATTN_NORM, 0);
 }
 
 mframe_t gladiator_frames_attack_melee [] =
@@ -207,7 +207,7 @@ void gladiator_attack(edict *self)
         return;
 
     // charge up the railgun
-    gi.sound (self, CHAN_WEAPON, sound_gun, 1, ATTN_NORM, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_WEAPON, sound_gun, 1, ATTN_NORM, 0);
     VectorCopy (self->enemy->s.origin, self->pos1);    //save for aiming the shot
     self->pos1[2] += self->enemy->viewheight;
     self->monsterinfo.currentmove = &gladiator_move_attack_gun;
@@ -253,9 +253,9 @@ void gladiator_pain (edict *self, edict *other, float kick, int damage)
     self->pain_debounce_time = level.time + 3;
 
     if (random() < 0.5)
-        gi.sound (self, CHAN_VOICE, sound_pain1, 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain1, 1, ATTN_NORM, 0);
     else
-        gi.sound (self, CHAN_VOICE, sound_pain2, 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain2, 1, ATTN_NORM, 0);
 
     if (skill->value == 3)
         return;        // no pain anims in nightmare
@@ -275,7 +275,7 @@ void gladiator_dead (edict *self)
     self->movetype = MOVETYPE_TOSS;
     self->svflags |= SVF_DEADMONSTER;
     self->nextthink = 0;
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 }
 
 mframe_t gladiator_frames_death [] =
@@ -312,7 +312,7 @@ void gladiator_die (edict *self, edict *inflictor, edict *attacker, int damage, 
 // check for gib
     if (self->health <= self->gib_health)
     {
-        gi.sound (self, CHAN_VOICE, gi.soundindex ("misc/udeath.wav"), 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, quake2::getInstance()->gi.soundindex ("misc/udeath.wav"), 1, ATTN_NORM, 0);
         for (n= 0; n < 2; n++)
             ThrowGib (self, "models/objects/gibs/bone/tris.md2", damage, GIB_ORGANIC);
         for (n= 0; n < 4; n++)
@@ -326,7 +326,7 @@ void gladiator_die (edict *self, edict *inflictor, edict *attacker, int damage, 
         return;
 
 // regular death
-    gi.sound (self, CHAN_VOICE, sound_die, 1, ATTN_NORM, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_die, 1, ATTN_NORM, 0);
     self->deadflag = DEAD_DEAD;
     self->takedamage = DAMAGE_YES;
 
@@ -345,20 +345,20 @@ void SP_monster_gladiator (edict *self)
     }
 
 
-    sound_pain1 = gi.soundindex ("gladiator/pain.wav");
-    sound_pain2 = gi.soundindex ("gladiator/gldpain2.wav");
-    sound_die = gi.soundindex ("gladiator/glddeth2.wav");
-    sound_gun = gi.soundindex ("gladiator/railgun.wav");
-    sound_cleaver_swing = gi.soundindex ("gladiator/melee1.wav");
-    sound_cleaver_hit = gi.soundindex ("gladiator/melee2.wav");
-    sound_cleaver_miss = gi.soundindex ("gladiator/melee3.wav");
-    sound_idle = gi.soundindex ("gladiator/gldidle1.wav");
-    sound_search = gi.soundindex ("gladiator/gldsrch1.wav");
-    sound_sight = gi.soundindex ("gladiator/sight.wav");
+    sound_pain1 = quake2::getInstance()->gi.soundindex ("gladiator/pain.wav");
+    sound_pain2 = quake2::getInstance()->gi.soundindex ("gladiator/gldpain2.wav");
+    sound_die = quake2::getInstance()->gi.soundindex ("gladiator/glddeth2.wav");
+    sound_gun = quake2::getInstance()->gi.soundindex ("gladiator/railgun.wav");
+    sound_cleaver_swing = quake2::getInstance()->gi.soundindex ("gladiator/melee1.wav");
+    sound_cleaver_hit = quake2::getInstance()->gi.soundindex ("gladiator/melee2.wav");
+    sound_cleaver_miss = quake2::getInstance()->gi.soundindex ("gladiator/melee3.wav");
+    sound_idle = quake2::getInstance()->gi.soundindex ("gladiator/gldidle1.wav");
+    sound_search = quake2::getInstance()->gi.soundindex ("gladiator/gldsrch1.wav");
+    sound_sight = quake2::getInstance()->gi.soundindex ("gladiator/sight.wav");
 
     self->movetype = MOVETYPE_STEP;
     self->solid = SOLID_BBOX;
-    self->s.modelindex = gi.modelindex ("models/monsters/gladiatr/tris.md2");
+    self->s.modelindex = quake2::getInstance()->gi.modelindex ("models/monsters/gladiatr/tris.md2");
     VectorSet (self->mins, -32, -32, -24);
     VectorSet (self->maxs, 32, 32, 64);
 
@@ -379,7 +379,7 @@ void SP_monster_gladiator (edict *self)
     self->monsterinfo.idle = gladiator_idle;
     self->monsterinfo.search = gladiator_search;
 
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
     self->monsterinfo.currentmove = &gladiator_move_stand;
     self->monsterinfo.scale = MODEL_SCALE;
 

@@ -123,7 +123,7 @@ edict *G_PickTarget (char *targetname)
 
     if (!targetname)
     {
-        gi.dprintf("G_PickTarget called with NULL targetname\n");
+        quake2::getInstance()->gi.dprintf("G_PickTarget called with NULL targetname\n");
         return NULL;
     }
 
@@ -139,7 +139,7 @@ edict *G_PickTarget (char *targetname)
 
     if (!num_choices)
     {
-        gi.dprintf("G_PickTarget: target %s not found\n", targetname);
+        quake2::getInstance()->gi.dprintf("G_PickTarget: target %s not found\n", targetname);
         return NULL;
     }
 
@@ -186,7 +186,7 @@ void G_UseTargets (edict *ent, edict *activator)
         t->think = Think_Delay;
         t->activator = activator;
         if (!activator)
-            gi.dprintf ("Think_Delay with no activator\n");
+            quake2::getInstance()->gi.dprintf ("Think_Delay with no activator\n");
         t->message = ent->message;
         t->target = ent->target;
         t->killtarget = ent->killtarget;
@@ -199,11 +199,11 @@ void G_UseTargets (edict *ent, edict *activator)
 //
     if ((ent->message) && !(activator->svflags & SVF_MONSTER))
     {
-        gi.centerprintf (activator, "%s", ent->message);
+        quake2::getInstance()->gi.centerprintf (activator, "%s", ent->message);
         if (ent->noise_index)
-            gi.sound (activator, CHAN_AUTO, ent->noise_index, 1, ATTN_NORM, 0);
+            quake2::getInstance()->gi.sound (activator, CHAN_AUTO, ent->noise_index, 1, ATTN_NORM, 0);
         else
-            gi.sound (activator, CHAN_AUTO, gi.soundindex ("misc/talk1.wav"), 1, ATTN_NORM, 0);
+            quake2::getInstance()->gi.sound (activator, CHAN_AUTO, quake2::getInstance()->gi.soundindex ("misc/talk1.wav"), 1, ATTN_NORM, 0);
     }
 
 //
@@ -217,7 +217,7 @@ void G_UseTargets (edict *ent, edict *activator)
             G_FreeEdict (t);
             if (!ent->inuse)
             {
-                gi.dprintf("entity was removed while using killtargets\n");
+                quake2::getInstance()->gi.dprintf("entity was removed while using killtargets\n");
                 return;
             }
         }
@@ -238,7 +238,7 @@ void G_UseTargets (edict *ent, edict *activator)
 
             if (t == ent)
             {
-                gi.dprintf ("WARNING: Entity used itself.\n");
+                quake2::getInstance()->gi.dprintf ("WARNING: Entity used itself.\n");
             }
             else
             {
@@ -247,7 +247,7 @@ void G_UseTargets (edict *ent, edict *activator)
             }
             if (!ent->inuse)
             {
-                gi.dprintf("entity was removed while using targets\n");
+                quake2::getInstance()->gi.dprintf("entity was removed while using targets\n");
                 return;
             }
         }
@@ -390,7 +390,7 @@ void vectoangles (vec3_t value1, vec3_t angles)
 
 char *G_CopyString (char *in)
 {
-    auto out = (char*)gi.TagMalloc (strlen(in)+1, TAG_LEVEL);
+    auto out = (char*)quake2::getInstance()->gi.TagMalloc (strlen(in)+1, TAG_LEVEL);
     strcpy (out, in);
     return out;
 }
@@ -433,7 +433,7 @@ edict *G_Spawn (void)
     }
 
     if (i == game.maxentities)
-        gi.error ("ED_Alloc: no free edicts");
+        quake2::getInstance()->gi.error ("ED_Alloc: no free edicts");
 
     globals.num_edicts++;
     G_InitEdict (e);
@@ -449,11 +449,11 @@ Marks the edict as free
 */
 void G_FreeEdict (edict *ed)
 {
-    gi.unlinkentity (ed);        // unlink from world
+    quake2::getInstance()->gi.unlinkentity (ed);        // unlink from world
 
     if ((ed - g_edicts) <= (maxclients->value + BODY_QUEUE_SIZE))
     {
-//        gi.dprintf("tried to free special edict\n");
+//        quake2::getInstance()->gi.dprintf("tried to free special edict\n");
         return;
     }
 
@@ -479,7 +479,7 @@ void    G_TouchTriggers (edict *ent)
     if ((ent->client || (ent->svflags & SVF_MONSTER)) && (ent->health <= 0))
         return;
 
-    num = gi.BoxEdicts (ent->absmin, ent->absmax, touch
+    num = quake2::getInstance()->gi.BoxEdicts (ent->absmin, ent->absmax, touch
         , MAX_EDICTS, AREA_TRIGGERS);
 
     // be careful, it is possible to have an entity in this
@@ -508,7 +508,7 @@ void    G_TouchSolids (edict *ent)
     int            i, num;
     edict        *touch[MAX_EDICTS], *hit;
 
-    num = gi.BoxEdicts (ent->absmin, ent->absmax, touch
+    num = quake2::getInstance()->gi.BoxEdicts (ent->absmin, ent->absmax, touch
         , MAX_EDICTS, AREA_SOLID);
 
     // be careful, it is possible to have an entity in this
@@ -550,7 +550,7 @@ bool KillBox (edict *ent)
 
     while (1)
     {
-        tr = gi.trace (ent->s.origin, ent->mins, ent->maxs, ent->s.origin, NULL, MASK_PLAYERSOLID);
+        tr = quake2::getInstance()->gi.trace (ent->s.origin, ent->mins, ent->maxs, ent->s.origin, NULL, MASK_PLAYERSOLID);
         if (!tr.ent)
             break;
 

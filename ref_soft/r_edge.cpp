@@ -800,7 +800,7 @@ D_CalcGradients
 */
 void D_CalcGradients (msurface_t *pface)
 {
-    plane_t    *pplane;
+    plane_s    *pplane;
     float        mipscale;
     vec3_t        p_temp1;
     vec3_t        p_saxis, p_taxis;
@@ -893,9 +893,9 @@ void D_TurbulentSurf (surf_t *s)
     {
     // FIXME: we don't want to do all this for every polygon!
     // TODO: store once at start of frame
-        currententity = s->entity;    //FIXME: make this passed in to
+        quake2::getInstance()->currententity = s->entity;    //FIXME: make this passed in to
                                     // R_RotateBmodel ()
-        VectorSubtract (r_origin, currententity->origin,
+        VectorSubtract (r_origin, quake2::getInstance()->currententity->origin,
                 local_modelorg);
         TransformVector (local_modelorg, transformed_modelorg);
 
@@ -924,7 +924,7 @@ void D_TurbulentSurf (surf_t *s)
     // FIXME: we don't want to do this every time!
     // TODO: speed up
     //
-        currententity = NULL;    // &r_worldentity;
+        quake2::getInstance()->currententity = NULL;    // &r_worldentity;
         VectorCopy (world_transformed_modelorg,
                     transformed_modelorg);
         VectorCopy (base_vpn, vpn);
@@ -982,16 +982,16 @@ void D_SolidSurf (surf_t *s)
     {
     // FIXME: we don't want to do all this for every polygon!
     // TODO: store once at start of frame
-        currententity = s->entity;    //FIXME: make this passed in to
+        quake2::getInstance()->currententity = s->entity;    //FIXME: make this passed in to
                                     // R_RotateBmodel ()
-        VectorSubtract (r_origin, currententity->origin, local_modelorg);
+        VectorSubtract (r_origin, quake2::getInstance()->currententity->origin, local_modelorg);
         TransformVector (local_modelorg, transformed_modelorg);
 
         R_RotateBmodel ();    // FIXME: don't mess with the frustum,
                             // make entity passed in
     }
     else
-        currententity = &r_worldentity;
+        quake2::getInstance()->currententity = &r_worldentity;
 
     pface = s->msurf;
 #if 1
@@ -1048,7 +1048,7 @@ void D_SolidSurf (surf_t *s)
         VectorCopy (base_vup, vup);
         VectorCopy (base_vright, vright);
         ref_soft_R_TransformFrustum ();
-        currententity = NULL;    //&r_worldentity;
+        quake2::getInstance()->currententity = NULL;    //&r_worldentity;
     }
 }
 
@@ -1091,7 +1091,7 @@ void ref_soft_D_DrawSurfaces (void)
 {
     surf_t            *s;
 
-//    currententity = NULL;    //&r_worldentity;
+//    quake2::getInstance()->currententity = NULL;    //&r_worldentity;
     VectorSubtract (r_origin, vec3_origin, modelorg);
     TransformVector (modelorg, transformed_modelorg);
     VectorCopy (transformed_modelorg, world_transformed_modelorg);
@@ -1118,7 +1118,7 @@ void ref_soft_D_DrawSurfaces (void)
     else
         D_DrawflatSurfaces ();
 
-    currententity = NULL;    //&r_worldentity;
+    quake2::getInstance()->currententity = NULL;    //&r_worldentity;
     VectorSubtract (r_origin, vec3_origin, modelorg);
     ref_soft_R_TransformFrustum ();
 }

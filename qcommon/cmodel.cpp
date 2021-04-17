@@ -25,13 +25,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 typedef struct
 {
-    plane_t    *plane;
+    plane_s    *plane;
     int            children[2];        // negative numbers are leafs
 } cnode_t;
 
 typedef struct
 {
-    plane_t    *plane;
+    plane_s    *plane;
     mapsurface_t    *surface;
 } cbrushside_t;
 
@@ -71,7 +71,7 @@ int            numtexinfo;
 mapsurface_t    map_surfaces[MAX_MAP_TEXINFO];
 
 int            numplanes;
-plane_t    map_planes[MAX_MAP_PLANES+6];        // extra for box hull
+plane_s    map_planes[MAX_MAP_PLANES+6];        // extra for box hull
 
 int            numnodes;
 cnode_t        map_nodes[MAX_MAP_NODES+6];        // extra for box hull
@@ -339,12 +339,12 @@ CMod_LoadPlanes
 void CMod_LoadPlanes (lump_t *l)
 {
     int            i, j;
-    plane_t    *out;
-    dplane_t     *in;
+    plane_s    *out;
+    dplane_s     *in;
     int            count;
     int            bits;
 
-    in = (dplane_t *)(cmod_base + l->fileofs);
+    in = (dplane_s *)(cmod_base + l->fileofs);
     if (l->filelen % sizeof(*in))
         Com_Error (ERR_DROP, "MOD_LoadBmodel: funny lump size");
     count = l->filelen / sizeof(*in);
@@ -692,7 +692,7 @@ int        CM_LeafArea (int leafnum)
 //=======================================================================
 
 
-plane_t    *box_planes;
+plane_s    *box_planes;
 int            box_headnode;
 cbrush_t    *box_brush;
 cleaf_t        *box_leaf;
@@ -710,7 +710,7 @@ void CM_InitBoxHull (void)
     int            i;
     int            side;
     cnode_t        *c;
-    plane_t    *p;
+    plane_s    *p;
     cbrushside_t    *s;
 
     box_headnode = numnodes;
@@ -805,7 +805,7 @@ int CM_PointLeafnum_r (vec3_t p, int num)
 {
     float        d;
     cnode_t        *node;
-    plane_t    *plane;
+    plane_s    *plane;
 
     while (num >= 0)
     {
@@ -850,7 +850,7 @@ int        leaf_topnode;
 
 void CM_BoxLeafnums_r (int nodenum)
 {
-    plane_t    *plane;
+    plane_s    *plane;
     cnode_t        *node;
     int        s;
 
@@ -994,7 +994,7 @@ void CM_ClipBoxToBrush (vec3_t mins, vec3_t maxs, vec3_t p1, vec3_t p2,
                       trace_t *trace, cbrush_t *brush)
 {
     int            i, j;
-    plane_t    *plane, *clipplane;
+    plane_s    *plane, *clipplane;
     float        dist;
     float        enterfrac, leavefrac;
     vec3_t        ofs;
@@ -1108,7 +1108,7 @@ void CM_TestBoxInBrush (vec3_t mins, vec3_t maxs, vec3_t p1,
                       trace_t *trace, cbrush_t *brush)
 {
     int            i, j;
-    plane_t    *plane;
+    plane_s    *plane;
     float        dist;
     vec3_t        ofs;
     float        d1;
@@ -1231,7 +1231,7 @@ CM_RecursiveHullCheck
 void CM_RecursiveHullCheck (int num, float p1f, float p2f, vec3_t p1, vec3_t p2)
 {
     cnode_t        *node;
-    plane_t    *plane;
+    plane_s    *plane;
     float        t1, t2, offset;
     float        frac, frac2;
     float        idist;

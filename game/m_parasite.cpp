@@ -54,32 +54,32 @@ void parasite_refidget (edict *self);
 
 void parasite_launch (edict *self)
 {
-    gi.sound (self, CHAN_WEAPON, sound_launch, 1, ATTN_NORM, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_WEAPON, sound_launch, 1, ATTN_NORM, 0);
 }
 
 void parasite_reel_in (edict *self)
 {
-    gi.sound (self, CHAN_WEAPON, sound_reelin, 1, ATTN_NORM, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_WEAPON, sound_reelin, 1, ATTN_NORM, 0);
 }
 
 void parasite_sight (edict *self, edict *other)
 {
-    gi.sound (self, CHAN_WEAPON, sound_sight, 1, ATTN_NORM, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_WEAPON, sound_sight, 1, ATTN_NORM, 0);
 }
 
 void parasite_tap (edict *self)
 {
-    gi.sound (self, CHAN_WEAPON, sound_tap, 1, ATTN_IDLE, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_WEAPON, sound_tap, 1, ATTN_IDLE, 0);
 }
 
 void parasite_scratch (edict *self)
 {
-    gi.sound (self, CHAN_WEAPON, sound_scratch, 1, ATTN_IDLE, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_WEAPON, sound_scratch, 1, ATTN_IDLE, 0);
 }
 
 void parasite_search (edict *self)
 {
-    gi.sound (self, CHAN_WEAPON, sound_search, 1, ATTN_IDLE, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_WEAPON, sound_search, 1, ATTN_IDLE, 0);
 }
 
 
@@ -286,9 +286,9 @@ void parasite_pain (edict *self, edict *other, float kick, int damage)
         return;        // no pain anims in nightmare
 
     if (random() < 0.5)
-        gi.sound (self, CHAN_VOICE, sound_pain1, 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain1, 1, ATTN_NORM, 0);
     else
-        gi.sound (self, CHAN_VOICE, sound_pain2, 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain2, 1, ATTN_NORM, 0);
 
     self->monsterinfo.currentmove = &parasite_move_pain1;
 }
@@ -336,28 +336,28 @@ void parasite_drain_attack (edict *self)
     }
     VectorCopy (self->enemy->s.origin, end);
 
-    tr = gi.trace (start, NULL, NULL, end, self, MASK_SHOT);
+    tr = quake2::getInstance()->gi.trace (start, NULL, NULL, end, self, MASK_SHOT);
     if (tr.ent != self->enemy)
         return;
 
     if (self->s.frame == FRAME_drain03)
     {
         damage = 5;
-        gi.sound (self->enemy, CHAN_AUTO, sound_impact, 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound (self->enemy, CHAN_AUTO, sound_impact, 1, ATTN_NORM, 0);
     }
     else
     {
         if (self->s.frame == FRAME_drain04)
-            gi.sound (self, CHAN_WEAPON, sound_suck, 1, ATTN_NORM, 0);
+            quake2::getInstance()->gi.sound (self, CHAN_WEAPON, sound_suck, 1, ATTN_NORM, 0);
         damage = 2;
     }
 
-    gi.WriteByte (svc_temp_entity);
-    gi.WriteByte (TE_PARASITE_ATTACK);
-    gi.WriteShort (self - g_edicts);
-    gi.WritePosition (start);
-    gi.WritePosition (end);
-    gi.multicast (self->s.origin, MULTICAST_PVS);
+    quake2::getInstance()->gi.WriteByte (svc_temp_entity);
+    quake2::getInstance()->gi.WriteByte (TE_PARASITE_ATTACK);
+    quake2::getInstance()->gi.WriteShort (self - g_edicts);
+    quake2::getInstance()->gi.WritePosition (start);
+    quake2::getInstance()->gi.WritePosition (end);
+    quake2::getInstance()->gi.multicast (self->s.origin, multicast_t::MULTICAST_PVS);
 
     VectorSubtract (start, end, dir);
     T_Damage (self->enemy, self, self, dir, self->enemy->s.origin, vec3_origin, damage, 0, DAMAGE_NO_KNOCKBACK, MOD_UNKNOWN);
@@ -453,7 +453,7 @@ void parasite_dead (edict *self)
     self->movetype = MOVETYPE_TOSS;
     self->svflags |= SVF_DEADMONSTER;
     self->nextthink = 0;
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 }
 
 mframe_t parasite_frames_death [] =
@@ -475,7 +475,7 @@ void parasite_die (edict *self, edict *inflictor, edict *attacker, int damage, v
 // check for gib
     if (self->health <= self->gib_health)
     {
-        gi.sound (self, CHAN_VOICE, gi.soundindex ("misc/udeath.wav"), 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, quake2::getInstance()->gi.soundindex ("misc/udeath.wav"), 1, ATTN_NORM, 0);
         for (n= 0; n < 2; n++)
             ThrowGib (self, "models/objects/gibs/bone/tris.md2", damage, GIB_ORGANIC);
         for (n= 0; n < 4; n++)
@@ -489,7 +489,7 @@ void parasite_die (edict *self, edict *inflictor, edict *attacker, int damage, v
         return;
 
 // regular death
-    gi.sound (self, CHAN_VOICE, sound_die, 1, ATTN_NORM, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_die, 1, ATTN_NORM, 0);
     self->deadflag = DEAD_DEAD;
     self->takedamage = DAMAGE_YES;
     self->monsterinfo.currentmove = &parasite_move_death;
@@ -511,19 +511,19 @@ void SP_monster_parasite (edict *self)
         return;
     }
 
-    sound_pain1 = gi.soundindex ("parasite/parpain1.wav");
-    sound_pain2 = gi.soundindex ("parasite/parpain2.wav");
-    sound_die = gi.soundindex ("parasite/pardeth1.wav");
-    sound_launch = gi.soundindex("parasite/paratck1.wav");
-    sound_impact = gi.soundindex("parasite/paratck2.wav");
-    sound_suck = gi.soundindex("parasite/paratck3.wav");
-    sound_reelin = gi.soundindex("parasite/paratck4.wav");
-    sound_sight = gi.soundindex("parasite/parsght1.wav");
-    sound_tap = gi.soundindex("parasite/paridle1.wav");
-    sound_scratch = gi.soundindex("parasite/paridle2.wav");
-    sound_search = gi.soundindex("parasite/parsrch1.wav");
+    sound_pain1 = quake2::getInstance()->gi.soundindex ("parasite/parpain1.wav");
+    sound_pain2 = quake2::getInstance()->gi.soundindex ("parasite/parpain2.wav");
+    sound_die = quake2::getInstance()->gi.soundindex ("parasite/pardeth1.wav");
+    sound_launch = quake2::getInstance()->gi.soundindex("parasite/paratck1.wav");
+    sound_impact = quake2::getInstance()->gi.soundindex("parasite/paratck2.wav");
+    sound_suck = quake2::getInstance()->gi.soundindex("parasite/paratck3.wav");
+    sound_reelin = quake2::getInstance()->gi.soundindex("parasite/paratck4.wav");
+    sound_sight = quake2::getInstance()->gi.soundindex("parasite/parsght1.wav");
+    sound_tap = quake2::getInstance()->gi.soundindex("parasite/paridle1.wav");
+    sound_scratch = quake2::getInstance()->gi.soundindex("parasite/paridle2.wav");
+    sound_search = quake2::getInstance()->gi.soundindex("parasite/parsrch1.wav");
 
-    self->s.modelindex = gi.modelindex ("models/monsters/parasite/tris.md2");
+    self->s.modelindex = quake2::getInstance()->gi.modelindex ("models/monsters/parasite/tris.md2");
     VectorSet (self->mins, -16, -16, -24);
     VectorSet (self->maxs, 16, 16, 24);
     self->movetype = MOVETYPE_STEP;
@@ -543,7 +543,7 @@ void SP_monster_parasite (edict *self)
     self->monsterinfo.sight = parasite_sight;
     self->monsterinfo.idle = parasite_idle;
 
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 
     self->monsterinfo.currentmove = &parasite_move_stand;
     self->monsterinfo.scale = MODEL_SCALE;

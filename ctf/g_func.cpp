@@ -363,7 +363,7 @@ void plat_hit_top (edict *ent)
     if (!(ent->flags & FL_TEAMSLAVE))
     {
         if (ent->moveinfo.sound_end)
-            gi.sound (ent, CHAN_NO_PHS_ADD+CHAN_VOICE, ent->moveinfo.sound_end, 1, ATTN_STATIC, 0);
+            quake2::getInstance()->gi.sound (ent, CHAN_NO_PHS_ADD+CHAN_VOICE, ent->moveinfo.sound_end, 1, ATTN_STATIC, 0);
         ent->s.sound = 0;
     }
     ent->moveinfo.state = STATE_TOP;
@@ -377,7 +377,7 @@ void plat_hit_bottom (edict *ent)
     if (!(ent->flags & FL_TEAMSLAVE))
     {
         if (ent->moveinfo.sound_end)
-            gi.sound (ent, CHAN_NO_PHS_ADD+CHAN_VOICE, ent->moveinfo.sound_end, 1, ATTN_STATIC, 0);
+            quake2::getInstance()->gi.sound (ent, CHAN_NO_PHS_ADD+CHAN_VOICE, ent->moveinfo.sound_end, 1, ATTN_STATIC, 0);
         ent->s.sound = 0;
     }
     ent->moveinfo.state = STATE_BOTTOM;
@@ -388,7 +388,7 @@ void plat_go_down (edict *ent)
     if (!(ent->flags & FL_TEAMSLAVE))
     {
         if (ent->moveinfo.sound_start)
-            gi.sound (ent, CHAN_NO_PHS_ADD+CHAN_VOICE, ent->moveinfo.sound_start, 1, ATTN_STATIC, 0);
+            quake2::getInstance()->gi.sound (ent, CHAN_NO_PHS_ADD+CHAN_VOICE, ent->moveinfo.sound_start, 1, ATTN_STATIC, 0);
         ent->s.sound = ent->moveinfo.sound_middle;
     }
     ent->moveinfo.state = STATE_DOWN;
@@ -400,7 +400,7 @@ void plat_go_up (edict *ent)
     if (!(ent->flags & FL_TEAMSLAVE))
     {
         if (ent->moveinfo.sound_start)
-            gi.sound (ent, CHAN_NO_PHS_ADD+CHAN_VOICE, ent->moveinfo.sound_start, 1, ATTN_STATIC, 0);
+            quake2::getInstance()->gi.sound (ent, CHAN_NO_PHS_ADD+CHAN_VOICE, ent->moveinfo.sound_start, 1, ATTN_STATIC, 0);
         ent->s.sound = ent->moveinfo.sound_middle;
     }
     ent->moveinfo.state = STATE_UP;
@@ -436,7 +436,7 @@ void Use_Plat (edict *ent, edict *other, edict *activator)
 }
 
 
-void Touch_Plat_Center (edict *ent, edict *other, plane_t *plane, csurface_t *surf)
+void Touch_Plat_Center (edict *ent, edict *other, plane_s *plane, csurface_s *surf)
 {
     if (!other->client)
         return;
@@ -492,7 +492,7 @@ void plat_spawn_inside_trigger (edict *ent)
     VectorCopy (tmin, trigger->mins);
     VectorCopy (tmax, trigger->maxs);
 
-    gi.linkentity (trigger);
+    quake2::getInstance()->gi.linkentity (trigger);
 }
 
 
@@ -519,7 +519,7 @@ void SP_func_plat (edict *ent)
     ent->solid = SOLID_BSP;
     ent->movetype = MOVETYPE_PUSH;
 
-    gi.setmodel (ent, ent->model);
+    quake2::getInstance()->gi.setmodel (ent, ent->model);
 
     ent->blocked = plat_blocked;
 
@@ -563,7 +563,7 @@ void SP_func_plat (edict *ent)
     else
     {
         VectorCopy (ent->pos2, ent->s.origin);
-        gi.linkentity (ent);
+        quake2::getInstance()->gi.linkentity (ent);
         ent->moveinfo.state = STATE_BOTTOM;
     }
 
@@ -576,9 +576,9 @@ void SP_func_plat (edict *ent)
     VectorCopy (ent->pos2, ent->moveinfo.end_origin);
     VectorCopy (ent->s.angles, ent->moveinfo.end_angles);
 
-    ent->moveinfo.sound_start = gi.soundindex ("plats/pt1_strt.wav");
-    ent->moveinfo.sound_middle = gi.soundindex ("plats/pt1_mid.wav");
-    ent->moveinfo.sound_end = gi.soundindex ("plats/pt1_end.wav");
+    ent->moveinfo.sound_start = quake2::getInstance()->gi.soundindex ("plats/pt1_strt.wav");
+    ent->moveinfo.sound_middle = quake2::getInstance()->gi.soundindex ("plats/pt1_mid.wav");
+    ent->moveinfo.sound_end = quake2::getInstance()->gi.soundindex ("plats/pt1_end.wav");
 }
 
 //====================================================================
@@ -600,7 +600,7 @@ void rotating_blocked (edict *self, edict *other)
     T_Damage (other, self, self, vec3_origin, other->s.origin, vec3_origin, self->dmg, 1, 0, MOD_CRUSH);
 }
 
-void rotating_touch (edict *self, edict *other, plane_t *plane, csurface_t *surf)
+void rotating_touch (edict *self, edict *other, plane_s *plane, csurface_s *surf)
 {
     if (self->avelocity[0] || self->avelocity[1] || self->avelocity[2])
         T_Damage (other, self, self, vec3_origin, other->s.origin, vec3_origin, self->dmg, 1, 0, MOD_CRUSH);
@@ -663,8 +663,8 @@ void SP_func_rotating (edict *ent)
     if (ent->spawnflags & 128)
         ent->s.effects |= EF_ANIM_ALLFAST;
 
-    gi.setmodel (ent, ent->model);
-    gi.linkentity (ent);
+    quake2::getInstance()->gi.setmodel (ent, ent->model);
+    quake2::getInstance()->gi.linkentity (ent);
 }
 
 /*
@@ -733,7 +733,7 @@ void button_fire (edict *self)
 
     self->moveinfo.state = STATE_UP;
     if (self->moveinfo.sound_start && !(self->flags & FL_TEAMSLAVE))
-        gi.sound (self, CHAN_NO_PHS_ADD+CHAN_VOICE, self->moveinfo.sound_start, 1, ATTN_STATIC, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_NO_PHS_ADD+CHAN_VOICE, self->moveinfo.sound_start, 1, ATTN_STATIC, 0);
     Move_Calc (self, self->moveinfo.end_origin, button_wait);
 }
 
@@ -743,7 +743,7 @@ void button_use (edict *self, edict *other, edict *activator)
     button_fire (self);
 }
 
-void button_touch (edict *self, edict *other, plane_t *plane, csurface_t *surf)
+void button_touch (edict *self, edict *other, plane_s *plane, csurface_s *surf)
 {
     if (!other->client)
         return;
@@ -771,10 +771,10 @@ void SP_func_button (edict *ent)
     G_SetMovedir (ent->s.angles, ent->movedir);
     ent->movetype = MOVETYPE_STOP;
     ent->solid = SOLID_BSP;
-    gi.setmodel (ent, ent->model);
+    quake2::getInstance()->gi.setmodel (ent, ent->model);
 
     if (ent->sounds != 1)
-        ent->moveinfo.sound_start = gi.soundindex ("switches/butn2.wav");
+        ent->moveinfo.sound_start = quake2::getInstance()->gi.soundindex ("switches/butn2.wav");
 
     if (!ent->speed)
         ent->speed = 40;
@@ -818,7 +818,7 @@ void SP_func_button (edict *ent)
     VectorCopy (ent->pos2, ent->moveinfo.end_origin);
     VectorCopy (ent->s.angles, ent->moveinfo.end_angles);
 
-    gi.linkentity (ent);
+    quake2::getInstance()->gi.linkentity (ent);
 }
 
 /*
@@ -863,7 +863,7 @@ void door_use_areaportals (edict *self, bool open)
     {
         if (Q_stricmp(t->classname, "func_areaportal") == 0)
         {
-            gi.SetAreaPortalState (t->style, open);
+            quake2::getInstance()->gi.SetAreaPortalState (t->style, open);
         }
     }
 }
@@ -875,7 +875,7 @@ void door_hit_top (edict *self)
     if (!(self->flags & FL_TEAMSLAVE))
     {
         if (self->moveinfo.sound_end)
-            gi.sound (self, CHAN_NO_PHS_ADD+CHAN_VOICE, self->moveinfo.sound_end, 1, ATTN_STATIC, 0);
+            quake2::getInstance()->gi.sound (self, CHAN_NO_PHS_ADD+CHAN_VOICE, self->moveinfo.sound_end, 1, ATTN_STATIC, 0);
         self->s.sound = 0;
     }
     self->moveinfo.state = STATE_TOP;
@@ -893,7 +893,7 @@ void door_hit_bottom (edict *self)
     if (!(self->flags & FL_TEAMSLAVE))
     {
         if (self->moveinfo.sound_end)
-            gi.sound (self, CHAN_NO_PHS_ADD+CHAN_VOICE, self->moveinfo.sound_end, 1, ATTN_STATIC, 0);
+            quake2::getInstance()->gi.sound (self, CHAN_NO_PHS_ADD+CHAN_VOICE, self->moveinfo.sound_end, 1, ATTN_STATIC, 0);
         self->s.sound = 0;
     }
     self->moveinfo.state = STATE_BOTTOM;
@@ -905,7 +905,7 @@ void door_go_down (edict *self)
     if (!(self->flags & FL_TEAMSLAVE))
     {
         if (self->moveinfo.sound_start)
-            gi.sound (self, CHAN_NO_PHS_ADD+CHAN_VOICE, self->moveinfo.sound_start, 1, ATTN_STATIC, 0);
+            quake2::getInstance()->gi.sound (self, CHAN_NO_PHS_ADD+CHAN_VOICE, self->moveinfo.sound_start, 1, ATTN_STATIC, 0);
         self->s.sound = self->moveinfo.sound_middle;
     }
     if (self->max_health)
@@ -936,7 +936,7 @@ void door_go_up (edict *self, edict *activator)
     if (!(self->flags & FL_TEAMSLAVE))
     {
         if (self->moveinfo.sound_start)
-            gi.sound (self, CHAN_NO_PHS_ADD+CHAN_VOICE, self->moveinfo.sound_start, 1, ATTN_STATIC, 0);
+            quake2::getInstance()->gi.sound (self, CHAN_NO_PHS_ADD+CHAN_VOICE, self->moveinfo.sound_start, 1, ATTN_STATIC, 0);
         self->s.sound = self->moveinfo.sound_middle;
     }
     self->moveinfo.state = STATE_UP;
@@ -980,7 +980,7 @@ void door_use (edict *self, edict *other, edict *activator)
     }
 };
 
-void Touch_DoorTrigger (edict *self, edict *other, plane_t *plane, csurface_t *surf)
+void Touch_DoorTrigger (edict *self, edict *other, plane_s *plane, csurface_s *surf)
 {
     if (other->health <= 0)
         return;
@@ -1068,7 +1068,7 @@ void Think_SpawnDoorTrigger (edict *ent)
     other->solid = SOLID_TRIGGER;
     other->movetype = MOVETYPE_NONE;
     other->touch = Touch_DoorTrigger;
-    gi.linkentity (other);
+    quake2::getInstance()->gi.linkentity (other);
 
     if (ent->spawnflags & DOOR_START_OPEN)
         door_use_areaportals (ent, true);
@@ -1125,7 +1125,7 @@ void door_killed (edict *self, edict *inflictor, edict *attacker, int damage, ve
     door_use (self->teammaster, attacker, attacker);
 }
 
-void door_touch (edict *self, edict *other, plane_t *plane, csurface_t *surf)
+void door_touch (edict *self, edict *other, plane_s *plane, csurface_s *surf)
 {
     if (!other->client)
         return;
@@ -1134,8 +1134,8 @@ void door_touch (edict *self, edict *other, plane_t *plane, csurface_t *surf)
         return;
     self->touch_debounce_time = level.time + 5.0;
 
-    gi.centerprintf (other, "%s", self->message);
-    gi.sound (other, CHAN_AUTO, gi.soundindex ("misc/talk1.wav"), 1, ATTN_NORM, 0);
+    quake2::getInstance()->gi.centerprintf (other, "%s", self->message);
+    quake2::getInstance()->gi.sound (other, CHAN_AUTO, quake2::getInstance()->gi.soundindex ("misc/talk1.wav"), 1, ATTN_NORM, 0);
 }
 
 void SP_func_door (edict *ent)
@@ -1144,15 +1144,15 @@ void SP_func_door (edict *ent)
 
     if (ent->sounds != 1)
     {
-        ent->moveinfo.sound_start = gi.soundindex  ("doors/dr1_strt.wav");
-        ent->moveinfo.sound_middle = gi.soundindex  ("doors/dr1_mid.wav");
-        ent->moveinfo.sound_end = gi.soundindex  ("doors/dr1_end.wav");
+        ent->moveinfo.sound_start = quake2::getInstance()->gi.soundindex  ("doors/dr1_strt.wav");
+        ent->moveinfo.sound_middle = quake2::getInstance()->gi.soundindex  ("doors/dr1_mid.wav");
+        ent->moveinfo.sound_end = quake2::getInstance()->gi.soundindex  ("doors/dr1_end.wav");
     }
 
     G_SetMovedir (ent->s.angles, ent->movedir);
     ent->movetype = MOVETYPE_PUSH;
     ent->solid = SOLID_BSP;
-    gi.setmodel (ent, ent->model);
+    quake2::getInstance()->gi.setmodel (ent, ent->model);
 
     ent->blocked = door_blocked;
     ent->use = door_use;
@@ -1200,7 +1200,7 @@ void SP_func_door (edict *ent)
     }
     else if (ent->targetname && ent->message)
     {
-        gi.soundindex ("misc/talk.wav");
+        quake2::getInstance()->gi.soundindex ("misc/talk.wav");
         ent->touch = door_touch;
     }
 
@@ -1222,7 +1222,7 @@ void SP_func_door (edict *ent)
     if (!ent->team)
         ent->teammaster = ent;
 
-    gi.linkentity (ent);
+    quake2::getInstance()->gi.linkentity (ent);
 
     ent->nextthink = level.time + FRAMETIME;
     if (ent->health || ent->targetname)
@@ -1280,7 +1280,7 @@ void SP_func_door_rotating (edict *ent)
 
     if (!st.distance)
     {
-        gi.dprintf("%s at %s with no distance set\n", ent->classname, vtos(ent->s.origin));
+        quake2::getInstance()->gi.dprintf("%s at %s with no distance set\n", ent->classname, vtos(ent->s.origin));
         st.distance = 90;
     }
 
@@ -1290,7 +1290,7 @@ void SP_func_door_rotating (edict *ent)
 
     ent->movetype = MOVETYPE_PUSH;
     ent->solid = SOLID_BSP;
-    gi.setmodel (ent, ent->model);
+    quake2::getInstance()->gi.setmodel (ent, ent->model);
 
     ent->blocked = door_blocked;
     ent->use = door_use;
@@ -1309,9 +1309,9 @@ void SP_func_door_rotating (edict *ent)
 
     if (ent->sounds != 1)
     {
-        ent->moveinfo.sound_start = gi.soundindex  ("doors/dr1_strt.wav");
-        ent->moveinfo.sound_middle = gi.soundindex  ("doors/dr1_mid.wav");
-        ent->moveinfo.sound_end = gi.soundindex  ("doors/dr1_end.wav");
+        ent->moveinfo.sound_start = quake2::getInstance()->gi.soundindex  ("doors/dr1_strt.wav");
+        ent->moveinfo.sound_middle = quake2::getInstance()->gi.soundindex  ("doors/dr1_mid.wav");
+        ent->moveinfo.sound_end = quake2::getInstance()->gi.soundindex  ("doors/dr1_end.wav");
     }
 
     // if it starts open, switch the positions
@@ -1332,7 +1332,7 @@ void SP_func_door_rotating (edict *ent)
 
     if (ent->targetname && ent->message)
     {
-        gi.soundindex ("misc/talk.wav");
+        quake2::getInstance()->gi.soundindex ("misc/talk.wav");
         ent->touch = door_touch;
     }
 
@@ -1353,7 +1353,7 @@ void SP_func_door_rotating (edict *ent)
     if (!ent->team)
         ent->teammaster = ent;
 
-    gi.linkentity (ent);
+    quake2::getInstance()->gi.linkentity (ent);
 
     ent->nextthink = level.time + FRAMETIME;
     if (ent->health || ent->targetname)
@@ -1385,7 +1385,7 @@ void SP_func_water (edict *self)
     G_SetMovedir (self->s.angles, self->movedir);
     self->movetype = MOVETYPE_PUSH;
     self->solid = SOLID_BSP;
-    gi.setmodel (self, self->model);
+    quake2::getInstance()->gi.setmodel (self, self->model);
 
     switch (self->sounds)
     {
@@ -1393,13 +1393,13 @@ void SP_func_water (edict *self)
             break;
 
         case 1: // water
-            self->moveinfo.sound_start = gi.soundindex  ("world/mov_watr.wav");
-            self->moveinfo.sound_end = gi.soundindex  ("world/stp_watr.wav");
+            self->moveinfo.sound_start = quake2::getInstance()->gi.soundindex  ("world/mov_watr.wav");
+            self->moveinfo.sound_end = quake2::getInstance()->gi.soundindex  ("world/stp_watr.wav");
             break;
 
         case 2: // lava
-            self->moveinfo.sound_start = gi.soundindex  ("world/mov_watr.wav");
-            self->moveinfo.sound_end = gi.soundindex  ("world/stp_watr.wav");
+            self->moveinfo.sound_start = quake2::getInstance()->gi.soundindex  ("world/mov_watr.wav");
+            self->moveinfo.sound_end = quake2::getInstance()->gi.soundindex  ("world/stp_watr.wav");
             break;
     }
 
@@ -1441,7 +1441,7 @@ void SP_func_water (edict *self)
 
     self->classname = "func_door";
 
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 }
 
 
@@ -1518,7 +1518,7 @@ void train_wait (edict *self)
         if (!(self->flags & FL_TEAMSLAVE))
         {
             if (self->moveinfo.sound_end)
-                gi.sound (self, CHAN_NO_PHS_ADD+CHAN_VOICE, self->moveinfo.sound_end, 1, ATTN_STATIC, 0);
+                quake2::getInstance()->gi.sound (self, CHAN_NO_PHS_ADD+CHAN_VOICE, self->moveinfo.sound_end, 1, ATTN_STATIC, 0);
             self->s.sound = 0;
         }
     }
@@ -1539,14 +1539,14 @@ void train_next (edict *self)
 again:
     if (!self->target)
     {
-//        gi.dprintf ("train_next: no next target\n");
+//        quake2::getInstance()->gi.dprintf ("train_next: no next target\n");
         return;
     }
 
     ent = G_PickTarget (self->target);
     if (!ent)
     {
-        gi.dprintf ("train_next: bad target %s\n", self->target);
+        quake2::getInstance()->gi.dprintf ("train_next: bad target %s\n", self->target);
         return;
     }
 
@@ -1557,13 +1557,13 @@ again:
     {
         if (!first)
         {
-            gi.dprintf ("connected teleport path_corners, see %s at %s\n", ent->classname, vtos(ent->s.origin));
+            quake2::getInstance()->gi.dprintf ("connected teleport path_corners, see %s at %s\n", ent->classname, vtos(ent->s.origin));
             return;
         }
         first = false;
         VectorSubtract (ent->s.origin, self->mins, self->s.origin);
         VectorCopy (self->s.origin, self->s.old_origin);
-        gi.linkentity (self);
+        quake2::getInstance()->gi.linkentity (self);
         goto again;
     }
 
@@ -1573,7 +1573,7 @@ again:
     if (!(self->flags & FL_TEAMSLAVE))
     {
         if (self->moveinfo.sound_start)
-            gi.sound (self, CHAN_NO_PHS_ADD+CHAN_VOICE, self->moveinfo.sound_start, 1, ATTN_STATIC, 0);
+            quake2::getInstance()->gi.sound (self, CHAN_NO_PHS_ADD+CHAN_VOICE, self->moveinfo.sound_start, 1, ATTN_STATIC, 0);
         self->s.sound = self->moveinfo.sound_middle;
     }
 
@@ -1606,19 +1606,19 @@ void func_train_find (edict *self)
 
     if (!self->target)
     {
-        gi.dprintf ("train_find: no target\n");
+        quake2::getInstance()->gi.dprintf ("train_find: no target\n");
         return;
     }
     ent = G_PickTarget (self->target);
     if (!ent)
     {
-        gi.dprintf ("train_find: target %s not found\n", self->target);
+        quake2::getInstance()->gi.dprintf ("train_find: target %s not found\n", self->target);
         return;
     }
     self->target = ent->target;
 
     VectorSubtract (ent->s.origin, self->mins, self->s.origin);
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 
     // if not triggered, start immediately
     if (!self->targetname)
@@ -1667,10 +1667,10 @@ void SP_func_train (edict *self)
             self->dmg = 100;
     }
     self->solid = SOLID_BSP;
-    gi.setmodel (self, self->model);
+    quake2::getInstance()->gi.setmodel (self, self->model);
 
     if (st.noise)
-        self->moveinfo.sound_middle = gi.soundindex  (st.noise);
+        self->moveinfo.sound_middle = quake2::getInstance()->gi.soundindex  (st.noise);
 
     if (!self->speed)
         self->speed = 100;
@@ -1680,7 +1680,7 @@ void SP_func_train (edict *self)
 
     self->use = train_use;
 
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 
     if (self->target)
     {
@@ -1691,7 +1691,7 @@ void SP_func_train (edict *self)
     }
     else
     {
-        gi.dprintf ("func_train without a target at %s\n", vtos(self->absmin));
+        quake2::getInstance()->gi.dprintf ("func_train without a target at %s\n", vtos(self->absmin));
     }
 }
 
@@ -1704,20 +1704,20 @@ void trigger_elevator_use (edict *self, edict *other, edict *activator)
 
     if (self->movetarget->nextthink)
     {
-//        gi.dprintf("elevator busy\n");
+//        quake2::getInstance()->gi.dprintf("elevator busy\n");
         return;
     }
 
     if (!other->pathtarget)
     {
-        gi.dprintf("elevator used with no pathtarget\n");
+        quake2::getInstance()->gi.dprintf("elevator used with no pathtarget\n");
         return;
     }
 
     target = G_PickTarget (other->pathtarget);
     if (!target)
     {
-        gi.dprintf("elevator used with bad pathtarget: %s\n", other->pathtarget);
+        quake2::getInstance()->gi.dprintf("elevator used with bad pathtarget: %s\n", other->pathtarget);
         return;
     }
 
@@ -1729,18 +1729,18 @@ void trigger_elevator_init (edict *self)
 {
     if (!self->target)
     {
-        gi.dprintf("trigger_elevator has no target\n");
+        quake2::getInstance()->gi.dprintf("trigger_elevator has no target\n");
         return;
     }
     self->movetarget = G_PickTarget (self->target);
     if (!self->movetarget)
     {
-        gi.dprintf("trigger_elevator unable to find target %s\n", self->target);
+        quake2::getInstance()->gi.dprintf("trigger_elevator unable to find target %s\n", self->target);
         return;
     }
     if (strcmp(self->movetarget->classname, "func_train") != 0)
     {
-        gi.dprintf("trigger_elevator target %s is not a train\n", self->target);
+        quake2::getInstance()->gi.dprintf("trigger_elevator target %s is not a train\n", self->target);
         return;
     }
 
@@ -1805,7 +1805,7 @@ void SP_func_timer (edict *self)
     if (self->random >= self->wait)
     {
         self->random = self->wait - FRAMETIME;
-        gi.dprintf("func_timer at %s has random >= wait\n", vtos(self->s.origin));
+        quake2::getInstance()->gi.dprintf("func_timer at %s has random >= wait\n", vtos(self->s.origin));
     }
 
     if (self->spawnflags & 1)
@@ -1854,9 +1854,9 @@ void SP_func_conveyor (edict *self)
 
     self->use = func_conveyor_use;
 
-    gi.setmodel (self, self->model);
+    quake2::getInstance()->gi.setmodel (self, self->model);
     self->solid = SOLID_BSP;
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 }
 
 
@@ -1972,13 +1972,13 @@ void SP_func_door_secret (edict *ent)
     float    width;
     float    length;
 
-    ent->moveinfo.sound_start = gi.soundindex  ("doors/dr1_strt.wav");
-    ent->moveinfo.sound_middle = gi.soundindex  ("doors/dr1_mid.wav");
-    ent->moveinfo.sound_end = gi.soundindex  ("doors/dr1_end.wav");
+    ent->moveinfo.sound_start = quake2::getInstance()->gi.soundindex  ("doors/dr1_strt.wav");
+    ent->moveinfo.sound_middle = quake2::getInstance()->gi.soundindex  ("doors/dr1_mid.wav");
+    ent->moveinfo.sound_end = quake2::getInstance()->gi.soundindex  ("doors/dr1_end.wav");
 
     ent->movetype = MOVETYPE_PUSH;
     ent->solid = SOLID_BSP;
-    gi.setmodel (ent, ent->model);
+    quake2::getInstance()->gi.setmodel (ent, ent->model);
 
     ent->blocked = door_secret_blocked;
     ent->use = door_secret_use;
@@ -2023,13 +2023,13 @@ void SP_func_door_secret (edict *ent)
     }
     else if (ent->targetname && ent->message)
     {
-        gi.soundindex ("misc/talk.wav");
+        quake2::getInstance()->gi.soundindex ("misc/talk.wav");
         ent->touch = door_touch;
     }
 
     ent->classname = "func_door";
 
-    gi.linkentity (ent);
+    quake2::getInstance()->gi.linkentity (ent);
 }
 
 
@@ -2043,7 +2043,7 @@ void use_killbox (edict *self, edict *other, edict *activator)
 
 void SP_func_killbox (edict *ent)
 {
-    gi.setmodel (ent, ent->model);
+    quake2::getInstance()->gi.setmodel (ent, ent->model);
     ent->use = use_killbox;
     ent->svflags = SVF_NOCLIENT;
 }

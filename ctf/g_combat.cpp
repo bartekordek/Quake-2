@@ -39,7 +39,7 @@ bool CanDamage (edict *targ, edict *inflictor)
     {
         VectorAdd (targ->absmin, targ->absmax, dest);
         VectorScale (dest, 0.5, dest);
-        trace = gi.trace (inflictor->s.origin, vec3_origin, vec3_origin, dest, inflictor, MASK_SOLID);
+        trace = quake2::getInstance()->gi.trace (inflictor->s.origin, vec3_origin, vec3_origin, dest, inflictor, MASK_SOLID);
         if (trace.fraction == 1.0)
             return true;
         if (trace.ent == targ)
@@ -47,35 +47,35 @@ bool CanDamage (edict *targ, edict *inflictor)
         return false;
     }
 
-    trace = gi.trace (inflictor->s.origin, vec3_origin, vec3_origin, targ->s.origin, inflictor, MASK_SOLID);
+    trace = quake2::getInstance()->gi.trace (inflictor->s.origin, vec3_origin, vec3_origin, targ->s.origin, inflictor, MASK_SOLID);
     if (trace.fraction == 1.0)
         return true;
 
     VectorCopy (targ->s.origin, dest);
     dest[0] += 15.0;
     dest[1] += 15.0;
-    trace = gi.trace (inflictor->s.origin, vec3_origin, vec3_origin, dest, inflictor, MASK_SOLID);
+    trace = quake2::getInstance()->gi.trace (inflictor->s.origin, vec3_origin, vec3_origin, dest, inflictor, MASK_SOLID);
     if (trace.fraction == 1.0)
         return true;
 
     VectorCopy (targ->s.origin, dest);
     dest[0] += 15.0;
     dest[1] -= 15.0;
-    trace = gi.trace (inflictor->s.origin, vec3_origin, vec3_origin, dest, inflictor, MASK_SOLID);
+    trace = quake2::getInstance()->gi.trace (inflictor->s.origin, vec3_origin, vec3_origin, dest, inflictor, MASK_SOLID);
     if (trace.fraction == 1.0)
         return true;
 
     VectorCopy (targ->s.origin, dest);
     dest[0] -= 15.0;
     dest[1] += 15.0;
-    trace = gi.trace (inflictor->s.origin, vec3_origin, vec3_origin, dest, inflictor, MASK_SOLID);
+    trace = quake2::getInstance()->gi.trace (inflictor->s.origin, vec3_origin, vec3_origin, dest, inflictor, MASK_SOLID);
     if (trace.fraction == 1.0)
         return true;
 
     VectorCopy (targ->s.origin, dest);
     dest[0] -= 15.0;
     dest[1] -= 15.0;
-    trace = gi.trace (inflictor->s.origin, vec3_origin, vec3_origin, dest, inflictor, MASK_SOLID);
+    trace = quake2::getInstance()->gi.trace (inflictor->s.origin, vec3_origin, vec3_origin, dest, inflictor, MASK_SOLID);
     if (trace.fraction == 1.0)
         return true;
 
@@ -135,12 +135,12 @@ void SpawnDamage (int type, vec3_t origin, vec3_t normal, int damage)
 {
     if (damage > 255)
         damage = 255;
-    gi.WriteByte (svc_temp_entity);
-    gi.WriteByte (type);
-//    gi.WriteByte (damage);
-    gi.WritePosition (origin);
-    gi.WriteDir (normal);
-    gi.multicast (origin, MULTICAST_PVS);
+    quake2::getInstance()->gi.WriteByte (svc_temp_entity);
+    quake2::getInstance()->gi.WriteByte (type);
+//    quake2::getInstance()->gi.WriteByte (damage);
+    quake2::getInstance()->gi.WritePosition (origin);
+    quake2::getInstance()->gi.WriteDir (normal);
+    quake2::getInstance()->gi.multicast (origin, multicast_t::MULTICAST_PVS);
 }
 
 
@@ -465,7 +465,7 @@ void T_Damage (edict *targ, edict *inflictor, edict *attacker, vec3_t dir, vec3_
     {
         if (targ->pain_debounce_time < level.time)
         {
-            gi.sound(targ, CHAN_ITEM, gi.soundindex("items/protect4.wav"), 1, ATTN_NORM, 0);
+            quake2::getInstance()->gi.sound(targ, CHAN_ITEM, quake2::getInstance()->gi.soundindex("items/protect4.wav"), 1, ATTN_NORM, 0);
             targ->pain_debounce_time = level.time + 2;
         }
         take = 0;

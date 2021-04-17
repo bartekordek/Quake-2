@@ -16,7 +16,7 @@
 // times !!!
 //
 
-// plane_t structure
+// plane_s structure
 // !!! if this is changed, it must be changed in model.h too !!!
 // !!! if the size of this is changed, the array lookup in SV_HullPointContents
 //     must be changed too !!!

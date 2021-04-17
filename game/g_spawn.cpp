@@ -284,7 +284,7 @@ void ED_CallSpawn (edict *ent)
 
     if (!ent->classname)
     {
-        gi.dprintf ("ED_CallSpawn: NULL classname\n");
+        quake2::getInstance()->gi.dprintf ("ED_CallSpawn: NULL classname\n");
         return;
     }
 
@@ -309,7 +309,7 @@ void ED_CallSpawn (edict *ent)
             return;
         }
     }
-    gi.dprintf ("%s doesn't have a spawn function\n", ent->classname);
+    quake2::getInstance()->gi.dprintf ("%s doesn't have a spawn function\n", ent->classname);
 }
 
 char* ED_NewString (char *string)
@@ -319,7 +319,7 @@ char* ED_NewString (char *string)
 
     l = strlen(string) + 1;
 
-    newb = (char*)gi.TagMalloc (l, TAG_LEVEL);
+    newb = (char*)quake2::getInstance()->gi.TagMalloc (l, TAG_LEVEL);
 
     new_p = newb;
 
@@ -401,7 +401,7 @@ void ED_ParseField (char *key, char *value, edict *ent)
             return;
         }
     }
-    //gi.dprintf ("%s is not a field\n", key);
+    //quake2::getInstance()->gi.dprintf ("%s is not a field\n", key);
 }
 
 /*
@@ -429,17 +429,17 @@ char *ED_ParseEdict (char *data, edict *ent)
         if (com_token[0] == '}')
             break;
         if (!data)
-            gi.error ("ED_ParseEntity: EOF without closing brace");
+            quake2::getInstance()->gi.error ("ED_ParseEntity: EOF without closing brace");
 
         strncpy (keyname, com_token, sizeof(keyname)-1);
 
     // parse value
         com_token = COM_Parse (&data);
         if (!data)
-            gi.error ("ED_ParseEntity: EOF without closing brace");
+            quake2::getInstance()->gi.error ("ED_ParseEntity: EOF without closing brace");
 
         if (com_token[0] == '}')
-            gi.error ("ED_ParseEntity: closing brace without data");
+            quake2::getInstance()->gi.error ("ED_ParseEntity: closing brace without data");
 
         init = true;
 
@@ -507,7 +507,7 @@ void G_FindTeams (void)
         }
     }
 
-    gi.dprintf ("%i teams with %i entities\n", c, c2);
+    quake2::getInstance()->gi.dprintf ("%i teams with %i entities\n", c, c2);
 }
 
 /*
@@ -532,11 +532,11 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
     if (skill_level > 3)
         skill_level = 3;
     if (skill->value != skill_level)
-        gi.cvar_forceset("skill", va("%f", skill_level));
+        quake2::getInstance()->gi.cvar_forceset("skill", va("%f", skill_level));
 
     SaveClientData ();
 
-    gi.FreeTags (TAG_LEVEL);
+    quake2::getInstance()->gi.FreeTags (TAG_LEVEL);
 
     memset (&level, 0, sizeof(level));
     memset (g_edicts, 0, game.maxentities * sizeof (g_edicts[0]));
@@ -559,7 +559,7 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
         if (!entities)
             break;
         if (com_token[0] != '{')
-            gi.error ("ED_LoadFromFile: found %s when expecting {",com_token);
+            quake2::getInstance()->gi.error ("ED_LoadFromFile: found %s when expecting {",com_token);
 
         if (!ent)
             ent = g_edicts;
@@ -603,7 +603,7 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
         ED_CallSpawn (ent);
     }
 
-    gi.dprintf ("%i entities inhibited\n", inhibit);
+    quake2::getInstance()->gi.dprintf ("%i entities inhibited\n", inhibit);
 
 #ifdef DEBUG
     i = 1;
@@ -816,170 +816,170 @@ void SP_worldspawn (edict *ent)
 
     if (ent->message && ent->message[0])
     {
-        gi.configstring (CS_NAME, ent->message);
+        quake2::getInstance()->gi.configstring (CS_NAME, ent->message);
         strncpy (level.level_name, ent->message, sizeof(level.level_name));
     }
     else
         strncpy (level.level_name, level.mapname, sizeof(level.level_name));
 
     if (st.sky && st.sky[0])
-        gi.configstring (CS_SKY, st.sky);
+        quake2::getInstance()->gi.configstring (CS_SKY, st.sky);
     else
-        gi.configstring (CS_SKY, "unit1_");
+        quake2::getInstance()->gi.configstring (CS_SKY, "unit1_");
 
-    gi.configstring (CS_SKYROTATE, va("%f", st.skyrotate) );
+    quake2::getInstance()->gi.configstring (CS_SKYROTATE, va("%f", st.skyrotate) );
 
-    gi.configstring (CS_SKYAXIS, va("%f %f %f",
+    quake2::getInstance()->gi.configstring (CS_SKYAXIS, va("%f %f %f",
         st.skyaxis[0], st.skyaxis[1], st.skyaxis[2]) );
 
-    gi.configstring (CS_CDTRACK, va("%i", ent->sounds) );
+    quake2::getInstance()->gi.configstring (CS_CDTRACK, va("%i", ent->sounds) );
 
-    gi.configstring (CS_MAXCLIENTS, va("%i", (int)(maxclients->value) ) );
+    quake2::getInstance()->gi.configstring (CS_MAXCLIENTS, va("%i", (int)(maxclients->value) ) );
 
     // status bar program
     if (deathmatch->value)
-        gi.configstring (CS_STATUSBAR, dm_statusbar);
+        quake2::getInstance()->gi.configstring (CS_STATUSBAR, dm_statusbar);
     else
-        gi.configstring (CS_STATUSBAR, single_statusbar);
+        quake2::getInstance()->gi.configstring (CS_STATUSBAR, single_statusbar);
 
     //---------------
 
 
     // help icon for statusbar
-    gi.imageindex ("i_help");
-    level.pic_health = gi.imageindex ("i_health");
-    gi.imageindex ("help");
-    gi.imageindex ("field_3");
+    quake2::getInstance()->gi.imageindex ("i_help");
+    level.pic_health = quake2::getInstance()->gi.imageindex ("i_health");
+    quake2::getInstance()->gi.imageindex ("help");
+    quake2::getInstance()->gi.imageindex ("field_3");
 
     if (!st.gravity)
-        gi.cvar_set("sv_gravity", "800");
+        quake2::getInstance()->gi.cvar_set("sv_gravity", "800");
     else
-        gi.cvar_set("sv_gravity", st.gravity);
+        quake2::getInstance()->gi.cvar_set("sv_gravity", st.gravity);
 
-    snd_fry = gi.soundindex ("player/fry.wav");    // standing in lava / slime
+    snd_fry = quake2::getInstance()->gi.soundindex ("player/fry.wav");    // standing in lava / slime
 
     PrecacheItem (FindItem ("Blaster"));
 
-    gi.soundindex ("player/lava1.wav");
-    gi.soundindex ("player/lava2.wav");
+    quake2::getInstance()->gi.soundindex ("player/lava1.wav");
+    quake2::getInstance()->gi.soundindex ("player/lava2.wav");
 
-    gi.soundindex ("misc/pc_up.wav");
-    gi.soundindex ("misc/talk1.wav");
+    quake2::getInstance()->gi.soundindex ("misc/pc_up.wav");
+    quake2::getInstance()->gi.soundindex ("misc/talk1.wav");
 
-    gi.soundindex ("misc/udeath.wav");
+    quake2::getInstance()->gi.soundindex ("misc/udeath.wav");
 
     // gibs
-    gi.soundindex ("items/respawn1.wav");
+    quake2::getInstance()->gi.soundindex ("items/respawn1.wav");
 
     // sexed sounds
-    gi.soundindex ("*death1.wav");
-    gi.soundindex ("*death2.wav");
-    gi.soundindex ("*death3.wav");
-    gi.soundindex ("*death4.wav");
-    gi.soundindex ("*fall1.wav");
-    gi.soundindex ("*fall2.wav");
-    gi.soundindex ("*gurp1.wav");        // drowning damage
-    gi.soundindex ("*gurp2.wav");
-    gi.soundindex ("*jump1.wav");        // player jump
-    gi.soundindex ("*pain25_1.wav");
-    gi.soundindex ("*pain25_2.wav");
-    gi.soundindex ("*pain50_1.wav");
-    gi.soundindex ("*pain50_2.wav");
-    gi.soundindex ("*pain75_1.wav");
-    gi.soundindex ("*pain75_2.wav");
-    gi.soundindex ("*pain100_1.wav");
-    gi.soundindex ("*pain100_2.wav");
+    quake2::getInstance()->gi.soundindex ("*death1.wav");
+    quake2::getInstance()->gi.soundindex ("*death2.wav");
+    quake2::getInstance()->gi.soundindex ("*death3.wav");
+    quake2::getInstance()->gi.soundindex ("*death4.wav");
+    quake2::getInstance()->gi.soundindex ("*fall1.wav");
+    quake2::getInstance()->gi.soundindex ("*fall2.wav");
+    quake2::getInstance()->gi.soundindex ("*gurp1.wav");        // drowning damage
+    quake2::getInstance()->gi.soundindex ("*gurp2.wav");
+    quake2::getInstance()->gi.soundindex ("*jump1.wav");        // player jump
+    quake2::getInstance()->gi.soundindex ("*pain25_1.wav");
+    quake2::getInstance()->gi.soundindex ("*pain25_2.wav");
+    quake2::getInstance()->gi.soundindex ("*pain50_1.wav");
+    quake2::getInstance()->gi.soundindex ("*pain50_2.wav");
+    quake2::getInstance()->gi.soundindex ("*pain75_1.wav");
+    quake2::getInstance()->gi.soundindex ("*pain75_2.wav");
+    quake2::getInstance()->gi.soundindex ("*pain100_1.wav");
+    quake2::getInstance()->gi.soundindex ("*pain100_2.wav");
 
     // sexed models
     // THIS ORDER MUST MATCH THE DEFINES IN g_local.h
     // you can add more, max 15
-    gi.modelindex ("#w_blaster.md2");
-    gi.modelindex ("#w_shotgun.md2");
-    gi.modelindex ("#w_sshotgun.md2");
-    gi.modelindex ("#w_machinegun.md2");
-    gi.modelindex ("#w_chaingun.md2");
-    gi.modelindex ("#a_grenades.md2");
-    gi.modelindex ("#w_glauncher.md2");
-    gi.modelindex ("#w_rlauncher.md2");
-    gi.modelindex ("#w_hyperblaster.md2");
-    gi.modelindex ("#w_railgun.md2");
-    gi.modelindex ("#w_bfg.md2");
+    quake2::getInstance()->gi.modelindex ("#w_blaster.md2");
+    quake2::getInstance()->gi.modelindex ("#w_shotgun.md2");
+    quake2::getInstance()->gi.modelindex ("#w_sshotgun.md2");
+    quake2::getInstance()->gi.modelindex ("#w_machinegun.md2");
+    quake2::getInstance()->gi.modelindex ("#w_chaingun.md2");
+    quake2::getInstance()->gi.modelindex ("#a_grenades.md2");
+    quake2::getInstance()->gi.modelindex ("#w_glauncher.md2");
+    quake2::getInstance()->gi.modelindex ("#w_rlauncher.md2");
+    quake2::getInstance()->gi.modelindex ("#w_hyperblaster.md2");
+    quake2::getInstance()->gi.modelindex ("#w_railgun.md2");
+    quake2::getInstance()->gi.modelindex ("#w_bfg.md2");
 
     //-------------------
 
-    gi.soundindex ("player/gasp1.wav");        // gasping for air
-    gi.soundindex ("player/gasp2.wav");        // head breaking surface, not gasping
+    quake2::getInstance()->gi.soundindex ("player/gasp1.wav");        // gasping for air
+    quake2::getInstance()->gi.soundindex ("player/gasp2.wav");        // head breaking surface, not gasping
 
-    gi.soundindex ("player/watr_in.wav");    // feet hitting water
-    gi.soundindex ("player/watr_out.wav");    // feet leaving water
+    quake2::getInstance()->gi.soundindex ("player/watr_in.wav");    // feet hitting water
+    quake2::getInstance()->gi.soundindex ("player/watr_out.wav");    // feet leaving water
 
-    gi.soundindex ("player/watr_un.wav");    // head going underwater
+    quake2::getInstance()->gi.soundindex ("player/watr_un.wav");    // head going underwater
 
-    gi.soundindex ("player/u_breath1.wav");
-    gi.soundindex ("player/u_breath2.wav");
+    quake2::getInstance()->gi.soundindex ("player/u_breath1.wav");
+    quake2::getInstance()->gi.soundindex ("player/u_breath2.wav");
 
-    gi.soundindex ("items/pkup.wav");        // bonus item pickup
-    gi.soundindex ("world/land.wav");        // landing thud
-    gi.soundindex ("misc/h2ohit1.wav");        // landing splash
+    quake2::getInstance()->gi.soundindex ("items/pkup.wav");        // bonus item pickup
+    quake2::getInstance()->gi.soundindex ("world/land.wav");        // landing thud
+    quake2::getInstance()->gi.soundindex ("misc/h2ohit1.wav");        // landing splash
 
-    gi.soundindex ("items/damage.wav");
-    gi.soundindex ("items/protect.wav");
-    gi.soundindex ("items/protect4.wav");
-    gi.soundindex ("weapons/noammo.wav");
+    quake2::getInstance()->gi.soundindex ("items/damage.wav");
+    quake2::getInstance()->gi.soundindex ("items/protect.wav");
+    quake2::getInstance()->gi.soundindex ("items/protect4.wav");
+    quake2::getInstance()->gi.soundindex ("weapons/noammo.wav");
 
-    gi.soundindex ("infantry/inflies1.wav");
+    quake2::getInstance()->gi.soundindex ("infantry/inflies1.wav");
 
-    sm_meat_index = gi.modelindex ("models/objects/gibs/sm_meat/tris.md2");
-    gi.modelindex ("models/objects/gibs/arm/tris.md2");
-    gi.modelindex ("models/objects/gibs/bone/tris.md2");
-    gi.modelindex ("models/objects/gibs/bone2/tris.md2");
-    gi.modelindex ("models/objects/gibs/chest/tris.md2");
-    gi.modelindex ("models/objects/gibs/skull/tris.md2");
-    gi.modelindex ("models/objects/gibs/head2/tris.md2");
+    sm_meat_index = quake2::getInstance()->gi.modelindex ("models/objects/gibs/sm_meat/tris.md2");
+    quake2::getInstance()->gi.modelindex ("models/objects/gibs/arm/tris.md2");
+    quake2::getInstance()->gi.modelindex ("models/objects/gibs/bone/tris.md2");
+    quake2::getInstance()->gi.modelindex ("models/objects/gibs/bone2/tris.md2");
+    quake2::getInstance()->gi.modelindex ("models/objects/gibs/chest/tris.md2");
+    quake2::getInstance()->gi.modelindex ("models/objects/gibs/skull/tris.md2");
+    quake2::getInstance()->gi.modelindex ("models/objects/gibs/head2/tris.md2");
 
 //
 // Setup light animation tables. 'a' is total darkness, 'z' is doublebright.
 //
 
     // 0 normal
-    gi.configstring(CS_LIGHTS+0, "m");
+    quake2::getInstance()->gi.configstring(CS_LIGHTS+0, "m");
 
     // 1 FLICKER (first variety)
-    gi.configstring(CS_LIGHTS+1, "mmnmmommommnonmmonqnmmo");
+    quake2::getInstance()->gi.configstring(CS_LIGHTS+1, "mmnmmommommnonmmonqnmmo");
 
     // 2 SLOW STRONG PULSE
-    gi.configstring(CS_LIGHTS+2, "abcdefghijklmnopqrstuvwxyzyxwvutsrqponmlkjihgfedcba");
+    quake2::getInstance()->gi.configstring(CS_LIGHTS+2, "abcdefghijklmnopqrstuvwxyzyxwvutsrqponmlkjihgfedcba");
 
     // 3 CANDLE (first variety)
-    gi.configstring(CS_LIGHTS+3, "mmmmmaaaaammmmmaaaaaabcdefgabcdefg");
+    quake2::getInstance()->gi.configstring(CS_LIGHTS+3, "mmmmmaaaaammmmmaaaaaabcdefgabcdefg");
 
     // 4 FAST STROBE
-    gi.configstring(CS_LIGHTS+4, "mamamamamama");
+    quake2::getInstance()->gi.configstring(CS_LIGHTS+4, "mamamamamama");
 
     // 5 GENTLE PULSE 1
-    gi.configstring(CS_LIGHTS+5,"jklmnopqrstuvwxyzyxwvutsrqponmlkj");
+    quake2::getInstance()->gi.configstring(CS_LIGHTS+5,"jklmnopqrstuvwxyzyxwvutsrqponmlkj");
 
     // 6 FLICKER (second variety)
-    gi.configstring(CS_LIGHTS+6, "nmonqnmomnmomomno");
+    quake2::getInstance()->gi.configstring(CS_LIGHTS+6, "nmonqnmomnmomomno");
 
     // 7 CANDLE (second variety)
-    gi.configstring(CS_LIGHTS+7, "mmmaaaabcdefgmmmmaaaammmaamm");
+    quake2::getInstance()->gi.configstring(CS_LIGHTS+7, "mmmaaaabcdefgmmmmaaaammmaamm");
 
     // 8 CANDLE (third variety)
-    gi.configstring(CS_LIGHTS+8, "mmmaaammmaaammmabcdefaaaammmmabcdefmmmaaaa");
+    quake2::getInstance()->gi.configstring(CS_LIGHTS+8, "mmmaaammmaaammmabcdefaaaammmmabcdefmmmaaaa");
 
     // 9 SLOW STROBE (fourth variety)
-    gi.configstring(CS_LIGHTS+9, "aaaaaaaazzzzzzzz");
+    quake2::getInstance()->gi.configstring(CS_LIGHTS+9, "aaaaaaaazzzzzzzz");
 
     // 10 FLUORESCENT FLICKER
-    gi.configstring(CS_LIGHTS+10, "mmamammmmammamamaaamammma");
+    quake2::getInstance()->gi.configstring(CS_LIGHTS+10, "mmamammmmammamamaaamammma");
 
     // 11 SLOW PULSE NOT FADE TO BLACK
-    gi.configstring(CS_LIGHTS+11, "abcdefghijklmnopqrrqponmlkjihgfedcba");
+    quake2::getInstance()->gi.configstring(CS_LIGHTS+11, "abcdefghijklmnopqrrqponmlkjihgfedcba");
 
     // styles 32-62 are assigned by the light program for switchable lights
 
     // 63 testing
-    gi.configstring(CS_LIGHTS+63, "a");
+    quake2::getInstance()->gi.configstring(CS_LIGHTS+63, "a");
 }
 

@@ -47,12 +47,12 @@ static int    sound_melee3;
 
 void brain_sight (edict *self, edict *other)
 {
-    gi.sound (self, CHAN_VOICE, sound_sight, 1, ATTN_NORM, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_sight, 1, ATTN_NORM, 0);
 }
 
 void brain_search (edict *self)
 {
-    gi.sound (self, CHAN_VOICE, sound_search, 1, ATTN_NORM, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_search, 1, ATTN_NORM, 0);
 }
 
 
@@ -150,7 +150,7 @@ mmove_t brain_move_idle = {FRAME_stand31, FRAME_stand60, brain_frames_idle, brai
 
 void brain_idle (edict *self)
 {
-    gi.sound (self, CHAN_AUTO, sound_idle3, 1, ATTN_IDLE, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_AUTO, sound_idle3, 1, ATTN_IDLE, 0);
     self->monsterinfo.currentmove = &brain_move_idle;
 }
 
@@ -317,7 +317,7 @@ void brain_duck_down (edict *self)
     self->monsterinfo.aiflags |= AI_DUCKED;
     self->maxs[2] -= 32;
     self->takedamage = DAMAGE_YES;
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 }
 
 void brain_duck_hold (edict *self)
@@ -333,7 +333,7 @@ void brain_duck_up (edict *self)
     self->monsterinfo.aiflags &= ~AI_DUCKED;
     self->maxs[2] += 32;
     self->takedamage = DAMAGE_AIM;
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 }
 
 mframe_t brain_frames_duck [] =
@@ -402,7 +402,7 @@ mmove_t brain_move_death1 = {FRAME_death101, FRAME_death118, brain_frames_death1
 
 void brain_swing_right (edict *self)
 {
-    gi.sound (self, CHAN_BODY, sound_melee1, 1, ATTN_NORM, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_BODY, sound_melee1, 1, ATTN_NORM, 0);
 }
 
 void brain_hit_right (edict *self)
@@ -411,12 +411,12 @@ void brain_hit_right (edict *self)
 
     VectorSet (aim, MELEE_DISTANCE, self->maxs[0], 8);
     if (fire_hit (self, aim, (15 + (rand() %5)), 40))
-        gi.sound (self, CHAN_WEAPON, sound_melee3, 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_WEAPON, sound_melee3, 1, ATTN_NORM, 0);
 }
 
 void brain_swing_left (edict *self)
 {
-    gi.sound (self, CHAN_BODY, sound_melee2, 1, ATTN_NORM, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_BODY, sound_melee2, 1, ATTN_NORM, 0);
 }
 
 void brain_hit_left (edict *self)
@@ -425,7 +425,7 @@ void brain_hit_left (edict *self)
 
     VectorSet (aim, MELEE_DISTANCE, self->mins[0], 8);
     if (fire_hit (self, aim, (15 + (rand() %5)), 40))
-        gi.sound (self, CHAN_WEAPON, sound_melee3, 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_WEAPON, sound_melee3, 1, ATTN_NORM, 0);
 }
 
 mframe_t brain_frames_attack1 [] =
@@ -455,7 +455,7 @@ void brain_chest_open (edict *self)
 {
     self->spawnflags &= ~65536;
     self->monsterinfo.power_armor_type = POWER_ARMOR_NONE;
-    gi.sound (self, CHAN_BODY, sound_chest_open, 1, ATTN_NORM, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_BODY, sound_chest_open, 1, ATTN_NORM, 0);
 }
 
 void brain_tentacle_attack (edict *self)
@@ -465,7 +465,7 @@ void brain_tentacle_attack (edict *self)
     VectorSet (aim, MELEE_DISTANCE, 0, 8);
     if (fire_hit (self, aim, (10 + (rand() %5)), -600) && skill->value > 0)
         self->spawnflags |= 65536;
-    gi.sound (self, CHAN_WEAPON, sound_tentacles_retract, 1, ATTN_NORM, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_WEAPON, sound_tentacles_retract, 1, ATTN_NORM, 0);
 }
 
 void brain_chest_closed (edict *self)
@@ -556,17 +556,17 @@ void brain_pain (edict *self, edict *other, float kick, int damage)
     r = random();
     if (r < 0.33)
     {
-        gi.sound (self, CHAN_VOICE, sound_pain1, 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain1, 1, ATTN_NORM, 0);
         self->monsterinfo.currentmove = &brain_move_pain1;
     }
     else if (r < 0.66)
     {
-        gi.sound (self, CHAN_VOICE, sound_pain2, 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain2, 1, ATTN_NORM, 0);
         self->monsterinfo.currentmove = &brain_move_pain2;
     }
     else
     {
-        gi.sound (self, CHAN_VOICE, sound_pain1, 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain1, 1, ATTN_NORM, 0);
         self->monsterinfo.currentmove = &brain_move_pain3;
     }
 }
@@ -578,7 +578,7 @@ void brain_dead (edict *self)
     self->movetype = MOVETYPE_TOSS;
     self->svflags |= SVF_DEADMONSTER;
     self->nextthink = 0;
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 }
 
 
@@ -593,7 +593,7 @@ void brain_die (edict *self, edict *inflictor, edict *attacker, int damage, vec3
 // check for gib
     if (self->health <= self->gib_health)
     {
-        gi.sound (self, CHAN_VOICE, gi.soundindex ("misc/udeath.wav"), 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, quake2::getInstance()->gi.soundindex ("misc/udeath.wav"), 1, ATTN_NORM, 0);
         for (n= 0; n < 2; n++)
             ThrowGib (self, "models/objects/gibs/bone/tris.md2", damage, GIB_ORGANIC);
         for (n= 0; n < 4; n++)
@@ -607,7 +607,7 @@ void brain_die (edict *self, edict *inflictor, edict *attacker, int damage, vec3
         return;
 
 // regular death
-    gi.sound (self, CHAN_VOICE, sound_death, 1, ATTN_NORM, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_death, 1, ATTN_NORM, 0);
     self->deadflag = DEAD_DEAD;
     self->takedamage = DAMAGE_YES;
     if (random() <= 0.5)
@@ -626,24 +626,24 @@ void SP_monster_brain (edict *self)
         return;
     }
 
-    sound_chest_open = gi.soundindex ("brain/brnatck1.wav");
-    sound_tentacles_extend = gi.soundindex ("brain/brnatck2.wav");
-    sound_tentacles_retract = gi.soundindex ("brain/brnatck3.wav");
-    sound_death = gi.soundindex ("brain/brndeth1.wav");
-    sound_idle1 = gi.soundindex ("brain/brnidle1.wav");
-    sound_idle2 = gi.soundindex ("brain/brnidle2.wav");
-    sound_idle3 = gi.soundindex ("brain/brnlens1.wav");
-    sound_pain1 = gi.soundindex ("brain/brnpain1.wav");
-    sound_pain2 = gi.soundindex ("brain/brnpain2.wav");
-    sound_sight = gi.soundindex ("brain/brnsght1.wav");
-    sound_search = gi.soundindex ("brain/brnsrch1.wav");
-    sound_melee1 = gi.soundindex ("brain/melee1.wav");
-    sound_melee2 = gi.soundindex ("brain/melee2.wav");
-    sound_melee3 = gi.soundindex ("brain/melee3.wav");
+    sound_chest_open = quake2::getInstance()->gi.soundindex ("brain/brnatck1.wav");
+    sound_tentacles_extend = quake2::getInstance()->gi.soundindex ("brain/brnatck2.wav");
+    sound_tentacles_retract = quake2::getInstance()->gi.soundindex ("brain/brnatck3.wav");
+    sound_death = quake2::getInstance()->gi.soundindex ("brain/brndeth1.wav");
+    sound_idle1 = quake2::getInstance()->gi.soundindex ("brain/brnidle1.wav");
+    sound_idle2 = quake2::getInstance()->gi.soundindex ("brain/brnidle2.wav");
+    sound_idle3 = quake2::getInstance()->gi.soundindex ("brain/brnlens1.wav");
+    sound_pain1 = quake2::getInstance()->gi.soundindex ("brain/brnpain1.wav");
+    sound_pain2 = quake2::getInstance()->gi.soundindex ("brain/brnpain2.wav");
+    sound_sight = quake2::getInstance()->gi.soundindex ("brain/brnsght1.wav");
+    sound_search = quake2::getInstance()->gi.soundindex ("brain/brnsrch1.wav");
+    sound_melee1 = quake2::getInstance()->gi.soundindex ("brain/melee1.wav");
+    sound_melee2 = quake2::getInstance()->gi.soundindex ("brain/melee2.wav");
+    sound_melee3 = quake2::getInstance()->gi.soundindex ("brain/melee3.wav");
 
     self->movetype = MOVETYPE_STEP;
     self->solid = SOLID_BBOX;
-    self->s.modelindex = gi.modelindex ("models/monsters/brain/tris.md2");
+    self->s.modelindex = quake2::getInstance()->gi.modelindex ("models/monsters/brain/tris.md2");
     VectorSet (self->mins, -16, -16, -24);
     VectorSet (self->maxs, 16, 16, 32);
 
@@ -667,7 +667,7 @@ void SP_monster_brain (edict *self)
     self->monsterinfo.power_armor_type = POWER_ARMOR_SCREEN;
     self->monsterinfo.power_armor_power = 100;
 
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 
     self->monsterinfo.currentmove = &brain_move_stand;
     self->monsterinfo.scale = MODEL_SCALE;

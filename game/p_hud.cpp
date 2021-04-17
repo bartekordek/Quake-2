@@ -65,7 +65,7 @@ void MoveClientToIntermission (edict *ent)
     if (deathmatch->value || coop->value)
     {
         DeathmatchScoreboardMessage (ent, NULL);
-        gi.unicast (ent, true);
+        quake2::getInstance()->gi.unicast (ent, true);
     }
 
 }
@@ -213,7 +213,7 @@ void DeathmatchScoreboardMessage (edict *ent, edict *killer)
         cl = &game.clients[sorted[i]];
         cl_ent = g_edicts + 1 + sorted[i];
 
-        picnum = gi.imageindex ("i_fixme");
+        picnum = quake2::getInstance()->gi.imageindex ("i_fixme");
         x = (i>=6) ? 160 : 0;
         y = 32 + 32 * (i%6);
 
@@ -245,8 +245,8 @@ void DeathmatchScoreboardMessage (edict *ent, edict *killer)
         stringlength += j;
     }
 
-    gi.WriteByte (svc_layout);
-    gi.WriteString (string);
+    quake2::getInstance()->gi.WriteByte (svc_layout);
+    quake2::getInstance()->gi.WriteString (string);
 }
 
 
@@ -261,7 +261,7 @@ Note that it isn't that hard to overflow the 1400 byte message limit!
 void DeathmatchScoreboard (edict *ent)
 {
     DeathmatchScoreboardMessage (ent, ent->enemy);
-    gi.unicast (ent, true);
+    quake2::getInstance()->gi.unicast (ent, true);
 }
 
 
@@ -329,9 +329,9 @@ void HelpComputer (edict *ent)
         // level.found_goals, level.total_goals,
         // level.found_secrets, level.total_secrets);
 
-    gi.WriteByte (svc_layout);
-    gi.WriteString (string);
-    gi.unicast (ent, true);
+    quake2::getInstance()->gi.WriteByte (svc_layout);
+    quake2::getInstance()->gi.WriteString (string);
+    quake2::getInstance()->gi.unicast (ent, true);
 }
 
 
@@ -396,7 +396,7 @@ void G_SetStats (edict *ent)
     else
     {
         item = &itemlist[ent->client->ammo_index];
-        ent->client->ps.stats[STAT_AMMO_ICON] = gi.imageindex (item->icon);
+        ent->client->ps.stats[STAT_AMMO_ICON] = quake2::getInstance()->gi.imageindex (item->icon);
         ent->client->ps.stats[STAT_AMMO] = ent->client->pers.inventory[ent->client->ammo_index];
     }
 
@@ -410,7 +410,7 @@ void G_SetStats (edict *ent)
         if (cells == 0)
         {    // ran out of cells for power armor
             ent->flags &= ~FL_POWER_ARMOR;
-            gi.sound(ent, CHAN_ITEM, gi.soundindex("misc/power2.wav"), 1, ATTN_NORM, 0);
+            quake2::getInstance()->gi.sound(ent, CHAN_ITEM, quake2::getInstance()->gi.soundindex("misc/power2.wav"), 1, ATTN_NORM, 0);
             power_armor_type = 0;;
         }
     }
@@ -418,13 +418,13 @@ void G_SetStats (edict *ent)
     index = ArmorIndex (ent);
     if (power_armor_type && (!index || (level.framenum & 8) ) )
     {    // flash between power armor and other armor icon
-        ent->client->ps.stats[STAT_ARMOR_ICON] = gi.imageindex ("i_powershield");
+        ent->client->ps.stats[STAT_ARMOR_ICON] = quake2::getInstance()->gi.imageindex ("i_powershield");
         ent->client->ps.stats[STAT_ARMOR] = cells;
     }
     else if (index)
     {
         item = GetItemByIndex (index);
-        ent->client->ps.stats[STAT_ARMOR_ICON] = gi.imageindex (item->icon);
+        ent->client->ps.stats[STAT_ARMOR_ICON] = quake2::getInstance()->gi.imageindex (item->icon);
         ent->client->ps.stats[STAT_ARMOR] = ent->client->pers.inventory[index];
     }
     else
@@ -447,22 +447,22 @@ void G_SetStats (edict *ent)
     //
     if (ent->client->quad_framenum > level.framenum)
     {
-        ent->client->ps.stats[STAT_TIMER_ICON] = gi.imageindex ("p_quad");
+        ent->client->ps.stats[STAT_TIMER_ICON] = quake2::getInstance()->gi.imageindex ("p_quad");
         ent->client->ps.stats[STAT_TIMER] = (ent->client->quad_framenum - level.framenum)/10;
     }
     else if (ent->client->invincible_framenum > level.framenum)
     {
-        ent->client->ps.stats[STAT_TIMER_ICON] = gi.imageindex ("p_invulnerability");
+        ent->client->ps.stats[STAT_TIMER_ICON] = quake2::getInstance()->gi.imageindex ("p_invulnerability");
         ent->client->ps.stats[STAT_TIMER] = (ent->client->invincible_framenum - level.framenum)/10;
     }
     else if (ent->client->enviro_framenum > level.framenum)
     {
-        ent->client->ps.stats[STAT_TIMER_ICON] = gi.imageindex ("p_envirosuit");
+        ent->client->ps.stats[STAT_TIMER_ICON] = quake2::getInstance()->gi.imageindex ("p_envirosuit");
         ent->client->ps.stats[STAT_TIMER] = (ent->client->enviro_framenum - level.framenum)/10;
     }
     else if (ent->client->breather_framenum > level.framenum)
     {
-        ent->client->ps.stats[STAT_TIMER_ICON] = gi.imageindex ("p_rebreather");
+        ent->client->ps.stats[STAT_TIMER_ICON] = quake2::getInstance()->gi.imageindex ("p_rebreather");
         ent->client->ps.stats[STAT_TIMER] = (ent->client->breather_framenum - level.framenum)/10;
     }
     else
@@ -477,7 +477,7 @@ void G_SetStats (edict *ent)
     if (ent->client->pers.selected_item == -1)
         ent->client->ps.stats[STAT_SELECTED_ICON] = 0;
     else
-        ent->client->ps.stats[STAT_SELECTED_ICON] = gi.imageindex (itemlist[ent->client->pers.selected_item].icon);
+        ent->client->ps.stats[STAT_SELECTED_ICON] = quake2::getInstance()->gi.imageindex (itemlist[ent->client->pers.selected_item].icon);
 
     ent->client->ps.stats[STAT_SELECTED_ITEM] = ent->client->pers.selected_item;
 
@@ -511,10 +511,10 @@ void G_SetStats (edict *ent)
     // help icon / current weapon if not shown
     //
     if (ent->client->pers.helpchanged && (level.framenum&8) )
-        ent->client->ps.stats[STAT_HELPICON] = gi.imageindex ("i_help");
+        ent->client->ps.stats[STAT_HELPICON] = quake2::getInstance()->gi.imageindex ("i_help");
     else if ( (ent->client->pers.hand == CENTER_HANDED || ent->client->ps.fov > 91)
         && ent->client->pers.weapon)
-        ent->client->ps.stats[STAT_HELPICON] = gi.imageindex (ent->client->pers.weapon->icon);
+        ent->client->ps.stats[STAT_HELPICON] = quake2::getInstance()->gi.imageindex (ent->client->pers.weapon->icon);
     else
         ent->client->ps.stats[STAT_HELPICON] = 0;
 

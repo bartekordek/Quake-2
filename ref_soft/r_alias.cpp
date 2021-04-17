@@ -188,7 +188,7 @@ bool R_AliasCheckBBox (void)
     /*
     ** non-lerping model
     */
-    if ( currententity->backlerp == 0 )
+    if ( quake2::getInstance()->currententity->backlerp == 0 )
     {
         if ( ccodes[0] == BBOX_TRIVIAL_ACCEPT )
             return BBOX_TRIVIAL_ACCEPT;
@@ -250,9 +250,9 @@ void R_AliasPreparePoints (void)
     finalvert_t    *pfinalverts;
 
 //PGM
-    iractive = (r_newrefdef.rdflags & RDF_IRGOGGLES && currententity->flags & RF_IR_VISIBLE);
+    iractive = (r_newrefdef.rdflags & RDF_IRGOGGLES && quake2::getInstance()->currententity->flags & RF_IR_VISIBLE);
 //    iractive = 0;
-//    if(r_newrefdef.rdflags & RDF_IRGOGGLES && currententity->flags & RF_IR_VISIBLE)
+//    if(r_newrefdef.rdflags & RDF_IRGOGGLES && quake2::getInstance()->currententity->flags & RF_IR_VISIBLE)
 //        iractive = 1;
 //PGM
 
@@ -275,7 +275,7 @@ void R_AliasPreparePoints (void)
     pstverts = (dstvert_t *)((byte *)s_pmdl + s_pmdl->ofs_st);
     ptri = (dtriangle_t *)((byte *)s_pmdl + s_pmdl->ofs_tris);
 
-    if ( ( currententity->flags & RF_WEAPONMODEL ) && ( r_lefthand->value == 1.0F ) )
+    if ( ( quake2::getInstance()->currententity->flags & RF_WEAPONMODEL ) && ( r_lefthand->value == 1.0F ) )
     {
         for (i=0 ; i<s_pmdl->num_tris ; i++, ptri++)
         {
@@ -306,7 +306,7 @@ void R_AliasPreparePoints (void)
             }
             else
             {
-                R_AliasClipTriangle (pfv[2], pfv[1], pfv[0]);
+                ref_soft_R_AliasClipTriangle (pfv[2], pfv[1], pfv[0]);
             }
         }
     }
@@ -341,7 +341,7 @@ void R_AliasPreparePoints (void)
             }
             else
             {    // partially clipped
-                R_AliasClipTriangle (pfv[0], pfv[1], pfv[2]);
+                ref_soft_R_AliasClipTriangle (pfv[0], pfv[1], pfv[2]);
             }
         }
     }
@@ -363,9 +363,9 @@ void R_AliasSetUpTransform (void)
 // TODO: should use a look-up table
 // TODO: could cache lazily, stored in the entity
 //
-    angles[ROLL] = currententity->angles[ROLL];
-    angles[PITCH] = currententity->angles[PITCH];
-    angles[YAW] = currententity->angles[YAW];
+    angles[ROLL] = quake2::getInstance()->currententity->angles[ROLL];
+    angles[PITCH] = quake2::getInstance()->currententity->angles[PITCH];
+    angles[YAW] = quake2::getInstance()->currententity->angles[YAW];
     AngleVectors( angles, s_alias_forward, s_alias_right, s_alias_up );
 
 // TODO: can do this with simple matrix rearrangement
@@ -380,13 +380,13 @@ void R_AliasSetUpTransform (void)
         aliasoldworldtransform[i][0] = aliasworldtransform[i][2] =  s_alias_up[i];
     }
 
-    aliasworldtransform[0][3] = currententity->origin[0]-r_origin[0];
-    aliasworldtransform[1][3] = currententity->origin[1]-r_origin[1];
-    aliasworldtransform[2][3] = currententity->origin[2]-r_origin[2];
+    aliasworldtransform[0][3] = quake2::getInstance()->currententity->origin[0]-r_origin[0];
+    aliasworldtransform[1][3] = quake2::getInstance()->currententity->origin[1]-r_origin[1];
+    aliasworldtransform[2][3] = quake2::getInstance()->currententity->origin[2]-r_origin[2];
 
-    aliasoldworldtransform[0][3] = currententity->oldorigin[0]-r_origin[0];
-    aliasoldworldtransform[1][3] = currententity->oldorigin[1]-r_origin[1];
-    aliasoldworldtransform[2][3] = currententity->oldorigin[2]-r_origin[2];
+    aliasoldworldtransform[0][3] = quake2::getInstance()->currententity->oldorigin[0]-r_origin[0];
+    aliasoldworldtransform[1][3] = quake2::getInstance()->currententity->oldorigin[1]-r_origin[1];
+    aliasoldworldtransform[2][3] = quake2::getInstance()->currententity->oldorigin[2]-r_origin[2];
 
 // FIXME: can do more efficiently than full concatenation
 //    memcpy( rotationmatrix, t2matrix, sizeof( rotationmatrix ) );
@@ -407,13 +407,13 @@ void R_AliasSetUpTransform (void)
 
     R_ConcatTransforms (viewmatrix, aliasworldtransform, aliastransform);
 
-    aliasworldtransform[0][3] = currententity->origin[0];
-    aliasworldtransform[1][3] = currententity->origin[1];
-    aliasworldtransform[2][3] = currententity->origin[2];
+    aliasworldtransform[0][3] = quake2::getInstance()->currententity->origin[0];
+    aliasworldtransform[1][3] = quake2::getInstance()->currententity->origin[1];
+    aliasworldtransform[2][3] = quake2::getInstance()->currententity->origin[2];
 
-    aliasoldworldtransform[0][3] = currententity->oldorigin[0];
-    aliasoldworldtransform[1][3] = currententity->oldorigin[1];
-    aliasoldworldtransform[2][3] = currententity->oldorigin[2];
+    aliasoldworldtransform[0][3] = quake2::getInstance()->currententity->oldorigin[0];
+    aliasoldworldtransform[1][3] = quake2::getInstance()->currententity->oldorigin[1];
+    aliasoldworldtransform[2][3] = quake2::getInstance()->currententity->oldorigin[2];
 }
 
 
@@ -495,7 +495,7 @@ top_of_loop:
     __asm fstp dword ptr [lerped_vert+8] ; lv2
     __asm fstp dword ptr [lerped_vert+4] ; (empty)
 
-    __asm mov  eax, currententity
+    __asm mov  eax, quake2::getInstance()->currententity
     __asm mov  eax, dword ptr [eax+ENTITY_FLAGS]
     __asm mov  ebx, RF_SHELL_RED | RF_SHELL_GREEN | RF_SHELL_BLUE | RF_SHELL_DOUBLE | RF_SHELL_HALF_DAM
     __asm and  eax, ebx
@@ -757,7 +757,7 @@ void R_AliasTransformFinalVerts( int numpoints, finalvert_t *fv, dtrivertx_t *ol
         plightnormal = r_avertexnormals[newv->lightnormalindex];
 
         // PMM - added double damage shell
-        if ( currententity->flags & ( RF_SHELL_RED | RF_SHELL_GREEN | RF_SHELL_BLUE | RF_SHELL_DOUBLE | RF_SHELL_HALF_DAM) )
+        if ( quake2::getInstance()->currententity->flags & ( RF_SHELL_RED | RF_SHELL_GREEN | RF_SHELL_BLUE | RF_SHELL_DOUBLE | RF_SHELL_HALF_DAM) )
         {
             lerped_vert[0] += plightnormal[0] * POWERSUIT_SCALE;
             lerped_vert[1] += plightnormal[1] * POWERSUIT_SCALE;
@@ -840,11 +840,11 @@ static bool R_AliasSetupSkin (void)
     int                skinnum;
     image_t            *pskindesc;
 
-    if (currententity->skin)
-        pskindesc = currententity->skin;
+    if (quake2::getInstance()->currententity->skin)
+        pskindesc = quake2::getInstance()->currententity->skin;
     else
     {
-        skinnum = currententity->skinnum;
+        skinnum = quake2::getInstance()->currententity->skinnum;
         if ((skinnum >= s_pmdl->num_skins) || (skinnum < 0))
         {
             ri.Con_Printf (PRINT_ALL, "R_AliasSetupSkin %s: no such skin # %d\n",
@@ -862,7 +862,7 @@ static bool R_AliasSetupSkin (void)
     r_affinetridesc.skinwidth = pskindesc->width;
     r_affinetridesc.skinheight = pskindesc->height;
 
-    R_PolysetUpdateTables ();        // FIXME: precalc edge lookups
+    ref_soft_R_PolysetUpdateTables ();        // FIXME: precalc edge lookups
 
     return true;
 }
@@ -883,29 +883,29 @@ void R_AliasSetupLighting (void)
     int                i, j;
 
     // all components of light should be identical in software
-    if ( currententity->flags & RF_FULLBRIGHT )
+    if ( quake2::getInstance()->currententity->flags & RF_FULLBRIGHT )
     {
         for (i=0 ; i<3 ; i++)
             light[i] = 1.0;
     }
     else
     {
-        ref_soft_R_LightPoint (currententity->origin, light);
+        ref_soft_R_LightPoint (quake2::getInstance()->currententity->origin, light);
     }
 
     // save off light value for server to look at (BIG HACK!)
-    if ( currententity->flags & RF_WEAPONMODEL )
+    if ( quake2::getInstance()->currententity->flags & RF_WEAPONMODEL )
         r_lightlevel->value = 150.0 * light[0];
 
 
-    if ( currententity->flags & RF_MINLIGHT )
+    if ( quake2::getInstance()->currententity->flags & RF_MINLIGHT )
     {
         for (i=0 ; i<3 ; i++)
             if (light[i] < 0.1)
                 light[i] = 0.1;
     }
 
-    if ( currententity->flags & RF_GLOW )
+    if ( quake2::getInstance()->currententity->flags & RF_GLOW )
     {    // bonus items will pulse with time
         float    scale;
         float    min;
@@ -967,8 +967,8 @@ R_AliasSetupFrames
 */
 void R_AliasSetupFrames( dmdl_t *pmdl )
 {
-    int thisframe = currententity->frame;
-    int lastframe = currententity->oldframe;
+    int thisframe = quake2::getInstance()->currententity->frame;
+    int lastframe = quake2::getInstance()->currententity->oldframe;
 
     if ( ( thisframe >= pmdl->num_frames ) || ( thisframe < 0 ) )
     {
@@ -1006,12 +1006,12 @@ void R_AliasSetUpLerpData( dmdl_t *pmdl, float backlerp )
     /*
     ** convert entity's angles into discrete vectors for R, U, and F
     */
-    AngleVectors (currententity->angles, vectors[0], vectors[1], vectors[2]);
+    AngleVectors (quake2::getInstance()->currententity->angles, vectors[0], vectors[1], vectors[2]);
 
     /*
     ** translation is the vector from last position to this position
     */
-    VectorSubtract (currententity->oldorigin, currententity->origin, translation);
+    VectorSubtract (quake2::getInstance()->currententity->oldorigin, quake2::getInstance()->currententity->origin, translation);
 
     /*
     ** move should be the delta back to the previous frame * backlerp
@@ -1051,9 +1051,9 @@ void R_AliasDrawModel (void)
     s_pmdl = (dmdl_t *)currentmodel->extradata;
 
     if ( r_lerpmodels->value == 0 )
-        currententity->backlerp = 0;
+        quake2::getInstance()->currententity->backlerp = 0;
 
-    if ( currententity->flags & RF_WEAPONMODEL )
+    if ( quake2::getInstance()->currententity->flags & RF_WEAPONMODEL )
     {
         if ( r_lefthand->value == 1.0F )
             aliasxscale = -aliasxscale;
@@ -1072,7 +1072,7 @@ void R_AliasDrawModel (void)
     // trivial accept status
     if ( R_AliasCheckBBox() == BBOX_TRIVIAL_REJECT )
     {
-        if ( ( currententity->flags & RF_WEAPONMODEL ) && ( r_lefthand->value == 1.0F ) )
+        if ( ( quake2::getInstance()->currententity->flags & RF_WEAPONMODEL ) && ( r_lefthand->value == 1.0F ) )
         {
             aliasxscale = -aliasxscale;
         }
@@ -1095,12 +1095,12 @@ void R_AliasDrawModel (void)
     */
     // PMM - added double damage shell
     // PMM - reordered to handle blending
-    if ( currententity->flags & ( RF_SHELL_RED | RF_SHELL_GREEN | RF_SHELL_BLUE | RF_SHELL_DOUBLE | RF_SHELL_HALF_DAM) )
+    if ( quake2::getInstance()->currententity->flags & ( RF_SHELL_RED | RF_SHELL_GREEN | RF_SHELL_BLUE | RF_SHELL_DOUBLE | RF_SHELL_HALF_DAM) )
     {
         int        color;
 
         // PMM - added double
-        color = currententity->flags & ( RF_SHELL_RED | RF_SHELL_GREEN | RF_SHELL_BLUE | RF_SHELL_DOUBLE | RF_SHELL_HALF_DAM);
+        color = quake2::getInstance()->currententity->flags & ( RF_SHELL_RED | RF_SHELL_GREEN | RF_SHELL_BLUE | RF_SHELL_DOUBLE | RF_SHELL_HALF_DAM);
         // PMM - reordered, old code first
 /*
         if ( color == RF_SHELL_RED )
@@ -1150,16 +1150,16 @@ void R_AliasDrawModel (void)
             r_aliasblendcolor = SHELL_WHITE_COLOR;
 
 
-        if ( currententity->alpha > 0.33 )
+        if ( quake2::getInstance()->currententity->alpha > 0.33 )
             d_pdrawspans = R_PolysetDrawSpansConstant8_66;
         else
             d_pdrawspans = R_PolysetDrawSpansConstant8_33;
     }
-    else if ( currententity->flags & RF_TRANSLUCENT )
+    else if ( quake2::getInstance()->currententity->flags & RF_TRANSLUCENT )
     {
-        if ( currententity->alpha > 0.66 )
+        if ( quake2::getInstance()->currententity->alpha > 0.66 )
             d_pdrawspans = R_PolysetDrawSpans8_Opaque;
-        else if ( currententity->alpha > 0.33 )
+        else if ( quake2::getInstance()->currententity->alpha > 0.33 )
             d_pdrawspans = R_PolysetDrawSpans8_66;
         else
             d_pdrawspans = R_PolysetDrawSpans8_33;
@@ -1172,16 +1172,16 @@ void R_AliasDrawModel (void)
     /*
     ** compute this_frame and old_frame addresses
     */
-    R_AliasSetUpLerpData( s_pmdl, currententity->backlerp );
+    R_AliasSetUpLerpData( s_pmdl, quake2::getInstance()->currententity->backlerp );
 
-    if (currententity->flags & RF_DEPTHHACK)
+    if (quake2::getInstance()->currententity->flags & RF_DEPTHHACK)
         s_ziscale = (float)0x8000 * (float)0x10000 * 3.0;
     else
         s_ziscale = (float)0x8000 * (float)0x10000;
 
     R_AliasPreparePoints ();
 
-    if ( ( currententity->flags & RF_WEAPONMODEL ) && ( r_lefthand->value == 1.0F ) )
+    if ( ( quake2::getInstance()->currententity->flags & RF_WEAPONMODEL ) && ( r_lefthand->value == 1.0F ) )
     {
         aliasxscale = -aliasxscale;
     }

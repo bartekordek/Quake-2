@@ -25,10 +25,10 @@ Fire an origin based temp entity event to the clients.
 */
 void Use_Target_Tent (edict *ent, edict *other, edict *activator)
 {
-    gi.WriteByte (svc_temp_entity);
-    gi.WriteByte (ent->style);
-    gi.WritePosition (ent->s.origin);
-    gi.multicast (ent->s.origin, MULTICAST_PVS);
+    quake2::getInstance()->gi.WriteByte (svc_temp_entity);
+    quake2::getInstance()->gi.WriteByte (ent->style);
+    quake2::getInstance()->gi.WritePosition (ent->s.origin);
+    quake2::getInstance()->gi.multicast (ent->s.origin, multicast_t::MULTICAST_PVS);
 }
 
 void SP_target_temp_entity (edict *ent)
@@ -74,7 +74,7 @@ void Use_Target_Speaker (edict *ent, edict *other, edict *activator)
             chan = CHAN_VOICE;
         // use a positioned_sound, because this entity won't normally be
         // sent to any clients because it is invisible
-        gi.positioned_sound (ent->s.origin, ent, chan, ent->noise_index, ent->volume, ent->attenuation, 0);
+        quake2::getInstance()->gi.positioned_sound (ent->s.origin, ent, chan, ent->noise_index, ent->volume, ent->attenuation, 0);
     }
 }
 
@@ -84,14 +84,14 @@ void SP_target_speaker (edict *ent)
 
     if(!st.noise)
     {
-        gi.dprintf("target_speaker with no noise set at %s\n", vtos(ent->s.origin));
+        quake2::getInstance()->gi.dprintf("target_speaker with no noise set at %s\n", vtos(ent->s.origin));
         return;
     }
     if (!strstr (st.noise, ".wav"))
         //Com_sprintf (buffer, sizeof(buffer), "%s.wav", st.noise);
     else
         strncpy (buffer, st.noise, sizeof(buffer));
-    ent->noise_index = gi.soundindex (buffer);
+    ent->noise_index = quake2::getInstance()->gi.soundindex (buffer);
 
     if (!ent->volume)
         ent->volume = 1.0;
@@ -109,7 +109,7 @@ void SP_target_speaker (edict *ent)
 
     // must link the entity so we get areas and clusters so
     // the server can determine who to send updates to
-    gi.linkentity (ent);
+    quake2::getInstance()->gi.linkentity (ent);
 }
 
 
@@ -138,7 +138,7 @@ void SP_target_help(edict *ent)
 
     if (!ent->message)
     {
-        gi.dprintf ("%s with no message at %s\n", ent->classname, vtos(ent->s.origin));
+        quake2::getInstance()->gi.dprintf ("%s with no message at %s\n", ent->classname, vtos(ent->s.origin));
         G_FreeEdict (ent);
         return;
     }
@@ -153,7 +153,7 @@ These are single use targets.
 */
 void use_target_secret (edict *ent, edict *other, edict *activator)
 {
-    gi.sound (ent, CHAN_VOICE, ent->noise_index, 1, ATTN_NORM, 0);
+    quake2::getInstance()->gi.sound (ent, CHAN_VOICE, ent->noise_index, 1, ATTN_NORM, 0);
 
     level.found_secrets++;
 
@@ -172,7 +172,7 @@ void SP_target_secret (edict *ent)
     ent->use = use_target_secret;
     if (!st.noise)
         st.noise = "misc/secret.wav";
-    ent->noise_index = gi.soundindex (st.noise);
+    ent->noise_index = quake2::getInstance()->gi.soundindex (st.noise);
     ent->svflags = SVF_NOCLIENT;
     level.total_secrets++;
     // map bug hack
@@ -188,12 +188,12 @@ These are single use targets.
 */
 void use_target_goal (edict *ent, edict *other, edict *activator)
 {
-    gi.sound (ent, CHAN_VOICE, ent->noise_index, 1, ATTN_NORM, 0);
+    quake2::getInstance()->gi.sound (ent, CHAN_VOICE, ent->noise_index, 1, ATTN_NORM, 0);
 
     level.found_goals++;
 
     if (level.found_goals == level.total_goals)
-        gi.configstring (CS_CDTRACK, "0");
+        quake2::getInstance()->gi.configstring (CS_CDTRACK, "0");
 
     G_UseTargets (ent, activator);
     G_FreeEdict (ent);
@@ -210,7 +210,7 @@ void SP_target_goal (edict *ent)
     ent->use = use_target_goal;
     if (!st.noise)
         st.noise = "misc/secret.wav";
-    ent->noise_index = gi.soundindex (st.noise);
+    ent->noise_index = quake2::getInstance()->gi.soundindex (st.noise);
     ent->svflags = SVF_NOCLIENT;
     level.total_goals++;
 }
@@ -228,10 +228,10 @@ void target_explosion_explode (edict *self)
 {
     float        save;
 
-    gi.WriteByte (svc_temp_entity);
-    gi.WriteByte (TE_EXPLOSION1);
-    gi.WritePosition (self->s.origin);
-    gi.multicast (self->s.origin, MULTICAST_PHS);
+    quake2::getInstance()->gi.WriteByte (svc_temp_entity);
+    quake2::getInstance()->gi.WriteByte (TE_EXPLOSION1);
+    quake2::getInstance()->gi.WritePosition (self->s.origin);
+    quake2::getInstance()->gi.multicast (self->s.origin, multicast_t::MULTICAST_PHS);
 
     T_RadiusDamage (self, self->activator, self->dmg, NULL, self->dmg+40, MOD_EXPLOSIVE);
 
@@ -289,7 +289,7 @@ void use_target_changelevel (edict *self, edict *other, edict *activator)
     if (deathmatch->value)
     {
         if (activator && activator->client)
-            gi.bprintf (PRINT_HIGH, "%s exited the level.\n", activator->client->pers.netname);
+            quake2::getInstance()->gi.bprintf (PRINT_HIGH, "%s exited the level.\n", activator->client->pers.netname);
     }
 
     // if going to a new unit, clear cross triggers
@@ -303,7 +303,7 @@ void SP_target_changelevel (edict *ent)
 {
     if (!ent->map)
     {
-        gi.dprintf("target_changelevel with no map at %s\n", vtos(ent->s.origin));
+        quake2::getInstance()->gi.dprintf("target_changelevel with no map at %s\n", vtos(ent->s.origin));
         G_FreeEdict (ent);
         return;
     }
@@ -337,13 +337,13 @@ Set "sounds" to one of the following:
 
 void use_target_splash (edict *self, edict *other, edict *activator)
 {
-    gi.WriteByte (svc_temp_entity);
-    gi.WriteByte (TE_SPLASH);
-    gi.WriteByte (self->count);
-    gi.WritePosition (self->s.origin);
-    gi.WriteDir (self->movedir);
-    gi.WriteByte (self->sounds);
-    gi.multicast (self->s.origin, MULTICAST_PVS);
+    quake2::getInstance()->gi.WriteByte (svc_temp_entity);
+    quake2::getInstance()->gi.WriteByte (TE_SPLASH);
+    quake2::getInstance()->gi.WriteByte (self->count);
+    quake2::getInstance()->gi.WritePosition (self->s.origin);
+    quake2::getInstance()->gi.WriteDir (self->movedir);
+    quake2::getInstance()->gi.WriteByte (self->sounds);
+    quake2::getInstance()->gi.multicast (self->s.origin, multicast_t::MULTICAST_PVS);
 
     if (self->dmg)
         T_RadiusDamage (self, activator, self->dmg, NULL, self->dmg+40, MOD_SPLASH);
@@ -386,9 +386,9 @@ void use_target_spawner (edict *self, edict *other, edict *activator)
     VectorCopy (self->s.origin, ent->s.origin);
     VectorCopy (self->s.angles, ent->s.angles);
     ED_CallSpawn (ent);
-    gi.unlinkentity (ent);
+    quake2::getInstance()->gi.unlinkentity (ent);
     KillBox (ent);
-    gi.linkentity (ent);
+    quake2::getInstance()->gi.linkentity (ent);
     if (self->speed)
         VectorCopy (self->movedir, ent->velocity);
 }
@@ -425,14 +425,14 @@ void use_target_blaster (edict *self, edict *other, edict *activator)
         effect = EF_BLASTER;
 
     fire_blaster (self, self->s.origin, self->movedir, self->dmg, self->speed, EF_BLASTER, MOD_TARGET_BLASTER);
-    gi.sound (self, CHAN_VOICE, self->noise_index, 1, ATTN_NORM, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_VOICE, self->noise_index, 1, ATTN_NORM, 0);
 }
 
 void SP_target_blaster (edict *self)
 {
     self->use = use_target_blaster;
     G_SetMovedir (self->s.angles, self->movedir);
-    self->noise_index = gi.soundindex ("weapons/laser2.wav");
+    self->noise_index = quake2::getInstance()->gi.soundindex ("weapons/laser2.wav");
 
     if (!self->dmg)
         self->dmg = 15;
@@ -522,7 +522,7 @@ void target_laser_think (edict *self)
     VectorMA (start, 2048, self->movedir, end);
     while(1)
     {
-        tr = gi.trace (start, NULL, NULL, end, ignore, CONTENTS_SOLID|CONTENTS_MONSTER|CONTENTS_DEADMONSTER);
+        tr = quake2::getInstance()->gi.trace (start, NULL, NULL, end, ignore, CONTENTS_SOLID|CONTENTS_MONSTER|CONTENTS_DEADMONSTER);
 
         if (!tr.ent)
             break;
@@ -537,13 +537,13 @@ void target_laser_think (edict *self)
             if (self->spawnflags & 0x80000000)
             {
                 self->spawnflags &= ~0x80000000;
-                gi.WriteByte (svc_temp_entity);
-                gi.WriteByte (TE_LASER_SPARKS);
-                gi.WriteByte (count);
-                gi.WritePosition (tr.endpos);
-                gi.WriteDir (tr.plane.normal);
-                gi.WriteByte (self->s.skinnum);
-                gi.multicast (tr.endpos, MULTICAST_PVS);
+                quake2::getInstance()->gi.WriteByte (svc_temp_entity);
+                quake2::getInstance()->gi.WriteByte (TE_LASER_SPARKS);
+                quake2::getInstance()->gi.WriteByte (count);
+                quake2::getInstance()->gi.WritePosition (tr.endpos);
+                quake2::getInstance()->gi.WriteDir (tr.plane.normal);
+                quake2::getInstance()->gi.WriteByte (self->s.skinnum);
+                quake2::getInstance()->gi.multicast (tr.endpos, multicast_t::MULTICAST_PVS);
             }
             break;
         }
@@ -615,7 +615,7 @@ void target_laser_start (edict *self)
         {
             ent = G_Find (NULL, FOFS(targetname), self->target);
             if (!ent)
-                gi.dprintf ("%s at %s: %s is a bad target\n", self->classname, vtos(self->s.origin), self->target);
+                quake2::getInstance()->gi.dprintf ("%s at %s: %s is a bad target\n", self->classname, vtos(self->s.origin), self->target);
             self->enemy = ent;
         }
         else
@@ -631,7 +631,7 @@ void target_laser_start (edict *self)
 
     VectorSet (self->mins, -8, -8, -8);
     VectorSet (self->maxs, 8, 8, 8);
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 
     if (self->spawnflags & 1)
         target_laser_on (self);
@@ -659,7 +659,7 @@ void target_lightramp_think (edict *self)
 
     style[0] = 'a' + self->movedir[0] + (level.time - self->timestamp) / FRAMETIME * self->movedir[2];
     style[1] = 0;
-    gi.configstring (CS_LIGHTS+self->enemy->style, style);
+    quake2::getInstance()->gi.configstring (CS_LIGHTS+self->enemy->style, style);
 
     if ((level.time - self->timestamp) < self->speed)
     {
@@ -691,8 +691,8 @@ void target_lightramp_use (edict *self, edict *other, edict *activator)
                 break;
             if (strcmp(e->classname, "light") != 0)
             {
-                gi.dprintf("%s at %s ", self->classname, vtos(self->s.origin));
-                gi.dprintf("target %s (%s at %s) is not a light\n", self->target, e->classname, vtos(e->s.origin));
+                quake2::getInstance()->gi.dprintf("%s at %s ", self->classname, vtos(self->s.origin));
+                quake2::getInstance()->gi.dprintf("target %s (%s at %s) is not a light\n", self->target, e->classname, vtos(e->s.origin));
             }
             else
             {
@@ -702,7 +702,7 @@ void target_lightramp_use (edict *self, edict *other, edict *activator)
 
         if (!self->enemy)
         {
-            gi.dprintf("%s target %s not found at %s\n", self->classname, self->target, vtos(self->s.origin));
+            quake2::getInstance()->gi.dprintf("%s target %s not found at %s\n", self->classname, self->target, vtos(self->s.origin));
             G_FreeEdict (self);
             return;
         }
@@ -716,7 +716,7 @@ void SP_target_lightramp (edict *self)
 {
     if (!self->message || strlen(self->message) != 2 || self->message[0] < 'a' || self->message[0] > 'z' || self->message[1] < 'a' || self->message[1] > 'z' || self->message[0] == self->message[1])
     {
-        gi.dprintf("target_lightramp has bad ramp (%s) at %s\n", self->message, vtos(self->s.origin));
+        quake2::getInstance()->gi.dprintf("target_lightramp has bad ramp (%s) at %s\n", self->message, vtos(self->s.origin));
         G_FreeEdict (self);
         return;
     }
@@ -729,7 +729,7 @@ void SP_target_lightramp (edict *self)
 
     if (!self->target)
     {
-        gi.dprintf("%s with no target at %s\n", self->classname, vtos(self->s.origin));
+        quake2::getInstance()->gi.dprintf("%s with no target at %s\n", self->classname, vtos(self->s.origin));
         G_FreeEdict (self);
         return;
     }
@@ -759,7 +759,7 @@ void target_earthquake_think (edict *self)
 
     if (self->last_move_time < level.time)
     {
-        gi.positioned_sound (self->s.origin, self, CHAN_AUTO, self->noise_index, 1.0, ATTN_NONE, 0);
+        quake2::getInstance()->gi.positioned_sound (self->s.origin, self, CHAN_AUTO, self->noise_index, 1.0, ATTN_NONE, 0);
         self->last_move_time = level.time + 0.5;
     }
 
@@ -793,7 +793,7 @@ void target_earthquake_use (edict *self, edict *other, edict *activator)
 void SP_target_earthquake (edict *self)
 {
     if (!self->targetname)
-        gi.dprintf("untargeted %s at %s\n", self->classname, vtos(self->s.origin));
+        quake2::getInstance()->gi.dprintf("untargeted %s at %s\n", self->classname, vtos(self->s.origin));
 
     if (!self->count)
         self->count = 5;
@@ -805,5 +805,5 @@ void SP_target_earthquake (edict *self)
     self->think = target_earthquake_think;
     self->use = target_earthquake_use;
 
-    self->noise_index = gi.soundindex ("world/quake.wav");
+    self->noise_index = quake2::getInstance()->gi.soundindex ("world/quake.wav");
 }

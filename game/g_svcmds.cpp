@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 void    Svcmd_Test_f (void)
 {
-    gi.cprintf (NULL, PRINT_HIGH, "Svcmd_Test_f()\n");
+    quake2::getInstance()->gi.cprintf (NULL, PRINT_HIGH, "Svcmd_Test_f()\n");
 }
 
 /*
@@ -90,7 +90,7 @@ static bool StringToFilter (char *s, ipfilter_t *f)
     {
         if (*s < '0' || *s > '9')
         {
-            gi.cprintf(NULL, PRINT_HIGH, "Bad filter address: %s\n", s);
+            quake2::getInstance()->gi.cprintf(NULL, PRINT_HIGH, "Bad filter address: %s\n", s);
             return false;
         }
 
@@ -159,8 +159,8 @@ void SVCmd_AddIP_f (void)
 {
     int        i;
 
-    if (gi.argc() < 3) {
-        gi.cprintf(NULL, PRINT_HIGH, "Usage:  addip <ip-mask>\n");
+    if (quake2::getInstance()->gi.argc() < 3) {
+        quake2::getInstance()->gi.cprintf(NULL, PRINT_HIGH, "Usage:  addip <ip-mask>\n");
         return;
     }
 
@@ -171,13 +171,13 @@ void SVCmd_AddIP_f (void)
     {
         if (numipfilters == MAX_IPFILTERS)
         {
-            gi.cprintf (NULL, PRINT_HIGH, "IP filter list is full\n");
+            quake2::getInstance()->gi.cprintf (NULL, PRINT_HIGH, "IP filter list is full\n");
             return;
         }
         numipfilters++;
     }
 
-    if (!StringToFilter (gi.argv(2), &ipfilters[i]))
+    if (!StringToFilter (quake2::getInstance()->gi.argv(2), &ipfilters[i]))
         ipfilters[i].compare = 0xffffffff;
 }
 
@@ -191,12 +191,12 @@ void SVCmd_RemoveIP_f (void)
     ipfilter_t    f;
     int            i, j;
 
-    if (gi.argc() < 3) {
-        gi.cprintf(NULL, PRINT_HIGH, "Usage:  sv removeip <ip-mask>\n");
+    if (quake2::getInstance()->gi.argc() < 3) {
+        quake2::getInstance()->gi.cprintf(NULL, PRINT_HIGH, "Usage:  sv removeip <ip-mask>\n");
         return;
     }
 
-    if (!StringToFilter (gi.argv(2), &f))
+    if (!StringToFilter (quake2::getInstance()->gi.argv(2), &f))
         return;
 
     for (i=0 ; i<numipfilters ; i++)
@@ -206,10 +206,10 @@ void SVCmd_RemoveIP_f (void)
             for (j=i+1 ; j<numipfilters ; j++)
                 ipfilters[j-1] = ipfilters[j];
             numipfilters--;
-            gi.cprintf (NULL, PRINT_HIGH, "Removed.\n");
+            quake2::getInstance()->gi.cprintf (NULL, PRINT_HIGH, "Removed.\n");
             return;
         }
-    gi.cprintf (NULL, PRINT_HIGH, "Didn't find %s.\n", gi.argv(2));
+    quake2::getInstance()->gi.cprintf (NULL, PRINT_HIGH, "Didn't find %s.\n", quake2::getInstance()->gi.argv(2));
 }
 
 /*
@@ -222,11 +222,11 @@ void SVCmd_ListIP_f (void)
     int        i;
     byte    b[4];
 
-    gi.cprintf (NULL, PRINT_HIGH, "Filter list:\n");
+    quake2::getInstance()->gi.cprintf (NULL, PRINT_HIGH, "Filter list:\n");
     for (i=0 ; i<numipfilters ; i++)
     {
         *(unsigned *)b = ipfilters[i].compare;
-        gi.cprintf (NULL, PRINT_HIGH, "%3i.%3i.%3i.%3i\n", b[0], b[1], b[2], b[3]);
+        quake2::getInstance()->gi.cprintf (NULL, PRINT_HIGH, "%3i.%3i.%3i.%3i\n", b[0], b[1], b[2], b[3]);
     }
 }
 
@@ -243,19 +243,19 @@ void SVCmd_WriteIP_f (void)
     int        i;
     cvar    *game;
 
-    game = gi.cvar_obj ("game", "", 0);
+    game = quake2::getInstance()->gi.cvar_obj ("game", "", 0);
 
     if (game->string.empty())
         sprintf (name, "%s/listip.cfg", GAMEVERSION);
     else
         sprintf (name, "%s/listip.cfg", game->string);
 
-    gi.cprintf (NULL, PRINT_HIGH, "Writing %s.\n", name);
+    quake2::getInstance()->gi.cprintf (NULL, PRINT_HIGH, "Writing %s.\n", name);
 
     f = fopen (name, "wb");
     if (!f)
     {
-        gi.cprintf (NULL, PRINT_HIGH, "Couldn't open %s\n", name);
+        quake2::getInstance()->gi.cprintf (NULL, PRINT_HIGH, "Couldn't open %s\n", name);
         return;
     }
 
@@ -275,7 +275,7 @@ void SVCmd_WriteIP_f (void)
 ServerCommand
 
 ServerCommand will be called when an "sv" command is issued.
-The game can issue gi.argc() / gi.argv() commands to get the rest
+The game can issue quake2::getInstance()->gi.argc() / quake2::getInstance()->gi.argv() commands to get the rest
 of the parameters
 =================
 */
@@ -283,7 +283,7 @@ void    ServerCommand (void)
 {
     char    *cmd;
 
-    cmd = gi.argv(1);
+    cmd = quake2::getInstance()->gi.argv(1);
     if (Q_stricmp (cmd, "test") == 0)
         Svcmd_Test_f ();
     else if (Q_stricmp (cmd, "addip") == 0)
@@ -295,6 +295,6 @@ void    ServerCommand (void)
     else if (Q_stricmp (cmd, "writeip") == 0)
         SVCmd_WriteIP_f ();
     else
-        gi.cprintf (NULL, PRINT_HIGH, "Unknown server command \"%s\"\n", cmd);
+        quake2::getInstance()->gi.cprintf (NULL, PRINT_HIGH, "Unknown server command \"%s\"\n", cmd);
 }
 

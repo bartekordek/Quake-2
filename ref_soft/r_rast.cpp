@@ -34,9 +34,9 @@ unsigned int    cacheoffset;
 int            c_faceclip;                    // number of faces clipped
 
 
-clipplane_t    *entity_clipplanes;
-clipplane_t    view_clipplanes[4];
-clipplane_t    world_clipplanes[16];
+clipplane_s    *entity_clipplanes;
+clipplane_s    view_clipplanes[4];
+clipplane_s    world_clipplanes[16];
 
 medge_t            *r_pedge;
 
@@ -66,7 +66,7 @@ bool        r_lastvertvalid;
 int                r_skyframe;
 
 msurface_t        *r_skyfaces;
-plane_t        r_skyplanes[6];
+plane_s        r_skyplanes[6];
 mtexinfo_t        r_skytexinfo[6];
 mvertex_t        *r_skyverts;
 medge_t            *r_skyedges;
@@ -104,15 +104,8 @@ float    box_verts[8][3] = {
 // down, west, up, north, east, south
 // {"rt", "bk", "lf", "ft", "up", "dn"};
 
-/*
-================
-R_InitSkyBox
-
-================
-*/
-void R_InitSkyBox (void)
+void ref_soft_R_InitSkyBox (void)
 {
-    int        i;
     extern model_t *loadmodel;
 
     r_skyfaces = loadmodel->surfaces + loadmodel->numsurfaces;
@@ -129,7 +122,7 @@ void R_InitSkyBox (void)
         ri.Sys_Error (ERR_DROP, "InitSkyBox: map overflow");
 
     memset (r_skyfaces, 0, 6*sizeof(*r_skyfaces));
-    for (i=0 ; i<6 ; i++)
+    for( int i = 0; i < 6; i++ )
     {
         r_skyplanes[i].normal[skybox_planes[i*2]] = 1;
         r_skyplanes[i].dist = skybox_planes[i*2+1];
@@ -148,13 +141,13 @@ void R_InitSkyBox (void)
         r_skyfaces[i].extents[1] = 256;
     }
 
-    for (i=0 ; i<24 ; i++)
+    for (int i=0 ; i<24 ; i++)
         if (box_surfedges[i] > 0)
             r_skysurfedges[i] = loadmodel->numedges-13 + box_surfedges[i];
         else
             r_skysurfedges[i] = - (loadmodel->numedges-13 + -box_surfedges[i]);
 
-    for(i=0 ; i<12 ; i++)
+    for(int i=0 ; i<12 ; i++)
     {
         r_skyedges[i].v[0] = loadmodel->numvertexes-9+box_edges[i*2+0];
         r_skyedges[i].v[1] = loadmodel->numvertexes-9+box_edges[i*2+1];
@@ -395,7 +388,7 @@ void R_EmitEdge (mvertex_t *pv0, mvertex_t *pv1)
 R_ClipEdge
 ================
 */
-void R_ClipEdge (mvertex_t *pv0, mvertex_t *pv1, clipplane_t *clip)
+void R_ClipEdge (mvertex_t *pv0, mvertex_t *pv1, clipplane_s *clip)
 {
     float        d0, d1, f;
     mvertex_t    clipvert;
@@ -526,11 +519,11 @@ void ref_soft_R_RenderFace (msurface_t *fa, int clipflags)
 {
     int            i, lindex;
     unsigned    mask;
-    plane_t    *pplane;
+    plane_s    *pplane;
     float        distinv;
     vec3_t        p_normal;
     medge_t        *pedges, tedge;
-    clipplane_t    *pclip;
+    clipplane_s    *pclip;
 
     // translucent surfaces are not drawn by the edge renderer
     if (fa->texinfo->flags & (SURF_TRANS33|SURF_TRANS66))
@@ -710,7 +703,7 @@ void ref_soft_R_RenderFace (msurface_t *fa, int clipflags)
     surface_p->flags = fa->flags;
     surface_p->insubmodel = insubmodel;
     surface_p->spanstate = 0;
-    surface_p->entity = currententity;
+    surface_p->entity = quake2::getInstance()->currententity;
     surface_p->key = r_currentkey++;
     surface_p->spans = NULL;
 
@@ -739,11 +732,11 @@ void ref_soft_R_RenderBmodelFace (bedge_t *pedges, msurface_t *psurf)
 {
     int            i;
     unsigned    mask;
-    plane_t    *pplane;
+    plane_s    *pplane;
     float        distinv;
     vec3_t        p_normal;
     medge_t        tedge;
-    clipplane_t    *pclip;
+    clipplane_s    *pclip;
 
     if (psurf->texinfo->flags & (SURF_TRANS33|SURF_TRANS66))
     {
@@ -831,7 +824,7 @@ void ref_soft_R_RenderBmodelFace (bedge_t *pedges, msurface_t *psurf)
     surface_p->flags = psurf->flags;
     surface_p->insubmodel = true;
     surface_p->spanstate = 0;
-    surface_p->entity = currententity;
+    surface_p->entity = quake2::getInstance()->currententity;
     surface_p->key = r_currentbkey;
     surface_p->spans = NULL;
 

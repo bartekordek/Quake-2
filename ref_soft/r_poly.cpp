@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 #include <assert.h>
-#include "r_local.hpp"
+#include "ref_soft/r_local.hpp"
 
 #define AFFINE_SPANLET_SIZE      16
 #define AFFINE_SPANLET_SIZE_BITS 4
@@ -508,7 +508,7 @@ void R_DrawSpanlet66Stipple( void )
 ** Clips the winding at clip_verts[clip_current] and changes clip_current
 ** Throws out the back side
 */
-int R_ClipPolyFace (int nump, clipplane_t *pclipplane)
+int R_ClipPolyFace (int nump, clipplane_s *pclipplane)
 {
     int        i, outcount;
     float    dists[MAXWORKINGVERTS+3];
@@ -1206,9 +1206,6 @@ void ref_soft_R_DrawAlphaSurfaces( void )
     r_alpha_surfaces = NULL;
 }
 
-/*
-** R_IMFlatShadedQuad
-*/
 void R_IMFlatShadedQuad( vec3_t a, vec3_t b, vec3_t c, vec3_t d, int color, float alpha )
 {
     vec3_t s0, s1;

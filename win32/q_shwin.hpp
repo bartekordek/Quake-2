@@ -1,3 +1,3 @@
 #pragma once
 
-int win32_Sys_Milliseconds (void);
+int win32_Sys_Milliseconds ();

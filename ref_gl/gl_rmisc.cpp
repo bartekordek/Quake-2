@@ -99,7 +99,6 @@ ref_gl_GL_ScreenShot_f
 */
 void ref_gl_GL_ScreenShot_f(void)
 {
-    byte        *buffer;
     char        picname[80];
     char        checkname[MAX_OSPATH];
     int            i, c, temp;
@@ -128,11 +127,11 @@ void ref_gl_GL_ScreenShot_f(void)
     {
         ri.Con_Printf (PRINT_ALL, "SCR_ScreenShot_f: Couldn't create a file\n");
         return;
-     }
+    }
 
 
-    buffer = malloc(vid.width*vid.height*3 + 18);
-    memset (buffer, 0, 18);
+    byte* buffer = (byte*)malloc(vid.width*vid.height*3 + 18);
+    memset ((void*)buffer, 0, 18);
     buffer[2] = 2;        // uncompressed type
     buffer[12] = vid.width&255;
     buffer[13] = vid.width>>8;
@@ -191,9 +190,9 @@ void GL_SetDefaultState( void )
     qglPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
     qglShadeModel (GL_FLAT);
 
-    ref_gl_GL_TextureMode( gl_texturemode->string );
-    ref_gl_GL_TextureAlphaMode( gl_texturealphamode->string );
-    ref_gl_GL_TextureSolidMode( gl_texturesolidmode->string );
+    ref_gl_GL_TextureMode( toChar(gl_texturemode->string ) );
+    ref_gl_GL_TextureAlphaMode( toChar(gl_texturealphamode->string ));
+    ref_gl_GL_TextureSolidMode(toChar( gl_texturesolidmode->string ));
 
     qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter_min);
     qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter_max);

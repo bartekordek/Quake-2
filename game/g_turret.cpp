@@ -90,7 +90,7 @@ void turret_breach_fire (edict *self)
     damage = 100 + random() * 50;
     speed = 550 + 50 * skill->value;
     fire_rocket (self->teammaster->owner, start, f, damage, speed, 150, damage);
-    gi.positioned_sound (start, self, CHAN_WEAPON, gi.soundindex("weapons/rocklf1a.wav"), 1, ATTN_NORM, 0);
+    quake2::getInstance()->gi.positioned_sound (start, self, CHAN_WEAPON, quake2::getInstance()->gi.soundindex("weapons/rocklf1a.wav"), 1, ATTN_NORM, 0);
 }
 
 void turret_breach_think (edict *self)
@@ -203,7 +203,7 @@ void turret_breach_finish_init (edict *self)
     // get and save info for muzzle location
     if (!self->target)
     {
-        gi.dprintf("%s at %s needs a target\n", self->classname, vtos(self->s.origin));
+        quake2::getInstance()->gi.dprintf("%s at %s needs a target\n", self->classname, vtos(self->s.origin));
     }
     else
     {
@@ -221,7 +221,7 @@ void SP_turret_breach (edict *self)
 {
     self->solid = SOLID_BSP;
     self->movetype = MOVETYPE_PUSH;
-    gi.setmodel (self, self->model);
+    quake2::getInstance()->gi.setmodel (self, self->model);
 
     if (!self->speed)
         self->speed = 50;
@@ -247,7 +247,7 @@ void SP_turret_breach (edict *self)
 
     self->think = turret_breach_finish_init;
     self->nextthink = level.time + FRAMETIME;
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 }
 
 
@@ -260,9 +260,9 @@ void SP_turret_base (edict *self)
 {
     self->solid = SOLID_BSP;
     self->movetype = MOVETYPE_PUSH;
-    gi.setmodel (self, self->model);
+    quake2::getInstance()->gi.setmodel (self, self->model);
     self->blocked = turret_blocked;
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 }
 
 
@@ -394,7 +394,7 @@ void SP_turret_driver (edict *self)
 
     self->movetype = MOVETYPE_PUSH;
     self->solid = SOLID_BBOX;
-    self->s.modelindex = gi.modelindex("models/monsters/infantry/tris.md2");
+    self->s.modelindex = quake2::getInstance()->gi.modelindex("models/monsters/infantry/tris.md2");
     VectorSet (self->mins, -16, -16, -24);
     VectorSet (self->maxs, 16, 16, 32);
 
@@ -422,11 +422,11 @@ void SP_turret_driver (edict *self)
     {
         self->item = FindItemByClassname (st.item);
         if (!self->item)
-            gi.dprintf("%s at %s has bad item: %s\n", self->classname, vtos(self->s.origin), st.item);
+            quake2::getInstance()->gi.dprintf("%s at %s has bad item: %s\n", self->classname, vtos(self->s.origin), st.item);
     }
 
     self->think = turret_driver_link;
     self->nextthink = level.time + FRAMETIME;
 
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 }

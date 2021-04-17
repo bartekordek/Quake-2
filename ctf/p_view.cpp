@@ -142,7 +142,7 @@ void P_DamageFeedback (edict *player)
             l = 75;
         else
             l = 100;
-        gi.sound (player, CHAN_VOICE, gi.soundindex(va("*pain%i_%i.wav", l, r)), 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound (player, CHAN_VOICE, quake2::getInstance()->gi.soundindex(va("*pain%i_%i.wav", l, r)), 1, ATTN_NORM, 0);
     }
 
     // the total alpha of the blend is allways proportional to count
@@ -311,7 +311,7 @@ void SV_CalcViewOffset (edict *ent)
     bob = bobfracsin * xyspeed * bob_up->value;
     if (bob > 6)
         bob = 6;
-    //gi.DebugGraph (bob *2, 255);
+    //quake2::getInstance()->gi.DebugGraph (bob *2, 255);
     v[2] += bob;
 
     // add kick offset
@@ -426,7 +426,7 @@ void SV_CalcBlend (edict *ent)
 
     // add for contents
     VectorAdd (ent->s.origin, ent->client->ps.viewoffset, vieworg);
-    contents = gi.pointcontents (vieworg);
+    contents = quake2::getInstance()->gi.pointcontents (vieworg);
     if (contents & (CONTENTS_LAVA|CONTENTS_SLIME|CONTENTS_WATER) )
         ent->client->ps.rdflags |= RDF_UNDERWATER;
     else
@@ -444,7 +444,7 @@ void SV_CalcBlend (edict *ent)
     {
         remaining = ent->client->quad_framenum - level.framenum;
         if (remaining == 30)    // beginning to fade
-            gi.sound(ent, CHAN_ITEM, gi.soundindex("items/damage2.wav"), 1, ATTN_NORM, 0);
+            quake2::getInstance()->gi.sound(ent, CHAN_ITEM, quake2::getInstance()->gi.soundindex("items/damage2.wav"), 1, ATTN_NORM, 0);
         if (remaining > 30 || (remaining & 4) )
             SV_AddBlend (0, 0, 1, 0.08, ent->client->ps.blend);
     }
@@ -452,7 +452,7 @@ void SV_CalcBlend (edict *ent)
     {
         remaining = ent->client->invincible_framenum - level.framenum;
         if (remaining == 30)    // beginning to fade
-            gi.sound(ent, CHAN_ITEM, gi.soundindex("items/protect2.wav"), 1, ATTN_NORM, 0);
+            quake2::getInstance()->gi.sound(ent, CHAN_ITEM, quake2::getInstance()->gi.soundindex("items/protect2.wav"), 1, ATTN_NORM, 0);
         if (remaining > 30 || (remaining & 4) )
             SV_AddBlend (1, 1, 0, 0.08, ent->client->ps.blend);
     }
@@ -460,7 +460,7 @@ void SV_CalcBlend (edict *ent)
     {
         remaining = ent->client->enviro_framenum - level.framenum;
         if (remaining == 30)    // beginning to fade
-            gi.sound(ent, CHAN_ITEM, gi.soundindex("items/airout.wav"), 1, ATTN_NORM, 0);
+            quake2::getInstance()->gi.sound(ent, CHAN_ITEM, quake2::getInstance()->gi.soundindex("items/airout.wav"), 1, ATTN_NORM, 0);
         if (remaining > 30 || (remaining & 4) )
             SV_AddBlend (0, 1, 0, 0.08, ent->client->ps.blend);
     }
@@ -468,7 +468,7 @@ void SV_CalcBlend (edict *ent)
     {
         remaining = ent->client->breather_framenum - level.framenum;
         if (remaining == 30)    // beginning to fade
-            gi.sound(ent, CHAN_ITEM, gi.soundindex("items/airout.wav"), 1, ATTN_NORM, 0);
+            quake2::getInstance()->gi.sound(ent, CHAN_ITEM, quake2::getInstance()->gi.soundindex("items/airout.wav"), 1, ATTN_NORM, 0);
         if (remaining > 30 || (remaining & 4) )
             SV_AddBlend (0.4, 1, 0.4, 0.04, ent->client->ps.blend);
     }
@@ -610,11 +610,11 @@ void P_WorldEffects (void)
     {
         PlayerNoise(current_player, current_player->s.origin, PNOISE_SELF);
         if (current_player->watertype & CONTENTS_LAVA)
-            gi.sound (current_player, CHAN_BODY, gi.soundindex("player/lava_in.wav"), 1, ATTN_NORM, 0);
+            quake2::getInstance()->gi.sound (current_player, CHAN_BODY, quake2::getInstance()->gi.soundindex("player/lava_in.wav"), 1, ATTN_NORM, 0);
         else if (current_player->watertype & CONTENTS_SLIME)
-            gi.sound (current_player, CHAN_BODY, gi.soundindex("player/watr_in.wav"), 1, ATTN_NORM, 0);
+            quake2::getInstance()->gi.sound (current_player, CHAN_BODY, quake2::getInstance()->gi.soundindex("player/watr_in.wav"), 1, ATTN_NORM, 0);
         else if (current_player->watertype & CONTENTS_WATER)
-            gi.sound (current_player, CHAN_BODY, gi.soundindex("player/watr_in.wav"), 1, ATTN_NORM, 0);
+            quake2::getInstance()->gi.sound (current_player, CHAN_BODY, quake2::getInstance()->gi.soundindex("player/watr_in.wav"), 1, ATTN_NORM, 0);
         current_player->flags |= FL_INWATER;
 
         // clear damage_debounce, so the pain sound will play immediately
@@ -627,7 +627,7 @@ void P_WorldEffects (void)
     if (old_waterlevel && ! waterlevel)
     {
         PlayerNoise(current_player, current_player->s.origin, PNOISE_SELF);
-        gi.sound (current_player, CHAN_BODY, gi.soundindex("player/watr_out.wav"), 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound (current_player, CHAN_BODY, quake2::getInstance()->gi.soundindex("player/watr_out.wav"), 1, ATTN_NORM, 0);
         current_player->flags &= ~FL_INWATER;
     }
 
@@ -636,7 +636,7 @@ void P_WorldEffects (void)
     //
     if (old_waterlevel != 3 && waterlevel == 3)
     {
-        gi.sound (current_player, CHAN_BODY, gi.soundindex("player/watr_un.wav"), 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound (current_player, CHAN_BODY, quake2::getInstance()->gi.soundindex("player/watr_un.wav"), 1, ATTN_NORM, 0);
     }
 
     //
@@ -646,12 +646,12 @@ void P_WorldEffects (void)
     {
         if (current_player->air_finished < level.time)
         {    // gasp for air
-            gi.sound (current_player, CHAN_VOICE, gi.soundindex("player/gasp1.wav"), 1, ATTN_NORM, 0);
+            quake2::getInstance()->gi.sound (current_player, CHAN_VOICE, quake2::getInstance()->gi.soundindex("player/gasp1.wav"), 1, ATTN_NORM, 0);
             PlayerNoise(current_player, current_player->s.origin, PNOISE_SELF);
         }
         else  if (current_player->air_finished < level.time + 11)
         {    // just break surface
-            gi.sound (current_player, CHAN_VOICE, gi.soundindex("player/gasp2.wav"), 1, ATTN_NORM, 0);
+            quake2::getInstance()->gi.sound (current_player, CHAN_VOICE, quake2::getInstance()->gi.soundindex("player/gasp2.wav"), 1, ATTN_NORM, 0);
         }
     }
 
@@ -668,9 +668,9 @@ void P_WorldEffects (void)
             if (((int)(current_client->breather_framenum - level.framenum) % 25) == 0)
             {
                 if (!current_client->breather_sound)
-                    gi.sound (current_player, CHAN_AUTO, gi.soundindex("player/u_breath1.wav"), 1, ATTN_NORM, 0);
+                    quake2::getInstance()->gi.sound (current_player, CHAN_AUTO, quake2::getInstance()->gi.soundindex("player/u_breath1.wav"), 1, ATTN_NORM, 0);
                 else
-                    gi.sound (current_player, CHAN_AUTO, gi.soundindex("player/u_breath2.wav"), 1, ATTN_NORM, 0);
+                    quake2::getInstance()->gi.sound (current_player, CHAN_AUTO, quake2::getInstance()->gi.soundindex("player/u_breath2.wav"), 1, ATTN_NORM, 0);
                 current_client->breather_sound ^= 1;
                 PlayerNoise(current_player, current_player->s.origin, PNOISE_SELF);
                 //FIXME: release a bubble?
@@ -692,11 +692,11 @@ void P_WorldEffects (void)
 
                 // play a gurp sound instead of a normal pain sound
                 if (current_player->health <= current_player->dmg)
-                    gi.sound (current_player, CHAN_VOICE, gi.soundindex("player/drown1.wav"), 1, ATTN_NORM, 0);
+                    quake2::getInstance()->gi.sound (current_player, CHAN_VOICE, quake2::getInstance()->gi.soundindex("player/drown1.wav"), 1, ATTN_NORM, 0);
                 else if (rand()&1)
-                    gi.sound (current_player, CHAN_VOICE, gi.soundindex("*gurp1.wav"), 1, ATTN_NORM, 0);
+                    quake2::getInstance()->gi.sound (current_player, CHAN_VOICE, quake2::getInstance()->gi.soundindex("*gurp1.wav"), 1, ATTN_NORM, 0);
                 else
-                    gi.sound (current_player, CHAN_VOICE, gi.soundindex("*gurp2.wav"), 1, ATTN_NORM, 0);
+                    quake2::getInstance()->gi.sound (current_player, CHAN_VOICE, quake2::getInstance()->gi.soundindex("*gurp2.wav"), 1, ATTN_NORM, 0);
 
                 current_player->pain_debounce_time = level.time;
 
@@ -722,9 +722,9 @@ void P_WorldEffects (void)
                 && current_client->invincible_framenum < level.framenum)
             {
                 if (rand()&1)
-                    gi.sound (current_player, CHAN_VOICE, gi.soundindex("player/burn1.wav"), 1, ATTN_NORM, 0);
+                    quake2::getInstance()->gi.sound (current_player, CHAN_VOICE, quake2::getInstance()->gi.soundindex("player/burn1.wav"), 1, ATTN_NORM, 0);
                 else
-                    gi.sound (current_player, CHAN_VOICE, gi.soundindex("player/burn2.wav"), 1, ATTN_NORM, 0);
+                    quake2::getInstance()->gi.sound (current_player, CHAN_VOICE, quake2::getInstance()->gi.soundindex("player/burn2.wav"), 1, ATTN_NORM, 0);
                 current_player->pain_debounce_time = level.time + 1;
             }
 
@@ -846,7 +846,7 @@ void G_SetClientSound (edict *ent)
     if (ent->client->resp.helpchanged && ent->client->resp.helpchanged <= 3 && !(level.framenum&63) )
     {
         ent->client->resp.helpchanged++;
-        gi.sound (ent, CHAN_VOICE, gi.soundindex ("misc/pc_up.wav"), 1, ATTN_STATIC, 0);
+        quake2::getInstance()->gi.sound (ent, CHAN_VOICE, quake2::getInstance()->gi.soundindex ("misc/pc_up.wav"), 1, ATTN_STATIC, 0);
     }
 
 
@@ -858,9 +858,9 @@ void G_SetClientSound (edict *ent)
     if (ent->waterlevel && (ent->watertype&(CONTENTS_LAVA|CONTENTS_SLIME)) )
         ent->s.sound = snd_fry;
     else if (strcmp(weap, "weapon_railgun") == 0)
-        ent->s.sound = gi.soundindex("weapons/rg_hum.wav");
+        ent->s.sound = quake2::getInstance()->gi.soundindex("weapons/rg_hum.wav");
     else if (strcmp(weap, "weapon_bfg") == 0)
-        ent->s.sound = gi.soundindex("weapons/bfg_hum.wav");
+        ent->s.sound = quake2::getInstance()->gi.soundindex("weapons/bfg_hum.wav");
     else if (ent->client->weapon_sound)
         ent->s.sound = ent->client->weapon_sound;
     else
@@ -1129,7 +1129,7 @@ void ClientEndServerFrame (edict *ent)
         } else
 //ZOID
             DeathmatchScoreboardMessage (ent, ent->enemy);
-        gi.unicast (ent, false);
+        quake2::getInstance()->gi.unicast (ent, false);
     }
 }
 

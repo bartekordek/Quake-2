@@ -44,15 +44,15 @@ void BossExplode (edict *self);
 
 void TreadSound (edict *self)
 {
-    gi.sound (self, CHAN_VOICE, tread_sound, 1, ATTN_NORM, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_VOICE, tread_sound, 1, ATTN_NORM, 0);
 }
 
 void supertank_search (edict *self)
 {
     if (random() < 0.5)
-        gi.sound (self, CHAN_VOICE, sound_search1, 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_search1, 1, ATTN_NORM, 0);
     else
-        gi.sound (self, CHAN_VOICE, sound_search2, 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_search2, 1, ATTN_NORM, 0);
 }
 
 
@@ -476,17 +476,17 @@ void supertank_pain (edict *self, edict *other, float kick, int damage)
 
     if (damage <= 10)
     {
-        gi.sound (self, CHAN_VOICE, sound_pain1, 1, ATTN_NORM,0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain1, 1, ATTN_NORM,0);
         self->monsterinfo.currentmove = &supertank_move_pain1;
     }
     else if (damage <= 25)
     {
-        gi.sound (self, CHAN_VOICE, sound_pain3, 1, ATTN_NORM,0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain3, 1, ATTN_NORM,0);
         self->monsterinfo.currentmove = &supertank_move_pain2;
     }
     else
     {
-        gi.sound (self, CHAN_VOICE, sound_pain2, 1, ATTN_NORM,0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain2, 1, ATTN_NORM,0);
         self->monsterinfo.currentmove = &supertank_move_pain3;
     }
 };
@@ -588,7 +588,7 @@ void supertank_dead (edict *self)
     self->movetype = MOVETYPE_TOSS;
     self->svflags |= SVF_DEADMONSTER;
     self->nextthink = 0;
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 }
 
 
@@ -646,10 +646,10 @@ void BossExplode (edict *self)
         return;
     }
 
-    gi.WriteByte (svc_temp_entity);
-    gi.WriteByte (TE_EXPLOSION1);
-    gi.WritePosition (org);
-    gi.multicast (self->s.origin, MULTICAST_PVS);
+    quake2::getInstance()->gi.WriteByte (svc_temp_entity);
+    quake2::getInstance()->gi.WriteByte (TE_EXPLOSION1);
+    quake2::getInstance()->gi.WritePosition (org);
+    quake2::getInstance()->gi.multicast (self->s.origin, multicast_t::MULTICAST_PVS);
 
     self->nextthink = level.time + 0.1;
 }
@@ -657,7 +657,7 @@ void BossExplode (edict *self)
 
 void supertank_die (edict *self, edict *inflictor, edict *attacker, int damage, vec3_t point)
 {
-    gi.sound (self, CHAN_VOICE, sound_death, 1, ATTN_NORM, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_death, 1, ATTN_NORM, 0);
     self->deadflag = DEAD_DEAD;
     self->takedamage = DAMAGE_NO;
     self->count = 0;
@@ -678,19 +678,19 @@ void SP_monster_supertank (edict *self)
         return;
     }
 
-    sound_pain1 = gi.soundindex ("bosstank/btkpain1.wav");
-    sound_pain2 = gi.soundindex ("bosstank/btkpain2.wav");
-    sound_pain3 = gi.soundindex ("bosstank/btkpain3.wav");
-    sound_death = gi.soundindex ("bosstank/btkdeth1.wav");
-    sound_search1 = gi.soundindex ("bosstank/btkunqv1.wav");
-    sound_search2 = gi.soundindex ("bosstank/btkunqv2.wav");
+    sound_pain1 = quake2::getInstance()->gi.soundindex ("bosstank/btkpain1.wav");
+    sound_pain2 = quake2::getInstance()->gi.soundindex ("bosstank/btkpain2.wav");
+    sound_pain3 = quake2::getInstance()->gi.soundindex ("bosstank/btkpain3.wav");
+    sound_death = quake2::getInstance()->gi.soundindex ("bosstank/btkdeth1.wav");
+    sound_search1 = quake2::getInstance()->gi.soundindex ("bosstank/btkunqv1.wav");
+    sound_search2 = quake2::getInstance()->gi.soundindex ("bosstank/btkunqv2.wav");
 
-//    self->s.sound = gi.soundindex ("bosstank/btkengn1.wav");
-    tread_sound = gi.soundindex ("bosstank/btkengn1.wav");
+//    self->s.sound = quake2::getInstance()->gi.soundindex ("bosstank/btkengn1.wav");
+    tread_sound = quake2::getInstance()->gi.soundindex ("bosstank/btkengn1.wav");
 
     self->movetype = MOVETYPE_STEP;
     self->solid = SOLID_BBOX;
-    self->s.modelindex = gi.modelindex ("models/monsters/boss1/tris.md2");
+    self->s.modelindex = quake2::getInstance()->gi.modelindex ("models/monsters/boss1/tris.md2");
     VectorSet (self->mins, -64, -64, 0);
     VectorSet (self->maxs, 64, 64, 112);
 
@@ -709,7 +709,7 @@ void SP_monster_supertank (edict *self)
     self->monsterinfo.melee = NULL;
     self->monsterinfo.sight = NULL;
 
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 
     self->monsterinfo.currentmove = &supertank_move_stand;
     self->monsterinfo.scale = MODEL_SCALE;

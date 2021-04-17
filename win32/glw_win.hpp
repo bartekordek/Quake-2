@@ -24,9 +24,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #  error You should not be including this file on this platform
 #endif
 
-#ifndef __GLW_WIN_H__
-#define __GLW_WIN_H__
-
 typedef struct
 {
     HINSTANCE    hInstance;
@@ -47,6 +44,6 @@ typedef struct
 
 extern glwstate_t glw_state;
 
-#endif
+int GLimp_InitGL();
 
 #endif // ____WIN32_GLW_WIN_H__

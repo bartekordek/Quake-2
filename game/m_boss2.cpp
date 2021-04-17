@@ -41,7 +41,7 @@ static int    sound_search1;
 void boss2_search (edict *self)
 {
     if (random() < 0.5)
-        gi.sound (self, CHAN_VOICE, sound_search1, 1, ATTN_NONE, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_search1, 1, ATTN_NONE, 0);
 }
 
 void boss2_run (edict *self);
@@ -479,17 +479,17 @@ void boss2_pain (edict *self, edict *other, float kick, int damage)
 // American wanted these at no attenuation
     if (damage < 10)
     {
-        gi.sound (self, CHAN_VOICE, sound_pain3, 1, ATTN_NONE, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain3, 1, ATTN_NONE, 0);
         self->monsterinfo.currentmove = &boss2_move_pain_light;
     }
     else if (damage < 30)
     {
-        gi.sound (self, CHAN_VOICE, sound_pain1, 1, ATTN_NONE, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain1, 1, ATTN_NONE, 0);
         self->monsterinfo.currentmove = &boss2_move_pain_light;
     }
     else
     {
-        gi.sound (self, CHAN_VOICE, sound_pain2, 1, ATTN_NONE, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain2, 1, ATTN_NONE, 0);
         self->monsterinfo.currentmove = &boss2_move_pain_heavy;
     }
 }
@@ -501,12 +501,12 @@ void boss2_dead (edict *self)
     self->movetype = MOVETYPE_TOSS;
     self->svflags |= SVF_DEADMONSTER;
     self->nextthink = 0;
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 }
 
 void boss2_die (edict *self, edict *inflictor, edict *attacker, int damage, vec3_t point)
 {
-    gi.sound (self, CHAN_VOICE, sound_death, 1, ATTN_NONE, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_death, 1, ATTN_NONE, 0);
     self->deadflag = DEAD_DEAD;
     self->takedamage = DAMAGE_NO;
     self->count = 0;
@@ -518,7 +518,7 @@ void boss2_die (edict *self, edict *inflictor, edict *attacker, int damage, vec3
     // check for gib
     if (self->health <= self->gib_health)
     {
-        gi.sound (self, CHAN_VOICE, gi.soundindex ("misc/udeath.wav"), 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, quake2::getInstance()->gi.soundindex ("misc/udeath.wav"), 1, ATTN_NORM, 0);
         for (n= 0; n < 2; n++)
             ThrowGib (self, "models/objects/gibs/bone/tris.md2", damage, GIB_ORGANIC);
         for (n= 0; n < 4; n++)
@@ -555,7 +555,7 @@ bool Boss2_CheckAttack (edict *self)
         VectorCopy (self->enemy->s.origin, spot2);
         spot2[2] += self->enemy->viewheight;
 
-        tr = gi.trace (spot1, NULL, NULL, spot2, self, CONTENTS_SOLID|CONTENTS_MONSTER|CONTENTS_SLIME|CONTENTS_LAVA);
+        tr = quake2::getInstance()->gi.trace (spot1, NULL, NULL, spot2, self, CONTENTS_SOLID|CONTENTS_MONSTER|CONTENTS_SLIME|CONTENTS_LAVA);
 
         // do we have a clear shot?
         if (tr.ent != self->enemy)
@@ -641,17 +641,17 @@ void SP_monster_boss2 (edict *self)
         return;
     }
 
-    sound_pain1 = gi.soundindex ("bosshovr/bhvpain1.wav");
-    sound_pain2 = gi.soundindex ("bosshovr/bhvpain2.wav");
-    sound_pain3 = gi.soundindex ("bosshovr/bhvpain3.wav");
-    sound_death = gi.soundindex ("bosshovr/bhvdeth1.wav");
-    sound_search1 = gi.soundindex ("bosshovr/bhvunqv1.wav");
+    sound_pain1 = quake2::getInstance()->gi.soundindex ("bosshovr/bhvpain1.wav");
+    sound_pain2 = quake2::getInstance()->gi.soundindex ("bosshovr/bhvpain2.wav");
+    sound_pain3 = quake2::getInstance()->gi.soundindex ("bosshovr/bhvpain3.wav");
+    sound_death = quake2::getInstance()->gi.soundindex ("bosshovr/bhvdeth1.wav");
+    sound_search1 = quake2::getInstance()->gi.soundindex ("bosshovr/bhvunqv1.wav");
 
-    self->s.sound = gi.soundindex ("bosshovr/bhvengn1.wav");
+    self->s.sound = quake2::getInstance()->gi.soundindex ("bosshovr/bhvengn1.wav");
 
     self->movetype = MOVETYPE_STEP;
     self->solid = SOLID_BBOX;
-    self->s.modelindex = gi.modelindex ("models/monsters/boss2/tris.md2");
+    self->s.modelindex = quake2::getInstance()->gi.modelindex ("models/monsters/boss2/tris.md2");
     VectorSet (self->mins, -56, -56, 0);
     VectorSet (self->maxs, 56, 56, 80);
 
@@ -670,7 +670,7 @@ void SP_monster_boss2 (edict *self)
     self->monsterinfo.attack = boss2_attack;
     self->monsterinfo.search = boss2_search;
     self->monsterinfo.checkattack = Boss2_CheckAttack;
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 
     self->monsterinfo.currentmove = &boss2_move_stand;
     self->monsterinfo.scale = MODEL_SCALE;

@@ -10,15 +10,16 @@
 // will result in a prediction error of some degree.
 struct pmove_state
 {
-    pmtype_t    pm_type;
+    pmtype_t pm_type;
 
-    short        origin[3];        // 12.3
-    short        velocity[3];    // 12.3
-    byte        pm_flags;        // ducked, jump_held, etc
-    byte        pm_time;        // each unit = 8 ms
-    short        gravity;
-    short        delta_angles[3];    // add to command angles to get view direction
-                                    // changed by spawns, rotating objects, and teleporters
-} pmove_state;
+    short origin[3];    // 12.3
+    short velocity[3];  // 12.3
+    byte pm_flags;      // ducked, jump_held, etc
+    byte pm_time;       // each unit = 8 ms
+    short gravity;
+    short delta_angles[3];  // add to command angles to get view direction
+                            // changed by spawns, rotating objects, and
+                            // teleporters
+};
 
-#endif // ____SHARED_PMOVE_STATE_H__
+#endif  // ____SHARED_PMOVE_STATE_H__

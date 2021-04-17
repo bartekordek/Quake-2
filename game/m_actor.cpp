@@ -238,7 +238,7 @@ void actor_pain (edict *self, edict *other, float kick, int damage)
         return;
 
     self->pain_debounce_time = level.time + 3;
-//    gi.sound (self, CHAN_VOICE, actor.sound_pain, 1, ATTN_NORM, 0);
+//    quake2::getInstance()->gi.sound (self, CHAN_VOICE, actor.sound_pain, 1, ATTN_NORM, 0);
 
     if ((other->client) && (random() < 0.4))
     {
@@ -252,7 +252,7 @@ void actor_pain (edict *self, edict *other, float kick, int damage)
         else
             self->monsterinfo.currentmove = &actor_move_taunt;
         name = actor_names[(self - g_edicts)%MAX_ACTOR_NAMES];
-        gi.cprintf (other, PRINT_CHAT, "%s: %s!\n", name, messages[rand()%3]);
+        quake2::getInstance()->gi.cprintf (other, PRINT_CHAT, "%s: %s!\n", name, messages[rand()%3]);
         return;
     }
 
@@ -303,7 +303,7 @@ void actor_dead (edict *self)
     self->movetype = MOVETYPE_TOSS;
     self->svflags |= SVF_DEADMONSTER;
     self->nextthink = 0;
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 }
 
 mframe_t actor_frames_death1 [] =
@@ -343,7 +343,7 @@ void actor_die (edict *self, edict *inflictor, edict *attacker, int damage, vec3
 // check for gib
     if (self->health <= -80)
     {
-//        gi.sound (self, CHAN_VOICE, actor.sound_gib, 1, ATTN_NORM, 0);
+//        quake2::getInstance()->gi.sound (self, CHAN_VOICE, actor.sound_gib, 1, ATTN_NORM, 0);
         for (n= 0; n < 2; n++)
             ThrowGib (self, "models/objects/gibs/bone/tris.md2", damage, GIB_ORGANIC);
         for (n= 0; n < 4; n++)
@@ -357,7 +357,7 @@ void actor_die (edict *self, edict *inflictor, edict *attacker, int damage, vec3
         return;
 
 // regular death
-//    gi.sound (self, CHAN_VOICE, actor.sound_die, 1, ATTN_NORM, 0);
+//    quake2::getInstance()->gi.sound (self, CHAN_VOICE, actor.sound_die, 1, ATTN_NORM, 0);
     self->deadflag = DEAD_DEAD;
     self->takedamage = DAMAGE_YES;
 
@@ -405,7 +405,7 @@ void actor_use (edict *self, edict *other, edict *activator)
     self->goalentity = self->movetarget = G_PickTarget(self->target);
     if ((!self->movetarget) || (strcmp(self->movetarget->classname, "target_actor") != 0))
     {
-        gi.dprintf ("%s has bad target %s at %s\n", self->classname, self->target, vtos(self->s.origin));
+        quake2::getInstance()->gi.dprintf ("%s has bad target %s at %s\n", self->classname, self->target, vtos(self->s.origin));
         self->target = NULL;
         self->monsterinfo.pausetime = 100000000;
         self->monsterinfo.stand (self);
@@ -432,21 +432,21 @@ void SP_misc_actor (edict *self)
 
     if (!self->targetname)
     {
-        gi.dprintf("untargeted %s at %s\n", self->classname, vtos(self->s.origin));
+        quake2::getInstance()->gi.dprintf("untargeted %s at %s\n", self->classname, vtos(self->s.origin));
         G_FreeEdict (self);
         return;
     }
 
     if (!self->target)
     {
-        gi.dprintf("%s with no target at %s\n", self->classname, vtos(self->s.origin));
+        quake2::getInstance()->gi.dprintf("%s with no target at %s\n", self->classname, vtos(self->s.origin));
         G_FreeEdict (self);
         return;
     }
 
     self->movetype = MOVETYPE_STEP;
     self->solid = SOLID_BBOX;
-    self->s.modelindex = gi.modelindex("players/male/tris.md2");
+    self->s.modelindex = quake2::getInstance()->gi.modelindex("players/male/tris.md2");
     VectorSet (self->mins, -16, -16, -24);
     VectorSet (self->maxs, 16, 16, 32);
 
@@ -466,7 +466,7 @@ void SP_misc_actor (edict *self)
 
     self->monsterinfo.aiflags |= AI_GOOD_GUY;
 
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 
     self->monsterinfo.currentmove = &actor_move_stand;
     self->monsterinfo.scale = MODEL_SCALE;
@@ -493,7 +493,7 @@ for JUMP only:
 "height"        speed thrown upwards (default 200)
 */
 
-void target_actor_touch (edict *self, edict *other, plane_t *plane, csurface_t *surf)
+void target_actor_touch (edict *self, edict *other, plane_s *plane, csurface_s *surf)
 {
     vec3_t    v;
 
@@ -515,7 +515,7 @@ void target_actor_touch (edict *self, edict *other, plane_t *plane, csurface_t *
             ent = &g_edicts[n];
             if (!ent->inuse)
                 continue;
-            gi.cprintf (ent, PRINT_CHAT, "%s: %s\n", actor_names[(other - g_edicts)%MAX_ACTOR_NAMES], self->message);
+            quake2::getInstance()->gi.cprintf (ent, PRINT_CHAT, "%s: %s\n", actor_names[(other - g_edicts)%MAX_ACTOR_NAMES], self->message);
         }
     }
 
@@ -528,7 +528,7 @@ void target_actor_touch (edict *self, edict *other, plane_t *plane, csurface_t *
         {
             other->groundentity = NULL;
             other->velocity[2] = self->movedir[2];
-            gi.sound(other, CHAN_VOICE, gi.soundindex("player/male/jump1.wav"), 1, ATTN_NORM, 0);
+            quake2::getInstance()->gi.sound(other, CHAN_VOICE, quake2::getInstance()->gi.soundindex("player/male/jump1.wav"), 1, ATTN_NORM, 0);
         }
     }
 
@@ -585,7 +585,7 @@ void target_actor_touch (edict *self, edict *other, plane_t *plane, csurface_t *
 void SP_target_actor (edict *self)
 {
     if (!self->targetname)
-        gi.dprintf ("%s with no targetname at %s\n", self->classname, vtos(self->s.origin));
+        quake2::getInstance()->gi.dprintf ("%s with no targetname at %s\n", self->classname, vtos(self->s.origin));
 
     self->solid = SOLID_TRIGGER;
     self->touch = target_actor_touch;
@@ -605,5 +605,5 @@ void SP_target_actor (edict *self)
         self->movedir[2] = st.height;
     }
 
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 }

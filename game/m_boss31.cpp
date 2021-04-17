@@ -57,11 +57,11 @@ void jorg_search (edict *self)
     r = random();
 
     if (r <= 0.3)
-        gi.sound (self, CHAN_VOICE, sound_search1, 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_search1, 1, ATTN_NORM, 0);
     else if (r <= 0.6)
-        gi.sound (self, CHAN_VOICE, sound_search2, 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_search2, 1, ATTN_NORM, 0);
     else
-        gi.sound (self, CHAN_VOICE, sound_search3, 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_search3, 1, ATTN_NORM, 0);
 }
 
 
@@ -138,23 +138,23 @@ mmove_t    jorg_move_stand = {FRAME_stand01, FRAME_stand51, jorg_frames_stand, N
 
 void jorg_idle (edict *self)
 {
-    gi.sound (self, CHAN_VOICE, sound_idle, 1, ATTN_NORM,0);
+    quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_idle, 1, ATTN_NORM,0);
 }
 
 void jorg_death_hit (edict *self)
 {
-    gi.sound (self, CHAN_BODY, sound_death_hit, 1, ATTN_NORM,0);
+    quake2::getInstance()->gi.sound (self, CHAN_BODY, sound_death_hit, 1, ATTN_NORM,0);
 }
 
 
 void jorg_step_left (edict *self)
 {
-    gi.sound (self, CHAN_BODY, sound_step_left, 1, ATTN_NORM,0);
+    quake2::getInstance()->gi.sound (self, CHAN_BODY, sound_step_left, 1, ATTN_NORM,0);
 }
 
 void jorg_step_right (edict *self)
 {
-    gi.sound (self, CHAN_BODY, sound_step_right, 1, ATTN_NORM,0);
+    quake2::getInstance()->gi.sound (self, CHAN_BODY, sound_step_right, 1, ATTN_NORM,0);
 }
 
 
@@ -454,19 +454,19 @@ void jorg_pain (edict *self, edict *other, float kick, int damage)
 
     if (damage <= 50)
     {
-        gi.sound (self, CHAN_VOICE, sound_pain1, 1, ATTN_NORM,0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain1, 1, ATTN_NORM,0);
         self->monsterinfo.currentmove = &jorg_move_pain1;
     }
     else if (damage <= 100)
     {
-        gi.sound (self, CHAN_VOICE, sound_pain2, 1, ATTN_NORM,0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain2, 1, ATTN_NORM,0);
         self->monsterinfo.currentmove = &jorg_move_pain2;
     }
     else
     {
         if (random() <= 0.3)
         {
-            gi.sound (self, CHAN_VOICE, sound_pain3, 1, ATTN_NORM,0);
+            quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain3, 1, ATTN_NORM,0);
             self->monsterinfo.currentmove = &jorg_move_pain3;
         }
     }
@@ -486,7 +486,7 @@ void jorgBFG (edict *self)
     vec[2] += self->enemy->viewheight;
     VectorSubtract (vec, start, dir);
     VectorNormalize (dir);
-    gi.sound (self, CHAN_VOICE, sound_attack2, 1, ATTN_NORM, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_attack2, 1, ATTN_NORM, 0);
     /*void monster_fire_bfg (edict *self,
                              vec3_t start,
                              vec3_t aimdir,
@@ -546,13 +546,13 @@ void jorg_attack(edict *self)
 
     if (random() <= 0.75)
     {
-        gi.sound (self, CHAN_VOICE, sound_attack1, 1, ATTN_NORM,0);
-        self->s.sound = gi.soundindex ("boss3/w_loop.wav");
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_attack1, 1, ATTN_NORM,0);
+        self->s.sound = quake2::getInstance()->gi.soundindex ("boss3/w_loop.wav");
         self->monsterinfo.currentmove = &jorg_move_start_attack1;
     }
     else
     {
-        gi.sound (self, CHAN_VOICE, sound_attack2, 1, ATTN_NORM,0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_attack2, 1, ATTN_NORM,0);
         self->monsterinfo.currentmove = &jorg_move_attack2;
     }
 }
@@ -571,7 +571,7 @@ void jorg_dead (edict *self)
     VectorSet (self->maxs, 60, 60, 72);
     self->movetype = MOVETYPE_TOSS;
     self->nextthink = 0;
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 
     tempent = G_Spawn();
     VectorCopy (self->s.origin, tempent->s.origin);
@@ -588,7 +588,7 @@ void jorg_dead (edict *self)
 
 void jorg_die (edict *self, edict *inflictor, edict *attacker, int damage, vec3_t point)
 {
-    gi.sound (self, CHAN_VOICE, sound_death, 1, ATTN_NORM, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_death, 1, ATTN_NORM, 0);
     self->deadflag = DEAD_DEAD;
     self->takedamage = DAMAGE_NO;
     self->s.sound = 0;
@@ -614,7 +614,7 @@ bool Jorg_CheckAttack (edict *self)
         VectorCopy (self->enemy->s.origin, spot2);
         spot2[2] += self->enemy->viewheight;
 
-        tr = gi.trace (spot1, NULL, NULL, spot2, self, CONTENTS_SOLID|CONTENTS_MONSTER|CONTENTS_SLIME|CONTENTS_LAVA);
+        tr = quake2::getInstance()->gi.trace (spot1, NULL, NULL, spot2, self, CONTENTS_SOLID|CONTENTS_MONSTER|CONTENTS_SLIME|CONTENTS_LAVA);
 
         // do we have a clear shot?
         if (tr.ent != self->enemy)
@@ -701,27 +701,27 @@ void SP_monster_jorg (edict *self)
         return;
     }
 
-    sound_pain1 = gi.soundindex ("boss3/bs3pain1.wav");
-    sound_pain2 = gi.soundindex ("boss3/bs3pain2.wav");
-    sound_pain3 = gi.soundindex ("boss3/bs3pain3.wav");
-    sound_death = gi.soundindex ("boss3/bs3deth1.wav");
-    sound_attack1 = gi.soundindex ("boss3/bs3atck1.wav");
-    sound_attack2 = gi.soundindex ("boss3/bs3atck2.wav");
-    sound_search1 = gi.soundindex ("boss3/bs3srch1.wav");
-    sound_search2 = gi.soundindex ("boss3/bs3srch2.wav");
-    sound_search3 = gi.soundindex ("boss3/bs3srch3.wav");
-    sound_idle = gi.soundindex ("boss3/bs3idle1.wav");
-    sound_step_left = gi.soundindex ("boss3/step1.wav");
-    sound_step_right = gi.soundindex ("boss3/step2.wav");
-    sound_firegun = gi.soundindex ("boss3/xfire.wav");
-    sound_death_hit = gi.soundindex ("boss3/d_hit.wav");
+    sound_pain1 = quake2::getInstance()->gi.soundindex ("boss3/bs3pain1.wav");
+    sound_pain2 = quake2::getInstance()->gi.soundindex ("boss3/bs3pain2.wav");
+    sound_pain3 = quake2::getInstance()->gi.soundindex ("boss3/bs3pain3.wav");
+    sound_death = quake2::getInstance()->gi.soundindex ("boss3/bs3deth1.wav");
+    sound_attack1 = quake2::getInstance()->gi.soundindex ("boss3/bs3atck1.wav");
+    sound_attack2 = quake2::getInstance()->gi.soundindex ("boss3/bs3atck2.wav");
+    sound_search1 = quake2::getInstance()->gi.soundindex ("boss3/bs3srch1.wav");
+    sound_search2 = quake2::getInstance()->gi.soundindex ("boss3/bs3srch2.wav");
+    sound_search3 = quake2::getInstance()->gi.soundindex ("boss3/bs3srch3.wav");
+    sound_idle = quake2::getInstance()->gi.soundindex ("boss3/bs3idle1.wav");
+    sound_step_left = quake2::getInstance()->gi.soundindex ("boss3/step1.wav");
+    sound_step_right = quake2::getInstance()->gi.soundindex ("boss3/step2.wav");
+    sound_firegun = quake2::getInstance()->gi.soundindex ("boss3/xfire.wav");
+    sound_death_hit = quake2::getInstance()->gi.soundindex ("boss3/d_hit.wav");
 
     MakronPrecache ();
 
     self->movetype = MOVETYPE_STEP;
     self->solid = SOLID_BBOX;
-    self->s.modelindex = gi.modelindex ("models/monsters/boss3/rider/tris.md2");
-    self->s.modelindex2 = gi.modelindex ("models/monsters/boss3/jorg/tris.md2");
+    self->s.modelindex = quake2::getInstance()->gi.modelindex ("models/monsters/boss3/rider/tris.md2");
+    self->s.modelindex2 = quake2::getInstance()->gi.modelindex ("models/monsters/boss3/jorg/tris.md2");
     VectorSet (self->mins, -80, -80, 0);
     VectorSet (self->maxs, 80, 80, 140);
 
@@ -740,7 +740,7 @@ void SP_monster_jorg (edict *self)
     self->monsterinfo.melee = NULL;
     self->monsterinfo.sight = NULL;
     self->monsterinfo.checkattack = Jorg_CheckAttack;
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 
     self->monsterinfo.currentmove = &jorg_move_stand;
     self->monsterinfo.scale = MODEL_SCALE;

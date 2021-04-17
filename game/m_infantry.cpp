@@ -135,7 +135,7 @@ mmove_t infantry_move_fidget = {FRAME_stand01, FRAME_stand49, infantry_frames_fi
 void infantry_fidget (edict *self)
 {
     self->monsterinfo.currentmove = &infantry_move_fidget;
-    gi.sound (self, CHAN_VOICE, sound_idle, 1, ATTN_IDLE, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_idle, 1, ATTN_IDLE, 0);
 }
 
 mframe_t infantry_frames_walk [] =
@@ -231,12 +231,12 @@ void infantry_pain (edict *self, edict *other, float kick, int damage)
     if (n == 0)
     {
         self->monsterinfo.currentmove = &infantry_move_pain1;
-        gi.sound (self, CHAN_VOICE, sound_pain1, 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain1, 1, ATTN_NORM, 0);
     }
     else
     {
         self->monsterinfo.currentmove = &infantry_move_pain2;
-        gi.sound (self, CHAN_VOICE, sound_pain2, 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain2, 1, ATTN_NORM, 0);
     }
 }
 
@@ -298,7 +298,7 @@ void InfantryMachineGun (edict *self)
 
 void infantry_sight (edict *self, edict *other)
 {
-    gi.sound (self, CHAN_BODY, sound_sight, 1, ATTN_NORM, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_BODY, sound_sight, 1, ATTN_NORM, 0);
 }
 
 void infantry_dead (edict *self)
@@ -307,7 +307,7 @@ void infantry_dead (edict *self)
     VectorSet (self->maxs, 16, 16, -8);
     self->movetype = MOVETYPE_TOSS;
     self->svflags |= SVF_DEADMONSTER;
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 
     M_FlyCheck (self);
 }
@@ -390,7 +390,7 @@ void infantry_die (edict *self, edict *inflictor, edict *attacker, int damage, v
 // check for gib
     if (self->health <= self->gib_health)
     {
-        gi.sound (self, CHAN_VOICE, gi.soundindex ("misc/udeath.wav"), 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, quake2::getInstance()->gi.soundindex ("misc/udeath.wav"), 1, ATTN_NORM, 0);
         for (n= 0; n < 2; n++)
             ThrowGib (self, "models/objects/gibs/bone/tris.md2", damage, GIB_ORGANIC);
         for (n= 0; n < 4; n++)
@@ -411,17 +411,17 @@ void infantry_die (edict *self, edict *inflictor, edict *attacker, int damage, v
     if (n == 0)
     {
         self->monsterinfo.currentmove = &infantry_move_death1;
-        gi.sound (self, CHAN_VOICE, sound_die2, 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_die2, 1, ATTN_NORM, 0);
     }
     else if (n == 1)
     {
         self->monsterinfo.currentmove = &infantry_move_death2;
-        gi.sound (self, CHAN_VOICE, sound_die1, 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_die1, 1, ATTN_NORM, 0);
     }
     else
     {
         self->monsterinfo.currentmove = &infantry_move_death3;
-        gi.sound (self, CHAN_VOICE, sound_die2, 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_die2, 1, ATTN_NORM, 0);
     }
 }
 
@@ -434,7 +434,7 @@ void infantry_duck_down (edict *self)
     self->maxs[2] -= 32;
     self->takedamage = DAMAGE_YES;
     self->monsterinfo.pausetime = level.time + 1;
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 }
 
 void infantry_duck_hold (edict *self)
@@ -450,7 +450,7 @@ void infantry_duck_up (edict *self)
     self->monsterinfo.aiflags &= ~AI_DUCKED;
     self->maxs[2] += 32;
     self->takedamage = DAMAGE_AIM;
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 }
 
 mframe_t infantry_frames_duck [] =
@@ -479,7 +479,7 @@ void infantry_cock_gun (edict *self)
 {
     int        n;
 
-    gi.sound (self, CHAN_WEAPON, sound_weapon_cock, 1, ATTN_NORM, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_WEAPON, sound_weapon_cock, 1, ATTN_NORM, 0);
     n = (rand() & 15) + 3 + 7;
     self->monsterinfo.pausetime = level.time + n * FRAMETIME;
 }
@@ -517,7 +517,7 @@ mmove_t infantry_move_attack1 = {FRAME_attak101, FRAME_attak115, infantry_frames
 
 void infantry_swing (edict *self)
 {
-    gi.sound (self, CHAN_WEAPON, sound_punch_swing, 1, ATTN_NORM, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_WEAPON, sound_punch_swing, 1, ATTN_NORM, 0);
 }
 
 void infantry_smack (edict *self)
@@ -526,7 +526,7 @@ void infantry_smack (edict *self)
 
     VectorSet (aim, MELEE_DISTANCE, 0, 0);
     if (fire_hit (self, aim, (5 + (rand() % 5)), 50))
-        gi.sound (self, CHAN_WEAPON, sound_punch_hit, 1, ATTN_NORM, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_WEAPON, sound_punch_hit, 1, ATTN_NORM, 0);
 }
 
 mframe_t infantry_frames_attack2 [] =
@@ -561,24 +561,24 @@ void SP_monster_infantry (edict *self)
         return;
     }
 
-    sound_pain1 = gi.soundindex ("infantry/infpain1.wav");
-    sound_pain2 = gi.soundindex ("infantry/infpain2.wav");
-    sound_die1 = gi.soundindex ("infantry/infdeth1.wav");
-    sound_die2 = gi.soundindex ("infantry/infdeth2.wav");
+    sound_pain1 = quake2::getInstance()->gi.soundindex ("infantry/infpain1.wav");
+    sound_pain2 = quake2::getInstance()->gi.soundindex ("infantry/infpain2.wav");
+    sound_die1 = quake2::getInstance()->gi.soundindex ("infantry/infdeth1.wav");
+    sound_die2 = quake2::getInstance()->gi.soundindex ("infantry/infdeth2.wav");
 
-    sound_gunshot = gi.soundindex ("infantry/infatck1.wav");
-    sound_weapon_cock = gi.soundindex ("infantry/infatck3.wav");
-    sound_punch_swing = gi.soundindex ("infantry/infatck2.wav");
-    sound_punch_hit = gi.soundindex ("infantry/melee2.wav");
+    sound_gunshot = quake2::getInstance()->gi.soundindex ("infantry/infatck1.wav");
+    sound_weapon_cock = quake2::getInstance()->gi.soundindex ("infantry/infatck3.wav");
+    sound_punch_swing = quake2::getInstance()->gi.soundindex ("infantry/infatck2.wav");
+    sound_punch_hit = quake2::getInstance()->gi.soundindex ("infantry/melee2.wav");
 
-    sound_sight = gi.soundindex ("infantry/infsght1.wav");
-    sound_search = gi.soundindex ("infantry/infsrch1.wav");
-    sound_idle = gi.soundindex ("infantry/infidle1.wav");
+    sound_sight = quake2::getInstance()->gi.soundindex ("infantry/infsght1.wav");
+    sound_search = quake2::getInstance()->gi.soundindex ("infantry/infsrch1.wav");
+    sound_idle = quake2::getInstance()->gi.soundindex ("infantry/infidle1.wav");
 
 
     self->movetype = MOVETYPE_STEP;
     self->solid = SOLID_BBOX;
-    self->s.modelindex = gi.modelindex("models/monsters/infantry/tris.md2");
+    self->s.modelindex = quake2::getInstance()->gi.modelindex("models/monsters/infantry/tris.md2");
     VectorSet (self->mins, -16, -16, -24);
     VectorSet (self->maxs, 16, 16, 32);
 
@@ -598,7 +598,7 @@ void SP_monster_infantry (edict *self)
     self->monsterinfo.sight = infantry_sight;
     self->monsterinfo.idle = infantry_fidget;
 
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 
     self->monsterinfo.currentmove = &infantry_move_stand;
     self->monsterinfo.scale = MODEL_SCALE;

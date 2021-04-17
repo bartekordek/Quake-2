@@ -36,22 +36,22 @@ static int    sound_scream[8];
 
 void insane_fist (edict *self)
 {
-    gi.sound (self, CHAN_VOICE, sound_fist, 1, ATTN_IDLE, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_fist, 1, ATTN_IDLE, 0);
 }
 
 void insane_shake (edict *self)
 {
-    gi.sound (self, CHAN_VOICE, sound_shake, 1, ATTN_IDLE, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_shake, 1, ATTN_IDLE, 0);
 }
 
 void insane_moan (edict *self)
 {
-    gi.sound (self, CHAN_VOICE, sound_moan, 1, ATTN_IDLE, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_moan, 1, ATTN_IDLE, 0);
 }
 
 void insane_scream (edict *self)
 {
-    gi.sound (self, CHAN_VOICE, sound_scream[rand()%8], 1, ATTN_IDLE, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_scream[rand()%8], 1, ATTN_IDLE, 0);
 }
 
 
@@ -495,7 +495,7 @@ void insane_pain (edict *self, edict *other, float kick, int damage)
         l = 75;
     else
         l = 100;
-    gi.sound (self, CHAN_VOICE, gi.soundindex (va("player/male/pain%i_%i.wav", l, r)), 1, ATTN_IDLE, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_VOICE, quake2::getInstance()->gi.soundindex (va("player/male/pain%i_%i.wav", l, r)), 1, ATTN_IDLE, 0);
 
     if (skill->value == 3)
         return;        // no pain anims in nightmare
@@ -574,7 +574,7 @@ void insane_dead (edict *self)
     }
     self->svflags |= SVF_DEADMONSTER;
     self->nextthink = 0;
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 }
 
 
@@ -584,7 +584,7 @@ void insane_die (edict *self, edict *inflictor, edict *attacker, int damage, vec
 
     if (self->health <= self->gib_health)
     {
-        gi.sound (self, CHAN_VOICE, gi.soundindex ("misc/udeath.wav"), 1, ATTN_IDLE, 0);
+        quake2::getInstance()->gi.sound (self, CHAN_VOICE, quake2::getInstance()->gi.soundindex ("misc/udeath.wav"), 1, ATTN_IDLE, 0);
         for (n= 0; n < 2; n++)
             ThrowGib (self, "models/objects/gibs/bone/tris.md2", damage, GIB_ORGANIC);
         for (n= 0; n < 4; n++)
@@ -597,7 +597,7 @@ void insane_die (edict *self, edict *inflictor, edict *attacker, int damage, vec
     if (self->deadflag == DEAD_DEAD)
         return;
 
-    gi.sound (self, CHAN_VOICE, gi.soundindex(va("player/male/death%i.wav", (rand()%4)+1)), 1, ATTN_IDLE, 0);
+    quake2::getInstance()->gi.sound (self, CHAN_VOICE, quake2::getInstance()->gi.soundindex(va("player/male/death%i.wav", (rand()%4)+1)), 1, ATTN_IDLE, 0);
 
     self->deadflag = DEAD_DEAD;
     self->takedamage = DAMAGE_YES;
@@ -628,21 +628,21 @@ void SP_misc_insane (edict *self)
         return;
     }
 
-    sound_fist = gi.soundindex ("insane/insane11.wav");
-    sound_shake = gi.soundindex ("insane/insane5.wav");
-    sound_moan = gi.soundindex ("insane/insane7.wav");
-    sound_scream[0] = gi.soundindex ("insane/insane1.wav");
-    sound_scream[1] = gi.soundindex ("insane/insane2.wav");
-    sound_scream[2] = gi.soundindex ("insane/insane3.wav");
-    sound_scream[3] = gi.soundindex ("insane/insane4.wav");
-    sound_scream[4] = gi.soundindex ("insane/insane6.wav");
-    sound_scream[5] = gi.soundindex ("insane/insane8.wav");
-    sound_scream[6] = gi.soundindex ("insane/insane9.wav");
-    sound_scream[7] = gi.soundindex ("insane/insane10.wav");
+    sound_fist = quake2::getInstance()->gi.soundindex ("insane/insane11.wav");
+    sound_shake = quake2::getInstance()->gi.soundindex ("insane/insane5.wav");
+    sound_moan = quake2::getInstance()->gi.soundindex ("insane/insane7.wav");
+    sound_scream[0] = quake2::getInstance()->gi.soundindex ("insane/insane1.wav");
+    sound_scream[1] = quake2::getInstance()->gi.soundindex ("insane/insane2.wav");
+    sound_scream[2] = quake2::getInstance()->gi.soundindex ("insane/insane3.wav");
+    sound_scream[3] = quake2::getInstance()->gi.soundindex ("insane/insane4.wav");
+    sound_scream[4] = quake2::getInstance()->gi.soundindex ("insane/insane6.wav");
+    sound_scream[5] = quake2::getInstance()->gi.soundindex ("insane/insane8.wav");
+    sound_scream[6] = quake2::getInstance()->gi.soundindex ("insane/insane9.wav");
+    sound_scream[7] = quake2::getInstance()->gi.soundindex ("insane/insane10.wav");
 
     self->movetype = MOVETYPE_STEP;
     self->solid = SOLID_BBOX;
-    self->s.modelindex = gi.modelindex("models/monsters/insane/tris.md2");
+    self->s.modelindex = quake2::getInstance()->gi.modelindex("models/monsters/insane/tris.md2");
 
     VectorSet (self->mins, -16, -16, -24);
     VectorSet (self->maxs, 16, 16, 32);
@@ -669,7 +669,7 @@ void SP_misc_insane (edict *self)
 //    if (skin > 12)
 //        skin = 0;
 
-    gi.linkentity (self);
+    quake2::getInstance()->gi.linkentity (self);
 
     if (self->spawnflags & 16)                // Stand Ground
         self->monsterinfo.aiflags |= AI_STAND_GROUND;
