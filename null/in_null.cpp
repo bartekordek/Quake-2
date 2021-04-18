@@ -22,7 +22,7 @@ void IN_Move (usercmd_t *cmd)
 {
 }
 
-void IN_Activate (qboolean active)
+void IN_Activate (bool active)
 {
 }
 

@@ -167,28 +167,28 @@ void R_EmitSkyBox (void)
 
     if (insubmodel)
         return;        // submodels should never have skies
-    if (r_skyframe == r_framecount)
+    if (r_skyframe == quake2::getInstance()->r_framecount)
         return;        // already set this frame
 
-    r_skyframe = r_framecount;
+    r_skyframe = quake2::getInstance()->r_framecount;
 
     // set the eight fake vertexes
     for (i=0 ; i<8 ; i++)
         for (j=0 ; j<3 ; j++)
-            r_skyverts[i].position[j] = r_origin[j] + box_verts[i][j]*128;
+            r_skyverts[i].position[j] = quake2::getInstance()->r_origin[j] + box_verts[i][j]*128;
 
     // set the six fake planes
     for (i=0 ; i<6 ; i++)
         if (skybox_planes[i*2+1] > 0)
-            r_skyplanes[i].dist = r_origin[skybox_planes[i*2]]+128;
+            r_skyplanes[i].dist = quake2::getInstance()->r_origin[skybox_planes[i*2]]+128;
         else
-            r_skyplanes[i].dist = r_origin[skybox_planes[i*2]]-128;
+            r_skyplanes[i].dist = quake2::getInstance()->r_origin[skybox_planes[i*2]]-128;
 
     // fix texture offseets
     for (i=0 ; i<6 ; i++)
     {
-        r_skytexinfo[i].vecs[0][3] = -DotProduct (r_origin, r_skytexinfo[i].vecs[0]);
-        r_skytexinfo[i].vecs[1][3] = -DotProduct (r_origin, r_skytexinfo[i].vecs[1]);
+        r_skytexinfo[i].vecs[0][3] = -DotProduct (quake2::getInstance()->r_origin, r_skytexinfo[i].vecs[0]);
+        r_skytexinfo[i].vecs[1][3] = -DotProduct (quake2::getInstance()->r_origin, r_skytexinfo[i].vecs[1]);
     }
 
     // emit the six faces
@@ -305,7 +305,7 @@ void R_EmitEdge (mvertex_t *pv0, mvertex_t *pv1)
         if (cacheoffset != 0x7FFFFFFF)
         {
             cacheoffset = FULLY_CLIPPED_CACHED |
-                    (r_framecount & FRAMECOUNT_MASK);
+                    (quake2::getInstance()->r_framecount & FRAMECOUNT_MASK);
         }
 
         return;        // horizontal edge
@@ -445,7 +445,7 @@ void R_ClipEdge (mvertex_t *pv0, mvertex_t *pv1, clipplane_s *clip)
                 // we do cache fully clipped edges
                     if (!r_leftclipped)
                         cacheoffset = FULLY_CLIPPED_CACHED |
-                                (r_framecount & FRAMECOUNT_MASK);
+                                (quake2::getInstance()->r_framecount & FRAMECOUNT_MASK);
                     return;
                 }
 
@@ -591,7 +591,7 @@ void ref_soft_R_RenderFace (msurface_t *fa, int clipflags)
                 if (r_pedge->cachededgeoffset & FULLY_CLIPPED_CACHED)
                 {
                     if ((r_pedge->cachededgeoffset & FRAMECOUNT_MASK) ==
-                        r_framecount)
+                        quake2::getInstance()->r_framecount)
                     {
                         r_lastvertvalid = false;
                         continue;
@@ -635,7 +635,7 @@ void ref_soft_R_RenderFace (msurface_t *fa, int clipflags)
                 if (r_pedge->cachededgeoffset & FULLY_CLIPPED_CACHED)
                 {
                     if ((r_pedge->cachededgeoffset & FRAMECOUNT_MASK) ==
-                        r_framecount)
+                        quake2::getInstance()->r_framecount)
                     {
                         r_lastvertvalid = false;
                         continue;

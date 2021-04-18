@@ -288,9 +288,9 @@ void ref_gl_Draw_FadeScreen( void )
     qglBegin( GL_QUADS );
 
     qglVertex2f( 0, 0 );
-    qglVertex2f( vid.width, 0 );
-    qglVertex2f( vid.width, vid.height );
-    qglVertex2f( 0, vid.height );
+    qglVertex2f( quake2::getInstance()->vid.width, 0 );
+    qglVertex2f( quake2::getInstance()->vid.width, quake2::getInstance()->vid.height );
+    qglVertex2f( 0, quake2::getInstance()->vid.height );
 
     qglEnd();
     qglColor4f( 1, 1, 1, 1 );

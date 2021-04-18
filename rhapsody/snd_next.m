@@ -2026,7 +2026,7 @@ Try to find a sound device to mix for.
 Returns false if nothing is found.
 ==================
 */
-qboolean SNDDMA_Init(void)
+bool SNDDMA_Init(void)
 {
     int		err;
     int		i;

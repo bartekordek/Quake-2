@@ -424,10 +424,10 @@ void hover_reattack (edict *self)
         if (visible (self, self->enemy) )
             if (random() <= 0.6)
             {
-                self->monsterinfo.currentmove = &hover_move_attack1;
+                self->monsterinfoVal.currentmove = &hover_move_attack1;
                 return;
             }
-    self->monsterinfo.currentmove = &hover_move_end_attack;
+    self->monsterinfoVal.currentmove = &hover_move_end_attack;
 }
 
 
@@ -457,30 +457,30 @@ void hover_fire_blaster (edict *self)
 
 void hover_stand (edict *self)
 {
-        self->monsterinfo.currentmove = &hover_move_stand;
+        self->monsterinfoVal.currentmove = &hover_move_stand;
 }
 
 void hover_run (edict *self)
 {
-    if (self->monsterinfo.aiflags & AI_STAND_GROUND)
-        self->monsterinfo.currentmove = &hover_move_stand;
+    if (self->monsterinfoVal.aiflags & AI_STAND_GROUND)
+        self->monsterinfoVal.currentmove = &hover_move_stand;
     else
-        self->monsterinfo.currentmove = &hover_move_run;
+        self->monsterinfoVal.currentmove = &hover_move_run;
 }
 
 void hover_walk (edict *self)
 {
-    self->monsterinfo.currentmove = &hover_move_walk;
+    self->monsterinfoVal.currentmove = &hover_move_walk;
 }
 
 void hover_start_attack (edict *self)
 {
-    self->monsterinfo.currentmove = &hover_move_start_attack;
+    self->monsterinfoVal.currentmove = &hover_move_start_attack;
 }
 
 void hover_attack(edict *self)
 {
-    self->monsterinfo.currentmove = &hover_move_attack1;
+    self->monsterinfoVal.currentmove = &hover_move_attack1;
 }
 
 
@@ -502,18 +502,18 @@ void hover_pain (edict *self, edict *other, float kick, int damage)
         if (random() < 0.5)
         {
             quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain1, 1, ATTN_NORM, 0);
-            self->monsterinfo.currentmove = &hover_move_pain3;
+            self->monsterinfoVal.currentmove = &hover_move_pain3;
         }
         else
         {
             quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain2, 1, ATTN_NORM, 0);
-            self->monsterinfo.currentmove = &hover_move_pain2;
+            self->monsterinfoVal.currentmove = &hover_move_pain2;
         }
     }
     else
     {
         quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain1, 1, ATTN_NORM, 0);
-        self->monsterinfo.currentmove = &hover_move_pain1;
+        self->monsterinfoVal.currentmove = &hover_move_pain1;
     }
 }
 
@@ -565,7 +565,7 @@ void hover_die (edict *self, edict *inflictor, edict *attacker, int damage, vec3
         quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_death2, 1, ATTN_NORM, 0);
     self->deadflag = DEAD_DEAD;
     self->takedamage = DAMAGE_YES;
-    self->monsterinfo.currentmove = &hover_move_death1;
+    self->monsterinfoVal.currentmove = &hover_move_death1;
 }
 
 /*QUAKED monster_hover (1 .5 0) (-16 -16 -24) (16 16 32) Ambush Trigger_Spawn Sight
@@ -603,18 +603,18 @@ void SP_monster_hover (edict *self)
     self->pain = hover_pain;
     self->die = hover_die;
 
-    self->monsterinfo.stand = hover_stand;
-    self->monsterinfo.walk = hover_walk;
-    self->monsterinfo.run = hover_run;
-//    self->monsterinfo.dodge = hover_dodge;
-    self->monsterinfo.attack = hover_start_attack;
-    self->monsterinfo.sight = hover_sight;
-    self->monsterinfo.search = hover_search;
+    self->monsterinfoVal.stand = hover_stand;
+    self->monsterinfoVal.walk = hover_walk;
+    self->monsterinfoVal.run = hover_run;
+//    self->monsterinfoVal.dodge = hover_dodge;
+    self->monsterinfoVal.attack = hover_start_attack;
+    self->monsterinfoVal.sight = hover_sight;
+    self->monsterinfoVal.search = hover_search;
 
     quake2::getInstance()->gi.linkentity (self);
 
-    self->monsterinfo.currentmove = &hover_move_stand;
-    self->monsterinfo.scale = MODEL_SCALE;
+    self->monsterinfoVal.currentmove = &hover_move_stand;
+    self->monsterinfoVal.scale = MODEL_SCALE;
 
     flymonster_start (self);
 }

@@ -31,7 +31,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "client/client.hpp"
 #include "shared/enum_image_type.hpp"
 #include "shared/enum_rserr.hpp"
-#include "shared/viddef.hpp"
 
 #ifdef _WIN32
 #include <windows.h>
@@ -61,8 +60,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 // fall over
 #define ROLL 2
-
-extern viddef_t vid;
 
 /*
 
@@ -114,35 +111,15 @@ extern image_t* r_notexture;
 extern image_t* r_particletexture;
 extern model_t* currentmodel;
 extern int r_visframecount;
-extern int r_framecount;
 extern plane_s frustum[4];
 extern int c_brush_polys, c_alias_polys;
 
 extern int gl_filter_min, gl_filter_max;
 
 //
-// view origin
-//
-extern vec3_t vup;
-extern vec3_t vpn;
-extern vec3_t vright;
-extern vec3_t r_origin;
-
-//
 // screen size info
 //
 extern refdef_t r_newrefdef;
-extern int r_viewcluster, r_viewcluster2, r_oldviewcluster, r_oldviewcluster2;
-
-extern cvar* r_norefresh;
-extern cvar* r_lefthand;
-extern cvar* r_drawentities;
-extern cvar* r_drawworld;
-extern cvar* r_speeds;
-extern cvar* r_fullbright;
-extern cvar* r_novis;
-extern cvar* r_nocull;
-extern cvar* r_lerpmodels;
 
 extern cvar*
     r_lightlevel;  // FIXME: This is a HACK to get the client's light level

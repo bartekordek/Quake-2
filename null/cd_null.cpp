@@ -1,6 +1,6 @@
 #include "../client/client.h"
 
-void CDAudio_Play(int track, qboolean looping)
+void CDAudio_Play(int track, bool looping)
 {
 }
 

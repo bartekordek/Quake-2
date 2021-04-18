@@ -532,7 +532,7 @@ void SV_BuildClientFrame( client_t* client )
     byte* clientphs;
     byte* bitvector;
 
-    clent = client->edict;
+    clent = client->edictVal;
     if ( !clent->client )
         return;  // not in game yet
 
@@ -660,7 +660,7 @@ void SV_BuildClientFrame( client_t* client )
         *state = ent->s;
 
         // don't mark players missiles as solid
-        if ( ent->owner == client->edict )
+        if ( ent->owner == client->edictVal )
             state->solid = 0;
 
         svs.next_client_entities++;

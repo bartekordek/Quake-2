@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #endif
 #include "client.hpp"
 #include "client/qmenu.hpp"
+#include "client/vid.hpp"
 #include "win32/q_shwin.hpp"
 
 static int m_main_cursor;
@@ -77,7 +78,8 @@ static void M_Banner( char* name )
     int w, h;
 
     re.DrawGetPicSize( &w, &h, name );
-    re.DrawPic( viddef.width / 2 - w / 2, viddef.height / 2 - 110, name );
+    re.DrawPic( quake2::getInstance()->viddef.width / 2 - w / 2,
+                quake2::getInstance()->viddef.height / 2 - 110, name );
 }
 
 void M_PushMenu( void ( *draw )( void ), const char* ( *key )( int k ) )
@@ -265,8 +267,9 @@ higher res screens.
 */
 void M_DrawCharacter( int cx, int cy, int num )
 {
-    re.DrawChar( cx + ( ( viddef.width - 320 ) >> 1 ),
-                 cy + ( ( viddef.height - 240 ) >> 1 ), num );
+    re.DrawChar( cx + ( ( quake2::getInstance()->viddef.width - 320 ) >> 1 ),
+                 cy + ( ( quake2::getInstance()->viddef.height - 240 ) >> 1 ),
+                 num );
 }
 
 void M_Print( int cx, int cy, char* str )
@@ -291,8 +294,9 @@ void M_PrintWhite( int cx, int cy, char* str )
 
 void M_DrawPic( int x, int y, char* pic )
 {
-    re.DrawPic( x + ( ( viddef.width - 320 ) >> 1 ),
-                y + ( ( viddef.height - 240 ) >> 1 ), pic );
+    re.DrawPic( x + ( ( quake2::getInstance()->viddef.width - 320 ) >> 1 ),
+                y + ( ( quake2::getInstance()->viddef.height - 240 ) >> 1 ),
+                pic );
 }
 
 /*
@@ -399,8 +403,8 @@ void M_Main_Draw( void )
         totalheight += ( h + 12 );
     }
 
-    ystart = ( viddef.height / 2 - 110 );
-    xoffset = ( viddef.width - widest + 70 ) / 2;
+    ystart = ( quake2::getInstance()->viddef.height / 2 - 110 );
+    xoffset = ( quake2::getInstance()->viddef.width - widest + 70 ) / 2;
 
     for ( i = 0; names[i] != 0; i++ )
     {
@@ -503,7 +507,7 @@ static void StartNetworkServerFunc( void* unused ) { M_Menu_StartServer_f(); }
 
 void Multiplayer_MenuInit( void )
 {
-    s_multiplayer_menu.x = viddef.width * 0.50 - 64;
+    s_multiplayer_menu.x = quake2::getInstance()->viddef.width * 0.50 - 64;
     s_multiplayer_menu.nitems = 0;
 
     s_join_network_server_action.generic.type = MTYPE_ACTION;
@@ -718,7 +722,7 @@ static void Keys_MenuInit( void )
     int y = 0;
     int i = 0;
 
-    s_keys_menu.x = viddef.width * 0.50;
+    s_keys_menu.x = quake2::getInstance()->viddef.width * 0.50;
     s_keys_menu.nitems = 0;
     s_keys_menu.cursordraw = KeyCursorDrawFunc;
 
@@ -1213,8 +1217,8 @@ void Options_MenuInit( void )
     /*
      * * configure controls menu and menu items
      */
-    s_options_menu.x = viddef.width / 2;
-    s_options_menu.y = viddef.height / 2 - 58;
+    s_options_menu.x = quake2::getInstance()->viddef.width / 2;
+    s_options_menu.y = quake2::getInstance()->viddef.height / 2 - 58;
     s_options_menu.nitems = 0;
 
     s_options_sfxvolume_slider.generic.type = MTYPE_SLIDER;
@@ -1739,9 +1743,9 @@ void M_Credits_MenuDraw( void )
     /*
      * * draw the credits
      */
-    for ( i = 0,
-          y = viddef.height - ( ( cls.realtime - credits_start_time ) / 40.0F );
-          credits[i] && y < viddef.height; y += 10, i++ )
+    for ( i = 0, y = quake2::getInstance()->viddef.height -
+                     ( ( cls.realtime - credits_start_time ) / 40.0F );
+          credits[i] && y < quake2::getInstance()->viddef.height; y += 10, i++ )
     {
         int j, stringoffset = 0;
         int bold = false;
@@ -1764,7 +1768,8 @@ void M_Credits_MenuDraw( void )
         {
             int x;
 
-            x = ( viddef.width - strlen( credits[i] ) * 8 - stringoffset * 8 ) /
+            x = ( quake2::getInstance()->viddef.width -
+                  strlen( credits[i] ) * 8 - stringoffset * 8 ) /
                     2 +
                 ( j + stringoffset ) * 8;
 
@@ -1908,7 +1913,7 @@ void Game_MenuInit( void )
 {
     static char* difficulty_names[] = { "easy", "medium", "hard", 0 };
 
-    s_game_menu.x = viddef.width * 0.50;
+    s_game_menu.x = quake2::getInstance()->viddef.width * 0.50;
     s_game_menu.nitems = 0;
 
     s_easy_game_action.generic.type = MTYPE_ACTION;
@@ -2042,8 +2047,8 @@ void LoadGame_MenuInit( void )
 {
     int i;
 
-    s_loadgame_menu.x = viddef.width / 2 - 120;
-    s_loadgame_menu.y = viddef.height / 2 - 58;
+    s_loadgame_menu.x = quake2::getInstance()->viddef.width / 2 - 120;
+    s_loadgame_menu.y = quake2::getInstance()->viddef.height / 2 - 58;
     s_loadgame_menu.nitems = 0;
 
     Create_Savestrings();
@@ -2118,8 +2123,8 @@ void SaveGame_MenuInit( void )
 {
     int i;
 
-    s_savegame_menu.x = viddef.width / 2 - 120;
-    s_savegame_menu.y = viddef.height / 2 - 58;
+    s_savegame_menu.x = quake2::getInstance()->viddef.width / 2 - 120;
+    s_savegame_menu.y = quake2::getInstance()->viddef.height / 2 - 58;
     s_savegame_menu.nitems = 0;
 
     Create_Savestrings();
@@ -2254,7 +2259,7 @@ void JoinServer_MenuInit( void )
 {
     int i;
 
-    s_joinserver_menu.x = viddef.width * 0.50 - 120;
+    s_joinserver_menu.x = quake2::getInstance()->viddef.width * 0.50 - 120;
     s_joinserver_menu.nitems = 0;
 
     s_joinserver_address_book_action.generic.type = MTYPE_ACTION;
@@ -2550,7 +2555,7 @@ void StartServer_MenuInit( void )
     /*
      * * initialize the menu stuff
      */
-    s_startserver_menu.x = viddef.width * 0.50;
+    s_startserver_menu.x = quake2::getInstance()->viddef.width * 0.50;
     s_startserver_menu.nitems = 0;
 
     s_startmap_list.generic.type = MTYPE_SPINCONTROL;
@@ -2868,7 +2873,7 @@ void DMOptions_MenuInit( void )
     int dmflags = Cvar_VariableValue( "dmflags" );
     int y = 0;
 
-    s_dmoptions_menu.x = viddef.width * 0.50;
+    s_dmoptions_menu.x = quake2::getInstance()->viddef.width * 0.50;
     s_dmoptions_menu.nitems = 0;
 
     s_falls_box.generic.type = MTYPE_SPINCONTROL;
@@ -3128,7 +3133,7 @@ void DownloadOptions_MenuInit( void )
     static char* yes_no_names[] = { "no", "yes", 0 };
     int y = 0;
 
-    s_downloadoptions_menu.x = viddef.width * 0.50;
+    s_downloadoptions_menu.x = quake2::getInstance()->viddef.width * 0.50;
     s_downloadoptions_menu.nitems = 0;
 
     s_download_title.generic.type = MTYPE_SEPARATOR;
@@ -3223,8 +3228,8 @@ void AddressBook_MenuInit( void )
 {
     int i;
 
-    s_addressbook_menu.x = viddef.width / 2 - 142;
-    s_addressbook_menu.y = viddef.height / 2 - 58;
+    s_addressbook_menu.x = quake2::getInstance()->viddef.width / 2 - 142;
+    s_addressbook_menu.y = quake2::getInstance()->viddef.height / 2 - 58;
     s_addressbook_menu.nitems = 0;
 
     for ( i = 0; i < NUM_ADDRESSBOOK_ENTRIES; i++ )
@@ -3607,8 +3612,8 @@ bool PlayerConfig_MenuInit( void )
         }
     }
 
-    s_player_config_menu.x = viddef.width / 2 - 95;
-    s_player_config_menu.y = viddef.height / 2 - 97;
+    s_player_config_menu.x = quake2::getInstance()->viddef.width / 2 - 95;
+    s_player_config_menu.y = quake2::getInstance()->viddef.height / 2 - 97;
     s_player_config_menu.nitems = 0;
 
     s_player_name_field.generic.type = MTYPE_FIELD;
@@ -3713,8 +3718,8 @@ void PlayerConfig_MenuDraw( void )
 
     memset( &refdef, 0, sizeof( refdef ) );
 
-    refdef.x = viddef.width / 2;
-    refdef.y = viddef.height / 2 - 72;
+    refdef.x = quake2::getInstance()->viddef.width / 2;
+    refdef.y = quake2::getInstance()->viddef.height / 2 - 72;
     refdef.width = 144;
     refdef.height = 168;
     refdef.fov_x = 40;
@@ -3757,9 +3762,12 @@ void PlayerConfig_MenuDraw( void )
 
         Menu_Draw( &s_player_config_menu );
 
-        M_DrawTextBox( ( refdef.x ) * ( 320.0F / viddef.width ) - 8,
-                       ( viddef.height / 2 ) * ( 240.0F / viddef.height ) - 77,
-                       refdef.width / 8, refdef.height / 8 );
+        M_DrawTextBox(
+            ( refdef.x ) * ( 320.0F / quake2::getInstance()->viddef.width ) - 8,
+            ( quake2::getInstance()->viddef.height / 2 ) *
+                    ( 240.0F / quake2::getInstance()->viddef.height ) -
+                77,
+            refdef.width / 8, refdef.height / 8 );
         refdef.height += 4;
 
         re.RenderFrame( &refdef );
@@ -3872,7 +3880,8 @@ void M_Quit_Draw( void )
     int w, h;
 
     re.DrawGetPicSize( &w, &h, "quit" );
-    re.DrawPic( ( viddef.width - w ) / 2, ( viddef.height - h ) / 2, "quit" );
+    re.DrawPic( ( quake2::getInstance()->viddef.width - w ) / 2,
+                ( quake2::getInstance()->viddef.height - h ) / 2, "quit" );
 }
 
 void M_Menu_Quit_f( void ) { M_PushMenu( M_Quit_Draw, M_Quit_Key ); }
@@ -3920,7 +3929,8 @@ void M_Draw( void )
 
     // dim everything behind it down
     if ( cl.cinematictime > 0 )
-        re.DrawFill( 0, 0, viddef.width, viddef.height, 0 );
+        re.DrawFill( 0, 0, quake2::getInstance()->viddef.width,
+                     quake2::getInstance()->viddef.height, 0 );
     else
         re.DrawFadeScreen();
 

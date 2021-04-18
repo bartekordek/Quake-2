@@ -27,7 +27,7 @@ if( MSVC )
 else()
     #add_compile_options( -Wall -Wextra -pedantic -Werror )
     #add_definitions( -Wfatal-errors )
-    add_compile_options( -w -fmax-errors=1 )
+    add_compile_options( -w -fmax-errors=2 )
 endif()
 
 # DEPS

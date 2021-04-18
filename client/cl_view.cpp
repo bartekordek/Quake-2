@@ -258,7 +258,7 @@ void CL_PrepRefresh (void)
         return;        // no map loaded
 
     SCR_AddDirtyPoint (0, 0);
-    SCR_AddDirtyPoint (viddef.width-1, viddef.height-1);
+    SCR_AddDirtyPoint (quake2::getInstance()->viddef.width-1, quake2::getInstance()->viddef.height-1);
 
     // let the render dll load the map
     strcpy (mapname, cl.configstrings[CS_MODELS+1] + 5);    // skip "maps/"
@@ -288,7 +288,10 @@ void CL_PrepRefresh (void)
         if (name[0] != '*')
             Com_Printf_G ("%s\r", name);
         SCR_UpdateScreen ();
+        #ifdef _WIN32
+        //TODO:
         win32_Sys_SendKeyEvents ();    // pump message loop
+        #endif
         if (name[0] == '#')
         {
             // special player weapon model
@@ -316,7 +319,10 @@ void CL_PrepRefresh (void)
     for (i=1 ; i<MAX_IMAGES && cl.configstrings[CS_IMAGES+i][0] ; i++)
     {
         cl.image_precache[i] = re.RegisterPic (cl.configstrings[CS_IMAGES+i]);
+            #ifdef _WIN32
+    // TODO
         win32_Sys_SendKeyEvents ();    // pump message loop
+            #endif
     }
 
     Com_Printf_G ("                                     \r");
@@ -324,11 +330,14 @@ void CL_PrepRefresh (void)
     {
         if (!cl.configstrings[CS_PLAYERSKINS+i][0])
             continue;
-        Com_Printf_G ("client %i\r", i);
+        //Com_Printf_G ("client %i\r", i);
         SCR_UpdateScreen ();
+            #ifdef _WIN32
+    // TODO
         win32_Sys_SendKeyEvents ();    // pump message loop
+            #endif
         CL_ParseClientinfo (i);
-        Com_Printf_G ("                                     \r");
+        //Com_Printf_G ("                                     \r");
     }
 
     CL_LoadClientinfo (&cl.baseclientinfo, "unnamed\\male/grunt");

@@ -65,9 +65,9 @@ void R_DrawSprite (void)
     r_polydesc.dist         = 0;
 
     // generate the sprite's axes, completely parallel to the viewplane.
-    VectorCopy (vup, r_polydesc.vup);
-    VectorCopy (vright, r_polydesc.vright);
-    VectorCopy (vpn, r_polydesc.vpn);
+    VectorCopy (quake2::getInstance()->vup, r_polydesc.vup);
+    VectorCopy (quake2::getInstance()->vright, r_polydesc.vright);
+    VectorCopy (quake2::getInstance()->vpn, r_polydesc.vpn);
 
 // build the sprite poster in worldspace
     VectorScale (r_polydesc.vright,

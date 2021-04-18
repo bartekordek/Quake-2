@@ -17,8 +17,8 @@ void PScurrentmouse (int win, float *x, float *y);
 extern	NSView	*vid_view_i;
 extern	NSWindow	*vid_window_i;
 
-qboolean	mlooking;
-qboolean	mouseinitialized;
+bool	mlooking;
+bool	mouseinitialized;
 int		mouse_buttons;
 int		mouse_oldbuttonstate;
 int		mouseactive;

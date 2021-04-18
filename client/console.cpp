@@ -247,7 +247,7 @@ void Con_CheckResize (void)
     int        i, j, width, oldwidth, oldtotallines, numlines, numchars;
     char    tbuf[CON_TEXTSIZE];
 
-    width = (viddef.width >> 3) - 2;
+    width = (quake2::getInstance()->viddef.width >> 3) - 2;
 
     if (width == con.linewidth)
         return;
@@ -540,8 +540,8 @@ void Con_DrawNotify (void)
         }
 
         s = chat_buffer;
-        if (chat_bufferlen > (viddef.width>>3)-(skip+1))
-            s += chat_bufferlen - ((viddef.width>>3)-(skip+1));
+        if (chat_bufferlen > (quake2::getInstance()->viddef.width>>3)-(skip+1))
+            s += chat_bufferlen - ((quake2::getInstance()->viddef.width>>3)-(skip+1));
         x = 0;
         while(s[x])
         {
@@ -555,7 +555,7 @@ void Con_DrawNotify (void)
     if (v)
     {
         SCR_AddDirtyPoint (0,0);
-        SCR_AddDirtyPoint (viddef.width-1, v);
+        SCR_AddDirtyPoint (quake2::getInstance()->viddef.width-1, v);
     }
 }
 
@@ -576,21 +576,21 @@ void Con_DrawConsole (float frac)
     char            version[64];
     char            dlbar[1024];
 
-    lines = viddef.height * frac;
+    lines = quake2::getInstance()->viddef.height * frac;
     if (lines <= 0)
         return;
 
-    if (lines > viddef.height)
-        lines = viddef.height;
+    if (lines > quake2::getInstance()->viddef.height)
+        lines = quake2::getInstance()->viddef.height;
 
 // draw the background
-    re.DrawStretchPic (0, -viddef.height+lines, viddef.width, viddef.height, "conback");
+    re.DrawStretchPic (0, -quake2::getInstance()->viddef.height+lines, quake2::getInstance()->viddef.width, quake2::getInstance()->viddef.height, "conback");
     SCR_AddDirtyPoint (0,0);
-    SCR_AddDirtyPoint (viddef.width-1,lines-1);
+    SCR_AddDirtyPoint (quake2::getInstance()->viddef.width-1,lines-1);
 
     //Com_sprintf (version, sizeof(version), "v%4.2f", VERSION);
     for (x=0 ; x<5 ; x++)
-        re.DrawChar (viddef.width-44+x*8, lines-12, 128 + version[x] );
+        re.DrawChar (quake2::getInstance()->viddef.width-44+x*8, lines-12, 128 + version[x] );
 
 // draw the text
     con.vislines = lines;

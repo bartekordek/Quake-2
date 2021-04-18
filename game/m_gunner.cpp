@@ -123,10 +123,10 @@ mmove_t    gunner_move_fidget = {FRAME_stand31, FRAME_stand70, gunner_frames_fid
 
 void gunner_fidget (edict *self)
 {
-    if (self->monsterinfo.aiflags & AI_STAND_GROUND)
+    if (self->monsterinfoVal.aiflags & AI_STAND_GROUND)
         return;
     if (random() <= 0.05)
-        self->monsterinfo.currentmove = &gunner_move_fidget;
+        self->monsterinfoVal.currentmove = &gunner_move_fidget;
 }
 
 mframe_t gunner_frames_stand [] =
@@ -168,7 +168,7 @@ mmove_t    gunner_move_stand = {FRAME_stand01, FRAME_stand30, gunner_frames_stan
 
 void gunner_stand (edict *self)
 {
-        self->monsterinfo.currentmove = &gunner_move_stand;
+        self->monsterinfoVal.currentmove = &gunner_move_stand;
 }
 
 
@@ -192,7 +192,7 @@ mmove_t gunner_move_walk = {FRAME_walk07, FRAME_walk19, gunner_frames_walk, NULL
 
 void gunner_walk (edict *self)
 {
-    self->monsterinfo.currentmove = &gunner_move_walk;
+    self->monsterinfoVal.currentmove = &gunner_move_walk;
 }
 
 mframe_t gunner_frames_run [] =
@@ -211,10 +211,10 @@ mmove_t gunner_move_run = {FRAME_run01, FRAME_run08, gunner_frames_run, NULL};
 
 void gunner_run (edict *self)
 {
-    if (self->monsterinfo.aiflags & AI_STAND_GROUND)
-        self->monsterinfo.currentmove = &gunner_move_stand;
+    if (self->monsterinfoVal.aiflags & AI_STAND_GROUND)
+        self->monsterinfoVal.currentmove = &gunner_move_stand;
     else
-        self->monsterinfo.currentmove = &gunner_move_run;
+        self->monsterinfoVal.currentmove = &gunner_move_run;
 }
 
 mframe_t gunner_frames_runandshoot [] =
@@ -231,7 +231,7 @@ mmove_t gunner_move_runandshoot = {FRAME_runs01, FRAME_runs06, gunner_frames_run
 
 void gunner_runandshoot (edict *self)
 {
-    self->monsterinfo.currentmove = &gunner_move_runandshoot;
+    self->monsterinfoVal.currentmove = &gunner_move_runandshoot;
 }
 
 mframe_t gunner_frames_pain3 [] =
@@ -299,11 +299,11 @@ void gunner_pain (edict *self, edict *other, float kick, int damage)
         return;        // no pain anims in nightmare
 
     if (damage <= 10)
-        self->monsterinfo.currentmove = &gunner_move_pain3;
+        self->monsterinfoVal.currentmove = &gunner_move_pain3;
     else if (damage <= 25)
-        self->monsterinfo.currentmove = &gunner_move_pain2;
+        self->monsterinfoVal.currentmove = &gunner_move_pain2;
     else
-        self->monsterinfo.currentmove = &gunner_move_pain1;
+        self->monsterinfoVal.currentmove = &gunner_move_pain1;
 }
 
 void gunner_dead (edict *self)
@@ -356,15 +356,15 @@ void gunner_die (edict *self, edict *inflictor, edict *attacker, int damage, vec
     quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_death, 1, ATTN_NORM, 0);
     self->deadflag = DEAD_DEAD;
     self->takedamage = DAMAGE_YES;
-    self->monsterinfo.currentmove = &gunner_move_death;
+    self->monsterinfoVal.currentmove = &gunner_move_death;
 }
 
 
 void gunner_duck_down (edict *self)
 {
-    if (self->monsterinfo.aiflags & AI_DUCKED)
+    if (self->monsterinfoVal.aiflags & AI_DUCKED)
         return;
-    self->monsterinfo.aiflags |= AI_DUCKED;
+    self->monsterinfoVal.aiflags |= AI_DUCKED;
     if (skill->value >= 2)
     {
         if (random() > 0.5)
@@ -373,21 +373,21 @@ void gunner_duck_down (edict *self)
 
     self->maxs[2] -= 32;
     self->takedamage = DAMAGE_YES;
-    self->monsterinfo.pausetime = level.time + 1;
+    self->monsterinfoVal.pausetime = level.time + 1;
     quake2::getInstance()->gi.linkentity (self);
 }
 
 void gunner_duck_hold (edict *self)
 {
-    if (level.time >= self->monsterinfo.pausetime)
-        self->monsterinfo.aiflags &= ~AI_HOLD_FRAME;
+    if (level.time >= self->monsterinfoVal.pausetime)
+        self->monsterinfoVal.aiflags &= ~AI_HOLD_FRAME;
     else
-        self->monsterinfo.aiflags |= AI_HOLD_FRAME;
+        self->monsterinfoVal.aiflags |= AI_HOLD_FRAME;
 }
 
 void gunner_duck_up (edict *self)
 {
-    self->monsterinfo.aiflags &= ~AI_DUCKED;
+    self->monsterinfoVal.aiflags &= ~AI_DUCKED;
     self->maxs[2] += 32;
     self->takedamage = DAMAGE_AIM;
     quake2::getInstance()->gi.linkentity (self);
@@ -414,7 +414,7 @@ void gunner_dodge (edict *self, edict *attacker, float eta)
     if (!self->enemy)
         self->enemy = attacker;
 
-    self->monsterinfo.currentmove = &gunner_move_duck;
+    self->monsterinfoVal.currentmove = &gunner_move_duck;
 }
 
 
@@ -548,20 +548,20 @@ void gunner_attack(edict *self)
 {
     if (range (self, self->enemy) == RANGE_MELEE)
     {
-        self->monsterinfo.currentmove = &gunner_move_attack_chain;
+        self->monsterinfoVal.currentmove = &gunner_move_attack_chain;
     }
     else
     {
         if (random() <= 0.5)
-            self->monsterinfo.currentmove = &gunner_move_attack_grenade;
+            self->monsterinfoVal.currentmove = &gunner_move_attack_grenade;
         else
-            self->monsterinfo.currentmove = &gunner_move_attack_chain;
+            self->monsterinfoVal.currentmove = &gunner_move_attack_chain;
     }
 }
 
 void gunner_fire_chain(edict *self)
 {
-    self->monsterinfo.currentmove = &gunner_move_fire_chain;
+    self->monsterinfoVal.currentmove = &gunner_move_fire_chain;
 }
 
 void gunner_refire_chain(edict *self)
@@ -570,10 +570,10 @@ void gunner_refire_chain(edict *self)
         if ( visible (self, self->enemy) )
             if (random() <= 0.5)
             {
-                self->monsterinfo.currentmove = &gunner_move_fire_chain;
+                self->monsterinfoVal.currentmove = &gunner_move_fire_chain;
                 return;
             }
-    self->monsterinfo.currentmove = &gunner_move_endfire_chain;
+    self->monsterinfoVal.currentmove = &gunner_move_endfire_chain;
 }
 
 /*QUAKED monster_gunner (1 .5 0) (-16 -16 -24) (16 16 32) Ambush Trigger_Spawn Sight
@@ -610,19 +610,19 @@ void SP_monster_gunner (edict *self)
     self->pain = gunner_pain;
     self->die = gunner_die;
 
-    self->monsterinfo.stand = gunner_stand;
-    self->monsterinfo.walk = gunner_walk;
-    self->monsterinfo.run = gunner_run;
-    self->monsterinfo.dodge = gunner_dodge;
-    self->monsterinfo.attack = gunner_attack;
-    self->monsterinfo.melee = NULL;
-    self->monsterinfo.sight = gunner_sight;
-    self->monsterinfo.search = gunner_search;
+    self->monsterinfoVal.stand = gunner_stand;
+    self->monsterinfoVal.walk = gunner_walk;
+    self->monsterinfoVal.run = gunner_run;
+    self->monsterinfoVal.dodge = gunner_dodge;
+    self->monsterinfoVal.attack = gunner_attack;
+    self->monsterinfoVal.melee = NULL;
+    self->monsterinfoVal.sight = gunner_sight;
+    self->monsterinfoVal.search = gunner_search;
 
     quake2::getInstance()->gi.linkentity (self);
 
-    self->monsterinfo.currentmove = &gunner_move_stand;
-    self->monsterinfo.scale = MODEL_SCALE;
+    self->monsterinfoVal.currentmove = &gunner_move_stand;
+    self->monsterinfoVal.scale = MODEL_SCALE;
 
     walkmonster_start (self);
 }

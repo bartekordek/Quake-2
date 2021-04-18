@@ -134,7 +134,7 @@ void M_FlyCheck (edict *self)
 
 void AttackFinished (edict *self, float time)
 {
-    self->monsterinfo.attack_finished = level.time + time;
+    self->monsterinfoVal.attack_finished = level.time + time;
 }
 
 
@@ -334,7 +334,7 @@ void M_SetEffects (edict *ent)
     ent->s.effects &= ~(EF_COLOR_SHELL|EF_POWERSCREEN);
     ent->s.renderfx &= ~(RF_SHELL_RED|RF_SHELL_GREEN|RF_SHELL_BLUE);
 
-    if (ent->monsterinfo.aiflags & AI_RESURRECTING)
+    if (ent->monsterinfoVal.aiflags & AI_RESURRECTING)
     {
         ent->s.effects |= EF_COLOR_SHELL;
         ent->s.renderfx |= RF_SHELL_RED;
@@ -345,11 +345,11 @@ void M_SetEffects (edict *ent)
 
     if (ent->powerarmor_time > level.time)
     {
-        if (ent->monsterinfo.power_armor_type == POWER_ARMOR_SCREEN)
+        if (ent->monsterinfoVal.power_armor_type == POWER_ARMOR_SCREEN)
         {
             ent->s.effects |= EF_POWERSCREEN;
         }
-        else if (ent->monsterinfo.power_armor_type == POWER_ARMOR_SHIELD)
+        else if (ent->monsterinfoVal.power_armor_type == POWER_ARMOR_SHIELD)
         {
             ent->s.effects |= EF_COLOR_SHELL;
             ent->s.renderfx |= RF_SHELL_GREEN;
@@ -363,13 +363,13 @@ void M_MoveFrame (edict *self)
     mmove_t    *move;
     int        index;
 
-    move = self->monsterinfo.currentmove;
+    move = self->monsterinfoVal.currentmove;
     self->nextthink = level.time + FRAMETIME;
 
-    if ((self->monsterinfo.nextframe) && (self->monsterinfo.nextframe >= move->firstframe) && (self->monsterinfo.nextframe <= move->lastframe))
+    if ((self->monsterinfoVal.nextframe) && (self->monsterinfoVal.nextframe >= move->firstframe) && (self->monsterinfoVal.nextframe <= move->lastframe))
     {
-        self->s.frame = self->monsterinfo.nextframe;
-        self->monsterinfo.nextframe = 0;
+        self->s.frame = self->monsterinfoVal.nextframe;
+        self->monsterinfoVal.nextframe = 0;
     }
     else
     {
@@ -380,7 +380,7 @@ void M_MoveFrame (edict *self)
                 move->endfunc (self);
 
                 // regrab move, endfunc is very likely to change it
-                move = self->monsterinfo.currentmove;
+                move = self->monsterinfoVal.currentmove;
 
                 // check for death
                 if (self->svflags & SVF_DEADMONSTER)
@@ -390,12 +390,12 @@ void M_MoveFrame (edict *self)
 
         if (self->s.frame < move->firstframe || self->s.frame > move->lastframe)
         {
-            self->monsterinfo.aiflags &= ~AI_HOLD_FRAME;
+            self->monsterinfoVal.aiflags &= ~AI_HOLD_FRAME;
             self->s.frame = move->firstframe;
         }
         else
         {
-            if (!(self->monsterinfo.aiflags & AI_HOLD_FRAME))
+            if (!(self->monsterinfoVal.aiflags & AI_HOLD_FRAME))
             {
                 self->s.frame++;
                 if (self->s.frame > move->lastframe)
@@ -406,8 +406,8 @@ void M_MoveFrame (edict *self)
 
     index = self->s.frame - move->firstframe;
     if (move->frame[index].aifunc)
-        if (!(self->monsterinfo.aiflags & AI_HOLD_FRAME))
-            move->frame[index].aifunc (self, move->frame[index].dist * self->monsterinfo.scale);
+        if (!(self->monsterinfoVal.aiflags & AI_HOLD_FRAME))
+            move->frame[index].aifunc (self, move->frame[index].dist * self->monsterinfoVal.scale);
         else
             move->frame[index].aifunc (self, 0);
 
@@ -419,9 +419,9 @@ void M_MoveFrame (edict *self)
 void monster_think (edict *self)
 {
     M_MoveFrame (self);
-    if (self->linkcount != self->monsterinfo.linkcount)
+    if (self->linkcount != self->monsterinfoVal.linkcount)
     {
-        self->monsterinfo.linkcount = self->linkcount;
+        self->monsterinfoVal.linkcount = self->linkcount;
         M_CheckGround (self);
     }
     M_CatagorizePosition (self);
@@ -445,7 +445,7 @@ void monster_use (edict *self, edict *other, edict *activator)
         return;
     if (activator->flags & FL_NOTARGET)
         return;
-    if (!(activator->client) && !(activator->monsterinfo.aiflags & AI_GOOD_GUY))
+    if (!(activator->client) && !(activator->monsterinfoVal.aiflags & AI_GOOD_GUY))
         return;
 
 // delay reaction so if the monster is teleported, its sound is still heard
@@ -511,7 +511,7 @@ enemy as activator.
 void monster_death_use (edict *self)
 {
     self->flags &= ~(FL_FLY|FL_SWIM);
-    self->monsterinfo.aiflags &= AI_GOOD_GUY;
+    self->monsterinfoVal.aiflags &= AI_GOOD_GUY;
 
     if (self->item)
     {
@@ -539,14 +539,14 @@ bool monster_start (edict *self)
         return false;
     }
 
-    if ((self->spawnflags & 4) && !(self->monsterinfo.aiflags & AI_GOOD_GUY))
+    if ((self->spawnflags & 4) && !(self->monsterinfoVal.aiflags & AI_GOOD_GUY))
     {
         self->spawnflags &= ~4;
         self->spawnflags |= 1;
 //        quake2::getInstance()->gi.dprintf("fixed spawnflags on %s at %s\n", self->classname, vtos(self->s.origin));
     }
 
-    if (!(self->monsterinfo.aiflags & AI_GOOD_GUY))
+    if (!(self->monsterinfoVal.aiflags & AI_GOOD_GUY))
         level.total_monsters++;
 
     self->nextthink = level.time + FRAMETIME;
@@ -562,8 +562,8 @@ bool monster_start (edict *self)
     self->deadflag = DEAD_NO;
     self->svflags &= ~SVF_DEADMONSTER;
 
-    if (!self->monsterinfo.checkattack)
-        self->monsterinfo.checkattack = M_CheckAttack;
+    if (!self->monsterinfoVal.checkattack)
+        self->monsterinfoVal.checkattack = M_CheckAttack;
     VectorCopy (self->s.origin, self->s.old_origin);
 
     if (st.item)
@@ -574,8 +574,8 @@ bool monster_start (edict *self)
     }
 
     // randomize what frame they start on
-    if (self->monsterinfo.currentmove)
-        self->s.frame = self->monsterinfo.currentmove->firstframe + (rand() % (self->monsterinfo.currentmove->lastframe - self->monsterinfo.currentmove->firstframe + 1));
+    if (self->monsterinfoVal.currentmove)
+        self->s.frame = self->monsterinfoVal.currentmove->firstframe + (rand() % (self->monsterinfoVal.currentmove->lastframe - self->monsterinfoVal.currentmove->firstframe + 1));
 
     return true;
 }
@@ -640,27 +640,27 @@ void monster_start_go (edict *self)
         {
             quake2::getInstance()->gi.dprintf ("%s can't find target %s at %s\n", self->classname, self->target, vtos(self->s.origin));
             self->target = NULL;
-            self->monsterinfo.pausetime = 100000000;
-            self->monsterinfo.stand (self);
+            self->monsterinfoVal.pausetime = 100000000;
+            self->monsterinfoVal.stand (self);
         }
         else if (strcmp (self->movetarget->classname, "path_corner") == 0)
         {
             VectorSubtract (self->goalentity->s.origin, self->s.origin, v);
             self->ideal_yaw = self->s.angles[YAW] = vectoyaw(v);
-            self->monsterinfo.walk (self);
+            self->monsterinfoVal.walk (self);
             self->target = NULL;
         }
         else
         {
             self->goalentity = self->movetarget = NULL;
-            self->monsterinfo.pausetime = 100000000;
-            self->monsterinfo.stand (self);
+            self->monsterinfoVal.pausetime = 100000000;
+            self->monsterinfoVal.stand (self);
         }
     }
     else
     {
-        self->monsterinfo.pausetime = 100000000;
-        self->monsterinfo.stand (self);
+        self->monsterinfoVal.pausetime = 100000000;
+        self->monsterinfoVal.stand (self);
     }
 
     self->think = monster_think;

@@ -44,11 +44,11 @@ static void check_dodge (edict *self, vec3_t start, vec3_t dir, int speed)
     }
     VectorMA (start, 8192, dir, end);
     tr = quake2::getInstance()->gi.trace (start, NULL, NULL, end, self, MASK_SHOT);
-    if ((tr.ent) && (tr.ent->svflags & SVF_MONSTER) && (tr.ent->health > 0) && (tr.ent->monsterinfo.dodge) && infront(tr.ent, self))
+    if ((tr.ent) && (tr.ent->svflags & SVF_MONSTER) && (tr.ent->health > 0) && (tr.ent->monsterinfoVal.dodge) && infront(tr.ent, self))
     {
         VectorSubtract (tr.endpos, start, v);
         eta = (VectorLength(v) - tr.ent->maxs[0]) / speed;
-        tr.ent->monsterinfo.dodge (tr.ent, self, eta);
+        tr.ent->monsterinfoVal.dodge (tr.ent, self, eta);
     }
 }
 

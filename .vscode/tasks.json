@@ -7,9 +7,6 @@
             "label": "[UTILITY][FIX HEADEERS]",
             "type": "shell",
             "command": "python FixHeaders.py",
-            "group": {
-                "kind": "build"
-            },
             "problemMatcher": [
                 "$gradle"
             ],
@@ -26,9 +23,6 @@
             "label": "[UTILITY][REPLACE TABS WITH SPACES]",
             "type": "shell",
             "command": "python ReplaceTabsWithSpaces.py",
-            "group": {
-                "kind": "build"
-            },
             "problemMatcher": [
                 "$gradle"
             ],
@@ -65,7 +59,7 @@
         {
             "label": "[LINUX][BUILD][DEBUG]",
             "type": "shell",
-            "command": "cmake --build Build-LINUX --target Quake-2 --config DEBUG -j1",
+            "command": "cmake --build Build-LINUX --target Quake-2 --config DEBUG -j16",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -108,10 +102,6 @@
             "label": "[WINDOWS][BUILD][DEBUG]",
             "type": "shell",
             "command": "cmake --build Build-Windows --target Quake-2 --config DEBUG",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
             "problemMatcher": [
                 "$msCompile"
             ],

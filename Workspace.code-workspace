@@ -56,7 +56,13 @@
             "stack": "cpp",
             "xtree": "cpp",
             "span": "cpp",
-            "xloctime": "cpp"
+            "xloctime": "cpp",
+            "complex": "cpp",
+            "functional": "cpp",
+            "optional": "cpp",
+            "system_error": "cpp",
+            "xlocnum": "cpp",
+            "*.ipp": "cpp"
         }
 	}
 }

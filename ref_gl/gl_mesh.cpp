@@ -318,12 +318,6 @@ void GL_DrawAliasFrameLerp( dmdl_t* paliashdr, float backlerp )
 }
 
 #if 1
-/*
-=============
-GL_DrawAliasShadow
-=============
-*/
-extern vec3_t lightspot;
 
 void GL_DrawAliasShadow( dmdl_t* paliashdr, int posenum )
 {
@@ -334,7 +328,8 @@ void GL_DrawAliasShadow( dmdl_t* paliashdr, int posenum )
     int count;
     daliasframe_t* frame;
 
-    lheight = quake2::getInstance()->currententity->origin[2] - lightspot[2];
+    lheight = quake2::getInstance()->currententity->origin[2] -
+              quake2::getInstance()->lightspot[2];
 
     frame = (daliasframe_t*)( (byte*)paliashdr + paliashdr->ofs_frames +
                               quake2::getInstance()->currententity->frame *
@@ -548,7 +543,7 @@ void ref_gl_R_DrawAliasModel( entity_s* e )
 
     if ( e->flags & RF_WEAPONMODEL )
     {
-        if ( r_lefthand->value == 2 )
+        if ( quake2::getInstance()->r_lefthand->value == 2 )
             return;
     }
 
@@ -744,7 +739,7 @@ void ref_gl_R_DrawAliasModel( entity_s* e )
                        gldepthmin + 0.3 * ( gldepthmax - gldepthmin ) );
 
     if ( ( quake2::getInstance()->currententity->flags & RF_WEAPONMODEL ) &&
-         ( r_lefthand->value == 1.0F ) )
+         ( quake2::getInstance()->r_lefthand->value == 1.0F ) )
     {
         extern void MYgluPerspective( GLdouble fovy, GLdouble aspect,
                                       GLdouble zNear, GLdouble zFar );
@@ -818,7 +813,7 @@ void ref_gl_R_DrawAliasModel( entity_s* e )
         quake2::getInstance()->currententity->oldframe = 0;
     }
 
-    if ( !r_lerpmodels->value )
+    if ( !quake2::getInstance()->r_lerpmodels->value )
         quake2::getInstance()->currententity->backlerp = 0;
     GL_DrawAliasFrameLerp( paliashdr,
                            quake2::getInstance()->currententity->backlerp );
@@ -844,7 +839,7 @@ void ref_gl_R_DrawAliasModel( entity_s* e )
 #endif
 
     if ( ( quake2::getInstance()->currententity->flags & RF_WEAPONMODEL ) &&
-         ( r_lefthand->value == 1.0F ) )
+         ( quake2::getInstance()->r_lefthand->value == 1.0F ) )
     {
         qglMatrixMode( GL_PROJECTION );
         qglPopMatrix();

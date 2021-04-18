@@ -102,7 +102,7 @@ edict *PlayerTrail_PickFirst (edict *self)
 
     for (marker = trail_head, n = TRAIL_LENGTH; n; n--)
     {
-        if(trail[marker]->timestamp <= self->monsterinfo.trail_time)
+        if(trail[marker]->timestamp <= self->monsterinfoVal.trail_time)
             marker = NEXT(marker);
         else
             break;
@@ -131,7 +131,7 @@ edict *PlayerTrail_PickNext (edict *self)
 
     for (marker = trail_head, n = TRAIL_LENGTH; n; n--)
     {
-        if(trail[marker]->timestamp <= self->monsterinfo.trail_time)
+        if(trail[marker]->timestamp <= self->monsterinfoVal.trail_time)
             marker = NEXT(marker);
         else
             break;

@@ -20,16 +20,18 @@
 #include <stdio.h>
 #include <signal.h>
 
-#include "../ref_gl/gl_local.h"
-#include "../client/keys.h"
-#include "../linux/rw_linux.h"
+#ifdef _MESA_PREPARED_
 
-#include <GL/fxmesa.h>
+#include "ref_gl/gl_local.hpp"
+#include "client/keys.hpp"
+#include "linux/rw_linux.hpp"
+
+//#include <GL/fxmesa.h>
 
 /*****************************************************************************/
 
-static qboolean GLimp_SwitchFullscreen( int width, int height );
-qboolean GLimp_InitGL (void);
+static bool GLimp_SwitchFullscreen( int width, int height );
+bool GLimp_InitGL (void);
 
 extern cvar_t *vid_fullscreen;
 extern cvar_t *vid_ref;
@@ -83,7 +85,7 @@ static void InitSig(void)
 /*
 ** GLimp_SetMode
 */
-int GLimp_SetMode( int *pwidth, int *pheight, int mode, qboolean fullscreen )
+int GLimp_SetMode( int *pwidth, int *pheight, int mode, bool fullscreen )
 {
     int width, height;
     GLint attribs[32];
@@ -180,7 +182,7 @@ void GLimp_EndFrame (void)
 /*
 ** GLimp_AppActivate
 */
-void GLimp_AppActivate( qboolean active )
+void GLimp_AppActivate( bool active )
 {
 }
 
@@ -204,3 +206,4 @@ void Fake_glColorTableEXT( GLenum target, GLenum internalformat,
 }
 
 
+#endif # _MESA_PREPARED_

@@ -99,7 +99,7 @@ typedef struct
 } vidtype_t;
 
 vid_encoding_t	vid_encoding;
- 
+
 void	Table8 (void);
 void	Table15 (void);
 void	Table12 (void);
@@ -178,10 +178,10 @@ Keybinding command
 void VID_Scale_f (void)
 {
 	int		scale;
-	
+
 	if (Cmd_Argc () != 2)
 		return;
-		
+
 	scale = atoi (Cmd_Argv(1));
 	if (scale != 1 && scale != 2)
 	{
@@ -234,7 +234,7 @@ Keybinding command
 =================
 */
 void VID_Size_f (void)
-{	
+{
 	if (Cmd_Argc () != 3)
 		return;
 
@@ -254,7 +254,7 @@ VID_Init
 void	VID_Init (unsigned char *palette)
 {
 	InitNS8Bit ();			// fixed palette lookups
-	
+
 	Q_memcpy (vid_palette, palette, sizeof(vid_palette));
 
 	if (COM_CheckParm ("-bitmap"))
@@ -269,7 +269,7 @@ void	VID_Init (unsigned char *palette)
 
 	if (COM_CheckParm ("-direct"))
 		drawdirect = 1;
-	
+
 	Cmd_AddCommand ("vid_scale", VID_Scale_f);
 	Cmd_AddCommand ("vid_mode", VID_Mode_f);
 	Cmd_AddCommand ("vid_size", VID_Size_f);
@@ -287,7 +287,7 @@ void	VID_Init (unsigned char *palette)
 		vid_scale = 2;
 	else
 		vid_scale = 1;
-		
+
     [Application new];
 
 	VID_Restart (vid_display, vid_scale);
@@ -383,7 +383,7 @@ void SetVideoEncoding (char *encoding)
 
 	Sys_Printf ("SetVideoEncoding: %s\n",encoding);
 	vid_encodingstring = encoding;
-	
+
 	for (type = vid_encodingtable ; type->string ; type++)
 	{
 		if (strcmp(type->string, encoding) == 0)
@@ -395,7 +395,7 @@ void SetVideoEncoding (char *encoding)
 			return;
 		}
 	}
-	
+
 	Sys_Error ("Unsupported video encoding: %s\n",encoding);
 }
 
@@ -404,7 +404,7 @@ void SetVideoEncoding (char *encoding)
 AllocBuffers
 =================
 */
-void AllocBuffers (qboolean withnative)
+void AllocBuffers (bool withnative)
 {
 	int		surfcachesize;
 	void	*surfcache;
@@ -425,7 +425,7 @@ void AllocBuffers (qboolean withnative)
 	pixbytes = 1 +sizeof (*d_pzbuffer);
 	if (withnative)
 		pixbytes += pixbytesnative;
-		
+
 	surfcachesize = D_SurfaceCacheForRes (vid.width, vid.height);
 	vid_buffersize = pixels * pixbytes + surfcachesize;
 
@@ -520,7 +520,7 @@ void SetupFramebuffer (void)
 	vid_view_i = [[QuakeView alloc] initFrame: &screenBounds];
 	[[vid_window_i setContentView: vid_view_i] free];
 	[vid_window_i makeFirstResponder: vid_view_i];
-	[vid_window_i setDelegate: vid_view_i];	
+	[vid_window_i setDelegate: vid_view_i];
 	[vid_window_i display];
 	[vid_window_i makeKeyAndOrderFront: nil];
 	NXPing ();
@@ -602,9 +602,9 @@ void SetupBitmap (void)
 //
 	vid.rowbytes = vid.width;
 	rowbytesnative = vid.width * pixbytesnative;
-	
+
 	AllocBuffers (true);
-	
+
 	vid.conbuffer = vid.buffer;
 	vid.conrowbytes = vid.rowbytes;
 	vid.conwidth = vid.width;
@@ -622,14 +622,14 @@ void UpdateFramebuffer (vrect_t *vrect)
 	byte		*psourcebase;
 	byte		*pdestbase;
 	int			scale;
-	
+
 	psourcebase = vid.buffer + vrect->x + vrect->y * vid.rowbytes;
 
 	if (vid_display == disp_bitmap)
 		scale = 1;		// let NS do the scaling
 	else
 		scale = vid_scale;
-		
+
 	pdestbase = buffernative + scale *
 			(vrect->x * pixbytesnative + vrect->y * rowbytesnative);
 
@@ -662,7 +662,7 @@ void UpdateBitmap (void)
 
 //
 // flush the screen with an image call
-// 
+//
 	if (pixbytesnative == 1)
 	{
 		bps = 8;
@@ -695,8 +695,8 @@ void UpdateBitmap (void)
 	[vid_view_i lockFocus];
 
 	NXDrawBitmap(
-		&bounds,  
-		vid.width, 
+		&bounds,
+		vid.width,
 		vid.height,
 		bps,
 		spp,
@@ -707,9 +707,9 @@ void UpdateBitmap (void)
 		colorspace,
 		planes
 	);
-	
+
 	[vid_view_i unlockFocus];
-    NXPing ();	
+    NXPing ();
 }
 
 
@@ -736,7 +736,7 @@ byte	bluetable[256];
 void FillTable (byte *table, int *ramp, int base)
 {
 	int		i, j, o;
-	
+
 	o = 0;
 	for (i=0 ; i<16 && o < 256; i++)
 	{
@@ -786,17 +786,17 @@ void	Table8 (void)
 	int		r,g,b,v;
 	int		i;
 	byte	*table;
-	
+
 	pal = vid_palette;
 	table = (byte *)pcolormap[0];
-	
+
 	for (i=0 ; i<256 ; i++)
 	{
 		r = pal[0];
 		g = pal[1];
 		b = pal[2];
 		pal += 3;
-		
+
 // use the grey ramp if all indexes are close
 
 		if (r-g < 16 && r-g > -16 && r-b < 16 && r-b > -16)
@@ -805,11 +805,11 @@ void	Table8 (void)
 			*table++ = greytable[v];
 			continue;
 		}
-		
+
 		r = redtable[r];
 		g = greentable[g];
 		b = bluetable[b];
-		
+
 // otherwise use the color cube
 		*table++ = r*(8*5) + g*5 + b;
 	}
@@ -826,21 +826,21 @@ void	Table24 (void)
 	int		r,g,b,v;
 	int		i;
 	unsigned	*table;
-	
-	
+
+
 //
 // 8 8 8 encoding
 //
 	pal = vid_palette;
 	table = (unsigned *)pcolormap[0];
-	
+
 	for (i=0 ; i<256 ; i++)
 	{
 		r = pal[0];
 		g = pal[1];
 		b = pal[2];
 		pal += 3;
-		
+
 		v = (r<<16) + (g<<8) + b;
 		*table++ = v;
 	}
@@ -863,14 +863,14 @@ void	Table24Swap (void)
 //
 	pal = vid_palette;
 	table = (unsigned *)pcolormap[0];
-	
+
 	for (i=0 ; i<256 ; i++)
 	{
 		r = pal[0];
 		g = pal[1];
 		b = pal[2];
 		pal += 3;
-		
+
 		v = (r<<24) + (g<<16) + (b<<8) /*+ 255*/;
 		v = NXSwapBigLongToHost (v);
 		*table++ = v;
@@ -895,10 +895,10 @@ void	Table15 (void)
 									(1 << 9) * 5 / 8,
 									(1 << 9) * 7 / 8,
 									(1 << 9) * 1 / 8};
-	
+
 	palette = vid_palette;
 	table = (unsigned short *)pcolormap;
-	
+
 //
 // 5 5 5 encoding
 //
@@ -942,7 +942,7 @@ void	Table12 (void)
 									   (1 << 9) * 1 / 8};
 
 	table = (unsigned short *)pcolormap;
-		
+
 //
 // 4 4 4 encoding
 //
@@ -986,7 +986,7 @@ void	Table12Swap (void)
 									   (1 << 9) * 1 / 8};
 
 	table = (unsigned short *)pcolormap;
-		
+
 //
 // 4 4 4 encoding
 //
@@ -1037,7 +1037,7 @@ void Update8_1 (pixel_t *src, byte *dest, int width, int height,
 	int				xwidth;
 
 	pdest = dest;
-	
+
 	xcount = width >> 3;
 	srcdelta = vid.width - width;
 
@@ -1238,7 +1238,7 @@ void Update16_1 (pixel_t *src, unsigned short *dest, int width,
 
 	psrc = src;
 	pdest = dest;
-	
+
 	xcount = width >> 3;
 	srcdelta = vid.width - width;
 
@@ -1517,7 +1517,7 @@ windowDidMove
 
     if ((int)aPoint.x & 7)
     {
-	[window moveTo:winframe.origin.x - ((int)aPoint.x&7) 
+	[window moveTo:winframe.origin.x - ((int)aPoint.x&7)
 			:winframe.origin.y];
 	[window getFrame: &winframe];
     }
@@ -1527,10 +1527,10 @@ windowDidMove
 - windowWillResize:sender toSize:(NXSize *)frameSize
 {
 	NXRect		fr, cont;
-	
+
 	fr.origin.x = fr.origin.y = 0;
 	fr.size = *frameSize;
-	
+
 	[Window getContentRect:&cont forFrameRect: &fr style:[window style]];
 
 	cont.size.width = (int)cont.size.width & ~15;
@@ -1543,7 +1543,7 @@ windowDidMove
 	[Window getFrameRect:&fr forContentRect: &cont style:[window style]];
 
 	*frameSize = fr.size;
-	
+
 	return self;
 }
 
@@ -1560,7 +1560,7 @@ windowDidMove
 //
 	vid.rowbytes = vid.width;
 	rowbytesnative = vid.width * pixbytesnative;
-	
+
 	AllocBuffers (true);
 
 	vid.conbuffer = vid.buffer;
@@ -1604,7 +1604,7 @@ keymap_t keymaps[] =
 	{68, K_F10},
 	{87, K_F11},
 	{88, K_F12},
-	
+
 	{-1,-1}
 };
 
@@ -1614,7 +1614,7 @@ keymap_t flagmaps[] =
 	{NX_CONTROLMASK, K_CTRL},
 	{NX_ALTERNATEMASK, K_ALT},
 	{NX_COMMANDMASK, K_ALT},
-	
+
 	{-1,-1}
 };
 
@@ -1627,7 +1627,7 @@ keyboard methods
 {
     int	ch;
 	keymap_t	*km;
-	
+
 	PSobscurecursor ();
 
 // check for non-ascii first
@@ -1644,7 +1644,7 @@ keyboard methods
 		ch += 'a' - 'A';
     if (ch>=256)
 		return self;
-		
+
 	Key_Event (ch, true);
     return self;
 }
@@ -1656,7 +1656,7 @@ keyboard methods
 	int		delta;
 	keymap_t	*km;
 	int		i;
-	
+
 	PSobscurecursor ();
     newflags = theEvent->flags;
 	delta = newflags ^ oldflags;
@@ -1675,9 +1675,9 @@ keyboard methods
 			}
 
 	}
-	
+
 	oldflags = newflags;
-		
+
     return self;
 }
 
@@ -1686,7 +1686,7 @@ keyboard methods
 {
     int	ch;
  	keymap_t	*km;
-  
+
  // check for non-ascii first
 	ch = theEvent->data.key.keyCode;
 	for (km=keymaps;km->source!=-1;km++)
@@ -1712,32 +1712,32 @@ keyboard methods
 	NXRect		r;
 	NXStream	*stream;
 	int			fd;
-	int    		i; 
-	char		tiffname[80]; 
-	
+	int    		i;
+	char		tiffname[80];
+
 	[vid_window_i getFrame: &r];
 	r.origin.x = r.origin.y = 0;
 	image = [[NXImage alloc] initSize: &r.size];
 	imagerep = [[NXCachedImageRep alloc] initFromWindow:vid_window_i rect:&r];
-	
+
 	[image lockFocus];
 	[imagerep draw];
 	[image unlockFocus];
-	
-// 
-// find a file name to save it to 
-// 
+
+//
+// find a file name to save it to
+//
 	strcpy(tiffname,"quake00.tif");
-		
-	for (i=0 ; i<=99 ; i++) 
-	{ 
-		tiffname[5] = i/10 + '0'; 
-		tiffname[6] = i%10 + '0'; 
+
+	for (i=0 ; i<=99 ; i++)
+	{
+		tiffname[5] = i/10 + '0';
+		tiffname[6] = i%10 + '0';
 		if (Sys_FileTime(tiffname) == -1)
 			break;	// file doesn't exist
-	} 
-	if (i==100) 
-		Sys_Error ("SCR_ScreenShot_f: Couldn't create a tiff"); 
+	}
+	if (i==100)
+		Sys_Error ("SCR_ScreenShot_f: Couldn't create a tiff");
 
 	fd = open (tiffname, O_RDWR|O_CREAT|O_TRUNC, 0666);
 	stream = NXOpenFile (fd, NX_READWRITE);
@@ -1749,7 +1749,7 @@ keyboard methods
 	[image free];
 	[imagerep free];
 	return self;
-	
+
 }
 
 - screenShot: sender

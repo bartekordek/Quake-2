@@ -383,15 +383,15 @@ void path_corner_touch( edict* self, edict* other, plane_s* plane,
 
     if ( self->wait )
     {
-        other->monsterinfo.pausetime = level.time + self->wait;
-        other->monsterinfo.stand( other );
+        other->monsterinfoVal.pausetime = level.time + self->wait;
+        other->monsterinfoVal.stand( other );
         return;
     }
 
     if ( !other->movetarget )
     {
-        other->monsterinfo.pausetime = level.time + 100000000;
-        other->monsterinfo.stand( other );
+        other->monsterinfoVal.pausetime = level.time + 100000000;
+        other->monsterinfoVal.stand( other );
     }
     else
     {
@@ -447,9 +447,9 @@ void point_combat_touch( edict* self, edict* other, plane_s* plane,
     else if ( ( self->spawnflags & 1 ) &&
               !( other->flags & ( FL_SWIM | FL_FLY ) ) )
     {
-        other->monsterinfo.pausetime = level.time + 100000000;
-        other->monsterinfo.aiflags |= AI_STAND_GROUND;
-        other->monsterinfo.stand( other );
+        other->monsterinfoVal.pausetime = level.time + 100000000;
+        other->monsterinfoVal.aiflags |= AI_STAND_GROUND;
+        other->monsterinfoVal.stand( other );
     }
 
     if ( other->movetarget == self )
@@ -457,7 +457,7 @@ void point_combat_touch( edict* self, edict* other, plane_s* plane,
         other->target = NULL;
         other->movetarget = NULL;
         other->goalentity = other->enemy;
-        other->monsterinfo.aiflags &= ~AI_COMBAT_POINT;
+        other->monsterinfoVal.aiflags &= ~AI_COMBAT_POINT;
     }
 
     if ( self->pathtarget )
@@ -1009,7 +1009,7 @@ void SP_misc_explobox( edict* self )
 
     self->die = barrel_delay;
     self->takedamage = DAMAGE_YES;
-    self->monsterinfo.aiflags = AI_NOSTEP;
+    self->monsterinfoVal.aiflags = AI_NOSTEP;
 
     self->touch = barrel_touch;
 
@@ -1283,7 +1283,7 @@ void SP_misc_deadsoldier( edict* ent )
     ent->takedamage = DAMAGE_YES;
     ent->svflags |= SVF_MONSTER | SVF_DEADMONSTER;
     ent->die = misc_deadsoldier_die;
-    ent->monsterinfo.aiflags |= AI_GOOD_GUY;
+    ent->monsterinfoVal.aiflags |= AI_GOOD_GUY;
 
     quake2::getInstance()->gi.linkentity( ent );
 }
@@ -1330,7 +1330,7 @@ void SP_misc_viper( edict* ent )
     ent->nextthink = level.time + FRAMETIME;
     ent->use = misc_viper_use;
     ent->svflags |= SVF_NOCLIENT;
-    ent->moveinfo.accel = ent->moveinfo.decel = ent->moveinfo.speed =
+    ent->moveinfoVal.accel = ent->moveinfoVal.decel = ent->moveinfoVal.speed =
         ent->speed;
 
     quake2::getInstance()->gi.linkentity( ent );
@@ -1374,7 +1374,7 @@ void misc_viper_bomb_prethink( edict* self )
     if ( diff < -1.0 )
         diff = -1.0;
 
-    VectorScale( self->moveinfo.dir, 1.0 + diff, v );
+    VectorScale( self->moveinfoVal.dir, 1.0 + diff, v );
     v[2] = diff;
 
     diff = self->s.angles[2];
@@ -1396,10 +1396,10 @@ void misc_viper_bomb_use( edict* self, edict* other, edict* activator )
     self->activator = activator;
 
     viper = G_Find( NULL, FOFS( classname ), "misc_viper" );
-    VectorScale( viper->moveinfo.dir, viper->moveinfo.speed, self->velocity );
+    VectorScale( viper->moveinfoVal.dir, viper->moveinfoVal.speed, self->velocity );
 
     self->timestamp = level.time;
-    VectorCopy( viper->moveinfo.dir, self->moveinfo.dir );
+    VectorCopy( viper->moveinfoVal.dir, self->moveinfoVal.dir );
 }
 
 void SP_misc_viper_bomb( edict* self )
@@ -1464,7 +1464,7 @@ void SP_misc_strogg_ship( edict* ent )
     ent->nextthink = level.time + FRAMETIME;
     ent->use = misc_strogg_ship_use;
     ent->svflags |= SVF_NOCLIENT;
-    ent->moveinfo.accel = ent->moveinfo.decel = ent->moveinfo.speed =
+    ent->moveinfoVal.accel = ent->moveinfoVal.decel = ent->moveinfoVal.speed =
         ent->speed;
 
     quake2::getInstance()->gi.linkentity( ent );

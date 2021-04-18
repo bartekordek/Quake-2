@@ -75,9 +75,9 @@ void D_WarpScreen (void)
     }
 
     turb = intsintable + ((int)(r_newrefdef.time*SPEED)&(CYCLE-1));
-    dest = vid.buffer + r_newrefdef.y * vid.rowbytes + r_newrefdef.x;
+    dest = quake2::getInstance()->vid.buffer + r_newrefdef.y * quake2::getInstance()->vid.rowbytes + r_newrefdef.x;
 
-    for (v=0 ; v<h ; v++, dest += vid.rowbytes)
+    for (v=0 ; v<h ; v++, dest += quake2::getInstance()->vid.rowbytes)
     {
         col = &column[turb[v]];
         row = &rowptr[v];

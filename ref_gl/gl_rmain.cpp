@@ -23,8 +23,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 void ref_gl_R_Clear( void );
 
-viddef_t vid;
-
 refimport_t ri;
 
 model_t* r_worldmodel;
@@ -42,21 +40,12 @@ model_t* currentmodel;
 plane_s frustum[4];
 
 int r_visframecount;  // bumped when going to a new PVS
-int r_framecount;     // used for dlight push checking
 
 int c_brush_polys, c_alias_polys;
 
 float v_blend[4];  // final blending color
 
 void ref_gl_GL_Strings_f( void );
-
-//
-// view origin
-//
-vec3_t vup;
-vec3_t vpn;
-vec3_t vright;
-vec3_t r_origin;
 
 float r_world_matrix[16];
 float r_base_world_matrix[16];
@@ -66,17 +55,9 @@ float r_base_world_matrix[16];
 //
 refdef_t r_newrefdef;
 
-int r_viewcluster, r_viewcluster2, r_oldviewcluster, r_oldviewcluster2;
-
 cvar* r_norefresh;
 cvar* r_drawentities;
-cvar* r_drawworld;
 cvar* r_speeds;
-cvar* r_fullbright;
-cvar* r_novis;
-cvar* r_nocull;
-cvar* r_lerpmodels;
-cvar* r_lefthand;
 
 cvar* r_lightlevel;  // FIXME: This is a HACK to get the client's light level
 
@@ -140,7 +121,7 @@ bool ref_gl_R_CullBox( vec3_t mins, vec3_t maxs )
 {
     int i;
 
-    if ( r_nocull->value )
+    if ( quake2::getInstance()->r_nocull->value )
         return false;
 
     for ( i = 0; i < 4; i++ )
@@ -208,8 +189,8 @@ void ref_gl_R_DrawSpriteModel( entity_s* e )
     else
 #endif
     {  // normal sprite
-        up = vup;
-        right = vright;
+        up = quake2::getInstance()->vup;
+        right = quake2::getInstance()->vright;
     }
 
     if ( e->flags & RF_TRANSLUCENT )
@@ -414,15 +395,18 @@ void GL_DrawParticles( int num_particles, const particle_t particles[],
     ref_gl_GL_TexEnv( GL_MODULATE );
     qglBegin( GL_TRIANGLES );
 
-    VectorScale( vup, 1.5, up );
-    VectorScale( vright, 1.5, right );
+    VectorScale( quake2::getInstance()->vup, 1.5, up );
+    VectorScale( quake2::getInstance()->vright, 1.5, right );
 
     for ( p = particles, i = 0; i < num_particles; i++, p++ )
     {
         // hack a scale up to keep particles from disapearing
-        scale = ( p->origin[0] - r_origin[0] ) * vpn[0] +
-                ( p->origin[1] - r_origin[1] ) * vpn[1] +
-                ( p->origin[2] - r_origin[2] ) * vpn[2];
+        scale = ( p->origin[0] - quake2::getInstance()->r_origin[0] ) *
+                    quake2::getInstance()->vpn[0] +
+                ( p->origin[1] - quake2::getInstance()->r_origin[1] ) *
+                    quake2::getInstance()->vpn[1] +
+                ( p->origin[2] - quake2::getInstance()->r_origin[2] ) *
+                    quake2::getInstance()->vpn[2];
 
         if ( scale < 20 )
             scale = 1;
@@ -565,10 +549,10 @@ void ref_gl_R_SetFrustum( void )
     ** horizontal and vertical plane
     */
     // front side is visible
-    VectorAdd (vpn, vright, frustum[0].normal);
-    VectorSubtract (vpn, vright, frustum[1].normal);
-    VectorAdd (vpn, vup, frustum[2].normal);
-    VectorSubtract (vpn, vup, frustum[3].normal);
+    VectorAdd (quake2::getInstance()->vpn, quake2::getInstance()->vright, frustum[0].normal);
+    VectorSubtract (quake2::getInstance()->vpn, quake2::getInstance()->vright, frustum[1].normal);
+    VectorAdd (quake2::getInstance()->vpn, quake2::getInstance()->vup, frustum[2].normal);
+    VectorSubtract (quake2::getInstance()->vpn, quake2::getInstance()->vup, frustum[3].normal);
 
     // we theoretically don't need to normalize these vectors, but I do it
     // anyway so that debugging is a little easier
@@ -578,23 +562,28 @@ void ref_gl_R_SetFrustum( void )
     VectorNormalize( frustum[3].normal );
 #else
     // rotate VPN right by FOV_X/2 degrees
-    RotatePointAroundVector( frustum[0].normal, vup, vpn,
+    RotatePointAroundVector( frustum[0].normal, quake2::getInstance()->vup,
+                             quake2::getInstance()->vpn,
                              -( 90 - r_newrefdef.fov_x / 2 ) );
     // rotate VPN left by FOV_X/2 degrees
-    RotatePointAroundVector( frustum[1].normal, vup, vpn,
+    RotatePointAroundVector( frustum[1].normal, quake2::getInstance()->vup,
+                             quake2::getInstance()->vpn,
                              90 - r_newrefdef.fov_x / 2 );
     // rotate VPN up by FOV_X/2 degrees
-    RotatePointAroundVector( frustum[2].normal, vright, vpn,
+    RotatePointAroundVector( frustum[2].normal, quake2::getInstance()->vright,
+                             quake2::getInstance()->vpn,
                              90 - r_newrefdef.fov_y / 2 );
     // rotate VPN down by FOV_X/2 degrees
-    RotatePointAroundVector( frustum[3].normal, vright, vpn,
+    RotatePointAroundVector( frustum[3].normal, quake2::getInstance()->vright,
+                             quake2::getInstance()->vpn,
                              -( 90 - r_newrefdef.fov_y / 2 ) );
 #endif
 
     for ( i = 0; i < 4; i++ )
     {
         frustum[i].type = PLANE_ANYZ;
-        frustum[i].dist = DotProduct( r_origin, frustum[i].normal );
+        frustum[i].dist =
+            DotProduct( quake2::getInstance()->r_origin, frustum[i].normal );
         frustum[i].signbits = SignbitsForPlane( &frustum[i] );
     }
 }
@@ -611,43 +600,48 @@ void ref_gl_R_SetupFrame( void )
     int i;
     mleaf_t* leaf;
 
-    r_framecount++;
+    quake2::getInstance()->r_framecount++;
 
     // build the transformation matrix for the given view angles
-    VectorCopy( r_newrefdef.vieworg, r_origin );
+    VectorCopy( r_newrefdef.vieworg, quake2::getInstance()->r_origin );
 
-    AngleVectors( r_newrefdef.viewangles, vpn, vright, vup );
+    AngleVectors( r_newrefdef.viewangles, quake2::getInstance()->vpn,
+                  quake2::getInstance()->vright, quake2::getInstance()->vup );
 
     // current viewcluster
     if ( !( r_newrefdef.rdflags & RDF_NOWORLDMODEL ) )
     {
-        r_oldviewcluster = r_viewcluster;
-        r_oldviewcluster2 = r_viewcluster2;
-        leaf = ref_gl_Mod_PointInLeaf( r_origin, r_worldmodel );
-        r_viewcluster = r_viewcluster2 = leaf->cluster;
+        quake2::getInstance()->r_oldviewcluster =
+            quake2::getInstance()->r_viewcluster;
+        quake2::getInstance()->r_oldviewcluster2 =
+            quake2::getInstance()->r_viewcluster2;
+        leaf = ref_gl_Mod_PointInLeaf( quake2::getInstance()->r_origin,
+                                       r_worldmodel );
+        quake2::getInstance()->r_viewcluster =
+            quake2::getInstance()->r_viewcluster2 = leaf->cluster;
 
         // check above and below so crossing solid water doesn't draw wrong
         if ( !leaf->contents )
         {  // look down a bit
             vec3_t temp;
 
-            VectorCopy( r_origin, temp );
+            VectorCopy( quake2::getInstance()->r_origin, temp );
             temp[2] -= 16;
             leaf = ref_gl_Mod_PointInLeaf( temp, r_worldmodel );
             if ( !( leaf->contents & CONTENTS_SOLID ) &&
-                 ( leaf->cluster != r_viewcluster2 ) )
-                r_viewcluster2 = leaf->cluster;
+                 ( leaf->cluster != quake2::getInstance()->r_viewcluster2 ) )
+                quake2::getInstance()->r_viewcluster2 = leaf->cluster;
         }
         else
         {  // look up a bit
             vec3_t temp;
 
-            VectorCopy( r_origin, temp );
+            VectorCopy( quake2::getInstance()->r_origin, temp );
             temp[2] += 16;
             leaf = ref_gl_Mod_PointInLeaf( temp, r_worldmodel );
             if ( !( leaf->contents & CONTENTS_SOLID ) &&
-                 ( leaf->cluster != r_viewcluster2 ) )
-                r_viewcluster2 = leaf->cluster;
+                 ( leaf->cluster != quake2::getInstance()->r_viewcluster2 ) )
+                quake2::getInstance()->r_viewcluster2 = leaf->cluster;
         }
     }
 
@@ -662,7 +656,8 @@ void ref_gl_R_SetupFrame( void )
         qglEnable( GL_SCISSOR_TEST );
         qglClearColor( 0.3, 0.3, 0.3, 1 );
         qglScissor( r_newrefdef.x,
-                    vid.height - r_newrefdef.height - r_newrefdef.y,
+                    quake2::getInstance()->vid.height - r_newrefdef.height -
+                        r_newrefdef.y,
                     r_newrefdef.width, r_newrefdef.height );
         qglClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
         qglClearColor( 1, 0, 0.5, 0.5 );
@@ -701,11 +696,18 @@ void ref_gl_R_SetupGL( void )
     //
     // set up viewport
     //
-    x = floor( r_newrefdef.x * vid.width / vid.width );
-    x2 = ceil( ( r_newrefdef.x + r_newrefdef.width ) * vid.width / vid.width );
-    y = floor( vid.height - r_newrefdef.y * vid.height / vid.height );
-    y2 = ceil( vid.height - ( r_newrefdef.y + r_newrefdef.height ) *
-                                vid.height / vid.height );
+    x = floor( r_newrefdef.x * quake2::getInstance()->vid.width /
+               quake2::getInstance()->vid.width );
+    x2 = ceil( ( r_newrefdef.x + r_newrefdef.width ) *
+               quake2::getInstance()->vid.width /
+               quake2::getInstance()->vid.width );
+    y = floor( quake2::getInstance()->vid.height -
+               r_newrefdef.y * quake2::getInstance()->vid.height /
+                   quake2::getInstance()->vid.height );
+    y2 = ceil( quake2::getInstance()->vid.height -
+               ( r_newrefdef.y + r_newrefdef.height ) *
+                   quake2::getInstance()->vid.height /
+                   quake2::getInstance()->vid.height );
 
     w = x2 - x;
     h = y - y2;
@@ -850,10 +852,12 @@ void ref_gl_R_RenderView( refdef_t* fd )
 void R_SetGL2D( void )
 {
     // set 2D virtual screen size
-    qglViewport( 0, 0, vid.width, vid.height );
+    qglViewport( 0, 0, quake2::getInstance()->vid.width,
+                 quake2::getInstance()->vid.height );
     qglMatrixMode( GL_PROJECTION );
     qglLoadIdentity();
-    qglOrtho( 0, vid.width, vid.height, 0, -99999, 99999 );
+    qglOrtho( 0, quake2::getInstance()->vid.width,
+              quake2::getInstance()->vid.height, 0, -99999, 99999 );
     qglMatrixMode( GL_MODELVIEW );
     qglLoadIdentity();
     qglDisable( GL_DEPTH_TEST );
@@ -867,10 +871,10 @@ static void GL_DrawColoredStereoLinePair( float r, float g, float b, float y )
 {
     qglColor3f( r, g, b );
     qglVertex2f( 0, y );
-    qglVertex2f( vid.width, y );
+    qglVertex2f( quake2::getInstance()->vid.width, y );
     qglColor3f( 0, 0, 0 );
     qglVertex2f( 0, y + 1 );
-    qglVertex2f( vid.width, y + 1 );
+    qglVertex2f( quake2::getInstance()->vid.width, y + 1 );
 }
 
 static void GL_DrawStereoPattern( void )
@@ -947,14 +951,16 @@ void ref_gl_R_RenderFrame( refdef_t* fd )
 
 void ref_gl_R_Register( void )
 {
-    r_lefthand = ri.Cvar_Get( "hand", "0", CVAR_USERINFO | CVAR_ARCHIVE );
+    quake2::getInstance()->r_lefthand =
+        ri.Cvar_Get( "hand", "0", CVAR_USERINFO | CVAR_ARCHIVE );
     r_norefresh = ri.Cvar_Get( "r_norefresh", "0", 0 );
-    r_fullbright = ri.Cvar_Get( "r_fullbright", "0", 0 );
+    quake2::getInstance()->r_fullbright = ri.Cvar_Get( "r_fullbright", "0", 0 );
     r_drawentities = ri.Cvar_Get( "r_drawentities", "1", 0 );
-    r_drawworld = ri.Cvar_Get( "r_drawworld", "1", 0 );
-    r_novis = ri.Cvar_Get( "r_novis", "0", 0 );
-    r_nocull = ri.Cvar_Get( "r_nocull", "0", 0 );
-    r_lerpmodels = ri.Cvar_Get( "r_lerpmodels", "1", 0 );
+    quake2::getInstance()->r_drawworld = ri.Cvar_Get( "r_drawworld", "1", 0 );
+    quake2::getInstance()->r_novis = ri.Cvar_Get( "r_novis", "0", 0 );
+    quake2::getInstance()->r_nocull = ri.Cvar_Get( "r_nocull", "0", 0 );
+    quake2::getInstance()->quake2::getInstance()->r_lerpmodels =
+        ri.Cvar_Get( "r_lerpmodels", "1", 0 );
     r_speeds = ri.Cvar_Get( "r_speeds", "0", 0 );
 
     r_lightlevel = ri.Cvar_Get( "r_lightlevel", "0", 0 );
@@ -1057,8 +1063,9 @@ bool R_SetMode( void )
     vid_fullscreen->modified = false;
     gl_mode->modified = false;
 
-    if ( ( err = GLimp_SetMode( &vid.width, &vid.height, gl_mode->value,
-                                fullscreen ) ) == rserr_ok )
+    if ( ( err = GLimp_SetMode( &quake2::getInstance()->vid.width,
+                                &quake2::getInstance()->vid.height,
+                                gl_mode->value, fullscreen ) ) == rserr_ok )
     {
         gl_state.prev_mode = gl_mode->value;
     }
@@ -1071,8 +1078,9 @@ bool R_SetMode( void )
             ri.Con_Printf(
                 PRINT_ALL,
                 "R_SetMode() - fullscreen unavailable in this mode\n" );
-            if ( ( err = GLimp_SetMode( &vid.width, &vid.height, gl_mode->value,
-                                        false ) ) == rserr_ok )
+            if ( ( err = GLimp_SetMode( &quake2::getInstance()->vid.width,
+                                        &quake2::getInstance()->vid.height,
+                                        gl_mode->value, false ) ) == rserr_ok )
                 return true;
         }
         else if ( err == rserr_invalid_mode )
@@ -1083,8 +1091,9 @@ bool R_SetMode( void )
         }
 
         // try setting it back to something safe
-        if ( ( err = GLimp_SetMode( &vid.width, &vid.height, gl_state.prev_mode,
-                                    false ) ) != rserr_ok )
+        if ( ( err = GLimp_SetMode( &quake2::getInstance()->vid.width,
+                                    &quake2::getInstance()->vid.height,
+                                    gl_state.prev_mode, false ) ) != rserr_ok )
         {
             ri.Con_Printf( PRINT_ALL,
                            "R_SetMode() - could not revert to safe mode\n" );
@@ -1455,10 +1464,12 @@ void ref_gl_R_BeginFrame( float camera_separation )
     /*
     ** go into 2D mode
     */
-    qglViewport( 0, 0, vid.width, vid.height );
+    qglViewport( 0, 0, quake2::getInstance()->vid.width,
+                 quake2::getInstance()->vid.height );
     qglMatrixMode( GL_PROJECTION );
     qglLoadIdentity();
-    qglOrtho( 0, vid.width, vid.height, 0, -99999, 99999 );
+    qglOrtho( 0, quake2::getInstance()->vid.width,
+              quake2::getInstance()->vid.height, 0, -99999, 99999 );
     qglMatrixMode( GL_MODELVIEW );
     qglLoadIdentity();
     qglDisable( GL_DEPTH_TEST );

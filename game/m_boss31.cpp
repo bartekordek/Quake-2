@@ -160,7 +160,7 @@ void jorg_step_right (edict *self)
 
 void jorg_stand (edict *self)
 {
-    self->monsterinfo.currentmove = &jorg_move_stand;
+    self->monsterinfoVal.currentmove = &jorg_move_stand;
 }
 
 mframe_t jorg_frames_run [] =
@@ -228,15 +228,15 @@ mmove_t jorg_move_end_walk = {FRAME_walk20, FRAME_walk25, jorg_frames_end_walk, 
 
 void jorg_walk (edict *self)
 {
-        self->monsterinfo.currentmove = &jorg_move_walk;
+        self->monsterinfoVal.currentmove = &jorg_move_walk;
 }
 
 void jorg_run (edict *self)
 {
-    if (self->monsterinfo.aiflags & AI_STAND_GROUND)
-        self->monsterinfo.currentmove = &jorg_move_stand;
+    if (self->monsterinfoVal.aiflags & AI_STAND_GROUND)
+        self->monsterinfoVal.currentmove = &jorg_move_stand;
     else
-        self->monsterinfo.currentmove = &jorg_move_run;
+        self->monsterinfoVal.currentmove = &jorg_move_run;
 }
 
 mframe_t jorg_frames_pain3 [] =
@@ -395,22 +395,22 @@ void jorg_reattack1(edict *self)
 {
     if (visible(self, self->enemy))
         if (random() < 0.9)
-            self->monsterinfo.currentmove = &jorg_move_attack1;
+            self->monsterinfoVal.currentmove = &jorg_move_attack1;
         else
         {
             self->s.sound = 0;
-            self->monsterinfo.currentmove = &jorg_move_end_attack1;
+            self->monsterinfoVal.currentmove = &jorg_move_end_attack1;
         }
     else
     {
         self->s.sound = 0;
-        self->monsterinfo.currentmove = &jorg_move_end_attack1;
+        self->monsterinfoVal.currentmove = &jorg_move_end_attack1;
     }
 }
 
 void jorg_attack1(edict *self)
 {
-    self->monsterinfo.currentmove = &jorg_move_attack1;
+    self->monsterinfoVal.currentmove = &jorg_move_attack1;
 }
 
 void jorg_pain (edict *self, edict *other, float kick, int damage)
@@ -455,19 +455,19 @@ void jorg_pain (edict *self, edict *other, float kick, int damage)
     if (damage <= 50)
     {
         quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain1, 1, ATTN_NORM,0);
-        self->monsterinfo.currentmove = &jorg_move_pain1;
+        self->monsterinfoVal.currentmove = &jorg_move_pain1;
     }
     else if (damage <= 100)
     {
         quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain2, 1, ATTN_NORM,0);
-        self->monsterinfo.currentmove = &jorg_move_pain2;
+        self->monsterinfoVal.currentmove = &jorg_move_pain2;
     }
     else
     {
         if (random() <= 0.3)
         {
             quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain3, 1, ATTN_NORM,0);
-            self->monsterinfo.currentmove = &jorg_move_pain3;
+            self->monsterinfoVal.currentmove = &jorg_move_pain3;
         }
     }
 };
@@ -548,12 +548,12 @@ void jorg_attack(edict *self)
     {
         quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_attack1, 1, ATTN_NORM,0);
         self->s.sound = quake2::getInstance()->gi.soundindex ("boss3/w_loop.wav");
-        self->monsterinfo.currentmove = &jorg_move_start_attack1;
+        self->monsterinfoVal.currentmove = &jorg_move_start_attack1;
     }
     else
     {
         quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_attack2, 1, ATTN_NORM,0);
-        self->monsterinfo.currentmove = &jorg_move_attack2;
+        self->monsterinfoVal.currentmove = &jorg_move_attack2;
     }
 }
 
@@ -593,7 +593,7 @@ void jorg_die (edict *self, edict *inflictor, edict *attacker, int damage, vec3_
     self->takedamage = DAMAGE_NO;
     self->s.sound = 0;
     self->count = 0;
-    self->monsterinfo.currentmove = &jorg_move_death;
+    self->monsterinfoVal.currentmove = &jorg_move_death;
 }
 
 bool Jorg_CheckAttack (edict *self)
@@ -632,24 +632,24 @@ bool Jorg_CheckAttack (edict *self)
     // melee attack
     if (enemy_range == RANGE_MELEE)
     {
-        if (self->monsterinfo.melee)
-            self->monsterinfo.attack_state = AS_MELEE;
+        if (self->monsterinfoVal.melee)
+            self->monsterinfoVal.attack_state = AS_MELEE;
         else
-            self->monsterinfo.attack_state = AS_MISSILE;
+            self->monsterinfoVal.attack_state = AS_MISSILE;
         return true;
     }
 
 // missile attack
-    if (!self->monsterinfo.attack)
+    if (!self->monsterinfoVal.attack)
         return false;
 
-    if (level.time < self->monsterinfo.attack_finished)
+    if (level.time < self->monsterinfoVal.attack_finished)
         return false;
 
     if (enemy_range == RANGE_FAR)
         return false;
 
-    if (self->monsterinfo.aiflags & AI_STAND_GROUND)
+    if (self->monsterinfoVal.aiflags & AI_STAND_GROUND)
     {
         chance = 0.4;
     }
@@ -672,17 +672,17 @@ bool Jorg_CheckAttack (edict *self)
 
     if (random () < chance)
     {
-        self->monsterinfo.attack_state = AS_MISSILE;
-        self->monsterinfo.attack_finished = level.time + 2*random();
+        self->monsterinfoVal.attack_state = AS_MISSILE;
+        self->monsterinfoVal.attack_finished = level.time + 2*random();
         return true;
     }
 
     if (self->flags & FL_FLY)
     {
         if (random() < 0.3)
-            self->monsterinfo.attack_state = AS_SLIDING;
+            self->monsterinfoVal.attack_state = AS_SLIDING;
         else
-            self->monsterinfo.attack_state = AS_STRAIGHT;
+            self->monsterinfoVal.attack_state = AS_STRAIGHT;
     }
 
     return false;
@@ -731,19 +731,19 @@ void SP_monster_jorg (edict *self)
 
     self->pain = jorg_pain;
     self->die = jorg_die;
-    self->monsterinfo.stand = jorg_stand;
-    self->monsterinfo.walk = jorg_walk;
-    self->monsterinfo.run = jorg_run;
-    self->monsterinfo.dodge = NULL;
-    self->monsterinfo.attack = jorg_attack;
-    self->monsterinfo.search = jorg_search;
-    self->monsterinfo.melee = NULL;
-    self->monsterinfo.sight = NULL;
-    self->monsterinfo.checkattack = Jorg_CheckAttack;
+    self->monsterinfoVal.stand = jorg_stand;
+    self->monsterinfoVal.walk = jorg_walk;
+    self->monsterinfoVal.run = jorg_run;
+    self->monsterinfoVal.dodge = NULL;
+    self->monsterinfoVal.attack = jorg_attack;
+    self->monsterinfoVal.search = jorg_search;
+    self->monsterinfoVal.melee = NULL;
+    self->monsterinfoVal.sight = NULL;
+    self->monsterinfoVal.checkattack = Jorg_CheckAttack;
     quake2::getInstance()->gi.linkentity (self);
 
-    self->monsterinfo.currentmove = &jorg_move_stand;
-    self->monsterinfo.scale = MODEL_SCALE;
+    self->monsterinfoVal.currentmove = &jorg_move_stand;
+    self->monsterinfoVal.scale = MODEL_SCALE;
 
     walkmonster_start(self);
 }

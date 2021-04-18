@@ -265,7 +265,7 @@ void SCR_DrawCenterString (void)
     start = scr_centerstring;
 
     if (scr_center_lines <= 4)
-        y = viddef.height*0.35;
+        y = quake2::getInstance()->viddef.height*0.35;
     else
         y = 48;
 
@@ -275,7 +275,7 @@ void SCR_DrawCenterString (void)
         for (l=0 ; l<40 ; l++)
             if (start[l] == '\n' || !start[l])
                 break;
-        x = (viddef.width - l*8)/2;
+        x = (quake2::getInstance()->viddef.width - l*8)/2;
         SCR_AddDirtyPoint (x, y);
         for (j=0 ; j<l ; j++, x+=8)
         {
@@ -327,14 +327,14 @@ static void SCR_CalcVrect (void)
 
     size = scr_viewsize->value;
 
-    scr_vrect.width = viddef.width*size/100;
+    scr_vrect.width = quake2::getInstance()->viddef.width*size/100;
     scr_vrect.width &= ~7;
 
-    scr_vrect.height = viddef.height*size/100;
+    scr_vrect.height = quake2::getInstance()->viddef.height*size/100;
     scr_vrect.height &= ~1;
 
-    scr_vrect.x = (viddef.width - scr_vrect.width)/2;
-    scr_vrect.y = (viddef.height - scr_vrect.height)/2;
+    scr_vrect.x = (quake2::getInstance()->viddef.width - scr_vrect.width)/2;
+    scr_vrect.y = (quake2::getInstance()->viddef.height - scr_vrect.height)/2;
 }
 
 
@@ -466,7 +466,7 @@ void SCR_DrawPause (void)
         return;
 
     re.DrawGetPicSize (&w, &h, "pause");
-    re.DrawPic ((viddef.width-w)/2, viddef.height/2 + 8, "pause");
+    re.DrawPic ((quake2::getInstance()->viddef.width-w)/2, quake2::getInstance()->viddef.height/2 + 8, "pause");
 }
 
 /*
@@ -483,7 +483,7 @@ void SCR_DrawLoading (void)
 
     scr_draw_loading = false;
     re.DrawGetPicSize (&w, &h, "loading");
-    re.DrawPic ((viddef.width-w)/2, (viddef.height-h)/2, "loading");
+    re.DrawPic ((quake2::getInstance()->viddef.width-w)/2, (quake2::getInstance()->viddef.height-h)/2, "loading");
 }
 
 //=============================================================================
@@ -537,7 +537,7 @@ void SCR_DrawConsole (void)
     if (cls.state != ca_active || !cl.refresh_prepped)
     {    // connected, but can't render
         Con_DrawConsole (0.5);
-        re.DrawFill (0, viddef.height/2, viddef.width, viddef.height/2, 0);
+        re.DrawFill (0, quake2::getInstance()->viddef.height/2, quake2::getInstance()->viddef.width, quake2::getInstance()->viddef.height/2, 0);
         return;
     }
 
@@ -614,11 +614,11 @@ int entitycmpfnc( const entity_s *a, const entity_s *b )
 */
     if ( a->model == b->model )
     {
-        return ( ( int ) a->skin - ( int ) b->skin );
+        return ( reinterpret_cast<intptr_t>( a->skin ) - reinterpret_cast<intptr_t>( b->skin ) );
     }
     else
     {
-        return ( ( int ) a->model - ( int ) b->model );
+        return ( reinterpret_cast<intptr_t>( a->model ) - reinterpret_cast<intptr_t>( b->model ) );
     }
 }
 
@@ -676,7 +676,7 @@ void SCR_AddDirtyPoint (int x, int y)
 void SCR_DirtyScreen (void)
 {
     SCR_AddDirtyPoint (0, 0);
-    SCR_AddDirtyPoint (viddef.width-1, viddef.height-1);
+    SCR_AddDirtyPoint (quake2::getInstance()->viddef.width-1, quake2::getInstance()->viddef.height-1);
 }
 
 /*
@@ -723,7 +723,7 @@ void SCR_TileClear (void)
     scr_dirty.y2 = -9999;
 
     // don't bother with anything convered by the console)
-    top = scr_con_current*viddef.height;
+    top = scr_con_current*quake2::getInstance()->viddef.height;
     if (top >= clear.y1)
         clear.y1 = top;
 
@@ -821,7 +821,7 @@ void SizeHUDString (char *string, int *w, int *h)
 * h = lines * 8;
 }
 
-void DrawHUDString (char *string, int x, int y, int centerwidth, int xor)
+void DrawHUDString (char *string, int x, int y, int centerwidth, int xorVal)
 {
     int        margin;
     char    line[1024];
@@ -844,7 +844,7 @@ void DrawHUDString (char *string, int x, int y, int centerwidth, int xor)
             x = margin;
         for (i=0 ; i<width ; i++)
         {
-            re.DrawChar (x, y, line[i]^xor);
+            re.DrawChar (x, y, line[i]^xorVal);
             x += 8;
         }
         if (*string)
@@ -964,13 +964,13 @@ void SCR_ExecuteLayoutString (char *s)
         if (!strcmp(token, "xr"))
         {
             token = COM_Parse (&s);
-            x = viddef.width + atoi(token);
+            x = quake2::getInstance()->viddef.width + atoi(token);
             continue;
         }
         if (!strcmp(token, "xv"))
         {
             token = COM_Parse (&s);
-            x = viddef.width/2 - 160 + atoi(token);
+            x = quake2::getInstance()->viddef.width/2 - 160 + atoi(token);
             continue;
         }
 
@@ -983,13 +983,13 @@ void SCR_ExecuteLayoutString (char *s)
         if (!strcmp(token, "yb"))
         {
             token = COM_Parse (&s);
-            y = viddef.height + atoi(token);
+            y = quake2::getInstance()->viddef.height + atoi(token);
             continue;
         }
         if (!strcmp(token, "yv"))
         {
             token = COM_Parse (&s);
-            y = viddef.height/2 - 120 + atoi(token);
+            y = quake2::getInstance()->viddef.height/2 - 120 + atoi(token);
             continue;
         }
 
@@ -1013,9 +1013,9 @@ void SCR_ExecuteLayoutString (char *s)
             int        score, ping, time;
 
             token = COM_Parse (&s);
-            x = viddef.width/2 - 160 + atoi(token);
+            x = quake2::getInstance()->viddef.width/2 - 160 + atoi(token);
             token = COM_Parse (&s);
-            y = viddef.height/2 - 120 + atoi(token);
+            y = quake2::getInstance()->viddef.height/2 - 120 + atoi(token);
             SCR_AddDirtyPoint (x, y);
             SCR_AddDirtyPoint (x+159, y+31);
 
@@ -1052,9 +1052,9 @@ void SCR_ExecuteLayoutString (char *s)
             char    block[80];
 
             token = COM_Parse (&s);
-            x = viddef.width/2 - 160 + atoi(token);
+            x = quake2::getInstance()->viddef.width/2 - 160 + atoi(token);
             token = COM_Parse (&s);
-            y = viddef.height/2 - 120 + atoi(token);
+            y = quake2::getInstance()->viddef.height/2 - 120 + atoi(token);
             SCR_AddDirtyPoint (x, y);
             SCR_AddDirtyPoint (x+159, y+31);
 
@@ -1265,7 +1265,7 @@ void SCR_UpdateScreen (void)
     int i;
     float separation[2] = { 0, 0 };
 
-    // if the screen is disabled (loading plaque is up, or vid mode changing)
+    // if the screen is disabled (loading plaque is up, or quake2::getInstance()->vid mode changing)
     // do nothing at all
     if (cls.disable_screen)
     {
@@ -1313,7 +1313,7 @@ void SCR_UpdateScreen (void)
             re.CinematicSetPalette(NULL);
             scr_draw_loading = false;
             re.DrawGetPicSize (&w, &h, "loading");
-            re.DrawPic ((viddef.width-w)/2, (viddef.height-h)/2, "loading");
+            re.DrawPic ((quake2::getInstance()->viddef.width-w)/2, (quake2::getInstance()->viddef.height-h)/2, "loading");
 //            re.EndFrame();
 //            return;
         }

@@ -73,16 +73,13 @@ void ref_soft_R_PushDlights( model_t* model )
     int i;
     dlight_t* l;
 
-    quake2::getInstance()->r_dlightframecount = r_framecount;
+    quake2::getInstance()->r_dlightframecount = quake2::getInstance()->r_framecount;
     for ( i = 0, l = r_newrefdef.dlights; i < r_newrefdef.num_dlights;
           i++, l++ )
     {
         ref_soft_R_MarkLights( l, 1 << i, model->nodes + model->firstnode );
     }
 }
-
-plane_s* lightplane;  // used as shadow plane
-vec3_t lightspot;
 
 int ref_soft_RecursiveLightPoint( mnode_s* node, vec3_t start, vec3_t end )
 {
@@ -130,8 +127,8 @@ int ref_soft_RecursiveLightPoint( mnode_s* node, vec3_t start, vec3_t end )
         return -1;  // didn't hit anuthing
 
     // check for impact on this node
-    VectorCopy( mid, lightspot );
-    lightplane = plane;
+    VectorCopy( mid, quake2::getInstance()->lightspot );
+    quake2::getInstance()->lightplane = plane;
 
     surf = r_worldmodel->surfaces + node->firstsurface;
     for ( i = 0; i < node->numsurfaces; i++, surf++ )
@@ -359,7 +356,7 @@ void ref_soft_R_BuildLightMap( void )
     tmax = ( surf->extents[1] >> 4 ) + 1;
     size = smax * tmax;
 
-    if ( r_fullbright->value || !r_worldmodel->lightdata )
+    if ( quake2::getInstance()->r_fullbright->value || !r_worldmodel->lightdata )
     {
         for ( i = 0; i < size; i++ ) blocklights[i] = 0;
         return;
@@ -380,7 +377,7 @@ void ref_soft_R_BuildLightMap( void )
         }
 
     // add all the dynamic lights
-    if ( surf->dlightframe == r_framecount )
+    if ( surf->dlightframe == quake2::getInstance()->r_framecount )
         ref_soft_R_AddDynamicLights();
 
     // bound, invert, and shift

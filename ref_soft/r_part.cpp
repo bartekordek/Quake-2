@@ -54,8 +54,8 @@ static unsigned s_prefetch_address;
 */
 __declspec(naked) void BlendParticle33( void )
 {
-    //    return vid.alphamap[color + dstcolor*256];
-    __asm mov ebp, vid.alphamap
+    //    return quake2::getInstance()->vid.alphamap[color + dstcolor*256];
+    __asm mov ebp, quake2::getInstance()->vid.alphamap
     __asm xor ebx, ebx
 
     __asm mov bl,  byte ptr [edi]
@@ -73,8 +73,8 @@ __declspec(naked) void BlendParticle33( void )
 
 __declspec(naked) void BlendParticle66( void )
 {
-    //    return vid.alphamap[pcolor*256 + dstcolor];
-    __asm mov ebp, vid.alphamap
+    //    return quake2::getInstance()->vid.alphamap[pcolor*256 + dstcolor];
+    __asm mov ebp, quake2::getInstance()->vid.alphamap
     __asm xor ebx, ebx
 
     __asm shl eax,  8
@@ -136,14 +136,14 @@ __declspec(naked) void R_DrawParticle( void )
     /*
     ** transform the particle
     */
-    // VectorSubtract (pparticle->origin, r_origin, local);
+    // VectorSubtract (pparticle->origin, quake2::getInstance()->r_origin, local);
     __asm mov  esi, partparms.particle
     __asm fld  dword ptr [esi+0]          ; p_o.x
-    __asm fsub dword ptr [r_origin+0]     ; p_o.x-r_o.x
+    __asm fsub dword ptr [quake2::getInstance()->r_origin+0]     ; p_o.x-r_o.x
     __asm fld  dword ptr [esi+4]          ; p_o.y | p_o.x-r_o.x
-    __asm fsub dword ptr [r_origin+4]     ; p_o.y-r_o.y | p_o.x-r_o.x
+    __asm fsub dword ptr [quake2::getInstance()->r_origin+4]     ; p_o.y-r_o.y | p_o.x-r_o.x
     __asm fld  dword ptr [esi+8]          ; p_o.z | p_o.y-r_o.y | p_o.x-r_o.x
-    __asm fsub dword ptr [r_origin+8]     ; p_o.z-r_o.z | p_o.y-r_o.y | p_o.x-r_o.x
+    __asm fsub dword ptr [quake2::getInstance()->r_origin+8]     ; p_o.z-r_o.z | p_o.y-r_o.y | p_o.x-r_o.x
     __asm fxch st(2)                      ; p_o.x-r_o.x | p_o.y-r_o.y | p_o.z-r_o.z
     __asm fstp dword ptr [local+0]        ; p_o.y-r_o.y | p_o.z-r_o.z
     __asm fstp dword ptr [local+4]        ; p_o.z-r_o.z
@@ -437,12 +437,12 @@ end:
 
 static byte BlendParticle33( int pcolor, int dstcolor )
 {
-    return vid.alphamap[pcolor + dstcolor*256];
+    return quake2::getInstance()->vid.alphamap[pcolor + dstcolor*256];
 }
 
 static byte BlendParticle66( int pcolor, int dstcolor )
 {
-    return vid.alphamap[pcolor*256+dstcolor];
+    return quake2::getInstance()->vid.alphamap[pcolor*256+dstcolor];
 }
 
 static byte BlendParticle100( int pcolor, int dstcolor )
@@ -479,7 +479,7 @@ void R_DrawParticle( void )
     /*
     ** transform the particle
     */
-    VectorSubtract (pparticle->origin, r_origin, local);
+    VectorSubtract (pparticle->origin, quake2::getInstance()->r_origin, local);
 
     transformed[0] = DotProduct(local, r_pright);
     transformed[1] = DotProduct(local, r_pup);
@@ -547,7 +547,7 @@ void R_DrawParticle( void )
                 if (pz[i] <= izi)
                 {
                     pz[i]    = izi;
-                    pdest[i] = vid.alphamap[color + ((int)pdest[i]<<8)];
+                    pdest[i] = quake2::getInstance()->vid.alphamap[color + ((int)pdest[i]<<8)];
                 }
             }
         }
@@ -561,7 +561,7 @@ void R_DrawParticle( void )
                 if (pz[i] <= izi)
                 {
                     pz[i]    = izi;
-                    pdest[i] = vid.alphamap[(color<<8) + (int)pdest[i]];
+                    pdest[i] = quake2::getInstance()->vid.alphamap[(color<<8) + (int)pdest[i]];
                 }
             }
         }
@@ -599,9 +599,9 @@ void R_DrawParticles (void)
     int         i;
     extern unsigned long fpu_sp24_cw, fpu_chop_cw;
 
-    VectorScale( vright, xscaleshrink, r_pright );
-    VectorScale( vup, yscaleshrink, r_pup );
-    VectorCopy( vpn, r_ppn );
+    VectorScale( quake2::getInstance()->vright, xscaleshrink, r_pright );
+    VectorScale( quake2::getInstance()->vup, yscaleshrink, r_pup );
+    VectorCopy( quake2::getInstance()->vpn, r_ppn );
 
 #if id386 && !defined __linux__
     __asm fldcw word ptr [fpu_sp24_cw]

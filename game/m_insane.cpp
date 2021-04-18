@@ -434,9 +434,9 @@ mmove_t insane_move_struggle_cross = {FRAME_cross16, FRAME_cross30, insane_frame
 void insane_cross (edict *self)
 {
     if (random() < 0.8)
-        self->monsterinfo.currentmove = &insane_move_cross;
+        self->monsterinfoVal.currentmove = &insane_move_cross;
     else
-        self->monsterinfo.currentmove = &insane_move_struggle_cross;
+        self->monsterinfoVal.currentmove = &insane_move_struggle_cross;
 }
 
 void insane_walk (edict *self)
@@ -444,16 +444,16 @@ void insane_walk (edict *self)
     if ( self->spawnflags & 16 )            // Hold Ground?
         if (self->s.frame == FRAME_cr_pain10)
         {
-            self->monsterinfo.currentmove = &insane_move_down;
+            self->monsterinfoVal.currentmove = &insane_move_down;
             return;
         }
     if (self->spawnflags & 4)
-        self->monsterinfo.currentmove = &insane_move_crawl;
+        self->monsterinfoVal.currentmove = &insane_move_crawl;
     else
         if (random() <= 0.5)
-            self->monsterinfo.currentmove = &insane_move_walk_normal;
+            self->monsterinfoVal.currentmove = &insane_move_walk_normal;
         else
-            self->monsterinfo.currentmove = &insane_move_walk_insane;
+            self->monsterinfoVal.currentmove = &insane_move_walk_insane;
 }
 
 void insane_run (edict *self)
@@ -461,16 +461,16 @@ void insane_run (edict *self)
     if ( self->spawnflags & 16 )            // Hold Ground?
         if (self->s.frame == FRAME_cr_pain10)
         {
-            self->monsterinfo.currentmove = &insane_move_down;
+            self->monsterinfoVal.currentmove = &insane_move_down;
             return;
         }
     if (self->spawnflags & 4)                // Crawling?
-        self->monsterinfo.currentmove = &insane_move_runcrawl;
+        self->monsterinfoVal.currentmove = &insane_move_runcrawl;
     else
         if (random() <= 0.5)                // Else, mix it up
-            self->monsterinfo.currentmove = &insane_move_run_normal;
+            self->monsterinfoVal.currentmove = &insane_move_run_normal;
         else
-            self->monsterinfo.currentmove = &insane_move_run_insane;
+            self->monsterinfoVal.currentmove = &insane_move_run_insane;
 }
 
 
@@ -503,22 +503,22 @@ void insane_pain (edict *self, edict *other, float kick, int damage)
     // Don't go into pain frames if crucified.
     if (self->spawnflags & 8)
     {
-        self->monsterinfo.currentmove = &insane_move_struggle_cross;
+        self->monsterinfoVal.currentmove = &insane_move_struggle_cross;
         return;
     }
 
     if  ( ((self->s.frame >= FRAME_crawl1) && (self->s.frame <= FRAME_crawl9)) || ((self->s.frame >= FRAME_stand99) && (self->s.frame <= FRAME_stand160)) )
     {
-        self->monsterinfo.currentmove = &insane_move_crawl_pain;
+        self->monsterinfoVal.currentmove = &insane_move_crawl_pain;
     }
     else
-        self->monsterinfo.currentmove = &insane_move_stand_pain;
+        self->monsterinfoVal.currentmove = &insane_move_stand_pain;
 
 }
 
 void insane_onground (edict *self)
 {
-    self->monsterinfo.currentmove = &insane_move_down;
+    self->monsterinfoVal.currentmove = &insane_move_down;
 }
 
 void insane_checkdown (edict *self)
@@ -528,9 +528,9 @@ void insane_checkdown (edict *self)
         return;
     if (random() < 0.3)
         if (random() < 0.5)
-            self->monsterinfo.currentmove = &insane_move_uptodown;
+            self->monsterinfoVal.currentmove = &insane_move_uptodown;
         else
-            self->monsterinfo.currentmove = &insane_move_jumpdown;
+            self->monsterinfoVal.currentmove = &insane_move_jumpdown;
 }
 
 void insane_checkup (edict *self)
@@ -539,7 +539,7 @@ void insane_checkup (edict *self)
     if ( (self->spawnflags & 4) && (self->spawnflags & 16) )
         return;
     if (random() < 0.5)
-        self->monsterinfo.currentmove = &insane_move_downtoup;
+        self->monsterinfoVal.currentmove = &insane_move_downtoup;
 
 }
 
@@ -547,17 +547,17 @@ void insane_stand (edict *self)
 {
     if (self->spawnflags & 8)            // If crucified
     {
-        self->monsterinfo.currentmove = &insane_move_cross;
-        self->monsterinfo.aiflags |= AI_STAND_GROUND;
+        self->monsterinfoVal.currentmove = &insane_move_cross;
+        self->monsterinfoVal.aiflags |= AI_STAND_GROUND;
     }
     // If Hold_Ground and Crawl are set
     else if ( (self->spawnflags & 4) && (self->spawnflags & 16) )
-        self->monsterinfo.currentmove = &insane_move_down;
+        self->monsterinfoVal.currentmove = &insane_move_down;
     else
         if (random() < 0.5)
-            self->monsterinfo.currentmove = &insane_move_stand_normal;
+            self->monsterinfoVal.currentmove = &insane_move_stand_normal;
         else
-            self->monsterinfo.currentmove = &insane_move_stand_insane;
+            self->monsterinfoVal.currentmove = &insane_move_stand_insane;
 }
 
 void insane_dead (edict *self)
@@ -609,9 +609,9 @@ void insane_die (edict *self, edict *inflictor, edict *attacker, int damage, vec
     else
     {
         if ( ((self->s.frame >= FRAME_crawl1) && (self->s.frame <= FRAME_crawl9)) || ((self->s.frame >= FRAME_stand99) && (self->s.frame <= FRAME_stand160)) )
-            self->monsterinfo.currentmove = &insane_move_crawl_death;
+            self->monsterinfoVal.currentmove = &insane_move_crawl_death;
         else
-            self->monsterinfo.currentmove = &insane_move_stand_death;
+            self->monsterinfoVal.currentmove = &insane_move_stand_death;
     }
 }
 
@@ -654,14 +654,14 @@ void SP_misc_insane (edict *self)
     self->pain = insane_pain;
     self->die = insane_die;
 
-    self->monsterinfo.stand = insane_stand;
-    self->monsterinfo.walk = insane_walk;
-    self->monsterinfo.run = insane_run;
-    self->monsterinfo.dodge = NULL;
-    self->monsterinfo.attack = NULL;
-    self->monsterinfo.melee = NULL;
-    self->monsterinfo.sight = NULL;
-    self->monsterinfo.aiflags |= AI_GOOD_GUY;
+    self->monsterinfoVal.stand = insane_stand;
+    self->monsterinfoVal.walk = insane_walk;
+    self->monsterinfoVal.run = insane_run;
+    self->monsterinfoVal.dodge = NULL;
+    self->monsterinfoVal.attack = NULL;
+    self->monsterinfoVal.melee = NULL;
+    self->monsterinfoVal.sight = NULL;
+    self->monsterinfoVal.aiflags |= AI_GOOD_GUY;
 
 //@@
 //    self->s.skinnum = skin;
@@ -672,11 +672,11 @@ void SP_misc_insane (edict *self)
     quake2::getInstance()->gi.linkentity (self);
 
     if (self->spawnflags & 16)                // Stand Ground
-        self->monsterinfo.aiflags |= AI_STAND_GROUND;
+        self->monsterinfoVal.aiflags |= AI_STAND_GROUND;
 
-    self->monsterinfo.currentmove = &insane_move_stand_normal;
+    self->monsterinfoVal.currentmove = &insane_move_stand_normal;
 
-    self->monsterinfo.scale = MODEL_SCALE;
+    self->monsterinfoVal.scale = MODEL_SCALE;
 
     if (self->spawnflags & 8)                    // Crucified ?
     {

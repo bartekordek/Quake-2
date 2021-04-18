@@ -1,5 +1,5 @@
-#include "../client/client.h"
-#include "../client/qmenu.h"
+#include "client/client.hpp"
+#include "client/qmenu.hpp"
 
 #define REF_SOFT    0
 #define REF_SOFTX11    1
@@ -170,7 +170,7 @@ static void ApplyChanges( void *unused )
 */
 void VID_MenuInit( void )
 {
-    static const char *resolutions[] = 
+    static const char *resolutions[] =
     {
         "[320 240  ]",
         "[400 300  ]",
@@ -230,7 +230,7 @@ void VID_MenuInit( void )
         s_current_menu_index = SOFTWARE_MENU;
         s_ref_list[0].curvalue = s_ref_list[1].curvalue = REF_SOFT;
     }
-    else if (strcmp( vid_ref->string, "softx" ) == 0 ) 
+    else if (strcmp( vid_ref->string, "softx" ) == 0 )
     {
         s_current_menu_index = SOFTWARE_MENU;
         s_ref_list[0].curvalue = s_ref_list[1].curvalue = REF_SOFTX11;

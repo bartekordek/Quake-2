@@ -54,7 +54,7 @@ edict* medic_FindDeadMonster( edict* self )
             continue;
         if ( !( ent->svflags & SVF_MONSTER ) )
             continue;
-        if ( ent->monsterinfo.aiflags & AI_GOOD_GUY )
+        if ( ent->monsterinfoVal.aiflags & AI_GOOD_GUY )
             continue;
         if ( ent->owner )
             continue;
@@ -89,7 +89,7 @@ void medic_idle( edict* self )
     {
         self->enemy = ent;
         self->enemy->owner = self;
-        self->monsterinfo.aiflags |= AI_MEDIC;
+        self->monsterinfoVal.aiflags |= AI_MEDIC;
         FoundTarget( self );
     }
 }
@@ -109,7 +109,7 @@ void medic_search( edict* self )
             self->oldenemy = self->enemy;
             self->enemy = ent;
             self->enemy->owner = self;
-            self->monsterinfo.aiflags |= AI_MEDIC;
+            self->monsterinfoVal.aiflags |= AI_MEDIC;
             FoundTarget( self );
         }
     }
@@ -159,7 +159,7 @@ mmove_t medic_move_stand = { FRAME_wait1, FRAME_wait90, medic_frames_stand,
 
 void medic_stand( edict* self )
 {
-    self->monsterinfo.currentmove = &medic_move_stand;
+    self->monsterinfoVal.currentmove = &medic_move_stand;
 }
 
 mframe_t medic_frames_walk[] = {
@@ -172,7 +172,7 @@ mmove_t medic_move_walk = { FRAME_walk1, FRAME_walk12, medic_frames_walk,
 
 void medic_walk( edict* self )
 {
-    self->monsterinfo.currentmove = &medic_move_walk;
+    self->monsterinfoVal.currentmove = &medic_move_walk;
 }
 
 mframe_t medic_frames_run[] = {
@@ -184,7 +184,7 @@ mmove_t medic_move_run = { FRAME_run1, FRAME_run6, medic_frames_run, NULL };
 
 void medic_run( edict* self )
 {
-    if ( !( self->monsterinfo.aiflags & AI_MEDIC ) )
+    if ( !( self->monsterinfoVal.aiflags & AI_MEDIC ) )
     {
         edict* ent;
 
@@ -194,16 +194,16 @@ void medic_run( edict* self )
             self->oldenemy = self->enemy;
             self->enemy = ent;
             self->enemy->owner = self;
-            self->monsterinfo.aiflags |= AI_MEDIC;
+            self->monsterinfoVal.aiflags |= AI_MEDIC;
             FoundTarget( self );
             return;
         }
     }
 
-    if ( self->monsterinfo.aiflags & AI_STAND_GROUND )
-        self->monsterinfo.currentmove = &medic_move_stand;
+    if ( self->monsterinfoVal.aiflags & AI_STAND_GROUND )
+        self->monsterinfoVal.currentmove = &medic_move_stand;
     else
-        self->monsterinfo.currentmove = &medic_move_run;
+        self->monsterinfoVal.currentmove = &medic_move_run;
 }
 
 mframe_t medic_frames_pain1[] = {
@@ -235,13 +235,13 @@ void medic_pain( edict* self, edict* other, float kick, int damage )
 
     if ( random() < 0.5 )
     {
-        self->monsterinfo.currentmove = &medic_move_pain1;
+        self->monsterinfoVal.currentmove = &medic_move_pain1;
         quake2::getInstance()->quake2::getInstance()->gi.sound(
             self, CHAN_VOICE, sound_pain1, 1, ATTN_NORM, 0 );
     }
     else
     {
-        self->monsterinfo.currentmove = &medic_move_pain2;
+        self->monsterinfoVal.currentmove = &medic_move_pain2;
         quake2::getInstance()->quake2::getInstance()->gi.sound(
             self, CHAN_VOICE, sound_pain2, 1, ATTN_NORM, 0 );
     }
@@ -338,31 +338,31 @@ void medic_die( edict* self, edict* inflictor, edict* attacker, int damage,
     self->deadflag = DEAD_DEAD;
     self->takedamage = DAMAGE_YES;
 
-    self->monsterinfo.currentmove = &medic_move_death;
+    self->monsterinfoVal.currentmove = &medic_move_death;
 }
 
 void medic_duck_down( edict* self )
 {
-    if ( self->monsterinfo.aiflags & AI_DUCKED )
+    if ( self->monsterinfoVal.aiflags & AI_DUCKED )
         return;
-    self->monsterinfo.aiflags |= AI_DUCKED;
+    self->monsterinfoVal.aiflags |= AI_DUCKED;
     self->maxs[2] -= 32;
     self->takedamage = DAMAGE_YES;
-    self->monsterinfo.pausetime = level.time + 1;
+    self->monsterinfoVal.pausetime = level.time + 1;
     quake2::getInstance()->quake2::getInstance()->gi.linkentity( self );
 }
 
 void medic_duck_hold( edict* self )
 {
-    if ( level.time >= self->monsterinfo.pausetime )
-        self->monsterinfo.aiflags &= ~AI_HOLD_FRAME;
+    if ( level.time >= self->monsterinfoVal.pausetime )
+        self->monsterinfoVal.aiflags &= ~AI_HOLD_FRAME;
     else
-        self->monsterinfo.aiflags |= AI_HOLD_FRAME;
+        self->monsterinfoVal.aiflags |= AI_HOLD_FRAME;
 }
 
 void medic_duck_up( edict* self )
 {
-    self->monsterinfo.aiflags &= ~AI_DUCKED;
+    self->monsterinfoVal.aiflags &= ~AI_DUCKED;
     self->maxs[2] += 32;
     self->takedamage = DAMAGE_AIM;
     quake2::getInstance()->quake2::getInstance()->gi.linkentity( self );
@@ -395,7 +395,7 @@ void medic_dodge( edict* self, edict* attacker, float eta )
     if ( !self->enemy )
         self->enemy = attacker;
 
-    self->monsterinfo.currentmove = &medic_move_duck;
+    self->monsterinfoVal.currentmove = &medic_move_duck;
 }
 
 mframe_t medic_frames_attackHyperBlaster[] = {
@@ -423,7 +423,7 @@ void medic_continue( edict* self )
 {
     if ( visible( self, self->enemy ) )
         if ( random() <= 0.95 )
-            self->monsterinfo.currentmove = &medic_move_attackHyperBlaster;
+            self->monsterinfoVal.currentmove = &medic_move_attackHyperBlaster;
 }
 
 mframe_t medic_frames_attackBlaster[] = {
@@ -495,12 +495,12 @@ void medic_cable_attack( edict* self )
     {
         quake2::getInstance()->quake2::getInstance()->gi.sound(
             self->enemy, CHAN_AUTO, sound_hook_hit, 1, ATTN_NORM, 0 );
-        self->enemy->monsterinfo.aiflags |= AI_RESURRECTING;
+        self->enemy->monsterinfoVal.aiflags |= AI_RESURRECTING;
     }
     else if ( self->s.frame == FRAME_attack50 )
     {
         self->enemy->spawnflags = 0;
-        self->enemy->monsterinfo.aiflags = 0;
+        self->enemy->monsterinfoVal.aiflags = 0;
         self->enemy->target = NULL;
         self->enemy->targetname = NULL;
         self->enemy->combattarget = NULL;
@@ -513,7 +513,7 @@ void medic_cable_attack( edict* self )
             self->enemy->nextthink = level.time;
             self->enemy->think( self->enemy );
         }
-        self->enemy->monsterinfo.aiflags |= AI_RESURRECTING;
+        self->enemy->monsterinfoVal.aiflags |= AI_RESURRECTING;
         if ( self->oldenemy && self->oldenemy->client )
         {
             self->enemy->enemy = self->oldenemy;
@@ -550,7 +550,7 @@ void medic_hook_retract( edict* self )
 {
     quake2::getInstance()->quake2::getInstance()->gi.sound(
         self, CHAN_WEAPON, sound_hook_retract, 1, ATTN_NORM, 0 );
-    self->enemy->monsterinfo.aiflags &= ~AI_RESURRECTING;
+    self->enemy->monsterinfoVal.aiflags &= ~AI_RESURRECTING;
 }
 
 mframe_t medic_frames_attackCable[] = { ai_move,   2,    NULL,
@@ -586,15 +586,15 @@ mmove_t medic_move_attackCable = { FRAME_attack33, FRAME_attack60,
 
 void medic_attack( edict* self )
 {
-    if ( self->monsterinfo.aiflags & AI_MEDIC )
-        self->monsterinfo.currentmove = &medic_move_attackCable;
+    if ( self->monsterinfoVal.aiflags & AI_MEDIC )
+        self->monsterinfoVal.currentmove = &medic_move_attackCable;
     else
-        self->monsterinfo.currentmove = &medic_move_attackBlaster;
+        self->monsterinfoVal.currentmove = &medic_move_attackBlaster;
 }
 
 bool medic_checkattack( edict* self )
 {
-    if ( self->monsterinfo.aiflags & AI_MEDIC )
+    if ( self->monsterinfoVal.aiflags & AI_MEDIC )
     {
         medic_attack( self );
         return true;
@@ -658,21 +658,21 @@ void SP_monster_medic( edict* self )
     self->pain = medic_pain;
     self->die = medic_die;
 
-    self->monsterinfo.stand = medic_stand;
-    self->monsterinfo.walk = medic_walk;
-    self->monsterinfo.run = medic_run;
-    self->monsterinfo.dodge = medic_dodge;
-    self->monsterinfo.attack = medic_attack;
-    self->monsterinfo.melee = NULL;
-    self->monsterinfo.sight = medic_sight;
-    self->monsterinfo.idle = medic_idle;
-    self->monsterinfo.search = medic_search;
-    self->monsterinfo.checkattack = medic_checkattack;
+    self->monsterinfoVal.stand = medic_stand;
+    self->monsterinfoVal.walk = medic_walk;
+    self->monsterinfoVal.run = medic_run;
+    self->monsterinfoVal.dodge = medic_dodge;
+    self->monsterinfoVal.attack = medic_attack;
+    self->monsterinfoVal.melee = NULL;
+    self->monsterinfoVal.sight = medic_sight;
+    self->monsterinfoVal.idle = medic_idle;
+    self->monsterinfoVal.search = medic_search;
+    self->monsterinfoVal.checkattack = medic_checkattack;
 
     quake2::getInstance()->quake2::getInstance()->gi.linkentity( self );
 
-    self->monsterinfo.currentmove = &medic_move_stand;
-    self->monsterinfo.scale = MODEL_SCALE;
+    self->monsterinfoVal.currentmove = &medic_move_stand;
+    self->monsterinfoVal.scale = MODEL_SCALE;
 
     walkmonster_start( self );
 }

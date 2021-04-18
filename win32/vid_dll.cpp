@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "shared/defines.hpp"
 #include "client/client.hpp"
+#include "client/vid.hpp"
 #include "ref_gl/gl_local.hpp"
 #include "winquake.hpp"
 //#include "zmouse.hpp"
@@ -48,7 +49,6 @@ cvar    * vid_ypos;            // Y coordinate of window position
 cvar    * vid_fullscreen;
 
 // Global variables used internally by this module
-viddef_t    viddef;                // global video state; used by other modules
 HINSTANCE    reflib_library;        // Handle to refresh DLL
 bool    reflib_active = 0;
 
@@ -518,8 +518,8 @@ void VID_UpdateWindowPosAndSize( int x, int y )
 
     r.left   = 0;
     r.top    = 0;
-    r.right  = viddef.width;
-    r.bottom = viddef.height;
+    r.right  = quake2::getInstance()->viddef.width;
+    r.bottom = quake2::getInstance()->viddef.height;
 
     style = GetWindowLong( cl_hwnd, GWL_STYLE );
     AdjustWindowRect( &r, style, FALSE );
@@ -535,8 +535,8 @@ void VID_UpdateWindowPosAndSize( int x, int y )
 */
 void VID_NewWindow ( int width, int height)
 {
-    viddef.width  = width;
-    viddef.height = height;
+    quake2::getInstance()->viddef.width  = width;
+    quake2::getInstance()->viddef.height = height;
 
     cl.force_refdef = true;        // can't use a paused refdef
 }
@@ -684,7 +684,7 @@ void VID_CheckChanges (void)
             {
                 Com_Error( ERR_FATAL, "Couldn't fall back to software refresh!" );
             }
-                
+
             Cvar_Set( "vid_ref", "soft" );
 
             /*
@@ -741,8 +741,8 @@ void VID_Init (void)
         if ( stricmp( gl_driver->string, "3dfxgl" ) == 0 )
         {
             Cvar_SetValue( "gl_mode", 3 );
-            viddef.width  = 640;
-            viddef.height = 480;
+            quake2::getInstance()->viddef.width  = 640;
+            quake2::getInstance()->viddef.height = 480;
         }
     }
 #endif

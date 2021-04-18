@@ -31,7 +31,7 @@ long long sgisnd_startframe;
 double sgisnd_frames_per_ns;
 long long sgisnd_lastframewritten = 0;
 
-qboolean SNDDMA_Init(void)
+bool SNDDMA_Init(void)
 {
     ALconfig    ac = NULL;
     ALpv    pvbuf[2];

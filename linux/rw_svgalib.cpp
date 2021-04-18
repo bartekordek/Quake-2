@@ -28,9 +28,9 @@
 #include "vgakeyboard.h"
 #include "vgamouse.h"
 
-#include "../ref_soft/r_local.h"
-#include "../client/keys.h"
-#include "../linux/rw_linux.h"
+#include "ref_soft/r_local.hpp"
+#include "client/keys.hpp"
+#include "linux/rw_linux.hpp"
 
 /*****************************************************************************/
 
@@ -120,7 +120,7 @@ int get_mode(int width, int height)
 ** The necessary width and height parameters are grabbed from
 ** vid.width and vid.height.
 */
-static qboolean SWimp_InitGraphics( qboolean fullscreen )
+static bool SWimp_InitGraphics( bool fullscreen )
 {
     int bsize, zsize, tsize;
 
@@ -205,7 +205,7 @@ void SWimp_EndFrame (void)
 /*
 ** SWimp_SetMode
 */
-rserr_t SWimp_SetMode( int *pwidth, int *pheight, int mode, qboolean fullscreen )
+rserr_t SWimp_SetMode( int *pwidth, int *pheight, int mode, bool fullscreen )
 {
     rserr_t retval = rserr_ok;
 
@@ -280,7 +280,7 @@ void SWimp_Shutdown( void )
 /*
 ** SWimp_AppActivate
 */
-void SWimp_AppActivate( qboolean active )
+void SWimp_AppActivate( bool active )
 {
 }
 

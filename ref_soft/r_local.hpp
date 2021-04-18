@@ -4,7 +4,6 @@
 #include "ref_soft/r_model.hpp"
 #include "shared/enum_rserr.hpp"
 #include "shared/image.hpp"
-#include "shared/viddef.hpp"
 #include "shared/vrect.hpp"
 
 /*
@@ -58,8 +57,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
     pic
 */
 //===================================================================
-extern viddef_t vid;
-
 // !!! if this is changed, it must be changed in asm_draw.h too !!!
 typedef struct
 {
@@ -295,16 +292,7 @@ typedef struct bedge_s
     struct bedge_s* pnext;
 } bedge_t;
 
-// !!! if this is changed, it must be changed in asm_draw.h too !!!
-typedef struct clipplane_s
-{
-    vec3_t normal;
-    float dist;
-    struct clipplane_s* next;
-    byte leftedge;
-    byte rightedge;
-    byte reserved[2];
-} clipplane_s;
+
 
 typedef struct surfcache_s
 {
@@ -387,11 +375,8 @@ VARS
 */
 
 extern int d_spanpixcount;
-extern int r_framecount;      // sequence # of current frame since Quake
-                              //  started
 extern float r_aliasuvscale;  // scale-up factor for screen u and v
                               //  on Alias vertices passed to driver
-extern bool r_dowarp;
 
 extern affinetridesc_t r_affinetridesc;
 
@@ -462,9 +447,9 @@ extern int sintable[1280];
 extern int intsintable[1280];
 extern int blanktable[1280];  // PGM
 
-extern vec3_t vup, base_vup;
-extern vec3_t vpn, base_vpn;
-extern vec3_t vright, base_vright;
+extern vec3_t base_vup;
+extern vec3_t base_vpn;
+extern vec3_t base_vright;
 
 extern surf_t *surfaces, *surface_p, *surf_max;
 
@@ -490,39 +475,6 @@ extern void SetUpForLineScan( fixed8_t startvertu, fixed8_t startvertv,
 
 extern int ubasestep, errorterm, erroradjustup, erroradjustdown;
 
-//===========================================================================
-
-extern cvar* sw_aliasstats;
-extern cvar* sw_clearcolor;
-extern cvar* sw_drawflat;
-extern cvar* sw_draworder;
-extern cvar* sw_maxedges;
-extern cvar* sw_maxsurfs;
-extern cvar* sw_mipcap;
-extern cvar* sw_mipscale;
-extern cvar* sw_mode;
-extern cvar* sw_reportsurfout;
-extern cvar* sw_reportedgeout;
-extern cvar* sw_stipplealpha;
-extern cvar* sw_surfcacheoverride;
-extern cvar* sw_waterwarp;
-
-extern cvar* r_fullbright;
-extern cvar* r_lefthand;
-extern cvar* r_drawentities;
-extern cvar* r_drawworld;
-extern cvar* r_dspeeds;
-extern cvar* r_lerpmodels;
-
-extern cvar* r_speeds;
-
-extern cvar* r_lightlevel;  // FIXME HACK
-
-extern cvar* vid_fullscreen;
-extern cvar* vid_gamma;
-
-extern clipplane_s view_clipplanes[4];
-extern int* pfrustum_indexes[4];
 
 //=============================================================================
 
@@ -531,8 +483,6 @@ void ref_soft_R_RenderWorld( void );
 //=============================================================================
 
 extern plane_s screenedge[4];
-
-extern vec3_t r_origin;
 
 extern entity_s r_worldentity;
 extern model_t* currentmodel;
@@ -672,7 +622,6 @@ extern int r_maxsurfsseen, r_maxedgesseen, r_cnumsurfs;
 extern bool r_surfsonstack;
 
 extern mleaf_t* r_viewleaf;
-extern int r_viewcluster, r_oldviewcluster;
 
 extern int r_clipflags;
 extern bool r_fov_greater_than_90;

@@ -172,7 +172,7 @@ void KBD_Close(void)
 
 // this is inside the renderer shared lib, so these are called from vid_so
 
-static qboolean    UseMouse = true;
+static bool    UseMouse = true;
 
 static int        mouserate = MOUSE_DEFAULTSAMPLERATE;
 
@@ -189,7 +189,7 @@ static cvar_t    *in_mouse;
 static cvar_t    *mdev;
 static cvar_t    *mrate;
 
-static qboolean    mlooking;
+static bool    mlooking;
 
 // state struct passed in Init
 static in_state_t    *in_state;

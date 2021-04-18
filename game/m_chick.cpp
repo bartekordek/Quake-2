@@ -98,10 +98,10 @@ mmove_t chick_move_fidget = {FRAME_stand201, FRAME_stand230, chick_frames_fidget
 
 void chick_fidget (edict *self)
 {
-    if (self->monsterinfo.aiflags & AI_STAND_GROUND)
+    if (self->monsterinfoVal.aiflags & AI_STAND_GROUND)
         return;
     if (random() <= 0.3)
-        self->monsterinfo.currentmove = &chick_move_fidget;
+        self->monsterinfoVal.currentmove = &chick_move_fidget;
 }
 
 mframe_t chick_frames_stand [] =
@@ -142,7 +142,7 @@ mmove_t chick_move_stand = {FRAME_stand101, FRAME_stand130, chick_frames_stand, 
 
 void chick_stand (edict *self)
 {
-    self->monsterinfo.currentmove = &chick_move_stand;
+    self->monsterinfoVal.currentmove = &chick_move_stand;
 }
 
 mframe_t chick_frames_start_run [] =
@@ -195,25 +195,25 @@ mmove_t chick_move_walk = {FRAME_walk11, FRAME_walk20, chick_frames_walk, NULL};
 
 void chick_walk (edict *self)
 {
-    self->monsterinfo.currentmove = &chick_move_walk;
+    self->monsterinfoVal.currentmove = &chick_move_walk;
 }
 
 void chick_run (edict *self)
 {
-    if (self->monsterinfo.aiflags & AI_STAND_GROUND)
+    if (self->monsterinfoVal.aiflags & AI_STAND_GROUND)
     {
-        self->monsterinfo.currentmove = &chick_move_stand;
+        self->monsterinfoVal.currentmove = &chick_move_stand;
         return;
     }
 
-    if (self->monsterinfo.currentmove == &chick_move_walk ||
-        self->monsterinfo.currentmove == &chick_move_start_run)
+    if (self->monsterinfoVal.currentmove == &chick_move_walk ||
+        self->monsterinfoVal.currentmove == &chick_move_start_run)
     {
-        self->monsterinfo.currentmove = &chick_move_run;
+        self->monsterinfoVal.currentmove = &chick_move_run;
     }
     else
     {
-        self->monsterinfo.currentmove = &chick_move_start_run;
+        self->monsterinfoVal.currentmove = &chick_move_start_run;
     }
 }
 
@@ -287,11 +287,11 @@ void chick_pain (edict *self, edict *other, float kick, int damage)
         return;        // no pain anims in nightmare
 
     if (damage <= 10)
-        self->monsterinfo.currentmove = &chick_move_pain1;
+        self->monsterinfoVal.currentmove = &chick_move_pain1;
     else if (damage <= 25)
-        self->monsterinfo.currentmove = &chick_move_pain2;
+        self->monsterinfoVal.currentmove = &chick_move_pain2;
     else
-        self->monsterinfo.currentmove = &chick_move_pain3;
+        self->monsterinfoVal.currentmove = &chick_move_pain3;
 }
 
 void chick_dead (edict *self)
@@ -377,12 +377,12 @@ void chick_die (edict *self, edict *inflictor, edict *attacker, int damage, vec3
     n = rand() % 2;
     if (n == 0)
     {
-        self->monsterinfo.currentmove = &chick_move_death1;
+        self->monsterinfoVal.currentmove = &chick_move_death1;
         quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_death1, 1, ATTN_NORM, 0);
     }
     else
     {
-        self->monsterinfo.currentmove = &chick_move_death2;
+        self->monsterinfoVal.currentmove = &chick_move_death2;
         quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_death2, 1, ATTN_NORM, 0);
     }
 }
@@ -390,26 +390,26 @@ void chick_die (edict *self, edict *inflictor, edict *attacker, int damage, vec3
 
 void chick_duck_down (edict *self)
 {
-    if (self->monsterinfo.aiflags & AI_DUCKED)
+    if (self->monsterinfoVal.aiflags & AI_DUCKED)
         return;
-    self->monsterinfo.aiflags |= AI_DUCKED;
+    self->monsterinfoVal.aiflags |= AI_DUCKED;
     self->maxs[2] -= 32;
     self->takedamage = DAMAGE_YES;
-    self->monsterinfo.pausetime = level.time + 1;
+    self->monsterinfoVal.pausetime = level.time + 1;
     quake2::getInstance()->gi.linkentity (self);
 }
 
 void chick_duck_hold (edict *self)
 {
-    if (level.time >= self->monsterinfo.pausetime)
-        self->monsterinfo.aiflags &= ~AI_HOLD_FRAME;
+    if (level.time >= self->monsterinfoVal.pausetime)
+        self->monsterinfoVal.aiflags &= ~AI_HOLD_FRAME;
     else
-        self->monsterinfo.aiflags |= AI_HOLD_FRAME;
+        self->monsterinfoVal.aiflags |= AI_HOLD_FRAME;
 }
 
 void chick_duck_up (edict *self)
 {
-    self->monsterinfo.aiflags &= ~AI_DUCKED;
+    self->monsterinfoVal.aiflags &= ~AI_DUCKED;
     self->maxs[2] += 32;
     self->takedamage = DAMAGE_AIM;
     quake2::getInstance()->gi.linkentity (self);
@@ -435,7 +435,7 @@ void chick_dodge (edict *self, edict *attacker, float eta)
     if (!self->enemy)
         self->enemy = attacker;
 
-    self->monsterinfo.currentmove = &chick_move_duck;
+    self->monsterinfoVal.currentmove = &chick_move_duck;
 }
 
 void ChickSlash (edict *self)
@@ -534,16 +534,16 @@ void chick_rerocket(edict *self)
             if ( visible (self, self->enemy) )
                 if (random() <= 0.6)
                 {
-                    self->monsterinfo.currentmove = &chick_move_attack1;
+                    self->monsterinfoVal.currentmove = &chick_move_attack1;
                     return;
                 }
     }
-    self->monsterinfo.currentmove = &chick_move_end_attack1;
+    self->monsterinfoVal.currentmove = &chick_move_end_attack1;
 }
 
 void chick_attack1(edict *self)
 {
-    self->monsterinfo.currentmove = &chick_move_attack1;
+    self->monsterinfoVal.currentmove = &chick_move_attack1;
 }
 
 mframe_t chick_frames_slash [] =
@@ -577,21 +577,21 @@ void chick_reslash(edict *self)
         if (range (self, self->enemy) == RANGE_MELEE)
             if (random() <= 0.9)
             {
-                self->monsterinfo.currentmove = &chick_move_slash;
+                self->monsterinfoVal.currentmove = &chick_move_slash;
                 return;
             }
             else
             {
-                self->monsterinfo.currentmove = &chick_move_end_slash;
+                self->monsterinfoVal.currentmove = &chick_move_end_slash;
                 return;
             }
     }
-    self->monsterinfo.currentmove = &chick_move_end_slash;
+    self->monsterinfoVal.currentmove = &chick_move_end_slash;
 }
 
 void chick_slash(edict *self)
 {
-    self->monsterinfo.currentmove = &chick_move_slash;
+    self->monsterinfoVal.currentmove = &chick_move_slash;
 }
 
 
@@ -607,13 +607,13 @@ mmove_t chick_move_start_slash = {FRAME_attak201, FRAME_attak203, chick_frames_s
 
 void chick_melee(edict *self)
 {
-    self->monsterinfo.currentmove = &chick_move_start_slash;
+    self->monsterinfoVal.currentmove = &chick_move_start_slash;
 }
 
 
 void chick_attack(edict *self)
 {
-    self->monsterinfo.currentmove = &chick_move_start_attack1;
+    self->monsterinfoVal.currentmove = &chick_move_start_attack1;
 }
 
 void chick_sight(edict *self, edict *other)
@@ -660,18 +660,18 @@ void SP_monster_chick (edict *self)
     self->pain = chick_pain;
     self->die = chick_die;
 
-    self->monsterinfo.stand = chick_stand;
-    self->monsterinfo.walk = chick_walk;
-    self->monsterinfo.run = chick_run;
-    self->monsterinfo.dodge = chick_dodge;
-    self->monsterinfo.attack = chick_attack;
-    self->monsterinfo.melee = chick_melee;
-    self->monsterinfo.sight = chick_sight;
+    self->monsterinfoVal.stand = chick_stand;
+    self->monsterinfoVal.walk = chick_walk;
+    self->monsterinfoVal.run = chick_run;
+    self->monsterinfoVal.dodge = chick_dodge;
+    self->monsterinfoVal.attack = chick_attack;
+    self->monsterinfoVal.melee = chick_melee;
+    self->monsterinfoVal.sight = chick_sight;
 
     quake2::getInstance()->gi.linkentity (self);
 
-    self->monsterinfo.currentmove = &chick_move_stand;
-    self->monsterinfo.scale = MODEL_SCALE;
+    self->monsterinfoVal.currentmove = &chick_move_stand;
+    self->monsterinfoVal.scale = MODEL_SCALE;
 
     walkmonster_start (self);
 }

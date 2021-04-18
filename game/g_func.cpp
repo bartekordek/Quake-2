@@ -75,19 +75,19 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 void Move_Done( edict* ent )
 {
     VectorClear( ent->velocity );
-    ent->moveinfo.endfunc( ent );
+    ent->moveinfoVal.endfunc( ent );
 }
 
 void Move_Final( edict* ent )
 {
-    if ( ent->moveinfo.remaining_distance == 0 )
+    if ( ent->moveinfoVal.remaining_distance == 0 )
     {
         Move_Done( ent );
         return;
     }
 
-    VectorScale( ent->moveinfo.dir,
-                 ent->moveinfo.remaining_distance / FRAMETIME, ent->velocity );
+    VectorScale( ent->moveinfoVal.dir,
+                 ent->moveinfoVal.remaining_distance / FRAMETIME, ent->velocity );
 
     ent->think = Move_Done;
     ent->nextthink = level.time + FRAMETIME;
@@ -97,17 +97,17 @@ void Move_Begin( edict* ent )
 {
     float frames;
 
-    if ( ( ent->moveinfo.speed * FRAMETIME ) >=
-         ent->moveinfo.remaining_distance )
+    if ( ( ent->moveinfoVal.speed * FRAMETIME ) >=
+         ent->moveinfoVal.remaining_distance )
     {
         Move_Final( ent );
         return;
     }
-    VectorScale( ent->moveinfo.dir, ent->moveinfo.speed, ent->velocity );
-    frames = floor( ( ent->moveinfo.remaining_distance / ent->moveinfo.speed ) /
+    VectorScale( ent->moveinfoVal.dir, ent->moveinfoVal.speed, ent->velocity );
+    frames = floor( ( ent->moveinfoVal.remaining_distance / ent->moveinfoVal.speed ) /
                     FRAMETIME );
-    ent->moveinfo.remaining_distance -=
-        frames * ent->moveinfo.speed * FRAMETIME;
+    ent->moveinfoVal.remaining_distance -=
+        frames * ent->moveinfoVal.speed * FRAMETIME;
     ent->nextthink = level.time + ( frames * FRAMETIME );
     ent->think = Move_Final;
 }
@@ -117,12 +117,12 @@ void Think_AccelMove( edict* ent );
 void Move_Calc( edict* ent, vec3_t dest, void ( *func )( edict* ) )
 {
     VectorClear( ent->velocity );
-    VectorSubtract( dest, ent->s.origin, ent->moveinfo.dir );
-    ent->moveinfo.remaining_distance = VectorNormalize( ent->moveinfo.dir );
-    ent->moveinfo.endfunc = func;
+    VectorSubtract( dest, ent->s.origin, ent->moveinfoVal.dir );
+    ent->moveinfoVal.remaining_distance = VectorNormalize( ent->moveinfoVal.dir );
+    ent->moveinfoVal.endfunc = func;
 
-    if ( ent->moveinfo.speed == ent->moveinfo.accel &&
-         ent->moveinfo.speed == ent->moveinfo.decel )
+    if ( ent->moveinfoVal.speed == ent->moveinfoVal.accel &&
+         ent->moveinfoVal.speed == ent->moveinfoVal.decel )
     {
         if ( level.current_entity ==
              ( ( ent->flags & FL_TEAMSLAVE ) ? ent->teammaster : ent ) )
@@ -138,7 +138,7 @@ void Move_Calc( edict* ent, vec3_t dest, void ( *func )( edict* ) )
     else
     {
         // accelerative
-        ent->moveinfo.current_speed = 0;
+        ent->moveinfoVal.current_speed = 0;
         ent->think = Think_AccelMove;
         ent->nextthink = level.time + FRAMETIME;
     }
@@ -151,17 +151,17 @@ void Move_Calc( edict* ent, vec3_t dest, void ( *func )( edict* ) )
 void AngleMove_Done( edict* ent )
 {
     VectorClear( ent->avelocity );
-    ent->moveinfo.endfunc( ent );
+    ent->moveinfoVal.endfunc( ent );
 }
 
 void AngleMove_Final( edict* ent )
 {
     vec3_t move;
 
-    if ( ent->moveinfo.state == STATE_UP )
-        VectorSubtract( ent->moveinfo.end_angles, ent->s.angles, move );
+    if ( ent->moveinfoVal.state == STATE_UP )
+        VectorSubtract( ent->moveinfoVal.end_angles, ent->s.angles, move );
     else
-        VectorSubtract( ent->moveinfo.start_angles, ent->s.angles, move );
+        VectorSubtract( ent->moveinfoVal.start_angles, ent->s.angles, move );
 
     if ( VectorCompare( move, vec3_origin ) )
     {
@@ -183,16 +183,16 @@ void AngleMove_Begin( edict* ent )
     float frames;
 
     // set destdelta to the vector needed to move
-    if ( ent->moveinfo.state == STATE_UP )
-        VectorSubtract( ent->moveinfo.end_angles, ent->s.angles, destdelta );
+    if ( ent->moveinfoVal.state == STATE_UP )
+        VectorSubtract( ent->moveinfoVal.end_angles, ent->s.angles, destdelta );
     else
-        VectorSubtract( ent->moveinfo.start_angles, ent->s.angles, destdelta );
+        VectorSubtract( ent->moveinfoVal.start_angles, ent->s.angles, destdelta );
 
     // calculate length of vector
     len = VectorLength( destdelta );
 
     // divide by speed to get time to reach dest
-    traveltime = len / ent->moveinfo.speed;
+    traveltime = len / ent->moveinfoVal.speed;
 
     if ( traveltime < FRAMETIME )
     {
@@ -213,7 +213,7 @@ void AngleMove_Begin( edict* ent )
 void AngleMove_Calc( edict* ent, void ( *func )( edict* ) )
 {
     VectorClear( ent->avelocity );
-    ent->moveinfo.endfunc = func;
+    ent->moveinfoVal.endfunc = func;
     if ( level.current_entity ==
          ( ( ent->flags & FL_TEAMSLAVE ) ? ent->teammaster : ent ) )
     {
@@ -351,21 +351,21 @@ void plat_Accelerate( moveinfo* moveinfo )
 
 void Think_AccelMove( edict* ent )
 {
-    ent->moveinfo.remaining_distance -= ent->moveinfo.current_speed;
+    ent->moveinfoVal.remaining_distance -= ent->moveinfoVal.current_speed;
 
-    if ( ent->moveinfo.current_speed == 0 )  // starting or blocked
-        plat_CalcAcceleratedMove( &ent->moveinfo );
+    if ( ent->moveinfoVal.current_speed == 0 )  // starting or blocked
+        plat_CalcAcceleratedMove( &ent->moveinfoVal );
 
-    plat_Accelerate( &ent->moveinfo );
+    plat_Accelerate( &ent->moveinfoVal );
 
     // will the entire move complete on next frame?
-    if ( ent->moveinfo.remaining_distance <= ent->moveinfo.current_speed )
+    if ( ent->moveinfoVal.remaining_distance <= ent->moveinfoVal.current_speed )
     {
         Move_Final( ent );
         return;
     }
 
-    VectorScale( ent->moveinfo.dir, ent->moveinfo.current_speed * 10,
+    VectorScale( ent->moveinfoVal.dir, ent->moveinfoVal.current_speed * 10,
                  ent->velocity );
     ent->nextthink = level.time + FRAMETIME;
     ent->think = Think_AccelMove;
@@ -377,13 +377,13 @@ void plat_hit_top( edict* ent )
 {
     if ( !( ent->flags & FL_TEAMSLAVE ) )
     {
-        if ( ent->moveinfo.sound_end )
+        if ( ent->moveinfoVal.sound_end )
             quake2::getInstance()->quake2::getInstance()->gi.sound(
-                ent, CHAN_NO_PHS_ADD + CHAN_VOICE, ent->moveinfo.sound_end, 1,
+                ent, CHAN_NO_PHS_ADD + CHAN_VOICE, ent->moveinfoVal.sound_end, 1,
                 ATTN_STATIC, 0 );
         ent->s.sound = 0;
     }
-    ent->moveinfo.state = STATE_TOP;
+    ent->moveinfoVal.state = STATE_TOP;
 
     ent->think = plat_go_down;
     ent->nextthink = level.time + 3;
@@ -393,41 +393,41 @@ void plat_hit_bottom( edict* ent )
 {
     if ( !( ent->flags & FL_TEAMSLAVE ) )
     {
-        if ( ent->moveinfo.sound_end )
+        if ( ent->moveinfoVal.sound_end )
             quake2::getInstance()->quake2::getInstance()->gi.sound(
-                ent, CHAN_NO_PHS_ADD + CHAN_VOICE, ent->moveinfo.sound_end, 1,
+                ent, CHAN_NO_PHS_ADD + CHAN_VOICE, ent->moveinfoVal.sound_end, 1,
                 ATTN_STATIC, 0 );
         ent->s.sound = 0;
     }
-    ent->moveinfo.state = STATE_BOTTOM;
+    ent->moveinfoVal.state = STATE_BOTTOM;
 }
 
 void plat_go_down( edict* ent )
 {
     if ( !( ent->flags & FL_TEAMSLAVE ) )
     {
-        if ( ent->moveinfo.sound_start )
+        if ( ent->moveinfoVal.sound_start )
             quake2::getInstance()->gi.sound( ent, CHAN_NO_PHS_ADD + CHAN_VOICE,
-                                              ent->moveinfo.sound_start, 1,
+                                              ent->moveinfoVal.sound_start, 1,
                                               ATTN_STATIC, 0 );
-        ent->s.sound = ent->moveinfo.sound_middle;
+        ent->s.sound = ent->moveinfoVal.sound_middle;
     }
-    ent->moveinfo.state = STATE_DOWN;
-    Move_Calc( ent, ent->moveinfo.end_origin, plat_hit_bottom );
+    ent->moveinfoVal.state = STATE_DOWN;
+    Move_Calc( ent, ent->moveinfoVal.end_origin, plat_hit_bottom );
 }
 
 void plat_go_up( edict* ent )
 {
     if ( !( ent->flags & FL_TEAMSLAVE ) )
     {
-        if ( ent->moveinfo.sound_start )
+        if ( ent->moveinfoVal.sound_start )
             quake2::getInstance()->gi.sound( ent, CHAN_NO_PHS_ADD + CHAN_VOICE,
-                                              ent->moveinfo.sound_start, 1,
+                                              ent->moveinfoVal.sound_start, 1,
                                               ATTN_STATIC, 0 );
-        ent->s.sound = ent->moveinfo.sound_middle;
+        ent->s.sound = ent->moveinfoVal.sound_middle;
     }
-    ent->moveinfo.state = STATE_UP;
-    Move_Calc( ent, ent->moveinfo.start_origin, plat_hit_top );
+    ent->moveinfoVal.state = STATE_UP;
+    Move_Calc( ent, ent->moveinfoVal.start_origin, plat_hit_top );
 }
 
 void plat_blocked( edict* self, edict* other )
@@ -446,9 +446,9 @@ void plat_blocked( edict* self, edict* other )
     T_Damage( other, self, self, vec3_origin, other->s.origin, vec3_origin,
               self->dmg, 1, 0, MOD_CRUSH );
 
-    if ( self->moveinfo.state == STATE_UP )
+    if ( self->moveinfoVal.state == STATE_UP )
         plat_go_down( self );
-    else if ( self->moveinfo.state == STATE_DOWN )
+    else if ( self->moveinfoVal.state == STATE_DOWN )
         plat_go_up( self );
 }
 
@@ -469,9 +469,9 @@ void Touch_Plat_Center( edict* ent, edict* other, plane_s* plane,
         return;
 
     ent = ent->enemy;  // now point at the plat, not the trigger
-    if ( ent->moveinfo.state == STATE_BOTTOM )
+    if ( ent->moveinfoVal.state == STATE_BOTTOM )
         plat_go_up( ent );
-    else if ( ent->moveinfo.state == STATE_TOP )
+    else if ( ent->moveinfoVal.state == STATE_TOP )
         ent->nextthink =
             level.time +
             1;  // the player is still on the plat, so delay going down
@@ -586,29 +586,29 @@ void SP_func_plat( edict* ent )
 
     if ( ent->targetname )
     {
-        ent->moveinfo.state = STATE_UP;
+        ent->moveinfoVal.state = STATE_UP;
     }
     else
     {
         VectorCopy( ent->pos2, ent->s.origin );
         quake2::getInstance()->gi.linkentity( ent );
-        ent->moveinfo.state = STATE_BOTTOM;
+        ent->moveinfoVal.state = STATE_BOTTOM;
     }
 
-    ent->moveinfo.speed = ent->speed;
-    ent->moveinfo.accel = ent->accel;
-    ent->moveinfo.decel = ent->decel;
-    ent->moveinfo.wait = ent->wait;
-    VectorCopy( ent->pos1, ent->moveinfo.start_origin );
-    VectorCopy( ent->s.angles, ent->moveinfo.start_angles );
-    VectorCopy( ent->pos2, ent->moveinfo.end_origin );
-    VectorCopy( ent->s.angles, ent->moveinfo.end_angles );
+    ent->moveinfoVal.speed = ent->speed;
+    ent->moveinfoVal.accel = ent->accel;
+    ent->moveinfoVal.decel = ent->decel;
+    ent->moveinfoVal.wait = ent->wait;
+    VectorCopy( ent->pos1, ent->moveinfoVal.start_origin );
+    VectorCopy( ent->s.angles, ent->moveinfoVal.start_angles );
+    VectorCopy( ent->pos2, ent->moveinfoVal.end_origin );
+    VectorCopy( ent->s.angles, ent->moveinfoVal.end_angles );
 
-    ent->moveinfo.sound_start =
+    ent->moveinfoVal.sound_start =
         quake2::getInstance()->gi.soundindex( "plats/pt1_strt.wav" );
-    ent->moveinfo.sound_middle =
+    ent->moveinfoVal.sound_middle =
         quake2::getInstance()->gi.soundindex( "plats/pt1_mid.wav" );
-    ent->moveinfo.sound_end =
+    ent->moveinfoVal.sound_end =
         quake2::getInstance()->gi.soundindex( "plats/pt1_end.wav" );
 }
 
@@ -651,7 +651,7 @@ void rotating_use( edict* self, edict* other, edict* activator )
     }
     else
     {
-        self->s.sound = self->moveinfo.sound_middle;
+        self->s.sound = self->moveinfoVal.sound_middle;
         VectorScale( self->movedir, self->speed, self->avelocity );
         if ( self->spawnflags & 16 )
             self->touch = rotating_touch;
@@ -684,7 +684,7 @@ void SP_func_rotating( edict* ent )
     if ( !ent->dmg )
         ent->dmg = 2;
 
-    //    ent->moveinfo.sound_middle = "doors/hydro1.wav";
+    //    ent->moveinfoVal.sound_middle = "doors/hydro1.wav";
 
     ent->use = rotating_use;
     if ( ent->dmg )
@@ -731,16 +731,16 @@ position where it can be triggered again.
 
 void button_done( edict* self )
 {
-    self->moveinfo.state = STATE_BOTTOM;
+    self->moveinfoVal.state = STATE_BOTTOM;
     self->s.effects &= ~EF_ANIM23;
     self->s.effects |= EF_ANIM01;
 }
 
 void button_return( edict* self )
 {
-    self->moveinfo.state = STATE_DOWN;
+    self->moveinfoVal.state = STATE_DOWN;
 
-    Move_Calc( self, self->moveinfo.start_origin, button_done );
+    Move_Calc( self, self->moveinfoVal.start_origin, button_done );
 
     self->s.frame = 0;
 
@@ -750,30 +750,30 @@ void button_return( edict* self )
 
 void button_wait( edict* self )
 {
-    self->moveinfo.state = STATE_TOP;
+    self->moveinfoVal.state = STATE_TOP;
     self->s.effects &= ~EF_ANIM01;
     self->s.effects |= EF_ANIM23;
 
     G_UseTargets( self, self->activator );
     self->s.frame = 1;
-    if ( self->moveinfo.wait >= 0 )
+    if ( self->moveinfoVal.wait >= 0 )
     {
-        self->nextthink = level.time + self->moveinfo.wait;
+        self->nextthink = level.time + self->moveinfoVal.wait;
         self->think = button_return;
     }
 }
 
 void button_fire( edict* self )
 {
-    if ( self->moveinfo.state == STATE_UP || self->moveinfo.state == STATE_TOP )
+    if ( self->moveinfoVal.state == STATE_UP || self->moveinfoVal.state == STATE_TOP )
         return;
 
-    self->moveinfo.state = STATE_UP;
-    if ( self->moveinfo.sound_start && !( self->flags & FL_TEAMSLAVE ) )
+    self->moveinfoVal.state = STATE_UP;
+    if ( self->moveinfoVal.sound_start && !( self->flags & FL_TEAMSLAVE ) )
         quake2::getInstance()->gi.sound( self, CHAN_NO_PHS_ADD + CHAN_VOICE,
-                                          self->moveinfo.sound_start, 1,
+                                          self->moveinfoVal.sound_start, 1,
                                           ATTN_STATIC, 0 );
-    Move_Calc( self, self->moveinfo.end_origin, button_wait );
+    Move_Calc( self, self->moveinfoVal.end_origin, button_wait );
 }
 
 void button_use( edict* self, edict* other, edict* activator )
@@ -814,7 +814,7 @@ void SP_func_button( edict* ent )
     quake2::getInstance()->gi.setmodel( ent, ent->model );
 
     if ( ent->sounds != 1 )
-        ent->moveinfo.sound_start =
+        ent->moveinfoVal.sound_start =
             quake2::getInstance()->gi.soundindex( "switches/butn2.wav" );
 
     if ( !ent->speed )
@@ -849,16 +849,16 @@ void SP_func_button( edict* ent )
     else if ( !ent->targetname )
         ent->touch = button_touch;
 
-    ent->moveinfo.state = STATE_BOTTOM;
+    ent->moveinfoVal.state = STATE_BOTTOM;
 
-    ent->moveinfo.speed = ent->speed;
-    ent->moveinfo.accel = ent->accel;
-    ent->moveinfo.decel = ent->decel;
-    ent->moveinfo.wait = ent->wait;
-    VectorCopy( ent->pos1, ent->moveinfo.start_origin );
-    VectorCopy( ent->s.angles, ent->moveinfo.start_angles );
-    VectorCopy( ent->pos2, ent->moveinfo.end_origin );
-    VectorCopy( ent->s.angles, ent->moveinfo.end_angles );
+    ent->moveinfoVal.speed = ent->speed;
+    ent->moveinfoVal.accel = ent->accel;
+    ent->moveinfoVal.decel = ent->decel;
+    ent->moveinfoVal.wait = ent->wait;
+    VectorCopy( ent->pos1, ent->moveinfoVal.start_origin );
+    VectorCopy( ent->s.angles, ent->moveinfoVal.start_angles );
+    VectorCopy( ent->pos2, ent->moveinfoVal.end_origin );
+    VectorCopy( ent->s.angles, ent->moveinfoVal.end_angles );
 
     quake2::getInstance()->gi.linkentity( ent );
 }
@@ -918,19 +918,19 @@ void door_hit_top( edict* self )
 {
     if ( !( self->flags & FL_TEAMSLAVE ) )
     {
-        if ( self->moveinfo.sound_end )
+        if ( self->moveinfoVal.sound_end )
             quake2::getInstance()->gi.sound(
-                self, CHAN_NO_PHS_ADD + CHAN_VOICE, self->moveinfo.sound_end, 1,
+                self, CHAN_NO_PHS_ADD + CHAN_VOICE, self->moveinfoVal.sound_end, 1,
                 ATTN_STATIC, 0 );
         self->s.sound = 0;
     }
-    self->moveinfo.state = STATE_TOP;
+    self->moveinfoVal.state = STATE_TOP;
     if ( self->spawnflags & DOOR_TOGGLE )
         return;
-    if ( self->moveinfo.wait >= 0 )
+    if ( self->moveinfoVal.wait >= 0 )
     {
         self->think = door_go_down;
-        self->nextthink = level.time + self->moveinfo.wait;
+        self->nextthink = level.time + self->moveinfoVal.wait;
     }
 }
 
@@ -938,13 +938,13 @@ void door_hit_bottom( edict* self )
 {
     if ( !( self->flags & FL_TEAMSLAVE ) )
     {
-        if ( self->moveinfo.sound_end )
+        if ( self->moveinfoVal.sound_end )
             quake2::getInstance()->gi.sound(
-                self, CHAN_NO_PHS_ADD + CHAN_VOICE, self->moveinfo.sound_end, 1,
+                self, CHAN_NO_PHS_ADD + CHAN_VOICE, self->moveinfoVal.sound_end, 1,
                 ATTN_STATIC, 0 );
         self->s.sound = 0;
     }
-    self->moveinfo.state = STATE_BOTTOM;
+    self->moveinfoVal.state = STATE_BOTTOM;
     door_use_areaportals( self, false );
 }
 
@@ -952,11 +952,11 @@ void door_go_down( edict* self )
 {
     if ( !( self->flags & FL_TEAMSLAVE ) )
     {
-        if ( self->moveinfo.sound_start )
+        if ( self->moveinfoVal.sound_start )
             quake2::getInstance()->gi.sound(
-                self, CHAN_NO_PHS_ADD + CHAN_VOICE, self->moveinfo.sound_start,
+                self, CHAN_NO_PHS_ADD + CHAN_VOICE, self->moveinfoVal.sound_start,
                 1, ATTN_STATIC, 0 );
-        self->s.sound = self->moveinfo.sound_middle;
+        self->s.sound = self->moveinfoVal.sound_middle;
     }
     if ( self->max_health )
     {
@@ -964,36 +964,36 @@ void door_go_down( edict* self )
         self->health = self->max_health;
     }
 
-    self->moveinfo.state = STATE_DOWN;
+    self->moveinfoVal.state = STATE_DOWN;
     if ( strcmp( self->classname, "func_door" ) == 0 )
-        Move_Calc( self, self->moveinfo.start_origin, door_hit_bottom );
+        Move_Calc( self, self->moveinfoVal.start_origin, door_hit_bottom );
     else if ( strcmp( self->classname, "func_door_rotating" ) == 0 )
         AngleMove_Calc( self, door_hit_bottom );
 }
 
 void door_go_up( edict* self, edict* activator )
 {
-    if ( self->moveinfo.state == STATE_UP )
+    if ( self->moveinfoVal.state == STATE_UP )
         return;  // already going up
 
-    if ( self->moveinfo.state == STATE_TOP )
+    if ( self->moveinfoVal.state == STATE_TOP )
     {  // reset top wait time
-        if ( self->moveinfo.wait >= 0 )
-            self->nextthink = level.time + self->moveinfo.wait;
+        if ( self->moveinfoVal.wait >= 0 )
+            self->nextthink = level.time + self->moveinfoVal.wait;
         return;
     }
 
     if ( !( self->flags & FL_TEAMSLAVE ) )
     {
-        if ( self->moveinfo.sound_start )
+        if ( self->moveinfoVal.sound_start )
             quake2::getInstance()->gi.sound(
-                self, CHAN_NO_PHS_ADD + CHAN_VOICE, self->moveinfo.sound_start,
+                self, CHAN_NO_PHS_ADD + CHAN_VOICE, self->moveinfoVal.sound_start,
                 1, ATTN_STATIC, 0 );
-        self->s.sound = self->moveinfo.sound_middle;
+        self->s.sound = self->moveinfoVal.sound_middle;
     }
-    self->moveinfo.state = STATE_UP;
+    self->moveinfoVal.state = STATE_UP;
     if ( strcmp( self->classname, "func_door" ) == 0 )
-        Move_Calc( self, self->moveinfo.end_origin, door_hit_top );
+        Move_Calc( self, self->moveinfoVal.end_origin, door_hit_top );
     else if ( strcmp( self->classname, "func_door_rotating" ) == 0 )
         AngleMove_Calc( self, door_hit_top );
 
@@ -1010,8 +1010,8 @@ void door_use( edict* self, edict* other, edict* activator )
 
     if ( self->spawnflags & DOOR_TOGGLE )
     {
-        if ( self->moveinfo.state == STATE_UP ||
-             self->moveinfo.state == STATE_TOP )
+        if ( self->moveinfoVal.state == STATE_UP ||
+             self->moveinfoVal.state == STATE_TOP )
         {
             // trigger all paired doors
             for ( ent = self; ent; ent = ent->teamchain )
@@ -1066,30 +1066,30 @@ void Think_CalcMoveSpeed( edict* self )
         return;  // only the team master does this
 
     // find the smallest distance any member of the team will be moving
-    min = fabs( self->moveinfo.distance );
+    min = fabs( self->moveinfoVal.distance );
     for ( ent = self->teamchain; ent; ent = ent->teamchain )
     {
-        dist = fabs( ent->moveinfo.distance );
+        dist = fabs( ent->moveinfoVal.distance );
         if ( dist < min )
             min = dist;
     }
 
-    time = min / self->moveinfo.speed;
+    time = min / self->moveinfoVal.speed;
 
     // adjust speeds so they will all complete at the same time
     for ( ent = self; ent; ent = ent->teamchain )
     {
-        newspeed = fabs( ent->moveinfo.distance ) / time;
-        ratio = newspeed / ent->moveinfo.speed;
-        if ( ent->moveinfo.accel == ent->moveinfo.speed )
-            ent->moveinfo.accel = newspeed;
+        newspeed = fabs( ent->moveinfoVal.distance ) / time;
+        ratio = newspeed / ent->moveinfoVal.speed;
+        if ( ent->moveinfoVal.accel == ent->moveinfoVal.speed )
+            ent->moveinfoVal.accel = newspeed;
         else
-            ent->moveinfo.accel *= ratio;
-        if ( ent->moveinfo.decel == ent->moveinfo.speed )
-            ent->moveinfo.decel = newspeed;
+            ent->moveinfoVal.accel *= ratio;
+        if ( ent->moveinfoVal.decel == ent->moveinfoVal.speed )
+            ent->moveinfoVal.decel = newspeed;
         else
-            ent->moveinfo.decel *= ratio;
-        ent->moveinfo.speed = newspeed;
+            ent->moveinfoVal.decel *= ratio;
+        ent->moveinfoVal.speed = newspeed;
     }
 }
 
@@ -1154,9 +1154,9 @@ void door_blocked( edict* self, edict* other )
 
     // if a door has a negative wait, it would never come back if blocked,
     // so let it just squash the object to death real fast
-    if ( self->moveinfo.wait >= 0 )
+    if ( self->moveinfoVal.wait >= 0 )
     {
-        if ( self->moveinfo.state == STATE_DOWN )
+        if ( self->moveinfoVal.state == STATE_DOWN )
         {
             for ( ent = self->teammaster; ent; ent = ent->teamchain )
                 door_go_up( ent, ent->activator );
@@ -1204,11 +1204,11 @@ void SP_func_door( edict* ent )
 
     if ( ent->sounds != 1 )
     {
-        ent->moveinfo.sound_start =
+        ent->moveinfoVal.sound_start =
             quake2::getInstance()->gi.soundindex( "doors/dr1_strt.wav" );
-        ent->moveinfo.sound_middle =
+        ent->moveinfoVal.sound_middle =
             quake2::getInstance()->gi.soundindex( "doors/dr1_mid.wav" );
-        ent->moveinfo.sound_end =
+        ent->moveinfoVal.sound_end =
             quake2::getInstance()->gi.soundindex( "doors/dr1_end.wav" );
     }
 
@@ -1242,10 +1242,10 @@ void SP_func_door( edict* ent )
     abs_movedir[0] = fabs( ent->movedir[0] );
     abs_movedir[1] = fabs( ent->movedir[1] );
     abs_movedir[2] = fabs( ent->movedir[2] );
-    ent->moveinfo.distance = abs_movedir[0] * ent->size[0] +
+    ent->moveinfoVal.distance = abs_movedir[0] * ent->size[0] +
                              abs_movedir[1] * ent->size[1] +
                              abs_movedir[2] * ent->size[2] - st.lip;
-    VectorMA( ent->pos1, ent->moveinfo.distance, ent->movedir, ent->pos2 );
+    VectorMA( ent->pos1, ent->moveinfoVal.distance, ent->movedir, ent->pos2 );
 
     // if it starts open, switch the positions
     if ( ent->spawnflags & DOOR_START_OPEN )
@@ -1255,7 +1255,7 @@ void SP_func_door( edict* ent )
         VectorCopy( ent->s.origin, ent->pos1 );
     }
 
-    ent->moveinfo.state = STATE_BOTTOM;
+    ent->moveinfoVal.state = STATE_BOTTOM;
 
     if ( ent->health )
     {
@@ -1269,14 +1269,14 @@ void SP_func_door( edict* ent )
         ent->touch = door_touch;
     }
 
-    ent->moveinfo.speed = ent->speed;
-    ent->moveinfo.accel = ent->accel;
-    ent->moveinfo.decel = ent->decel;
-    ent->moveinfo.wait = ent->wait;
-    VectorCopy( ent->pos1, ent->moveinfo.start_origin );
-    VectorCopy( ent->s.angles, ent->moveinfo.start_angles );
-    VectorCopy( ent->pos2, ent->moveinfo.end_origin );
-    VectorCopy( ent->s.angles, ent->moveinfo.end_angles );
+    ent->moveinfoVal.speed = ent->speed;
+    ent->moveinfoVal.accel = ent->accel;
+    ent->moveinfoVal.decel = ent->decel;
+    ent->moveinfoVal.wait = ent->wait;
+    VectorCopy( ent->pos1, ent->moveinfoVal.start_origin );
+    VectorCopy( ent->s.angles, ent->moveinfoVal.start_angles );
+    VectorCopy( ent->pos2, ent->moveinfoVal.end_origin );
+    VectorCopy( ent->s.angles, ent->moveinfoVal.end_angles );
 
     if ( ent->spawnflags & 16 )
         ent->s.effects |= EF_ANIM_ALL;
@@ -1355,7 +1355,7 @@ void SP_func_door_rotating( edict* ent )
 
     VectorCopy( ent->s.angles, ent->pos1 );
     VectorMA( ent->s.angles, st.distance, ent->movedir, ent->pos2 );
-    ent->moveinfo.distance = st.distance;
+    ent->moveinfoVal.distance = st.distance;
 
     ent->movetype = MOVETYPE_PUSH;
     ent->solid = SOLID_BSP;
@@ -1378,11 +1378,11 @@ void SP_func_door_rotating( edict* ent )
 
     if ( ent->sounds != 1 )
     {
-        ent->moveinfo.sound_start =
+        ent->moveinfoVal.sound_start =
             quake2::getInstance()->gi.soundindex( "doors/dr1_strt.wav" );
-        ent->moveinfo.sound_middle =
+        ent->moveinfoVal.sound_middle =
             quake2::getInstance()->gi.soundindex( "doors/dr1_mid.wav" );
-        ent->moveinfo.sound_end =
+        ent->moveinfoVal.sound_end =
             quake2::getInstance()->gi.soundindex( "doors/dr1_end.wav" );
     }
 
@@ -1408,15 +1408,15 @@ void SP_func_door_rotating( edict* ent )
         ent->touch = door_touch;
     }
 
-    ent->moveinfo.state = STATE_BOTTOM;
-    ent->moveinfo.speed = ent->speed;
-    ent->moveinfo.accel = ent->accel;
-    ent->moveinfo.decel = ent->decel;
-    ent->moveinfo.wait = ent->wait;
-    VectorCopy( ent->s.origin, ent->moveinfo.start_origin );
-    VectorCopy( ent->pos1, ent->moveinfo.start_angles );
-    VectorCopy( ent->s.origin, ent->moveinfo.end_origin );
-    VectorCopy( ent->pos2, ent->moveinfo.end_angles );
+    ent->moveinfoVal.state = STATE_BOTTOM;
+    ent->moveinfoVal.speed = ent->speed;
+    ent->moveinfoVal.accel = ent->accel;
+    ent->moveinfoVal.decel = ent->decel;
+    ent->moveinfoVal.wait = ent->wait;
+    VectorCopy( ent->s.origin, ent->moveinfoVal.start_origin );
+    VectorCopy( ent->pos1, ent->moveinfoVal.start_angles );
+    VectorCopy( ent->s.origin, ent->moveinfoVal.end_origin );
+    VectorCopy( ent->pos2, ent->moveinfoVal.end_angles );
 
     if ( ent->spawnflags & 16 )
         ent->s.effects |= EF_ANIM_ALL;
@@ -1466,16 +1466,16 @@ void SP_func_water( edict* self )
             break;
 
         case 1:  // water
-            self->moveinfo.sound_start =
+            self->moveinfoVal.sound_start =
                 quake2::getInstance()->gi.soundindex( "world/mov_watr.wav" );
-            self->moveinfo.sound_end =
+            self->moveinfoVal.sound_end =
                 quake2::getInstance()->gi.soundindex( "world/stp_watr.wav" );
             break;
 
         case 2:  // lava
-            self->moveinfo.sound_start =
+            self->moveinfoVal.sound_start =
                 quake2::getInstance()->gi.soundindex( "world/mov_watr.wav" );
-            self->moveinfo.sound_end =
+            self->moveinfoVal.sound_end =
                 quake2::getInstance()->gi.soundindex( "world/stp_watr.wav" );
             break;
     }
@@ -1485,10 +1485,10 @@ void SP_func_water( edict* self )
     abs_movedir[0] = fabs( self->movedir[0] );
     abs_movedir[1] = fabs( self->movedir[1] );
     abs_movedir[2] = fabs( self->movedir[2] );
-    self->moveinfo.distance = abs_movedir[0] * self->size[0] +
+    self->moveinfoVal.distance = abs_movedir[0] * self->size[0] +
                               abs_movedir[1] * self->size[1] +
                               abs_movedir[2] * self->size[2] - st.lip;
-    VectorMA( self->pos1, self->moveinfo.distance, self->movedir, self->pos2 );
+    VectorMA( self->pos1, self->moveinfoVal.distance, self->movedir, self->pos2 );
 
     // if it starts open, switch the positions
     if ( self->spawnflags & DOOR_START_OPEN )
@@ -1498,21 +1498,21 @@ void SP_func_water( edict* self )
         VectorCopy( self->s.origin, self->pos1 );
     }
 
-    VectorCopy( self->pos1, self->moveinfo.start_origin );
-    VectorCopy( self->s.angles, self->moveinfo.start_angles );
-    VectorCopy( self->pos2, self->moveinfo.end_origin );
-    VectorCopy( self->s.angles, self->moveinfo.end_angles );
+    VectorCopy( self->pos1, self->moveinfoVal.start_origin );
+    VectorCopy( self->s.angles, self->moveinfoVal.start_angles );
+    VectorCopy( self->pos2, self->moveinfoVal.end_origin );
+    VectorCopy( self->s.angles, self->moveinfoVal.end_angles );
 
-    self->moveinfo.state = STATE_BOTTOM;
+    self->moveinfoVal.state = STATE_BOTTOM;
 
     if ( !self->speed )
         self->speed = 25;
-    self->moveinfo.accel = self->moveinfo.decel = self->moveinfo.speed =
+    self->moveinfoVal.accel = self->moveinfoVal.decel = self->moveinfoVal.speed =
         self->speed;
 
     if ( !self->wait )
         self->wait = -1;
-    self->moveinfo.wait = self->wait;
+    self->moveinfoVal.wait = self->wait;
 
     self->use = door_use;
 
@@ -1580,11 +1580,11 @@ void train_wait( edict* self )
             return;
     }
 
-    if ( self->moveinfo.wait )
+    if ( self->moveinfoVal.wait )
     {
-        if ( self->moveinfo.wait > 0 )
+        if ( self->moveinfoVal.wait > 0 )
         {
-            self->nextthink = level.time + self->moveinfo.wait;
+            self->nextthink = level.time + self->moveinfoVal.wait;
             self->think = train_next;
         }
         else if ( self->spawnflags & TRAIN_TOGGLE )  // && wait < 0
@@ -1597,10 +1597,10 @@ void train_wait( edict* self )
 
         if ( !( self->flags & FL_TEAMSLAVE ) )
         {
-            if ( self->moveinfo.sound_end )
+            if ( self->moveinfoVal.sound_end )
                 quake2::getInstance()->gi.sound(
                     self, CHAN_NO_PHS_ADD + CHAN_VOICE,
-                    self->moveinfo.sound_end, 1, ATTN_STATIC, 0 );
+                    self->moveinfoVal.sound_end, 1, ATTN_STATIC, 0 );
             self->s.sound = 0;
         }
     }
@@ -1653,22 +1653,22 @@ again:
         goto again;
     }
 
-    self->moveinfo.wait = ent->wait;
+    self->moveinfoVal.wait = ent->wait;
     self->target_ent = ent;
 
     if ( !( self->flags & FL_TEAMSLAVE ) )
     {
-        if ( self->moveinfo.sound_start )
+        if ( self->moveinfoVal.sound_start )
             quake2::getInstance()->gi.sound(
-                self, CHAN_NO_PHS_ADD + CHAN_VOICE, self->moveinfo.sound_start,
+                self, CHAN_NO_PHS_ADD + CHAN_VOICE, self->moveinfoVal.sound_start,
                 1, ATTN_STATIC, 0 );
-        self->s.sound = self->moveinfo.sound_middle;
+        self->s.sound = self->moveinfoVal.sound_middle;
     }
 
     VectorSubtract( ent->s.origin, self->mins, dest );
-    self->moveinfo.state = STATE_TOP;
-    VectorCopy( self->s.origin, self->moveinfo.start_origin );
-    VectorCopy( dest, self->moveinfo.end_origin );
+    self->moveinfoVal.state = STATE_TOP;
+    VectorCopy( self->s.origin, self->moveinfoVal.start_origin );
+    VectorCopy( dest, self->moveinfoVal.end_origin );
     Move_Calc( self, dest, train_wait );
     self->spawnflags |= TRAIN_START_ON;
 }
@@ -1681,9 +1681,9 @@ void train_resume( edict* self )
     ent = self->target_ent;
 
     VectorSubtract( ent->s.origin, self->mins, dest );
-    self->moveinfo.state = STATE_TOP;
-    VectorCopy( self->s.origin, self->moveinfo.start_origin );
-    VectorCopy( dest, self->moveinfo.end_origin );
+    self->moveinfoVal.state = STATE_TOP;
+    VectorCopy( self->s.origin, self->moveinfoVal.start_origin );
+    VectorCopy( dest, self->moveinfoVal.end_origin );
     Move_Calc( self, dest, train_wait );
     self->spawnflags |= TRAIN_START_ON;
 }
@@ -1759,14 +1759,14 @@ void SP_func_train( edict* self )
     quake2::getInstance()->gi.setmodel( self, self->model );
 
     if ( st.noise )
-        self->moveinfo.sound_middle =
+        self->moveinfoVal.sound_middle =
             quake2::getInstance()->gi.soundindex( st.noise );
 
     if ( !self->speed )
         self->speed = 100;
 
-    self->moveinfo.speed = self->speed;
-    self->moveinfo.accel = self->moveinfo.decel = self->moveinfo.speed;
+    self->moveinfoVal.speed = self->speed;
+    self->moveinfoVal.accel = self->moveinfoVal.decel = self->moveinfoVal.speed;
 
     self->use = train_use;
 
@@ -2068,11 +2068,11 @@ void SP_func_door_secret( edict* ent )
     float width;
     float length;
 
-    ent->moveinfo.sound_start =
+    ent->moveinfoVal.sound_start =
         quake2::getInstance()->gi.soundindex( "doors/dr1_strt.wav" );
-    ent->moveinfo.sound_middle =
+    ent->moveinfoVal.sound_middle =
         quake2::getInstance()->gi.soundindex( "doors/dr1_mid.wav" );
-    ent->moveinfo.sound_end =
+    ent->moveinfoVal.sound_end =
         quake2::getInstance()->gi.soundindex( "doors/dr1_end.wav" );
 
     ent->movetype = MOVETYPE_PUSH;
@@ -2095,7 +2095,7 @@ void SP_func_door_secret( edict* ent )
     if ( !ent->wait )
         ent->wait = 5;
 
-    ent->moveinfo.accel = ent->moveinfo.decel = ent->moveinfo.speed = 50;
+    ent->moveinfoVal.accel = ent->moveinfoVal.decel = ent->moveinfoVal.speed = 50;
 
     // calculate positions
     AngleVectors( ent->s.angles, forward, right, up );

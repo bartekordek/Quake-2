@@ -25,7 +25,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #pragma warning( disable : 4229 )  // mgraph gets this
 
+#ifdef _WIN32
 #include <windows.h>
+
 
 #include <dsound.h>
 
@@ -46,5 +48,7 @@ void IN_MouseEvent (int mstate);
 
 extern int        window_center_x, window_center_y;
 extern RECT        window_rect;
+
+#endif
 
 #endif // ____WIN32_WINQUAKE_H__

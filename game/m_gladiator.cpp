@@ -75,7 +75,7 @@ mmove_t gladiator_move_stand = {FRAME_stand1, FRAME_stand7, gladiator_frames_sta
 
 void gladiator_stand (edict *self)
 {
-    self->monsterinfo.currentmove = &gladiator_move_stand;
+    self->monsterinfoVal.currentmove = &gladiator_move_stand;
 }
 
 
@@ -102,7 +102,7 @@ mmove_t gladiator_move_walk = {FRAME_walk1, FRAME_walk16, gladiator_frames_walk,
 
 void gladiator_walk (edict *self)
 {
-    self->monsterinfo.currentmove = &gladiator_move_walk;
+    self->monsterinfoVal.currentmove = &gladiator_move_walk;
 }
 
 
@@ -119,10 +119,10 @@ mmove_t gladiator_move_run = {FRAME_run1, FRAME_run6, gladiator_frames_run, NULL
 
 void gladiator_run (edict *self)
 {
-    if (self->monsterinfo.aiflags & AI_STAND_GROUND)
-        self->monsterinfo.currentmove = &gladiator_move_stand;
+    if (self->monsterinfoVal.aiflags & AI_STAND_GROUND)
+        self->monsterinfoVal.currentmove = &gladiator_move_stand;
     else
-        self->monsterinfo.currentmove = &gladiator_move_run;
+        self->monsterinfoVal.currentmove = &gladiator_move_run;
 }
 
 
@@ -161,7 +161,7 @@ mmove_t gladiator_move_attack_melee = {FRAME_melee1, FRAME_melee17, gladiator_fr
 
 void gladiator_melee(edict *self)
 {
-    self->monsterinfo.currentmove = &gladiator_move_attack_melee;
+    self->monsterinfoVal.currentmove = &gladiator_move_attack_melee;
 }
 
 
@@ -210,7 +210,7 @@ void gladiator_attack(edict *self)
     quake2::getInstance()->gi.sound (self, CHAN_WEAPON, sound_gun, 1, ATTN_NORM, 0);
     VectorCopy (self->enemy->s.origin, self->pos1);    //save for aiming the shot
     self->pos1[2] += self->enemy->viewheight;
-    self->monsterinfo.currentmove = &gladiator_move_attack_gun;
+    self->monsterinfoVal.currentmove = &gladiator_move_attack_gun;
 }
 
 
@@ -245,8 +245,8 @@ void gladiator_pain (edict *self, edict *other, float kick, int damage)
 
     if (level.time < self->pain_debounce_time)
     {
-        if ((self->velocity[2] > 100) && (self->monsterinfo.currentmove == &gladiator_move_pain))
-            self->monsterinfo.currentmove = &gladiator_move_pain_air;
+        if ((self->velocity[2] > 100) && (self->monsterinfoVal.currentmove == &gladiator_move_pain))
+            self->monsterinfoVal.currentmove = &gladiator_move_pain_air;
         return;
     }
 
@@ -261,9 +261,9 @@ void gladiator_pain (edict *self, edict *other, float kick, int damage)
         return;        // no pain anims in nightmare
 
     if (self->velocity[2] > 100)
-        self->monsterinfo.currentmove = &gladiator_move_pain_air;
+        self->monsterinfoVal.currentmove = &gladiator_move_pain_air;
     else
-        self->monsterinfo.currentmove = &gladiator_move_pain;
+        self->monsterinfoVal.currentmove = &gladiator_move_pain;
 
 }
 
@@ -330,7 +330,7 @@ void gladiator_die (edict *self, edict *inflictor, edict *attacker, int damage, 
     self->deadflag = DEAD_DEAD;
     self->takedamage = DAMAGE_YES;
 
-    self->monsterinfo.currentmove = &gladiator_move_death;
+    self->monsterinfoVal.currentmove = &gladiator_move_death;
 }
 
 
@@ -369,19 +369,19 @@ void SP_monster_gladiator (edict *self)
     self->pain = gladiator_pain;
     self->die = gladiator_die;
 
-    self->monsterinfo.stand = gladiator_stand;
-    self->monsterinfo.walk = gladiator_walk;
-    self->monsterinfo.run = gladiator_run;
-    self->monsterinfo.dodge = NULL;
-    self->monsterinfo.attack = gladiator_attack;
-    self->monsterinfo.melee = gladiator_melee;
-    self->monsterinfo.sight = gladiator_sight;
-    self->monsterinfo.idle = gladiator_idle;
-    self->monsterinfo.search = gladiator_search;
+    self->monsterinfoVal.stand = gladiator_stand;
+    self->monsterinfoVal.walk = gladiator_walk;
+    self->monsterinfoVal.run = gladiator_run;
+    self->monsterinfoVal.dodge = NULL;
+    self->monsterinfoVal.attack = gladiator_attack;
+    self->monsterinfoVal.melee = gladiator_melee;
+    self->monsterinfoVal.sight = gladiator_sight;
+    self->monsterinfoVal.idle = gladiator_idle;
+    self->monsterinfoVal.search = gladiator_search;
 
     quake2::getInstance()->gi.linkentity (self);
-    self->monsterinfo.currentmove = &gladiator_move_stand;
-    self->monsterinfo.scale = MODEL_SCALE;
+    self->monsterinfoVal.currentmove = &gladiator_move_stand;
+    self->monsterinfoVal.scale = MODEL_SCALE;
 
     walkmonster_start (self);
 }

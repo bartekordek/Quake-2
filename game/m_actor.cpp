@@ -86,11 +86,11 @@ mmove_t actor_move_stand = {FRAME_stand101, FRAME_stand140, actor_frames_stand, 
 
 void actor_stand (edict *self)
 {
-    self->monsterinfo.currentmove = &actor_move_stand;
+    self->monsterinfoVal.currentmove = &actor_move_stand;
 
     // randomize on startup
     if (level.time < 1.0)
-        self->s.frame = self->monsterinfo.currentmove->firstframe + (rand() % (self->monsterinfo.currentmove->lastframe - self->monsterinfo.currentmove->firstframe + 1));
+        self->s.frame = self->monsterinfoVal.currentmove->firstframe + (rand() % (self->monsterinfoVal.currentmove->lastframe - self->monsterinfoVal.currentmove->firstframe + 1));
 }
 
 
@@ -112,7 +112,7 @@ mmove_t actor_move_walk = {FRAME_walk01, FRAME_walk08, actor_frames_walk, NULL};
 
 void actor_walk (edict *self)
 {
-    self->monsterinfo.currentmove = &actor_move_walk;
+    self->monsterinfoVal.currentmove = &actor_move_walk;
 }
 
 
@@ -144,13 +144,13 @@ void actor_run (edict *self)
         return;
     }
 
-    if (self->monsterinfo.aiflags & AI_STAND_GROUND)
+    if (self->monsterinfoVal.aiflags & AI_STAND_GROUND)
     {
         actor_stand(self);
         return;
     }
 
-    self->monsterinfo.currentmove = &actor_move_run;
+    self->monsterinfoVal.currentmove = &actor_move_run;
 }
 
 
@@ -248,9 +248,9 @@ void actor_pain (edict *self, edict *other, float kick, int damage)
         VectorSubtract (other->s.origin, self->s.origin, v);
         self->ideal_yaw = vectoyaw (v);
         if (random() < 0.5)
-            self->monsterinfo.currentmove = &actor_move_flipoff;
+            self->monsterinfoVal.currentmove = &actor_move_flipoff;
         else
-            self->monsterinfo.currentmove = &actor_move_taunt;
+            self->monsterinfoVal.currentmove = &actor_move_taunt;
         name = actor_names[(self - g_edicts)%MAX_ACTOR_NAMES];
         quake2::getInstance()->gi.cprintf (other, PRINT_CHAT, "%s: %s!\n", name, messages[rand()%3]);
         return;
@@ -258,11 +258,11 @@ void actor_pain (edict *self, edict *other, float kick, int damage)
 
     n = rand() % 3;
     if (n == 0)
-        self->monsterinfo.currentmove = &actor_move_pain1;
+        self->monsterinfoVal.currentmove = &actor_move_pain1;
     else if (n == 1)
-        self->monsterinfo.currentmove = &actor_move_pain2;
+        self->monsterinfoVal.currentmove = &actor_move_pain2;
     else
-        self->monsterinfo.currentmove = &actor_move_pain3;
+        self->monsterinfoVal.currentmove = &actor_move_pain3;
 }
 
 
@@ -363,9 +363,9 @@ void actor_die (edict *self, edict *inflictor, edict *attacker, int damage, vec3
 
     n = rand() % 2;
     if (n == 0)
-        self->monsterinfo.currentmove = &actor_move_death1;
+        self->monsterinfoVal.currentmove = &actor_move_death1;
     else
-        self->monsterinfo.currentmove = &actor_move_death2;
+        self->monsterinfoVal.currentmove = &actor_move_death2;
 }
 
 
@@ -373,10 +373,10 @@ void actor_fire (edict *self)
 {
     actorMachineGun (self);
 
-    if (level.time >= self->monsterinfo.pausetime)
-        self->monsterinfo.aiflags &= ~AI_HOLD_FRAME;
+    if (level.time >= self->monsterinfoVal.pausetime)
+        self->monsterinfoVal.aiflags &= ~AI_HOLD_FRAME;
     else
-        self->monsterinfo.aiflags |= AI_HOLD_FRAME;
+        self->monsterinfoVal.aiflags |= AI_HOLD_FRAME;
 }
 
 mframe_t actor_frames_attack [] =
@@ -392,9 +392,9 @@ void actor_attack(edict *self)
 {
     int        n;
 
-    self->monsterinfo.currentmove = &actor_move_attack;
+    self->monsterinfoVal.currentmove = &actor_move_attack;
     n = (rand() & 15) + 3 + 7;
-    self->monsterinfo.pausetime = level.time + n * FRAMETIME;
+    self->monsterinfoVal.pausetime = level.time + n * FRAMETIME;
 }
 
 
@@ -407,14 +407,14 @@ void actor_use (edict *self, edict *other, edict *activator)
     {
         quake2::getInstance()->gi.dprintf ("%s has bad target %s at %s\n", self->classname, self->target, vtos(self->s.origin));
         self->target = NULL;
-        self->monsterinfo.pausetime = 100000000;
-        self->monsterinfo.stand (self);
+        self->monsterinfoVal.pausetime = 100000000;
+        self->monsterinfoVal.stand (self);
         return;
     }
 
     VectorSubtract (self->goalentity->s.origin, self->s.origin, v);
     self->ideal_yaw = self->s.angles[YAW] = vectoyaw(v);
-    self->monsterinfo.walk (self);
+    self->monsterinfoVal.walk (self);
     self->target = NULL;
 }
 
@@ -457,19 +457,19 @@ void SP_misc_actor (edict *self)
     self->pain = actor_pain;
     self->die = actor_die;
 
-    self->monsterinfo.stand = actor_stand;
-    self->monsterinfo.walk = actor_walk;
-    self->monsterinfo.run = actor_run;
-    self->monsterinfo.attack = actor_attack;
-    self->monsterinfo.melee = NULL;
-    self->monsterinfo.sight = NULL;
+    self->monsterinfoVal.stand = actor_stand;
+    self->monsterinfoVal.walk = actor_walk;
+    self->monsterinfoVal.run = actor_run;
+    self->monsterinfoVal.attack = actor_attack;
+    self->monsterinfoVal.melee = NULL;
+    self->monsterinfoVal.sight = NULL;
 
-    self->monsterinfo.aiflags |= AI_GOOD_GUY;
+    self->monsterinfoVal.aiflags |= AI_GOOD_GUY;
 
     quake2::getInstance()->gi.linkentity (self);
 
-    self->monsterinfo.currentmove = &actor_move_stand;
-    self->monsterinfo.scale = MODEL_SCALE;
+    self->monsterinfoVal.currentmove = &actor_move_stand;
+    self->monsterinfoVal.scale = MODEL_SCALE;
 
     walkmonster_start (self);
 
@@ -542,10 +542,10 @@ void target_actor_touch (edict *self, edict *other, plane_s *plane, csurface_s *
         {
             other->goalentity = other->enemy;
             if (self->spawnflags & 32)
-                other->monsterinfo.aiflags |= AI_BRUTAL;
+                other->monsterinfoVal.aiflags |= AI_BRUTAL;
             if (self->spawnflags & 16)
             {
-                other->monsterinfo.aiflags |= AI_STAND_GROUND;
+                other->monsterinfoVal.aiflags |= AI_STAND_GROUND;
                 actor_stand (other);
             }
             else
@@ -572,8 +572,8 @@ void target_actor_touch (edict *self, edict *other, plane_s *plane, csurface_s *
 
     if (!other->movetarget && !other->enemy)
     {
-        other->monsterinfo.pausetime = level.time + 100000000;
-        other->monsterinfo.stand (other);
+        other->monsterinfoVal.pausetime = level.time + 100000000;
+        other->monsterinfoVal.stand (other);
     }
     else if (other->movetarget == other->goalentity)
     {

@@ -137,7 +137,7 @@ mmove_t    makron_move_stand = {FRAME_stand201, FRAME_stand260, makron_frames_st
 
 void makron_stand (edict *self)
 {
-    self->monsterinfo.currentmove = &makron_move_stand;
+    self->monsterinfoVal.currentmove = &makron_move_stand;
 }
 
 mframe_t makron_frames_run [] =
@@ -203,15 +203,15 @@ mmove_t    makron_move_walk = {FRAME_walk204, FRAME_walk213, makron_frames_run, 
 
 void makron_walk (edict *self)
 {
-        self->monsterinfo.currentmove = &makron_move_walk;
+        self->monsterinfoVal.currentmove = &makron_move_walk;
 }
 
 void makron_run (edict *self)
 {
-    if (self->monsterinfo.aiflags & AI_STAND_GROUND)
-        self->monsterinfo.currentmove = &makron_move_stand;
+    if (self->monsterinfoVal.aiflags & AI_STAND_GROUND)
+        self->monsterinfoVal.currentmove = &makron_move_stand;
     else
-        self->monsterinfo.currentmove = &makron_move_run;
+        self->monsterinfoVal.currentmove = &makron_move_run;
 }
 
 mframe_t makron_frames_pain6 [] =
@@ -574,12 +574,12 @@ void makron_pain (edict *self, edict *other, float kick, int damage)
     if (damage <= 40)
     {
         quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain4, 1, ATTN_NONE,0);
-        self->monsterinfo.currentmove = &makron_move_pain4;
+        self->monsterinfoVal.currentmove = &makron_move_pain4;
     }
     else if (damage <= 110)
     {
         quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain5, 1, ATTN_NONE,0);
-        self->monsterinfo.currentmove = &makron_move_pain5;
+        self->monsterinfoVal.currentmove = &makron_move_pain5;
     }
     else
     {
@@ -587,20 +587,20 @@ void makron_pain (edict *self, edict *other, float kick, int damage)
             if (random() <= 0.45)
             {
                 quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain6, 1, ATTN_NONE,0);
-                self->monsterinfo.currentmove = &makron_move_pain6;
+                self->monsterinfoVal.currentmove = &makron_move_pain6;
             }
         else
             if (random() <= 0.35)
             {
                 quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain6, 1, ATTN_NONE,0);
-                self->monsterinfo.currentmove = &makron_move_pain6;
+                self->monsterinfoVal.currentmove = &makron_move_pain6;
             }
     }
 };
 
 void makron_sight(edict *self, edict *other)
 {
-    self->monsterinfo.currentmove = &makron_move_sight;
+    self->monsterinfoVal.currentmove = &makron_move_sight;
 };
 
 void makron_attack(edict *self)
@@ -616,11 +616,11 @@ void makron_attack(edict *self)
 
 
     if (r <= 0.3)
-        self->monsterinfo.currentmove = &makron_move_attack3;
+        self->monsterinfoVal.currentmove = &makron_move_attack3;
     else if (r <= 0.6)
-        self->monsterinfo.currentmove = &makron_move_attack4;
+        self->monsterinfoVal.currentmove = &makron_move_attack4;
     else
-        self->monsterinfo.currentmove = &makron_move_attack5;
+        self->monsterinfoVal.currentmove = &makron_move_attack5;
 }
 
 /*
@@ -704,7 +704,7 @@ void makron_die (edict *self, edict *inflictor, edict *attacker, int damage, vec
     tempent->s.origin[1] -= 84;
     makron_torso (tempent);
 
-    self->monsterinfo.currentmove = &makron_move_death2;
+    self->monsterinfoVal.currentmove = &makron_move_death2;
 
 }
 
@@ -744,24 +744,24 @@ bool Makron_CheckAttack (edict *self)
     // melee attack
     if (enemy_range == RANGE_MELEE)
     {
-        if (self->monsterinfo.melee)
-            self->monsterinfo.attack_state = AS_MELEE;
+        if (self->monsterinfoVal.melee)
+            self->monsterinfoVal.attack_state = AS_MELEE;
         else
-            self->monsterinfo.attack_state = AS_MISSILE;
+            self->monsterinfoVal.attack_state = AS_MISSILE;
         return true;
     }
 
 // missile attack
-    if (!self->monsterinfo.attack)
+    if (!self->monsterinfoVal.attack)
         return false;
 
-    if (level.time < self->monsterinfo.attack_finished)
+    if (level.time < self->monsterinfoVal.attack_finished)
         return false;
 
     if (enemy_range == RANGE_FAR)
         return false;
 
-    if (self->monsterinfo.aiflags & AI_STAND_GROUND)
+    if (self->monsterinfoVal.aiflags & AI_STAND_GROUND)
     {
         chance = 0.4;
     }
@@ -784,17 +784,17 @@ bool Makron_CheckAttack (edict *self)
 
     if (random () < chance)
     {
-        self->monsterinfo.attack_state = AS_MISSILE;
-        self->monsterinfo.attack_finished = level.time + 2*random();
+        self->monsterinfoVal.attack_state = AS_MISSILE;
+        self->monsterinfoVal.attack_finished = level.time + 2*random();
         return true;
     }
 
     if (self->flags & FL_FLY)
     {
         if (random() < 0.3)
-            self->monsterinfo.attack_state = AS_SLIDING;
+            self->monsterinfoVal.attack_state = AS_SLIDING;
         else
-            self->monsterinfo.attack_state = AS_STRAIGHT;
+            self->monsterinfoVal.attack_state = AS_STRAIGHT;
     }
 
     return false;
@@ -849,20 +849,20 @@ void SP_monster_makron (edict *self)
 
     self->pain = makron_pain;
     self->die = makron_die;
-    self->monsterinfo.stand = makron_stand;
-    self->monsterinfo.walk = makron_walk;
-    self->monsterinfo.run = makron_run;
-    self->monsterinfo.dodge = NULL;
-    self->monsterinfo.attack = makron_attack;
-    self->monsterinfo.melee = NULL;
-    self->monsterinfo.sight = makron_sight;
-    self->monsterinfo.checkattack = Makron_CheckAttack;
+    self->monsterinfoVal.stand = makron_stand;
+    self->monsterinfoVal.walk = makron_walk;
+    self->monsterinfoVal.run = makron_run;
+    self->monsterinfoVal.dodge = NULL;
+    self->monsterinfoVal.attack = makron_attack;
+    self->monsterinfoVal.melee = NULL;
+    self->monsterinfoVal.sight = makron_sight;
+    self->monsterinfoVal.checkattack = Makron_CheckAttack;
 
     quake2::getInstance()->gi.linkentity (self);
 
-//    self->monsterinfo.currentmove = &makron_move_stand;
-    self->monsterinfo.currentmove = &makron_move_sight;
-    self->monsterinfo.scale = MODEL_SCALE;
+//    self->monsterinfoVal.currentmove = &makron_move_stand;
+    self->monsterinfoVal.currentmove = &makron_move_sight;
+    self->monsterinfoVal.scale = MODEL_SCALE;
 
     walkmonster_start(self);
 }

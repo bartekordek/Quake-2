@@ -168,8 +168,8 @@ struct edict
     struct gitem* item;// for bonus items
 
     // common data blocks
-    moveinfo moveinfo;
-    monsterinfo monsterinfo;
+    moveinfo moveinfoVal;
+    monsterinfo monsterinfoVal;
 };
 
 #endif // ____SHARED_EDICT_H__

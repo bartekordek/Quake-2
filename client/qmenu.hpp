@@ -140,4 +140,6 @@ void Menu_DrawStringDark( int, int, const char* );
 void Menu_DrawStringR2L( int, int, const char* );
 void Menu_DrawStringR2LDark( int, int, const char* );
 
+void VID_MenuInit();
+
 #endif  // ____CLIENT_QMENU_H__

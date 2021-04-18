@@ -120,7 +120,7 @@ typedef struct client_s
     int rate;
     int surpressCount;  // number of messages rate supressed
 
-    edict* edict;      // EDICT_NUM(clientnum+1)
+    edict* edictVal;      // EDICT_NUM(clientnum+1)
     char name[32];     // extracted from userinfo, high bits masked
     int messagelevel;  // for filtering printed messages
 

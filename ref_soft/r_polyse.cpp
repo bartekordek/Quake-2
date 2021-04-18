@@ -779,7 +779,7 @@ void R_PolysetDrawThreshSpans8 (spanpackage_t *pspanpackage)
 
                     if (rand1k[rand1k_index] <= r_affinetridesc.vis_thresh)
                     {
-                        *lpdest = ((byte *)vid.colormap)[*lptex + (llight & 0xFF00)];
+                        *lpdest = ((byte *)quake2::getInstance()->vid.colormap)[*lptex + (llight & 0xFF00)];
                         *lpz = lzi >> 16;
                     }
                 }
@@ -850,9 +850,9 @@ void R_PolysetDrawSpans8_33( spanpackage_t *pspanpackage)
             {
                 if ((lzi >> 16) >= *lpz)
                 {
-                    int temp = vid.colormap[*lptex + ( llight & 0xFF00 )];
+                    int temp = quake2::getInstance()->vid.colormap[*lptex + ( llight & 0xFF00 )];
 
-                    *lpdest = vid.alphamap[temp+ *lpdest*256];
+                    *lpdest = quake2::getInstance()->vid.alphamap[temp+ *lpdest*256];
                 }
                 lpdest++;
                 lzi += r_zistepx;
@@ -907,7 +907,7 @@ void R_PolysetDrawSpansConstant8_33( spanpackage_t *pspanpackage)
             {
                 if ((lzi >> 16) >= *lpz)
                 {
-                    *lpdest = vid.alphamap[r_aliasblendcolor + *lpdest*256];
+                    *lpdest = quake2::getInstance()->vid.alphamap[r_aliasblendcolor + *lpdest*256];
                 }
                 lpdest++;
                 lzi += r_zistepx;
@@ -958,9 +958,9 @@ void R_PolysetDrawSpans8_66(spanpackage_t *pspanpackage)
             {
                 if ((lzi >> 16) >= *lpz)
                 {
-                    int temp = vid.colormap[*lptex + ( llight & 0xFF00 )];
+                    int temp = quake2::getInstance()->vid.colormap[*lptex + ( llight & 0xFF00 )];
 
-                    *lpdest = vid.alphamap[temp*256 + *lpdest];
+                    *lpdest = quake2::getInstance()->vid.alphamap[temp*256 + *lpdest];
                     *lpz = lzi >> 16;
                 }
                 lpdest++;
@@ -1016,7 +1016,7 @@ void R_PolysetDrawSpansConstant8_66( spanpackage_t *pspanpackage)
             {
                 if ((lzi >> 16) >= *lpz)
                 {
-                    *lpdest = vid.alphamap[r_aliasblendcolor*256 + *lpdest];
+                    *lpdest = quake2::getInstance()->vid.alphamap[r_aliasblendcolor*256 + *lpdest];
                 }
                 lpdest++;
                 lzi += r_zistepx;
@@ -1071,9 +1071,9 @@ void R_PolysetDrawSpans8_Opaque (spanpackage_t *pspanpackage)
                 {
 //PGM
                     if(r_newrefdef.rdflags & RDF_IRGOGGLES && quake2::getInstance()->currententity->flags & RF_IR_VISIBLE)
-                        *lpdest = ((byte *)vid.colormap)[irtable[*lptex]];
+                        *lpdest = ((byte *)quake2::getInstance()->vid.colormap)[irtable[*lptex]];
                     else
-                    *lpdest = ((byte *)vid.colormap)[*lptex + (llight & 0xFF00)];
+                    *lpdest = ((byte *)quake2::getInstance()->vid.colormap)[*lptex + (llight & 0xFF00)];
 //PGM
                     *lpz = lzi >> 16;
                 }

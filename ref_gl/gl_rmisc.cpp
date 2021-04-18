@@ -130,19 +130,19 @@ void ref_gl_GL_ScreenShot_f(void)
     }
 
 
-    byte* buffer = (byte*)malloc(vid.width*vid.height*3 + 18);
+    byte* buffer = (byte*)malloc(quake2::getInstance()->vid.width*quake2::getInstance()->vid.height*3 + 18);
     memset ((void*)buffer, 0, 18);
     buffer[2] = 2;        // uncompressed type
-    buffer[12] = vid.width&255;
-    buffer[13] = vid.width>>8;
-    buffer[14] = vid.height&255;
-    buffer[15] = vid.height>>8;
+    buffer[12] = quake2::getInstance()->vid.width&255;
+    buffer[13] = quake2::getInstance()->vid.width>>8;
+    buffer[14] = quake2::getInstance()->vid.height&255;
+    buffer[15] = quake2::getInstance()->vid.height>>8;
     buffer[16] = 24;    // pixel size
 
-    qglReadPixels (0, 0, vid.width, vid.height, GL_RGB, GL_UNSIGNED_BYTE, buffer+18 );
+    qglReadPixels (0, 0, quake2::getInstance()->vid.width, quake2::getInstance()->vid.height, GL_RGB, GL_UNSIGNED_BYTE, buffer+18 );
 
     // swap rgb to bgr
-    c = 18+vid.width*vid.height*3;
+    c = 18+quake2::getInstance()->vid.width*quake2::getInstance()->vid.height*3;
     for (i=18 ; i<c ; i+=3)
     {
         temp = buffer[i];

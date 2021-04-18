@@ -99,7 +99,7 @@ void Killed (edict *targ, edict *inflictor, edict *attacker, int damage, vec3_t 
     if ((targ->svflags & SVF_MONSTER) && (targ->deadflag != DEAD_DEAD))
     {
 //        targ->svflags |= SVF_DEADMONSTER;    // now treat as a different content type
-        if (!(targ->monsterinfo.aiflags & AI_GOOD_GUY))
+        if (!(targ->monsterinfoVal.aiflags & AI_GOOD_GUY))
         {
             level.killed_monsters++;
             if (coop->value && attacker->client)
@@ -198,8 +198,8 @@ static int CheckPowerArmor (edict *ent, vec3_t point, vec3_t normal, int damage,
     }
     else if (ent->svflags & SVF_MONSTER)
     {
-        power_armor_type = ent->monsterinfo.power_armor_type;
-        power = ent->monsterinfo.power_armor_power;
+        power_armor_type = ent->monsterinfoVal.power_armor_type;
+        power = ent->monsterinfoVal.power_armor_power;
     }
     else
         return 0;
@@ -248,7 +248,7 @@ static int CheckPowerArmor (edict *ent, vec3_t point, vec3_t normal, int damage,
     if (client)
         client->pers.inventory[index] -= power_used;
     else
-        ent->monsterinfo.power_armor_power -= power_used;
+        ent->monsterinfoVal.power_armor_power -= power_used;
     return save;
 }
 
@@ -302,9 +302,9 @@ void M_ReactToDamage (edict *targ, edict *attacker)
 
     // if we are a good guy monster and our attacker is a player
     // or another good guy, do not get mad at them
-    if (targ->monsterinfo.aiflags & AI_GOOD_GUY)
+    if (targ->monsterinfoVal.aiflags & AI_GOOD_GUY)
     {
-        if (attacker->client || (attacker->monsterinfo.aiflags & AI_GOOD_GUY))
+        if (attacker->client || (attacker->monsterinfoVal.aiflags & AI_GOOD_GUY))
             return;
     }
 
@@ -325,7 +325,7 @@ void M_ReactToDamage (edict *targ, edict *attacker)
             targ->oldenemy = targ->enemy;
         }
         targ->enemy = attacker;
-        if (!(targ->monsterinfo.aiflags & AI_DUCKED))
+        if (!(targ->monsterinfoVal.aiflags & AI_DUCKED))
             FoundTarget (targ);
         return;
     }
@@ -343,7 +343,7 @@ void M_ReactToDamage (edict *targ, edict *attacker)
             if (targ->enemy->client)
                 targ->oldenemy = targ->enemy;
         targ->enemy = attacker;
-        if (!(targ->monsterinfo.aiflags & AI_DUCKED))
+        if (!(targ->monsterinfoVal.aiflags & AI_DUCKED))
             FoundTarget (targ);
     }
     else
@@ -526,7 +526,7 @@ void T_Damage (edict *targ, edict *inflictor, edict *attacker, vec3_t dir, vec3_
     if (targ->svflags & SVF_MONSTER)
     {
         M_ReactToDamage (targ, attacker);
-        if (!(targ->monsterinfo.aiflags & AI_DUCKED) && (take))
+        if (!(targ->monsterinfoVal.aiflags & AI_DUCKED) && (take))
         {
             targ->pain (targ, attacker, knockback, take);
             // nightmare mode monsters don't go into pain frames often

@@ -208,7 +208,7 @@ void SV_Multicast( vec3_t origin, multicast_t to )
 
         if ( mask )
         {
-            leafnum = CM_PointLeafnum( client->edict->s.origin );
+            leafnum = CM_PointLeafnum( client->edictVal->s.origin );
             cluster = CM_LeafCluster( leafnum );
             area2 = CM_LeafArea( leafnum );
             if ( !CM_AreasConnected( area1, area2 ) )

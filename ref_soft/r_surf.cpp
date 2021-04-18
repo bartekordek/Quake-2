@@ -198,7 +198,7 @@ void R_DrawSurfaceBlock8_mip0 (void)
             for (b=15; b>=0; b--)
             {
                 pix = psource[b];
-                prowdest[b] = ((unsigned char *)vid.colormap)
+                prowdest[b] = ((unsigned char *)quake2::getInstance()->vid.colormap)
                         [(light & 0xFF00) + pix];
                 light += lightstep;
             }
@@ -248,7 +248,7 @@ void R_DrawSurfaceBlock8_mip1 (void)
             for (b=7; b>=0; b--)
             {
                 pix = psource[b];
-                prowdest[b] = ((unsigned char *)vid.colormap)
+                prowdest[b] = ((unsigned char *)quake2::getInstance()->vid.colormap)
                         [(light & 0xFF00) + pix];
                 light += lightstep;
             }
@@ -298,7 +298,7 @@ void R_DrawSurfaceBlock8_mip2 (void)
             for (b=3; b>=0; b--)
             {
                 pix = psource[b];
-                prowdest[b] = ((unsigned char *)vid.colormap)
+                prowdest[b] = ((unsigned char *)quake2::getInstance()->vid.colormap)
                         [(light & 0xFF00) + pix];
                 light += lightstep;
             }
@@ -348,7 +348,7 @@ void R_DrawSurfaceBlock8_mip3 (void)
             for (b=1; b>=0; b--)
             {
                 pix = psource[b];
-                prowdest[b] = ((unsigned char *)vid.colormap)
+                prowdest[b] = ((unsigned char *)quake2::getInstance()->vid.colormap)
                         [(light & 0xFF00) + pix];
                 light += lightstep;
             }
@@ -382,15 +382,15 @@ void R_InitCaches (void)
     int        pix;
 
     // calculate size to allocate
-    if (sw_surfcacheoverride->value)
+    if (quake2::getInstance()->sw_surfcacheoverride->value)
     {
-        size = sw_surfcacheoverride->value;
+        size = quake2::getInstance()->sw_surfcacheoverride->value;
     }
     else
     {
         size = SURFCACHE_SIZE_AT_320X240;
 
-        pix = vid.width*vid.height;
+        pix = quake2::getInstance()->vid.width*quake2::getInstance()->vid.height;
         if (pix > 64000)
             size += (pix-64000)*3;
     }
@@ -590,7 +590,7 @@ surfcache_t *D_CacheSurface (msurface_t *surface, int miplevel)
 //
     cache = surface->cachespots[miplevel];
 
-    if (cache && !cache->dlight && surface->dlightframe != r_framecount
+    if (cache && !cache->dlight && surface->dlightframe != quake2::getInstance()->r_framecount
             && cache->image == r_drawsurf.image
             && cache->lightadj[0] == r_drawsurf.lightadj[0]
             && cache->lightadj[1] == r_drawsurf.lightadj[1]
@@ -619,7 +619,7 @@ surfcache_t *D_CacheSurface (msurface_t *surface, int miplevel)
         cache->mipscale = surfscale;
     }
 
-    if (surface->dlightframe == r_framecount)
+    if (surface->dlightframe == quake2::getInstance()->r_framecount)
         cache->dlight = 1;
     else
         cache->dlight = 0;

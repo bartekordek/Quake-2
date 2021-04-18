@@ -64,7 +64,7 @@ void D_Patch (void)
                          (long)R_Surf8End - (long)R_Surf8Start);
         protectset8 = true;
     }
-    colormap = vid.colormap;
+    colormap = quake2::getInstance()->vid.colormap;
 
     R_Surf8Patch ();
     D_Aff8Patch();
@@ -85,8 +85,8 @@ void D_ViewChanged (void)
     if (yscale > xscale)
         scale_for_mip = yscale;
 
-    d_zrowbytes = vid.width * 2;
-    d_zwidth = vid.width;
+    d_zrowbytes = quake2::getInstance()->vid.width * 2;
+    d_zwidth = quake2::getInstance()->vid.width;
 
     d_pix_min = r_refdef.vrect.width / 320;
     if (d_pix_min < 1)
@@ -103,7 +103,7 @@ void D_ViewChanged (void)
     d_vrectbottom_particle =
             r_refdef.vrectbottom - d_pix_max;
 
-    for (i=0 ; i<vid.height; i++)
+    for (i=0 ; i<quake2::getInstance()->vid.height; i++)
     {
         d_scantable[i] = i*r_screenwidth;
         zspantable[i] = d_pzbuffer + i*d_zwidth;
@@ -114,11 +114,11 @@ void D_ViewChanged (void)
 */
     if ( r_newrefdef.rdflags & RDF_NOWORLDMODEL )
     {
-        memset( d_pzbuffer, 0xff, vid.width * vid.height * sizeof( d_pzbuffer[0] ) );
-        ref_soft_Draw_Fill( r_newrefdef.x, r_newrefdef.y, r_newrefdef.width, r_newrefdef.height,( int ) sw_clearcolor->value & 0xff );
+        memset( d_pzbuffer, 0xff, quake2::getInstance()->vid.width * quake2::getInstance()->vid.height * sizeof( d_pzbuffer[0] ) );
+        ref_soft_Draw_Fill( r_newrefdef.x, r_newrefdef.y, r_newrefdef.width, r_newrefdef.height,( int ) quake2::getInstance()->sw_clearcolor->value & 0xff );
     }
 
-    alias_colormap = vid.colormap;
+    alias_colormap = quake2::getInstance()->vid.colormap;
 
     D_Patch ();
 }
@@ -184,13 +184,13 @@ void ref_soft_R_TransformFrustum (void)
         v[1] = -screenedge[i].normal[0];
         v[2] = screenedge[i].normal[1];
 
-        v2[0] = v[1]*vright[0] + v[2]*vup[0] + v[0]*vpn[0];
-        v2[1] = v[1]*vright[1] + v[2]*vup[1] + v[0]*vpn[1];
-        v2[2] = v[1]*vright[2] + v[2]*vup[2] + v[0]*vpn[2];
+        v2[0] = v[1]*quake2::getInstance()->vright[0] + v[2]*quake2::getInstance()->vup[0] + v[0]*quake2::getInstance()->vpn[0];
+        v2[1] = v[1]*quake2::getInstance()->vright[1] + v[2]*quake2::getInstance()->vup[1] + v[0]*quake2::getInstance()->vpn[1];
+        v2[2] = v[1]*quake2::getInstance()->vright[2] + v[2]*quake2::getInstance()->vup[2] + v[0]*quake2::getInstance()->vpn[2];
 
-        VectorCopy (v2, view_clipplanes[i].normal);
+        VectorCopy (v2, quake2::getInstance()->view_clipplanes[i].normal);
 
-        view_clipplanes[i].dist = DotProduct (modelorg, v2);
+        quake2::getInstance()->view_clipplanes[i].dist = DotProduct (modelorg, v2);
     }
 }
 
@@ -205,9 +205,9 @@ TransformVector
 */
 void TransformVector (vec3_t in, vec3_t out)
 {
-    out[0] = DotProduct(in,vright);
-    out[1] = DotProduct(in,vup);
-    out[2] = DotProduct(in,vpn);
+    out[0] = DotProduct(in,quake2::getInstance()->vright);
+    out[1] = DotProduct(in,quake2::getInstance()->vup);
+    out[2] = DotProduct(in,quake2::getInstance()->vpn);
 }
 
 #else
@@ -218,18 +218,18 @@ __declspec( naked ) void TransformVector( vec3_t vin, vec3_t vout )
     __asm mov edx, dword ptr [esp+8]
 
     __asm fld  dword ptr [eax+0]
-    __asm fmul dword ptr [vright+0]
+    __asm fmul dword ptr [quake2::getInstance()->vright+0]
     __asm fld  dword ptr [eax+0]
-    __asm fmul dword ptr [vup+0]
+    __asm fmul dword ptr [quake2::getInstance()->vup+0]
     __asm fld  dword ptr [eax+0]
-    __asm fmul dword ptr [vpn+0]
+    __asm fmul dword ptr [quake2::getInstance()->vpn+0]
 
     __asm fld  dword ptr [eax+4]
-    __asm fmul dword ptr [vright+4]
+    __asm fmul dword ptr [quake2::getInstance()->vright+4]
     __asm fld  dword ptr [eax+4]
-    __asm fmul dword ptr [vup+4]
+    __asm fmul dword ptr [quake2::getInstance()->vup+4]
     __asm fld  dword ptr [eax+4]
-    __asm fmul dword ptr [vpn+4]
+    __asm fmul dword ptr [quake2::getInstance()->vpn+4]
 
     __asm fxch st(2)
 
@@ -238,11 +238,11 @@ __declspec( naked ) void TransformVector( vec3_t vin, vec3_t vout )
     __asm faddp st(1), st(0)
 
     __asm fld  dword ptr [eax+8]
-    __asm fmul dword ptr [vright+8]
+    __asm fmul dword ptr [quake2::getInstance()->vright+8]
     __asm fld  dword ptr [eax+8]
-    __asm fmul dword ptr [vup+8]
+    __asm fmul dword ptr [quake2::getInstance()->vup+8]
     __asm fld  dword ptr [eax+8]
-    __asm fmul dword ptr [vpn+8]
+    __asm fmul dword ptr [quake2::getInstance()->vpn+8]
 
     __asm fxch st(2)
 
@@ -270,7 +270,7 @@ void R_TransformPlane (plane_s *p, float *normal, float *dist)
 {
     float    d;
 
-    d = DotProduct (r_origin, p->normal);
+    d = DotProduct (quake2::getInstance()->r_origin, p->normal);
 * dist = p->dist - d;
 // TODO: when we have rotating entities, this will need to use the view matrix
     TransformVector (p->normal, normal);
@@ -292,7 +292,7 @@ void R_SetUpFrustumIndexes (void)
     {
         for (j=0 ; j<3 ; j++)
         {
-            if (view_clipplanes[i].normal[j] < 0)
+            if (quake2::getInstance()->view_clipplanes[i].normal[j] < 0)
             {
                 pindex[j] = j;
                 pindex[j+3] = j+3;
@@ -305,7 +305,7 @@ void R_SetUpFrustumIndexes (void)
         }
 
     // FIXME: do just once at start
-        pfrustum_indexes[i] = pindex;
+        quake2::getInstance()->pfrustum_indexes[i] = pindex;
         pindex += 6;
     }
 }
@@ -314,7 +314,7 @@ void R_SetUpFrustumIndexes (void)
 ===============
 R_ViewChanged
 
-Called every time the vid structure or r_refdef changes.
+Called every time the quake2::getInstance()->vid structure or r_refdef changes.
 Guaranteed to be called before the first refresh
 ===============
 */
@@ -418,34 +418,34 @@ void R_SetupFrame (void)
     int            i;
     vrect_t        vrect;
 
-    if (r_fullbright->modified)
+    if (quake2::getInstance()->r_fullbright->modified)
     {
-        r_fullbright->modified = false;
+        quake2::getInstance()->r_fullbright->modified = false;
         ref_soft_D_FlushCaches ();    // so all lighting changes
     }
 
-    r_framecount++;
+    quake2::getInstance()->r_framecount++;
 
 
 // build the transformation matrix for the given view angles
     VectorCopy (r_refdef.vieworg, modelorg);
-    VectorCopy (r_refdef.vieworg, r_origin);
+    VectorCopy (r_refdef.vieworg, quake2::getInstance()->r_origin);
 
-    AngleVectors (r_refdef.viewangles, vpn, vright, vup);
+    AngleVectors (r_refdef.viewangles, quake2::getInstance()->vpn, quake2::getInstance()->vright, quake2::getInstance()->vup);
 
 // current viewleaf
     if ( !( r_newrefdef.rdflags & RDF_NOWORLDMODEL ) )
     {
-        r_viewleaf = ref_soft_Mod_PointInLeaf (r_origin, r_worldmodel);
-        r_viewcluster = r_viewleaf->cluster;
+        r_viewleaf = ref_soft_Mod_PointInLeaf (quake2::getInstance()->r_origin, r_worldmodel);
+        quake2::getInstance()->r_viewcluster = r_viewleaf->cluster;
     }
 
-    if (sw_waterwarp->value && (r_newrefdef.rdflags & RDF_UNDERWATER) )
-        r_dowarp = true;
+    if (quake2::getInstance()->sw_waterwarp->value && (r_newrefdef.rdflags & RDF_UNDERWATER) )
+        quake2::getInstance()->r_dowarp = true;
     else
-        r_dowarp = false;
+        quake2::getInstance()->r_dowarp = false;
 
-    if (r_dowarp)
+    if (quake2::getInstance()->r_dowarp)
     {    // warp into off screen buffer
         vrect.x = 0;
         vrect.y = 0;
@@ -462,8 +462,8 @@ void R_SetupFrame (void)
         vrect.width = r_newrefdef.width;
         vrect.height = r_newrefdef.height;
 
-        d_viewbuffer = (pixel_t *)vid.buffer;
-        r_screenwidth = vid.rowbytes;
+        d_viewbuffer = (pixel_t *)quake2::getInstance()->vid.buffer;
+        r_screenwidth = quake2::getInstance()->vid.rowbytes;
     }
 
     R_ViewChanged (&vrect);
@@ -473,9 +473,9 @@ void R_SetupFrame (void)
     R_SetUpFrustumIndexes ();
 
 // save base values
-    VectorCopy (vpn, base_vpn);
-    VectorCopy (vright, base_vright);
-    VectorCopy (vup, base_vup);
+    VectorCopy (quake2::getInstance()->vpn, base_vpn);
+    VectorCopy (quake2::getInstance()->vright, base_vright);
+    VectorCopy (quake2::getInstance()->vup, base_vup);
 
 // clear frame counts
     c_faceclip = 0;
@@ -651,7 +651,7 @@ void ref_soft_R_ScreenShot_f (void)
 // save the pcx file
 //
 
-    WritePCXfile (checkname, vid.buffer, vid.width, vid.height, vid.rowbytes,
+    WritePCXfile (checkname, quake2::getInstance()->vid.buffer, quake2::getInstance()->vid.width, quake2::getInstance()->vid.height, quake2::getInstance()->vid.rowbytes,
                   palette);
 
     ri.Con_Printf (PRINT_ALL, "Wrote %s\n", checkname);

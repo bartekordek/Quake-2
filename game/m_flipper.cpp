@@ -50,7 +50,7 @@ mmove_t    flipper_move_stand = {FRAME_flphor01, FRAME_flphor01, flipper_frames_
 
 void flipper_stand (edict *self)
 {
-        self->monsterinfo.currentmove = &flipper_move_stand;
+        self->monsterinfoVal.currentmove = &flipper_move_stand;
 }
 
 #define FLIPPER_RUN_SPEED    24
@@ -88,7 +88,7 @@ mmove_t flipper_move_run_loop = {FRAME_flpver06, FRAME_flpver29, flipper_frames_
 
 void flipper_run_loop (edict *self)
 {
-    self->monsterinfo.currentmove = &flipper_move_run_loop;
+    self->monsterinfoVal.currentmove = &flipper_move_run_loop;
 }
 
 mframe_t flipper_frames_run_start [] =
@@ -104,7 +104,7 @@ mmove_t flipper_move_run_start = {FRAME_flpver01, FRAME_flpver06, flipper_frames
 
 void flipper_run (edict *self)
 {
-    self->monsterinfo.currentmove = &flipper_move_run_start;
+    self->monsterinfoVal.currentmove = &flipper_move_run_start;
 }
 
 /* Standard Swimming */
@@ -139,7 +139,7 @@ mmove_t flipper_move_walk = {FRAME_flphor01, FRAME_flphor24, flipper_frames_walk
 
 void flipper_walk (edict *self)
 {
-    self->monsterinfo.currentmove = &flipper_move_walk;
+    self->monsterinfoVal.currentmove = &flipper_move_walk;
 }
 
 mframe_t flipper_frames_start_run [] =
@@ -154,7 +154,7 @@ mmove_t flipper_move_start_run = {FRAME_flphor01, FRAME_flphor05, flipper_frames
 
 void flipper_start_run (edict *self)
 {
-    self->monsterinfo.currentmove = &flipper_move_start_run;
+    self->monsterinfoVal.currentmove = &flipper_move_start_run;
 }
 
 mframe_t flipper_frames_pain2 [] =
@@ -217,7 +217,7 @@ mmove_t flipper_move_attack = {FRAME_flpbit01, FRAME_flpbit20, flipper_frames_at
 
 void flipper_melee(edict *self)
 {
-    self->monsterinfo.currentmove = &flipper_move_attack;
+    self->monsterinfoVal.currentmove = &flipper_move_attack;
 }
 
 void flipper_pain (edict *self, edict *other, float kick, int damage)
@@ -239,12 +239,12 @@ void flipper_pain (edict *self, edict *other, float kick, int damage)
     if (n == 0)
     {
         quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain1, 1, ATTN_NORM, 0);
-        self->monsterinfo.currentmove = &flipper_move_pain1;
+        self->monsterinfoVal.currentmove = &flipper_move_pain1;
     }
     else
     {
         quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain2, 1, ATTN_NORM, 0);
-        self->monsterinfo.currentmove = &flipper_move_pain2;
+        self->monsterinfoVal.currentmove = &flipper_move_pain2;
     }
 }
 
@@ -353,7 +353,7 @@ void flipper_die (edict *self, edict *inflictor, edict *attacker, int damage, ve
     quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_death, 1, ATTN_NORM, 0);
     self->deadflag = DEAD_DEAD;
     self->takedamage = DAMAGE_YES;
-    self->monsterinfo.currentmove = &flipper_move_death;
+    self->monsterinfoVal.currentmove = &flipper_move_death;
 }
 
 /*QUAKED monster_flipper (1 .5 0) (-16 -16 -24) (16 16 32) Ambush Trigger_Spawn Sight
@@ -388,16 +388,16 @@ void SP_monster_flipper (edict *self)
     self->pain = flipper_pain;
     self->die = flipper_die;
 
-    self->monsterinfo.stand = flipper_stand;
-    self->monsterinfo.walk = flipper_walk;
-    self->monsterinfo.run = flipper_start_run;
-    self->monsterinfo.melee = flipper_melee;
-    self->monsterinfo.sight = flipper_sight;
+    self->monsterinfoVal.stand = flipper_stand;
+    self->monsterinfoVal.walk = flipper_walk;
+    self->monsterinfoVal.run = flipper_start_run;
+    self->monsterinfoVal.melee = flipper_melee;
+    self->monsterinfoVal.sight = flipper_sight;
 
     quake2::getInstance()->gi.linkentity (self);
 
-    self->monsterinfo.currentmove = &flipper_move_stand;
-    self->monsterinfo.scale = MODEL_SCALE;
+    self->monsterinfoVal.currentmove = &flipper_move_stand;
+    self->monsterinfoVal.scale = MODEL_SCALE;
 
     swimmonster_start (self);
 }

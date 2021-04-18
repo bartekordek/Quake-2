@@ -1,7 +1,4 @@
-#ifndef ____CLIENT_VID_H__
-#define ____CLIENT_VID_H__
-
-#include "shared/viddef.hpp"
+#pragma once
 
 /*
 Copyright (C) 1997-2001 Id Software, Inc.
@@ -20,18 +17,13 @@ See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-
 */
-// vid.h -- video driver defs
-extern    viddef_t    viddef;                // global video state
 
 // Video module initialisation etc
-void    VID_Init (void);
-void    VID_Shutdown (void);
-void    VID_CheckChanges (void);
+void VID_Init();
+void VID_Shutdown();
+void VID_CheckChanges();
 
-void    VID_MenuInit( void );
-void    VID_MenuDraw( void );
-const char *VID_MenuKey( int );
-
-#endif // ____CLIENT_VID_H__
+void VID_MenuInit();
+void VID_MenuDraw();
+const char* VID_MenuKey( int );

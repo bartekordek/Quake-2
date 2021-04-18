@@ -113,7 +113,7 @@ bool DDRAW_Init( unsigned char **ppbuffer, int *ppitch )
 //     */
 //     ri.Con_Printf( PRINT_ALL, "...finding display mode\n" );
 //     ri.Con_Printf( PRINT_ALL, "...setting linear mode: " );
-//     if ( ( ddrval = sww_state.lpDirectDraw->lpVtbl->SetDisplayMode( sww_state.lpDirectDraw, vid.width, vid.height, 8 ) ) == DD_OK )
+//     if ( ( ddrval = sww_state.lpDirectDraw->lpVtbl->SetDisplayMode( sww_state.lpDirectDraw, quake2::getInstance()->vid.width, quake2::getInstance()->vid.height, 8 ) ) == DD_OK )
 //     {
 //         ri.Con_Printf( PRINT_ALL, "ok\n" );
 //     }
@@ -146,7 +146,7 @@ bool DDRAW_Init( unsigned char **ppbuffer, int *ppitch )
 //         /*
 //         ** change our display mode
 //         */
-//         if ( ( ddrval = sww_state.lpDirectDraw->lpVtbl->SetDisplayMode( sww_state.lpDirectDraw, vid.width, vid.height, 8 ) ) != DD_OK )
+//         if ( ( ddrval = sww_state.lpDirectDraw->lpVtbl->SetDisplayMode( sww_state.lpDirectDraw, quake2::getInstance()->vid.width, quake2::getInstance()->vid.height, 8 ) ) != DD_OK )
 //         {
 //             ri.Con_Printf( PRINT_ALL, "failed SDM - %s\n", DDrawError( ddrval ) );
 //             goto fail;
@@ -204,8 +204,8 @@ bool DDRAW_Init( unsigned char **ppbuffer, int *ppitch )
 //     memset( &ddsd, 0, sizeof( ddsd ) );
 //     ddsd.dwSize = sizeof( ddsd );
 //     ddsd.dwFlags = DDSD_WIDTH | DDSD_HEIGHT | DDSD_CAPS;
-//     ddsd.dwHeight = vid.height;
-//     ddsd.dwWidth = vid.width;
+//     ddsd.dwHeight = quake2::getInstance()->vid.height;
+//     ddsd.dwWidth = quake2::getInstance()->vid.width;
 //     ddsd.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
 
 //     ri.Con_Printf( PRINT_ALL, "...creating offscreen buffer: " );
@@ -259,7 +259,7 @@ bool DDRAW_Init( unsigned char **ppbuffer, int *ppitch )
 //     *ppbuffer = ddsd.lpSurface;
 //     *ppitch   = ddsd.lPitch;
 
-//     for ( i = 0; i < vid.height; i++ )
+//     for ( i = 0; i < quake2::getInstance()->vid.height; i++ )
 //     {
 //         memset( *ppbuffer + i * *ppitch, 0, *ppitch );
 //     }
@@ -320,7 +320,7 @@ void DDRAW_Shutdown( void )
     // if ( sww_state.lpddsOffScreenBuffer )
     // {
     //     ri.Con_Printf( PRINT_ALL, "...releasing offscreen buffer\n");
-    //     sww_state.lpddsOffScreenBuffer->lpVtbl->Unlock( sww_state.lpddsOffScreenBuffer, vid.buffer );
+    //     sww_state.lpddsOffScreenBuffer->lpVtbl->Unlock( sww_state.lpddsOffScreenBuffer, quake2::getInstance()->vid.buffer );
     //     sww_state.lpddsOffScreenBuffer->lpVtbl->Release( sww_state.lpddsOffScreenBuffer );
     //     sww_state.lpddsOffScreenBuffer = NULL;
     // }

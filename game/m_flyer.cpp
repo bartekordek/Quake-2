@@ -218,20 +218,20 @@ mmove_t    flyer_move_run = {FRAME_stand01, FRAME_stand45, flyer_frames_run, NUL
 
 void flyer_run (edict *self)
 {
-    if (self->monsterinfo.aiflags & AI_STAND_GROUND)
-        self->monsterinfo.currentmove = &flyer_move_stand;
+    if (self->monsterinfoVal.aiflags & AI_STAND_GROUND)
+        self->monsterinfoVal.currentmove = &flyer_move_stand;
     else
-        self->monsterinfo.currentmove = &flyer_move_run;
+        self->monsterinfoVal.currentmove = &flyer_move_run;
 }
 
 void flyer_walk (edict *self)
 {
-    self->monsterinfo.currentmove = &flyer_move_walk;
+    self->monsterinfoVal.currentmove = &flyer_move_walk;
 }
 
 void flyer_stand (edict *self)
 {
-        self->monsterinfo.currentmove = &flyer_move_stand;
+        self->monsterinfoVal.currentmove = &flyer_move_stand;
 }
 
 mframe_t flyer_frames_start [] =
@@ -259,12 +259,12 @@ mmove_t flyer_move_stop = {FRAME_stop01, FRAME_stop07, flyer_frames_stop, NULL};
 
 void flyer_stop (edict *self)
 {
-        self->monsterinfo.currentmove = &flyer_move_stop;
+        self->monsterinfoVal.currentmove = &flyer_move_stop;
 }
 
 void flyer_start (edict *self)
 {
-        self->monsterinfo.currentmove = &flyer_move_start;
+        self->monsterinfoVal.currentmove = &flyer_move_start;
 }
 
 
@@ -479,9 +479,9 @@ mmove_t flyer_move_loop_melee = {FRAME_attak107, FRAME_attak118, flyer_frames_lo
 void flyer_loop_melee (edict *self)
 {
 /*    if (random() <= 0.5)
-        self->monsterinfo.currentmove = &flyer_move_attack1;
+        self->monsterinfoVal.currentmove = &flyer_move_attack1;
     else */
-    self->monsterinfo.currentmove = &flyer_move_loop_melee;
+    self->monsterinfoVal.currentmove = &flyer_move_loop_melee;
 }
 
 
@@ -489,43 +489,43 @@ void flyer_loop_melee (edict *self)
 void flyer_attack (edict *self)
 {
 /*    if (random() <= 0.5)
-        self->monsterinfo.currentmove = &flyer_move_attack1;
+        self->monsterinfoVal.currentmove = &flyer_move_attack1;
     else */
-    self->monsterinfo.currentmove = &flyer_move_attack2;
+    self->monsterinfoVal.currentmove = &flyer_move_attack2;
 }
 
 void flyer_setstart (edict *self)
 {
     nextmove = ACTION_run;
-    self->monsterinfo.currentmove = &flyer_move_start;
+    self->monsterinfoVal.currentmove = &flyer_move_start;
 }
 
 void flyer_nextmove (edict *self)
 {
     if (nextmove == ACTION_attack1)
-        self->monsterinfo.currentmove = &flyer_move_start_melee;
+        self->monsterinfoVal.currentmove = &flyer_move_start_melee;
     else if (nextmove == ACTION_attack2)
-        self->monsterinfo.currentmove = &flyer_move_attack2;
+        self->monsterinfoVal.currentmove = &flyer_move_attack2;
     else if (nextmove == ACTION_run)
-        self->monsterinfo.currentmove = &flyer_move_run;
+        self->monsterinfoVal.currentmove = &flyer_move_run;
 }
 
 void flyer_melee (edict *self)
 {
 //    flyer.nextmove = ACTION_attack1;
-//    self->monsterinfo.currentmove = &flyer_move_stop;
-    self->monsterinfo.currentmove = &flyer_move_start_melee;
+//    self->monsterinfoVal.currentmove = &flyer_move_stop;
+    self->monsterinfoVal.currentmove = &flyer_move_start_melee;
 }
 
 void flyer_check_melee(edict *self)
 {
     if (range (self, self->enemy) == RANGE_MELEE)
         if (random() <= 0.8)
-            self->monsterinfo.currentmove = &flyer_move_loop_melee;
+            self->monsterinfoVal.currentmove = &flyer_move_loop_melee;
         else
-            self->monsterinfo.currentmove = &flyer_move_end_melee;
+            self->monsterinfoVal.currentmove = &flyer_move_end_melee;
     else
-        self->monsterinfo.currentmove = &flyer_move_end_melee;
+        self->monsterinfoVal.currentmove = &flyer_move_end_melee;
 }
 
 void flyer_pain (edict *self, edict *other, float kick, int damage)
@@ -546,17 +546,17 @@ void flyer_pain (edict *self, edict *other, float kick, int damage)
     if (n == 0)
     {
         quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain1, 1, ATTN_NORM, 0);
-        self->monsterinfo.currentmove = &flyer_move_pain1;
+        self->monsterinfoVal.currentmove = &flyer_move_pain1;
     }
     else if (n == 1)
     {
         quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain2, 1, ATTN_NORM, 0);
-        self->monsterinfo.currentmove = &flyer_move_pain2;
+        self->monsterinfoVal.currentmove = &flyer_move_pain2;
     }
     else
     {
         quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain1, 1, ATTN_NORM, 0);
-        self->monsterinfo.currentmove = &flyer_move_pain3;
+        self->monsterinfoVal.currentmove = &flyer_move_pain3;
     }
 }
 
@@ -609,18 +609,18 @@ void SP_monster_flyer (edict *self)
     self->pain = flyer_pain;
     self->die = flyer_die;
 
-    self->monsterinfo.stand = flyer_stand;
-    self->monsterinfo.walk = flyer_walk;
-    self->monsterinfo.run = flyer_run;
-    self->monsterinfo.attack = flyer_attack;
-    self->monsterinfo.melee = flyer_melee;
-    self->monsterinfo.sight = flyer_sight;
-    self->monsterinfo.idle = flyer_idle;
+    self->monsterinfoVal.stand = flyer_stand;
+    self->monsterinfoVal.walk = flyer_walk;
+    self->monsterinfoVal.run = flyer_run;
+    self->monsterinfoVal.attack = flyer_attack;
+    self->monsterinfoVal.melee = flyer_melee;
+    self->monsterinfoVal.sight = flyer_sight;
+    self->monsterinfoVal.idle = flyer_idle;
 
     quake2::getInstance()->gi.linkentity (self);
 
-    self->monsterinfo.currentmove = &flyer_move_stand;
-    self->monsterinfo.scale = MODEL_SCALE;
+    self->monsterinfoVal.currentmove = &flyer_move_stand;
+    self->monsterinfoVal.scale = MODEL_SCALE;
 
     flymonster_start (self);
 }

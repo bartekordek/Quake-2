@@ -74,12 +74,12 @@ void ref_soft_Draw_Char( int x, int y, int num )
     if ( y <= -8 )
         return;  // totally off screen
 
-    //    if ( ( y + 8 ) >= vid.height )
-    if ( ( y + 8 ) > vid.height )  // PGM - status text was missing in sw...
+    //    if ( ( y + 8 ) >= quake2::getInstance()->vid.height )
+    if ( ( y + 8 ) > quake2::getInstance()->vid.height )  // PGM - status text was missing in sw...
         return;
 
 #ifdef PARANOID
-    if ( y > vid.height - 8 || x < 0 || x > vid.width - 8 )
+    if ( y > quake2::getInstance()->vid.height - 8 || x < 0 || x > quake2::getInstance()->vid.width - 8 )
         ri.Sys_Error( ERR_FATAL, "Con_DrawCharacter: (%i, %i)", x, y );
     if ( num < 0 || num > 255 )
         ri.Sys_Error( ERR_FATAL, "Con_DrawCharacter: char %i", num );
@@ -99,7 +99,7 @@ void ref_soft_Draw_Char( int x, int y, int num )
     else
         drawline = 8;
 
-    dest = vid.buffer + y * vid.rowbytes + x;
+    dest = quake2::getInstance()->vid.buffer + y * quake2::getInstance()->vid.rowbytes + x;
 
     while ( drawline-- )
     {
@@ -120,7 +120,7 @@ void ref_soft_Draw_Char( int x, int y, int num )
         if ( source[7] != TRANSPARENT_COLOR )
             dest[7] = source[7];
         source += 128;
-        dest += vid.rowbytes;
+        dest += quake2::getInstance()->vid.rowbytes;
     }
 }
 
@@ -147,7 +147,7 @@ void ref_soft_Draw_StretchPicImplementation( int x, int y, int w, int h,
     int f, fstep;
     int skip;
 
-    if ( ( x < 0 ) || ( x + w > vid.width ) || ( y + h > vid.height ) )
+    if ( ( x < 0 ) || ( x + w > quake2::getInstance()->vid.width ) || ( y + h > quake2::getInstance()->vid.height ) )
     {
         ri.Sys_Error( ERR_FATAL, "Draw_Pic: bad coordinates" );
     }
@@ -162,9 +162,9 @@ void ref_soft_Draw_StretchPicImplementation( int x, int y, int w, int h,
     else
         skip = 0;
 
-    dest = vid.buffer + y * vid.rowbytes + x;
+    dest = quake2::getInstance()->vid.buffer + y * quake2::getInstance()->vid.rowbytes + x;
 
-    for ( v = 0; v < height; v++, dest += vid.rowbytes )
+    for ( v = 0; v < height; v++, dest += quake2::getInstance()->vid.rowbytes )
     {
         sv = ( skip + v ) * pic->height / h;
         source = pic->pixels[0] + sv * pic->width;
@@ -238,8 +238,8 @@ void ref_soft_Draw_Pic( int x, int y, char* name )
         return;
     }
 
-    if ( ( x < 0 ) || ( x + pic->width > vid.width ) ||
-         ( y + pic->height > vid.height ) )
+    if ( ( x < 0 ) || ( x + pic->width > quake2::getInstance()->vid.width ) ||
+         ( y + pic->height > quake2::getInstance()->vid.height ) )
         return;  //    ri.Sys_Error (ERR_FATAL,"Draw_Pic: bad coordinates");
 
     height = pic->height;
@@ -251,14 +251,14 @@ void ref_soft_Draw_Pic( int x, int y, char* name )
         y = 0;
     }
 
-    dest = vid.buffer + y * vid.rowbytes + x;
+    dest = quake2::getInstance()->vid.buffer + y * quake2::getInstance()->vid.rowbytes + x;
 
     if ( !pic->transparent )
     {
         for ( v = 0; v < height; v++ )
         {
             memcpy( dest, source, pic->width );
-            dest += vid.rowbytes;
+            dest += quake2::getInstance()->vid.rowbytes;
             source += pic->width;
         }
     }
@@ -272,7 +272,7 @@ void ref_soft_Draw_Pic( int x, int y, char* name )
                     if ( ( tbyte = source[u] ) != TRANSPARENT_COLOR )
                         dest[u] = tbyte;
 
-                dest += vid.rowbytes;
+                dest += quake2::getInstance()->vid.rowbytes;
                 source += pic->width;
             }
         }
@@ -299,7 +299,7 @@ void ref_soft_Draw_Pic( int x, int y, char* name )
                     if ( ( tbyte = source[u + 7] ) != TRANSPARENT_COLOR )
                         dest[u + 7] = tbyte;
                 }
-                dest += vid.rowbytes;
+                dest += quake2::getInstance()->vid.rowbytes;
                 source += pic->width;
             }
         }
@@ -332,10 +332,10 @@ void ref_soft_Draw_TileClear( int x, int y, int w, int h, char* name )
         h += y;
         y = 0;
     }
-    if ( x + w > vid.width )
-        w = vid.width - x;
-    if ( y + h > vid.height )
-        h = vid.height - y;
+    if ( x + w > quake2::getInstance()->vid.width )
+        w = quake2::getInstance()->vid.width - x;
+    if ( y + h > quake2::getInstance()->vid.height )
+        h = quake2::getInstance()->vid.height - y;
     if ( w <= 0 || h <= 0 )
         return;
 
@@ -346,8 +346,8 @@ void ref_soft_Draw_TileClear( int x, int y, int w, int h, char* name )
         return;
     }
     x2 = x + w;
-    pdest = vid.buffer + y * vid.rowbytes;
-    for ( i = 0; i < h; i++, pdest += vid.rowbytes )
+    pdest = quake2::getInstance()->vid.buffer + y * quake2::getInstance()->vid.rowbytes;
+    for ( i = 0; i < h; i++, pdest += quake2::getInstance()->vid.rowbytes )
     {
         psrc = pic->pixels[0] + pic->width * ( ( i + y ) & 63 );
         for ( j = x; j < x2; j++ ) pdest[j] = psrc[j & 63];
@@ -362,10 +362,10 @@ void ref_soft_Draw_Fill( int x, int y, int w, int h, int c )
     byte* dest;
     int u, v;
 
-    if ( x + w > vid.width )
-        w = vid.width - x;
-    if ( y + h > vid.height )
-        h = vid.height - y;
+    if ( x + w > quake2::getInstance()->vid.width )
+        w = quake2::getInstance()->vid.width - x;
+    if ( y + h > quake2::getInstance()->vid.height )
+        h = quake2::getInstance()->vid.height - y;
     if ( x < 0 )
     {
         w += x;
@@ -378,8 +378,8 @@ void ref_soft_Draw_Fill( int x, int y, int w, int h, int c )
     }
     if ( w < 0 || h < 0 )
         return;
-    dest = vid.buffer + y * vid.rowbytes + x;
-    for ( v = 0; v < h; v++, dest += vid.rowbytes )
+    dest = quake2::getInstance()->vid.buffer + y * quake2::getInstance()->vid.rowbytes + x;
+    for ( v = 0; v < h; v++, dest += quake2::getInstance()->vid.rowbytes )
         for ( u = 0; u < w; u++ ) dest[u] = c;
 }
 //=============================================================================
@@ -396,12 +396,12 @@ void ref_soft_Draw_FadeScreen( void )
     byte* pbuf;
     int t;
 
-    for ( y = 0; y < vid.height; y++ )
+    for ( y = 0; y < quake2::getInstance()->vid.height; y++ )
     {
-        pbuf = (byte*)( vid.buffer + vid.rowbytes * y );
+        pbuf = (byte*)( quake2::getInstance()->vid.buffer + quake2::getInstance()->vid.rowbytes * y );
         t = ( y & 1 ) << 1;
 
-        for ( x = 0; x < vid.width; x++ )
+        for ( x = 0; x < quake2::getInstance()->vid.width; x++ )
         {
             if ( ( x & 3 ) != t )
                 pbuf[x] = 0;

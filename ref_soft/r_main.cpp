@@ -23,7 +23,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "shared/shared_functions.hpp"
 #include "win32/q_shwin.hpp"
 
-viddef_t vid;
 refimport_t ri;
 
 unsigned d_8to24table[256];
@@ -52,8 +51,6 @@ int r_numallocatededges;
 float r_aliasuvscale = 1.0;
 int r_outofsurfaces;
 int r_outofedges;
-
-bool r_dowarp;
 
 mvertex_t* r_pcurrentvertbase;
 
@@ -87,19 +84,6 @@ float xOrigin, yOrigin;
 
 plane_s screenedge[4];
 
-//
-// refresh flags
-//
-int r_framecount = 1;  // so frame counts initialized to 0 don't match
-int r_visframecount;
-int d_spanpixcount;
-int r_polycount;
-int r_drawnpolycount;
-int r_wholepolycount;
-
-int* pfrustum_indexes[4];
-int r_frustum_indexes[4 * 6];
-
 mleaf_t* r_viewleaf;
 int r_viewcluster, r_oldviewcluster;
 
@@ -110,38 +94,6 @@ float da_time1, da_time2, dp_time1, dp_time2, db_time1, db_time2, rw_time1,
 float se_time1, se_time2, de_time1, de_time2;
 
 void ref_soft_R_MarkLeaves( void );
-
-cvar* r_lefthand;
-cvar* sw_aliasstats;
-cvar* sw_allow_modex;
-cvar* sw_clearcolor;
-cvar* sw_drawflat;
-cvar* sw_draworder;
-cvar* sw_maxedges;
-cvar* sw_maxsurfs;
-cvar* sw_mode;
-cvar* sw_reportedgeout;
-cvar* sw_reportsurfout;
-cvar* sw_stipplealpha;
-cvar* sw_surfcacheoverride;
-cvar* sw_waterwarp;
-
-cvar* r_drawworld;
-cvar* r_drawentities;
-cvar* r_dspeeds;
-cvar* r_fullbright;
-cvar* r_lerpmodels;
-cvar* r_novis;
-
-cvar* r_speeds;
-cvar* r_lightlevel;  // FIXME HACK
-
-cvar* vid_fullscreen;
-cvar* vid_gamma;
-
-// PGM
-cvar* sw_lockpvs;
-// PGM
 
 #define STRINGER( x ) "x"
 
@@ -239,31 +191,42 @@ void ref_soft_R_ImageList_f( void );
 
 void ref_soft_R_Register( void )
 {
-    sw_aliasstats = ri.Cvar_Get( "sw_polymodelstats", "0", 0 );
-    sw_allow_modex = ri.Cvar_Get( "sw_allow_modex", "1", CVAR_ARCHIVE );
-    sw_clearcolor = ri.Cvar_Get( "sw_clearcolor", "2", 0 );
-    sw_drawflat = ri.Cvar_Get( "sw_drawflat", "0", 0 );
-    sw_draworder = ri.Cvar_Get( "sw_draworder", "0", 0 );
-    sw_maxedges = ri.Cvar_Get( "sw_maxedges", STRINGER( MAXSTACKSURFACES ), 0 );
-    sw_maxsurfs = ri.Cvar_Get( "sw_maxsurfs", "0", 0 );
-    sw_mipcap = ri.Cvar_Get( "sw_mipcap", "0", 0 );
-    sw_mipscale = ri.Cvar_Get( "sw_mipscale", "1", 0 );
-    sw_reportedgeout = ri.Cvar_Get( "sw_reportedgeout", "0", 0 );
-    sw_reportsurfout = ri.Cvar_Get( "sw_reportsurfout", "0", 0 );
-    sw_stipplealpha = ri.Cvar_Get( "sw_stipplealpha", "0", CVAR_ARCHIVE );
-    sw_surfcacheoverride = ri.Cvar_Get( "sw_surfcacheoverride", "0", 0 );
-    sw_waterwarp = ri.Cvar_Get( "sw_waterwarp", "1", 0 );
-    sw_mode = ri.Cvar_Get( "sw_mode", "0", CVAR_ARCHIVE );
+    quake2::getInstance()->sw_aliasstats =
+        ri.Cvar_Get( "sw_polymodelstats", "0", 0 );
+    quake2::getInstance()->sw_allow_modex =
+        ri.Cvar_Get( "sw_allow_modex", "1", CVAR_ARCHIVE );
+    quake2::getInstance()->sw_clearcolor =
+        ri.Cvar_Get( "sw_clearcolor", "2", 0 );
+    quake2::getInstance()->sw_drawflat = ri.Cvar_Get( "sw_drawflat", "0", 0 );
+    quake2::getInstance()->sw_draworder = ri.Cvar_Get( "sw_draworder", "0", 0 );
+    quake2::getInstance()->sw_maxedges =
+        ri.Cvar_Get( "sw_maxedges", STRINGER( MAXSTACKSURFACES ), 0 );
+    quake2::getInstance()->sw_maxsurfs = ri.Cvar_Get( "sw_maxsurfs", "0", 0 );
+    quake2::getInstance()->sw_mipcap = ri.Cvar_Get( "sw_mipcap", "0", 0 );
+    quake2::getInstance()->sw_mipscale = ri.Cvar_Get( "sw_mipscale", "1", 0 );
+    quake2::getInstance()->sw_reportedgeout =
+        ri.Cvar_Get( "sw_reportedgeout", "0", 0 );
+    quake2::getInstance()->sw_reportsurfout =
+        ri.Cvar_Get( "sw_reportsurfout", "0", 0 );
+    quake2::getInstance()->sw_stipplealpha =
+        ri.Cvar_Get( "sw_stipplealpha", "0", CVAR_ARCHIVE );
+    quake2::getInstance()->sw_surfcacheoverride =
+        ri.Cvar_Get( "sw_surfcacheoverride", "0", 0 );
+    quake2::getInstance()->sw_waterwarp = ri.Cvar_Get( "sw_waterwarp", "1", 0 );
+    quake2::getInstance()->sw_mode =
+        ri.Cvar_Get( "sw_mode", "0", CVAR_ARCHIVE );
 
-    r_lefthand = ri.Cvar_Get( "hand", "0", CVAR_USERINFO | CVAR_ARCHIVE );
-    r_speeds = ri.Cvar_Get( "r_speeds", "0", 0 );
-    r_fullbright = ri.Cvar_Get( "r_fullbright", "0", 0 );
-    r_drawentities = ri.Cvar_Get( "r_drawentities", "1", 0 );
-    r_drawworld = ri.Cvar_Get( "r_drawworld", "1", 0 );
-    r_dspeeds = ri.Cvar_Get( "r_dspeeds", "0", 0 );
-    r_lightlevel = ri.Cvar_Get( "r_lightlevel", "0", 0 );
-    r_lerpmodels = ri.Cvar_Get( "r_lerpmodels", "1", 0 );
-    r_novis = ri.Cvar_Get( "r_novis", "0", 0 );
+    quake2::getInstance()->r_lefthand =
+        ri.Cvar_Get( "hand", "0", CVAR_USERINFO | CVAR_ARCHIVE );
+    quake2::getInstance()->r_speeds = ri.Cvar_Get( "r_speeds", "0", 0 );
+    quake2::getInstance()->r_fullbright = ri.Cvar_Get( "r_fullbright", "0", 0 );
+    quake2::getInstance()->r_drawentities =
+        ri.Cvar_Get( "r_drawentities", "1", 0 );
+    quake2::getInstance()->r_drawworld = ri.Cvar_Get( "r_drawworld", "1", 0 );
+    quake2::getInstance()->r_dspeeds = ri.Cvar_Get( "r_dspeeds", "0", 0 );
+    quake2::getInstance()->r_lightlevel = ri.Cvar_Get( "r_lightlevel", "0", 0 );
+    quake2::getInstance()->r_lerpmodels = ri.Cvar_Get( "r_lerpmodels", "1", 0 );
+    quake2::getInstance()->r_novis = ri.Cvar_Get( "r_novis", "0", 0 );
 
     vid_fullscreen = ri.Cvar_Get( "vid_fullscreen", "0", CVAR_ARCHIVE );
     vid_gamma = ri.Cvar_Get( "vid_gamma", "1.0", CVAR_ARCHIVE );
@@ -276,7 +239,7 @@ void ref_soft_R_Register( void )
     vid_gamma->modified = true;  // force us to rebuild the gamma table later
 
     // PGM
-    sw_lockpvs = ri.Cvar_Get( "sw_lockpvs", "0", 0 );
+    quake2::getInstance()->sw_lockpvs = ri.Cvar_Get( "sw_lockpvs", "0", 0 );
     // PGM
 }
 
@@ -289,6 +252,8 @@ void ref_soft_R_UnRegister( void )
 
 int ref_soft_R_Init( void* hInstance, void* wndProc )
 {
+    auto& view_clipplanes = quake2::getInstance()->view_clipplanes;
+
     ref_soft_R_InitImages();
     ref_soft_Mod_Init();
     ref_soft_Draw_InitLocal();
@@ -344,10 +309,10 @@ void ref_soft_R_Shutdown( void )
     }
 
     // free colormap
-    if ( vid.colormap )
+    if ( quake2::getInstance()->vid.colormap )
     {
-        free( vid.colormap );
-        vid.colormap = NULL;
+        free( quake2::getInstance()->vid.colormap );
+        quake2::getInstance()->vid.colormap = NULL;
     }
     ref_soft_R_UnRegister();
     ref_soft_Mod_FreeAll();
@@ -360,7 +325,7 @@ void ref_soft_R_NewMap( void )
 {
     r_viewcluster = -1;
 
-    r_cnumsurfs = sw_maxsurfs->value;
+    r_cnumsurfs = quake2::getInstance()->sw_maxsurfs->value;
 
     if ( r_cnumsurfs <= MINSURFACES )
         r_cnumsurfs = MINSURFACES;
@@ -384,7 +349,7 @@ void ref_soft_R_NewMap( void )
     r_maxedgesseen = 0;
     r_maxsurfsseen = 0;
 
-    r_numallocatededges = sw_maxedges->value;
+    r_numallocatededges = quake2::getInstance()->sw_maxedges->value;
 
     if ( r_numallocatededges < MINEDGES )
         r_numallocatededges = MINEDGES;
@@ -411,19 +376,19 @@ void ref_soft_R_MarkLeaves( void )
     mleaf_t* leaf;
     int cluster;
 
-    if ( r_oldviewcluster == r_viewcluster && !r_novis->value &&
-         r_viewcluster != -1 )
+    if ( r_oldviewcluster == r_viewcluster && !quake2::getInstance()->r_novis->value &&
+         quake2::getInstance()->r_viewcluster != -1 )
         return;
 
     // development aid to let you run around and see exactly where
     // the pvs ends
-    if ( sw_lockpvs->value )
+    if ( quake2::getInstance()->sw_lockpvs->value )
         return;
 
     r_visframecount++;
     r_oldviewcluster = r_viewcluster;
 
-    if ( r_novis->value || r_viewcluster == -1 || !r_worldmodel->vis )
+    if ( quake2::getInstance()->r_novis->value || r_viewcluster == -1 || !r_worldmodel->vis )
     {
         // mark everything
         for ( i = 0; i < r_worldmodel->numleafs; i++ )
@@ -484,7 +449,7 @@ void ref_soft_R_DrawEntitiesOnList( void )
     int i;
     bool translucent_entities = false;
 
-    if ( !r_drawentities->value )
+    if ( !quake2::getInstance()->r_drawentities->value )
         return;
 
     // all bmodels have already been drawn by the edge list
@@ -500,9 +465,9 @@ void ref_soft_R_DrawEntitiesOnList( void )
 
         if ( quake2::getInstance()->currententity->flags & RF_BEAM )
         {
-            modelorg[0] = -r_origin[0];
-            modelorg[1] = -r_origin[1];
-            modelorg[2] = -r_origin[2];
+            modelorg[0] = -quake2::getInstance()->r_origin[0];
+            modelorg[1] = -quake2::getInstance()->r_origin[1];
+            modelorg[2] = -quake2::getInstance()->r_origin[2];
             VectorCopy( vec3_origin, r_entorigin );
             ref_soft_R_DrawBeam( quake2::getInstance()->currententity );
         }
@@ -516,7 +481,8 @@ void ref_soft_R_DrawEntitiesOnList( void )
             }
             VectorCopy( quake2::getInstance()->currententity->origin,
                         r_entorigin );
-            VectorSubtract( r_origin, r_entorigin, modelorg );
+            VectorSubtract( quake2::getInstance()->r_origin, r_entorigin,
+                            modelorg );
 
             switch ( currentmodel->type )
             {
@@ -546,9 +512,9 @@ void ref_soft_R_DrawEntitiesOnList( void )
 
         if ( quake2::getInstance()->currententity->flags & RF_BEAM )
         {
-            modelorg[0] = -r_origin[0];
-            modelorg[1] = -r_origin[1];
-            modelorg[2] = -r_origin[2];
+            modelorg[0] = -quake2::getInstance()->r_origin[0];
+            modelorg[1] = -quake2::getInstance()->r_origin[1];
+            modelorg[2] = -quake2::getInstance()->r_origin[2];
             VectorCopy( vec3_origin, r_entorigin );
             ref_soft_R_DrawBeam( quake2::getInstance()->currententity );
         }
@@ -562,7 +528,8 @@ void ref_soft_R_DrawEntitiesOnList( void )
             }
             VectorCopy( quake2::getInstance()->currententity->origin,
                         r_entorigin );
-            VectorSubtract( r_origin, r_entorigin, modelorg );
+            VectorSubtract( quake2::getInstance()->r_origin, r_entorigin,
+                            modelorg );
 
             switch ( currentmodel->type )
             {
@@ -600,14 +567,14 @@ int ref_soft_R_BmodelCheckBBox( float* minmaxs )
         // FIXME: do with fast look-ups or integer tests based on the sign bit
         // of the floating point values
 
-        pindex = pfrustum_indexes[i];
+        pindex = quake2::getInstance()->pfrustum_indexes[i];
 
         rejectpt[0] = minmaxs[pindex[0]];
         rejectpt[1] = minmaxs[pindex[1]];
         rejectpt[2] = minmaxs[pindex[2]];
 
-        d = DotProduct( rejectpt, view_clipplanes[i].normal );
-        d -= view_clipplanes[i].dist;
+        d = DotProduct( rejectpt, quake2::getInstance()->view_clipplanes[i].normal );
+        d -= quake2::getInstance()->view_clipplanes[i].dist;
 
         if ( d <= 0 )
             return BMODEL_FULLY_CLIPPED;
@@ -616,8 +583,8 @@ int ref_soft_R_BmodelCheckBBox( float* minmaxs )
         acceptpt[1] = minmaxs[pindex[3 + 1]];
         acceptpt[2] = minmaxs[pindex[3 + 2]];
 
-        d = DotProduct( acceptpt, view_clipplanes[i].normal );
-        d -= view_clipplanes[i].dist;
+        d = DotProduct( acceptpt, quake2::getInstance()->view_clipplanes[i].normal );
+        d -= quake2::getInstance()->view_clipplanes[i].dist;
 
         if ( d <= 0 )
             clipflags |= ( 1 << i );
@@ -732,12 +699,13 @@ void ref_soft_R_DrawBEntitiesOnList( void )
     float minmaxs[6];
     mnode_s* topnode;
 
-    if ( !r_drawentities->value )
+    if ( !quake2::getInstance()->r_drawentities->value )
         return;
 
     VectorCopy( modelorg, oldorigin );
     insubmodel = true;
-    quake2::getInstance()->r_dlightframecount = r_framecount;
+    quake2::getInstance()->r_dlightframecount =
+        quake2::getInstance()->r_framecount;
 
     for ( i = 0; i < r_newrefdef.num_entities; i++ )
     {
@@ -769,7 +737,8 @@ void ref_soft_R_DrawBEntitiesOnList( void )
             continue;  // no part in a visible leaf
 
         VectorCopy( quake2::getInstance()->currententity->origin, r_entorigin );
-        VectorSubtract( r_origin, r_entorigin, modelorg );
+        VectorSubtract( quake2::getInstance()->r_origin, r_entorigin,
+                        modelorg );
 
         r_pcurrentvertbase = currentmodel->vertexes;
 
@@ -796,9 +765,9 @@ void ref_soft_R_DrawBEntitiesOnList( void )
 
         // put back world rotation and frustum clipping
         // FIXME: ref_soft_R_RotateBmodel should just work off base_vxx
-        VectorCopy( base_vpn, vpn );
-        VectorCopy( base_vup, vup );
-        VectorCopy( base_vright, vright );
+        VectorCopy( base_vpn, quake2::getInstance()->vpn );
+        VectorCopy( base_vup, quake2::getInstance()->vup );
+        VectorCopy( base_vright, quake2::getInstance()->vright );
         VectorCopy( oldorigin, modelorg );
         ref_soft_R_TransformFrustum();
     }
@@ -808,6 +777,7 @@ void ref_soft_R_DrawBEntitiesOnList( void )
 
 void ref_soft_R_EdgeDrawing( void )
 {
+    auto& r_dspeeds = quake2::getInstance()->r_dspeeds;
     edge_t
         ledges[NUMSTACKEDGES + ( ( CACHE_SIZE - 1 ) / sizeof( edge_t ) ) + 1];
     surf_t lsurfs[NUMSTACKSURFACES + ( ( CACHE_SIZE - 1 ) / sizeof( surf_t ) ) +
@@ -920,7 +890,7 @@ void ref_soft_R_SetLightLevel( void )
     vec3_t light;
 
     if ( ( r_newrefdef.rdflags & RDF_NOWORLDMODEL ) ||
-         ( !r_drawentities->value ) ||
+         ( !quake2::getInstance()->r_drawentities->value ) ||
          ( !quake2::getInstance()->currententity ) )
     {
         r_lightlevel->value = 150.0;
@@ -932,12 +902,6 @@ void ref_soft_R_SetLightLevel( void )
     r_lightlevel->value = 150.0 * light[0];
 }
 
-/*
-@@@@@@@@@@@@@@@@
-R_RenderFrame
-
-@@@@@@@@@@@@@@@@
-*/
 void ref_soft_R_RenderFrame( refdef_t* fd )
 {
     r_newrefdef = *fd;
@@ -948,7 +912,7 @@ void ref_soft_R_RenderFrame( refdef_t* fd )
     VectorCopy( fd->vieworg, r_refdef.vieworg );
     VectorCopy( fd->viewangles, r_refdef.viewangles );
 
-    if ( r_speeds->value || r_dspeeds->value )
+    if ( quake2::getInstance()->r_speeds->value || quake2::getInstance()->r_dspeeds->value )
         r_time1 = win32_Sys_Milliseconds();
 
     ref_soft_R_SetupFrame();
@@ -959,7 +923,7 @@ void ref_soft_R_RenderFrame( refdef_t* fd )
 
     ref_soft_R_EdgeDrawing();
 
-    if ( r_dspeeds->value )
+    if ( quake2::getInstance()->r_dspeeds->value )
     {
         se_time2 = win32_Sys_Milliseconds();
         de_time1 = se_time2;
@@ -967,7 +931,7 @@ void ref_soft_R_RenderFrame( refdef_t* fd )
 
     ref_soft_R_DrawEntitiesOnList();
 
-    if ( r_dspeeds->value )
+    if ( quake2::getInstance()->r_dspeeds->value )
     {
         de_time2 = win32_Sys_Milliseconds();
         dp_time1 = win32_Sys_Milliseconds();
@@ -975,37 +939,37 @@ void ref_soft_R_RenderFrame( refdef_t* fd )
 
     ref_soft_R_DrawParticles();
 
-    if ( r_dspeeds->value )
+    if ( quake2::getInstance()->r_dspeeds->value )
         dp_time2 = win32_Sys_Milliseconds();
 
     ref_soft_R_DrawAlphaSurfaces();
 
     ref_soft_R_SetLightLevel();
 
-    if ( r_dowarp )
+    if ( quake2::getInstance()->r_dowarp )
         ref_soft_D_WarpScreen();
 
-    if ( r_dspeeds->value )
+    if ( quake2::getInstance()->r_dspeeds->value )
         da_time1 = win32_Sys_Milliseconds();
 
-    if ( r_dspeeds->value )
+    if ( quake2::getInstance()->r_dspeeds->value )
         da_time2 = win32_Sys_Milliseconds();
 
     ref_soft_R_CalcPalette();
 
-    if ( sw_aliasstats->value )
+    if ( quake2::getInstance()->sw_aliasstats->value )
         ref_soft_R_PrintAliasStats();
 
-    if ( r_speeds->value )
+    if ( quake2::getInstance()->r_speeds->value )
         ref_soft_R_PrintTimes();
 
-    if ( r_dspeeds->value )
+    if ( quake2::getInstance()->r_dspeeds->value )
         ref_soft_R_PrintDSpeeds();
 
-    if ( sw_reportsurfout->value && r_outofsurfaces )
+    if ( quake2::getInstance()->sw_reportsurfout->value && r_outofsurfaces )
         ri.Con_Printf( PRINT_ALL, "Short %d surfaces\n", r_outofsurfaces );
 
-    if ( sw_reportedgeout->value && r_outofedges )
+    if ( quake2::getInstance()->sw_reportedgeout->value && r_outofedges )
         ri.Con_Printf( PRINT_ALL, "Short roughly %d edges\n",
                        r_outofedges * 2 / 3 );
 }
@@ -1015,8 +979,8 @@ void ref_soft_R_RenderFrame( refdef_t* fd )
 */
 void ref_soft_R_InitGraphics( int width, int height )
 {
-    vid.width = width;
-    vid.height = height;
+    quake2::getInstance()->vid.width = width;
+    quake2::getInstance()->vid.height = height;
 
     // free z buffer
     if ( d_pzbuffer )
@@ -1033,7 +997,8 @@ void ref_soft_R_InitGraphics( int width, int height )
         sc_base = NULL;
     }
 
-    d_pzbuffer = (short*)malloc( vid.width * vid.height * 2 );
+    d_pzbuffer = (short*)malloc( quake2::getInstance()->vid.width *
+                                 quake2::getInstance()->vid.height * 2 );
 
     ref_soft_R_InitCaches();
 
@@ -1069,10 +1034,13 @@ void ref_soft_R_BeginFrame( float camera_separation )
          * * fullscreen mode, e.g. 320x200 on a system that doesn't support that
          * res
          */
-        if ( ( err = SWimp_SetMode( &vid.width, &vid.height, sw_mode->value,
-                                    vid_fullscreen->value ) ) == rserr_ok )
+        if ( ( err = SWimp_SetMode( &quake2::getInstance()->vid.width,
+                                    &quake2::getInstance()->vid.height,
+                                    sw_mode->value, vid_fullscreen->value ) ) ==
+             rserr_ok )
         {
-            ref_soft_R_InitGraphics( vid.width, vid.height );
+            ref_soft_R_InitGraphics( quake2::getInstance()->vid.width,
+                                     quake2::getInstance()->vid.height );
 
             sw_state.prev_mode = sw_mode->value;
             vid_fullscreen->modified = false;
@@ -1089,7 +1057,8 @@ void ref_soft_R_BeginFrame( float camera_separation )
             }
             else if ( err == rserr_invalid_fullscreen )
             {
-                ref_soft_R_InitGraphics( vid.width, vid.height );
+                ref_soft_R_InitGraphics( quake2::getInstance()->vid.width,
+                                         quake2::getInstance()->vid.height );
 
                 ri.Cvar_SetValue( "vid_fullscreen", 0 );
                 ri.Con_Printf( PRINT_ALL,
@@ -1139,10 +1108,12 @@ void ref_soft_R_CinematicSetPalette( const unsigned char* palette )
     int* d;
 
     // clear screen to black to avoid any palette flash
-    w = abs( vid.rowbytes ) >> 2;  // stupid negative pitch win32 stuff...
-    for ( i = 0; i < vid.height; i++, d += w )
+    w = abs( quake2::getInstance()->vid.rowbytes ) >>
+        2;  // stupid negative pitch win32 stuff...
+    for ( i = 0; i < quake2::getInstance()->vid.height; i++, d += w )
     {
-        d = (int*)( vid.buffer + i * vid.rowbytes );
+        d = (int*)( quake2::getInstance()->vid.buffer +
+                    i * quake2::getInstance()->vid.rowbytes );
         for ( j = 0; j < w; j++ ) d[j] = 0;
     }
     // flush it to the screen

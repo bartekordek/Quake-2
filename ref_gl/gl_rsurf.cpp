@@ -319,7 +319,7 @@ void ref_gl_R_BlendLightmaps( void )
     msurface_t *surf, *newdrawsurf = 0;
 
     // don't bother if we're set to fullbright
-    if ( r_fullbright->value )
+    if ( quake2::getInstance()->r_fullbright->value )
         return;
     if ( !r_worldmodel->lightdata )
         return;
@@ -536,7 +536,7 @@ void ref_gl_R_RenderBrushPoly( msurface_t* fa )
     }
 
     // dynamic this frame or dynamic previously
-    if ( ( fa->dlightframe == r_framecount ) )
+    if ( ( fa->dlightframe == quake2::getInstance()->r_framecount ) )
     {
     dynamic:
         if ( gl_dynamic->value )
@@ -552,7 +552,7 @@ void ref_gl_R_RenderBrushPoly( msurface_t* fa )
     if ( is_dynamic )
     {
         if ( ( fa->styles[maps] >= 32 || fa->styles[maps] == 0 ) &&
-             ( fa->dlightframe != r_framecount ) )
+             ( fa->dlightframe != quake2::getInstance()->r_framecount ) )
         {
             unsigned temp[34 * 34];
             int smax, tmax;
@@ -725,7 +725,7 @@ static void GL_RenderLightmappedPoly( msurface_t* surf )
     }
 
     // dynamic this frame or dynamic previously
-    if ( ( surf->dlightframe == r_framecount ) )
+    if ( ( surf->dlightframe == quake2::getInstance()->r_framecount ) )
     {
     dynamic:
         if ( gl_dynamic->value )
@@ -744,7 +744,7 @@ static void GL_RenderLightmappedPoly( msurface_t* surf )
         int smax, tmax;
 
         if ( ( surf->styles[map] >= 32 || surf->styles[map] == 0 ) &&
-             ( surf->dlightframe != r_framecount ) )
+             ( surf->dlightframe != quake2::getInstance()->r_framecount ) )
         {
             smax = ( surf->extents[0] >> 4 ) + 1;
             tmax = ( surf->extents[1] >> 4 ) + 1;
@@ -1068,7 +1068,7 @@ void ref_gl_R_RecursiveWorldNode( mnode_s* node )
         {
             do
             {
-                ( *mark )->visframe = r_framecount;
+                ( *mark )->visframe = quake2::getInstance()->r_framecount;
                 mark++;
             } while ( --c );
         }
@@ -1116,7 +1116,7 @@ void ref_gl_R_RecursiveWorldNode( mnode_s* node )
           surf = r_worldmodel->surfaces + node->firstsurface;
           c; c--, surf++ )
     {
-        if ( surf->visframe != r_framecount )
+        if ( surf->visframe != quake2::getInstance()->r_framecount )
             continue;
 
         if ( ( surf->flags & SURF_PLANEBACK ) != sidebit )
@@ -1198,7 +1198,7 @@ void ref_gl_R_DrawWorld( void )
 {
     entity_s ent;
 
-    if ( !r_drawworld->value )
+    if ( !quake2::getInstance()->r_drawworld->value )
         return;
 
     if ( r_newrefdef.rdflags & RDF_NOWORLDMODEL )
@@ -1259,6 +1259,12 @@ cluster
 */
 void ref_gl_R_MarkLeaves( void )
 {
+    auto& r_novis = quake2::getInstance()->r_novis;
+    auto& r_oldviewcluster = quake2::getInstance()->r_oldviewcluster;
+    auto& r_oldviewcluster2 = quake2::getInstance()->r_oldviewcluster2;
+    auto& r_viewcluster = quake2::getInstance()->r_viewcluster;
+    auto& r_viewcluster2 = quake2::getInstance()->r_viewcluster2;
+    auto& r_visframecount = quake2::getInstance()->r_visframecount;
     byte* vis;
     byte fatvis[MAX_MAP_LEAFS / 8];
     mnode_s* node;
@@ -1276,7 +1282,7 @@ void ref_gl_R_MarkLeaves( void )
     if ( gl_lockpvs->value )
         return;
 
-    r_visframecount++;
+    ++r_visframecount;
     r_oldviewcluster = r_viewcluster;
     r_oldviewcluster2 = r_viewcluster2;
 
@@ -1556,7 +1562,7 @@ void GL_BeginBuildingLightmaps( model_t* m )
 
     memset( gl_lms.allocated, 0, sizeof( gl_lms.allocated ) );
 
-    r_framecount = 1;  // no dlightcache
+    quake2::getInstance()->r_framecount = 1;  // no dlightcache
 
     ref_gl_GL_EnableMultitexture( true );
     GL_SelectTexture( GL_TEXTURE1_SGIS );

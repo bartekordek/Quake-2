@@ -368,7 +368,7 @@ void SV_InitGame( void )
     {
         ent = Edict_num( i + 1 );
         ent->s.number = i + 1;
-        svs.clients[i].edict = ent;
+        svs.clients[i].edictVal = ent;
         memset( &svs.clients[i].lastcmd, 0, sizeof( svs.clients[i].lastcmd ) );
     }
 }

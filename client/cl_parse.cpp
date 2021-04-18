@@ -185,7 +185,10 @@ void CL_RegisterSounds (void)
         if (!cl.configstrings[CS_SOUNDS+i][0])
             break;
         cl.sound_precache[i] = S_RegisterSound (cl.configstrings[CS_SOUNDS+i]);
+        #ifdef _WIN32
+        //TODO:
         win32_Sys_SendKeyEvents ();    // pump message loop
+        #endif
     }
     S_EndRegistration ();
 }

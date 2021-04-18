@@ -31,7 +31,7 @@ int Draw_SetResolution (void);
 int	resolutions[NUM_RESOLUTIONS][2] = {
 	{320,200}, {320,240}, {400,300}, {512,384}, {640,480}, {800,600}, {1024,768} };
 
-qboolean	available[NUM_RESOLUTIONS][3];
+bool	available[NUM_RESOLUTIONS][3];
 int			mode_res = 0, mode_type = TYPE_WINDOWED;
 
 byte		gammatable[256];	// palette is sent through this

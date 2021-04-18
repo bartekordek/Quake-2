@@ -133,7 +133,7 @@ mmove_t    supertank_move_stand = {FRAME_stand_1, FRAME_stand_60, supertank_fram
 
 void supertank_stand (edict *self)
 {
-    self->monsterinfo.currentmove = &supertank_move_stand;
+    self->monsterinfoVal.currentmove = &supertank_move_stand;
 }
 
 
@@ -190,20 +190,20 @@ mmove_t    supertank_move_forward = {FRAME_forwrd_1, FRAME_forwrd_18, supertank_
 
 void supertank_forward (edict *self)
 {
-        self->monsterinfo.currentmove = &supertank_move_forward;
+        self->monsterinfoVal.currentmove = &supertank_move_forward;
 }
 
 void supertank_walk (edict *self)
 {
-        self->monsterinfo.currentmove = &supertank_move_forward;
+        self->monsterinfoVal.currentmove = &supertank_move_forward;
 }
 
 void supertank_run (edict *self)
 {
-    if (self->monsterinfo.aiflags & AI_STAND_GROUND)
-        self->monsterinfo.currentmove = &supertank_move_stand;
+    if (self->monsterinfoVal.aiflags & AI_STAND_GROUND)
+        self->monsterinfoVal.currentmove = &supertank_move_stand;
     else
-        self->monsterinfo.currentmove = &supertank_move_run;
+        self->monsterinfoVal.currentmove = &supertank_move_run;
 }
 
 mframe_t supertank_frames_turn_right [] =
@@ -443,11 +443,11 @@ void supertank_reattack1(edict *self)
 {
     if (visible(self, self->enemy))
         if (random() < 0.9)
-            self->monsterinfo.currentmove = &supertank_move_attack1;
+            self->monsterinfoVal.currentmove = &supertank_move_attack1;
         else
-            self->monsterinfo.currentmove = &supertank_move_end_attack1;
+            self->monsterinfoVal.currentmove = &supertank_move_end_attack1;
     else
-        self->monsterinfo.currentmove = &supertank_move_end_attack1;
+        self->monsterinfoVal.currentmove = &supertank_move_end_attack1;
 }
 
 void supertank_pain (edict *self, edict *other, float kick, int damage)
@@ -477,17 +477,17 @@ void supertank_pain (edict *self, edict *other, float kick, int damage)
     if (damage <= 10)
     {
         quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain1, 1, ATTN_NORM,0);
-        self->monsterinfo.currentmove = &supertank_move_pain1;
+        self->monsterinfoVal.currentmove = &supertank_move_pain1;
     }
     else if (damage <= 25)
     {
         quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain3, 1, ATTN_NORM,0);
-        self->monsterinfo.currentmove = &supertank_move_pain2;
+        self->monsterinfoVal.currentmove = &supertank_move_pain2;
     }
     else
     {
         quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain2, 1, ATTN_NORM,0);
-        self->monsterinfo.currentmove = &supertank_move_pain3;
+        self->monsterinfoVal.currentmove = &supertank_move_pain3;
     }
 };
 
@@ -565,14 +565,14 @@ void supertank_attack(edict *self)
 
     if (range <= 160)
     {
-        self->monsterinfo.currentmove = &supertank_move_attack1;
+        self->monsterinfoVal.currentmove = &supertank_move_attack1;
     }
     else
     {    // fire rockets more often at distance
         if (random() < 0.3)
-            self->monsterinfo.currentmove = &supertank_move_attack1;
+            self->monsterinfoVal.currentmove = &supertank_move_attack1;
         else
-            self->monsterinfo.currentmove = &supertank_move_attack2;
+            self->monsterinfoVal.currentmove = &supertank_move_attack2;
     }
 }
 
@@ -661,7 +661,7 @@ void supertank_die (edict *self, edict *inflictor, edict *attacker, int damage, 
     self->deadflag = DEAD_DEAD;
     self->takedamage = DAMAGE_NO;
     self->count = 0;
-    self->monsterinfo.currentmove = &supertank_move_death;
+    self->monsterinfoVal.currentmove = &supertank_move_death;
 }
 
 //
@@ -700,19 +700,19 @@ void SP_monster_supertank (edict *self)
 
     self->pain = supertank_pain;
     self->die = supertank_die;
-    self->monsterinfo.stand = supertank_stand;
-    self->monsterinfo.walk = supertank_walk;
-    self->monsterinfo.run = supertank_run;
-    self->monsterinfo.dodge = NULL;
-    self->monsterinfo.attack = supertank_attack;
-    self->monsterinfo.search = supertank_search;
-    self->monsterinfo.melee = NULL;
-    self->monsterinfo.sight = NULL;
+    self->monsterinfoVal.stand = supertank_stand;
+    self->monsterinfoVal.walk = supertank_walk;
+    self->monsterinfoVal.run = supertank_run;
+    self->monsterinfoVal.dodge = NULL;
+    self->monsterinfoVal.attack = supertank_attack;
+    self->monsterinfoVal.search = supertank_search;
+    self->monsterinfoVal.melee = NULL;
+    self->monsterinfoVal.sight = NULL;
 
     quake2::getInstance()->gi.linkentity (self);
 
-    self->monsterinfo.currentmove = &supertank_move_stand;
-    self->monsterinfo.scale = MODEL_SCALE;
+    self->monsterinfoVal.currentmove = &supertank_move_stand;
+    self->monsterinfoVal.scale = MODEL_SCALE;
 
     walkmonster_start(self);
 }

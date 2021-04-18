@@ -114,7 +114,7 @@ void Killed( edict* targ, edict* inflictor, edict* attacker, int damage,
     {
         //        targ->svflags |= SVF_DEADMONSTER;    // now treat as a
         //        different content type
-        if ( !( targ->monsterinfo.aiflags & AI_GOOD_GUY ) )
+        if ( !( targ->monsterinfoVal.aiflags & AI_GOOD_GUY ) )
         {
             level.killed_monsters++;
             if ( coop->value && attacker->client )
@@ -213,8 +213,8 @@ static int CheckPowerArmor( edict* ent, vec3_t point, vec3_t normal, int damage,
     }
     else if ( ent->svflags & SVF_MONSTER )
     {
-        power_armor_type = ent->monsterinfo.power_armor_type;
-        power = ent->monsterinfo.power_armor_power;
+        power_armor_type = ent->monsterinfoVal.power_armor_type;
+        power = ent->monsterinfoVal.power_armor_power;
     }
     else
         return 0;
@@ -263,7 +263,7 @@ static int CheckPowerArmor( edict* ent, vec3_t point, vec3_t normal, int damage,
     if ( client )
         client->pers.inventory[index] -= power_used;
     else
-        ent->monsterinfo.power_armor_power -= power_used;
+        ent->monsterinfoVal.power_armor_power -= power_used;
     return save;
 }
 
@@ -320,10 +320,10 @@ void M_ReactToDamage( edict* targ, edict* attacker )
 
     // if we are a good guy monster and our attacker is a player
     // or another good guy, do not get mad at them
-    if ( targ->monsterinfo.aiflags & AI_GOOD_GUY )
+    if ( targ->monsterinfoVal.aiflags & AI_GOOD_GUY )
     {
         if ( attacker->client ||
-             ( attacker->monsterinfo.aiflags & AI_GOOD_GUY ) )
+             ( attacker->monsterinfoVal.aiflags & AI_GOOD_GUY ) )
             return;
     }
 
@@ -332,7 +332,7 @@ void M_ReactToDamage( edict* targ, edict* attacker )
     // if attacker is a client, get mad at them because he's good and we're not
     if ( attacker->client )
     {
-        targ->monsterinfo.aiflags &= ~AI_SOUND_TARGET;
+        targ->monsterinfoVal.aiflags &= ~AI_SOUND_TARGET;
 
         // this can only happen in coop (both new and old enemies are clients)
         // only switch if can't see the current enemy
@@ -346,7 +346,7 @@ void M_ReactToDamage( edict* targ, edict* attacker )
             targ->oldenemy = targ->enemy;
         }
         targ->enemy = attacker;
-        if ( !( targ->monsterinfo.aiflags & AI_DUCKED ) )
+        if ( !( targ->monsterinfoVal.aiflags & AI_DUCKED ) )
             FoundTarget( targ );
         return;
     }
@@ -364,7 +364,7 @@ void M_ReactToDamage( edict* targ, edict* attacker )
         if ( targ->enemy && targ->enemy->client )
             targ->oldenemy = targ->enemy;
         targ->enemy = attacker;
-        if ( !( targ->monsterinfo.aiflags & AI_DUCKED ) )
+        if ( !( targ->monsterinfoVal.aiflags & AI_DUCKED ) )
             FoundTarget( targ );
     }
     // if they *meant* to shoot us, then shoot back
@@ -373,7 +373,7 @@ void M_ReactToDamage( edict* targ, edict* attacker )
         if ( targ->enemy && targ->enemy->client )
             targ->oldenemy = targ->enemy;
         targ->enemy = attacker;
-        if ( !( targ->monsterinfo.aiflags & AI_DUCKED ) )
+        if ( !( targ->monsterinfoVal.aiflags & AI_DUCKED ) )
             FoundTarget( targ );
     }
     // otherwise get mad at whoever they are mad at (help our buddy) unless it
@@ -383,7 +383,7 @@ void M_ReactToDamage( edict* targ, edict* attacker )
         if ( targ->enemy && targ->enemy->client )
             targ->oldenemy = targ->enemy;
         targ->enemy = attacker->enemy;
-        if ( !( targ->monsterinfo.aiflags & AI_DUCKED ) )
+        if ( !( targ->monsterinfoVal.aiflags & AI_DUCKED ) )
             FoundTarget( targ );
     }
 }
@@ -542,7 +542,7 @@ void T_Damage( edict* targ, edict* inflictor, edict* attacker, vec3_t dir,
     if ( targ->svflags & SVF_MONSTER )
     {
         M_ReactToDamage( targ, attacker );
-        if ( !( targ->monsterinfo.aiflags & AI_DUCKED ) && ( take ) )
+        if ( !( targ->monsterinfoVal.aiflags & AI_DUCKED ) && ( take ) )
         {
             targ->pain( targ, attacker, knockback, take );
             // nightmare mode monsters don't go into pain frames often

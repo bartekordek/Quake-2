@@ -97,8 +97,8 @@ void CL_DrawInventory (void)
     if (top < 0)
         top = 0;
 
-    x = (viddef.width-256)/2;
-    y = (viddef.height-240)/2;
+    x = (quake2::getInstance()->viddef.width-256)/2;
+    y = (quake2::getInstance()->viddef.height-240)/2;
 
     // repaint everything next frame
     SCR_DirtyScreen ();

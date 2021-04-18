@@ -104,7 +104,7 @@ bool SV_SetPlayer( void )
         }
 
         sv_client = &svs.clients[idnum];
-        sv_player = sv_client->edict;
+        sv_player = sv_client->edictVal;
         if ( !sv_client->state )
         {
             Com_Printf_G( "Client %i is not active\n", idnum );
@@ -121,7 +121,7 @@ bool SV_SetPlayer( void )
         if ( !strcmp( cl->name, s ) )
         {
             sv_client = cl;
-            sv_player = sv_client->edict;
+            sv_player = sv_client->edictVal;
             return true;
         }
     }
@@ -513,15 +513,15 @@ void SV_GameMap_f( void )
                 (bool*)malloc( maxclients->value * sizeof( bool ) );
             for ( i = 0, cl = svs.clients; i < maxclients->value; i++, cl++ )
             {
-                savedInuse[i] = cl->edict->inuse;
-                cl->edict->inuse = false;
+                savedInuse[i] = cl->edictVal->inuse;
+                cl->edictVal->inuse = false;
             }
 
             SV_WriteLevelFile();
 
             // we must restore these for clients to transfer over correctly
             for ( i = 0, cl = svs.clients; i < maxclients->value; i++, cl++ )
-                cl->edict->inuse = savedInuse[i];
+                cl->edictVal->inuse = savedInuse[i];
             free( savedInuse );
         }
     }
@@ -659,7 +659,7 @@ void SV_Savegame_f( void )
     }
 
     if ( maxclients->value == 1 &&
-         svs.clients[0].edict->client->ps.stats[STAT_HEALTH] <= 0 )
+         svs.clients[0].edictVal->client->ps.stats[STAT_HEALTH] <= 0 )
     {
         Com_Printf_G( "\nCan't savegame while dead!\n" );
         return;
@@ -750,7 +750,7 @@ void SV_Status_f( void )
         if ( !cl->state )
             continue;
         Com_Printf_G( "%3i ", i );
-        Com_Printf_G( "%5i ", cl->edict->client->ps.stats[STAT_FRAGS] );
+        Com_Printf_G( "%5i ", cl->edictVal->client->ps.stats[STAT_FRAGS] );
 
         if ( cl->state == cs_connected )
             Com_Printf_G( "CNCT " );

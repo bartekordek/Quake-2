@@ -140,9 +140,9 @@ void R_RotateBmodel( void )
     // rotate modelorg and the transformation matrix
     //
     R_EntityRotate( modelorg );
-    R_EntityRotate( vpn );
-    R_EntityRotate( vright );
-    R_EntityRotate( vup );
+    R_EntityRotate( quake2::getInstance()->vpn );
+    R_EntityRotate( quake2::getInstance()->vright );
+    R_EntityRotate( quake2::getInstance()->vup );
 
     ref_soft_R_TransformFrustum();
 }
@@ -468,6 +468,8 @@ void ref_soft_R_RecursiveWorldNode( mnode_s* node, int clipflags )
     // cull the clipping planes if not trivial accept
     // FIXME: the compiler is doing a lousy job of optimizing here; it could be
     //  twice as fast in ASM
+
+    auto& view_clipplanes = quake2::getInstance()->view_clipplanes;
     if ( clipflags )
     {
         for ( i = 0; i < 4; i++ )
@@ -479,7 +481,7 @@ void ref_soft_R_RecursiveWorldNode( mnode_s* node, int clipflags )
             // FIXME: do with fast look-ups or integer tests based on the sign
             // bit of the floating point values
 
-            pindex = pfrustum_indexes[i];
+            pindex = quake2::getInstance()->pfrustum_indexes[i];
 
             rejectpt[0] = (float)node->minmaxs[pindex[0]];
             rejectpt[1] = (float)node->minmaxs[pindex[1]];
@@ -523,7 +525,7 @@ void ref_soft_R_RecursiveWorldNode( mnode_s* node, int clipflags )
         {
             do
             {
-                ( *mark )->visframe = r_framecount;
+                ( *mark )->visframe = quake2::getInstance()->r_framecount;
                 mark++;
             } while ( --c );
         }
@@ -574,7 +576,7 @@ void ref_soft_R_RecursiveWorldNode( mnode_s* node, int clipflags )
                 do
                 {
                     if ( ( surf->flags & SURF_PLANEBACK ) &&
-                         ( surf->visframe == r_framecount ) )
+                         ( surf->visframe == quake2::getInstance()->r_framecount ) )
                     {
                         ref_soft_R_RenderFace( surf, clipflags );
                     }
@@ -587,7 +589,7 @@ void ref_soft_R_RecursiveWorldNode( mnode_s* node, int clipflags )
                 do
                 {
                     if ( !( surf->flags & SURF_PLANEBACK ) &&
-                         ( surf->visframe == r_framecount ) )
+                         ( surf->visframe == quake2::getInstance()->r_framecount ) )
                     {
                         ref_soft_R_RenderFace( surf, clipflags );
                     }
@@ -605,14 +607,9 @@ void ref_soft_R_RecursiveWorldNode( mnode_s* node, int clipflags )
     }
 }
 
-/*
-================
-R_RenderWorld
-================
-*/
-void R_RenderWorld( void )
+void R_RenderWorld()
 {
-    if ( !r_drawworld->value )
+    if ( !quake2::getInstance()->r_drawworld->value )
         return;
     if ( r_newrefdef.rdflags & RDF_NOWORLDMODEL )
         return;
@@ -623,7 +620,7 @@ void R_RenderWorld( void )
     r_worldentity.frame = (int)( r_newrefdef.time * 2 );
     quake2::getInstance()->currententity = &r_worldentity;
 
-    VectorCopy( r_origin, modelorg );
+    VectorCopy( quake2::getInstance()->r_origin, modelorg );
     currentmodel = r_worldmodel;
     r_pcurrentvertbase = currentmodel->vertexes;
 

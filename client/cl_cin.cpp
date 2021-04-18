@@ -546,7 +546,7 @@ bool SCR_DrawCinematic( void )
     if ( !cin.pic )
         return true;
 
-    re.DrawStretchRaw( 0, 0, viddef.width, viddef.height, cin.width, cin.height,
+    re.DrawStretchRaw( 0, 0, quake2::getInstance()->viddef.width, quake2::getInstance()->viddef.height, cin.width, cin.height,
                        cin.pic );
 
     return true;
@@ -627,5 +627,8 @@ void SCR_PlayCinematic( const std::string& arg )
 
     cl.cinematicframe = 0;
     cin.pic = SCR_ReadNextFrame();
+    #ifdef _WIN32
+    // TODO
     cl.cinematictime = win32_Sys_Milliseconds();
+    #endif
 }

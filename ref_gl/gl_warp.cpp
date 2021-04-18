@@ -302,7 +302,7 @@ void DrawSkyPolygon( int nump, vec3_t vecs )
 glBegin (GL_POLYGON);
 for (i=0 ; i<nump ; i++, vecs+=3)
 {
-    VectorAdd(vecs, r_origin, v);
+    VectorAdd(vecs, quake2::getInstance()->r_origin, v);
     qglVertex3fv (v);
 }
 glEnd();
@@ -476,7 +476,7 @@ void ref_gl_R_AddSkySurface( msurface_t* fa )
     {
         for ( i = 0; i < p->numverts; i++ )
         {
-            VectorSubtract( p->verts[i], r_origin, verts[i] );
+            VectorSubtract( p->verts[i], quake2::getInstance()->r_origin, verts[i] );
         }
         ClipSkyPolygon( p->numverts, verts[0], 0 );
     }
@@ -561,7 +561,7 @@ qglDisable (GL_DEPTH_TEST);
     }
 
     qglPushMatrix();
-    qglTranslatef( r_origin[0], r_origin[1], r_origin[2] );
+    qglTranslatef( quake2::getInstance()->r_origin[0], quake2::getInstance()->r_origin[1], quake2::getInstance()->r_origin[2] );
     qglRotatef( r_newrefdef.time * skyrotate, skyaxis[0], skyaxis[1],
                 skyaxis[2] );
 

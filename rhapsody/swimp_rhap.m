@@ -283,7 +283,7 @@ int SWimp_Init( void *hInstance, void *wndProc )
 /*
 ** SWimp_SetMode
 */
-rserr_t SWimp_SetMode( int *pwidth, int *pheight, int mode, qboolean fullscreen)
+rserr_t SWimp_SetMode( int *pwidth, int *pheight, int mode, bool fullscreen)
 {
     const char 	*win_fs[] = { "W", "FS" };
     NSRect		content;
@@ -393,7 +393,7 @@ void SWimp_EndFrame (void)
 /*
 ** SWimp_AppActivate
 */
-void SWimp_AppActivate( qboolean active )
+void SWimp_AppActivate( bool active )
 {
 }
 

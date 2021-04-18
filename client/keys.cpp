@@ -925,19 +925,17 @@ void Key_ClearStates (void)
     }
 }
 
-
-/*
-===================
-Key_GetKey
-===================
-*/
 int Key_GetKey (void)
 {
     key_waiting = -1;
 
     while (key_waiting == -1)
+    {
+        #ifdef _WIN32
+        //TODO:
         win32_Sys_SendKeyEvents ();
+        #endif
+    }
 
     return key_waiting;
 }
-

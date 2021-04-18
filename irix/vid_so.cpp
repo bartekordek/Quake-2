@@ -31,13 +31,13 @@ cvar        *vid_fullscreen;
 // Global variables used internally by this module
 viddef_t    viddef;                // global video state; used by other modules
 void        *reflib_library;        // Handle to refresh DLL
-qboolean    reflib_active = 0;
+bool    reflib_active = 0;
 
 #define VID_NUM_MODES ( sizeof( vid_modes ) / sizeof( vid_modes[0] ) )
 
 /** KEYBOARD **************************************************************/
 
-void Do_Key_Event(int key, qboolean down);
+void Do_Key_Event(int key, bool down);
 
 void (*KBD_Update_fp)(void);
 void (*KBD_Init_fp)(Key_Event_fp_t fp);
@@ -49,7 +49,7 @@ in_state_t in_state;
 
 void (*RW_IN_Init_fp)(in_state_t *in_state_p);
 void (*RW_IN_Shutdown_fp)(void);
-void (*RW_IN_Activate_fp)(qboolean active);
+void (*RW_IN_Activate_fp)(bool active);
 void (*RW_IN_Commands_fp)(void);
 void (*RW_IN_Move_fp)(usercmd_t *cmd);
 void (*RW_IN_Frame_fp)(void);
@@ -68,7 +68,7 @@ void VID_Printf (int print_level, char *fmt, ...)
 {
     va_list        argptr;
     char        msg[MAXPRINTMSG];
-    static qboolean    inupdate;
+    static bool    inupdate;
 
     va_start (argptr,fmt);
     vsprintf (msg,fmt,argptr);
@@ -84,7 +84,7 @@ void VID_Error (int err_level, char *fmt, ...)
 {
     va_list        argptr;
     char        msg[MAXPRINTMSG];
-    static qboolean    inupdate;
+    static bool    inupdate;
 
     va_start (argptr,fmt);
     vsprintf (msg,fmt,argptr);
@@ -133,7 +133,7 @@ vidmode_t vid_modes[] =
     { "Mode 9: 1600x1200", 1600, 1200, 9 }
 };
 
-qboolean VID_GetModeInfo( int *width, int *height, int mode )
+bool VID_GetModeInfo( int *width, int *height, int mode )
 {
     if ( mode < 0 || mode >= VID_NUM_MODES )
         return false;
@@ -185,7 +185,7 @@ void VID_FreeReflib (void)
 VID_LoadRefresh
 ==============
 */
-qboolean VID_LoadRefresh( char *name )
+bool VID_LoadRefresh( char *name )
 {
     refimport_t    ri;
 #ifndef REF_HARD_LINKED
@@ -478,13 +478,13 @@ void IN_Frame (void)
         RW_IN_Frame_fp();
 }
 
-void IN_Activate (qboolean active)
+void IN_Activate (bool active)
 {
     if (RW_IN_Activate_fp)
         RW_IN_Activate_fp(active);
 }
 
-void Do_Key_Event(int key, qboolean down)
+void Do_Key_Event(int key, bool down)
 {
     Key_Event(key, down, Sys_Milliseconds());
 }

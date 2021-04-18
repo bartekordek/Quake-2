@@ -108,7 +108,7 @@ void SV_New_f( void )
         // set up the entity for the client
         ent = Edict_num( playernum + 1 );
         ent->s.number = playernum + 1;
-        sv_client->edict = ent;
+        sv_client->edictVal = ent;
         memset( &sv_client->lastcmd, 0, sizeof( sv_client->lastcmd ) );
 
         // begin fetching configstrings
@@ -479,7 +479,7 @@ void SV_ExecuteUserCommand( char* s )
     ucmd_t* u;
 
     Cmd_TokenizeString( s, true );
-    sv_player = sv_client->edict;
+    sv_player = sv_client->edictVal;
 
     //    SV_BeginRedirect (RD_CLIENT);
 
@@ -515,7 +515,7 @@ void SV_ClientThink( client_t* cl, usercmd_s* cmd )
         return;
     }
 
-    quake2::getInstance()->ge.ClientThink( cl->edict, cmd );
+    quake2::getInstance()->ge.ClientThink( cl->edictVal, cmd );
 }
 
 #define MAX_STRINGCMDS 8
@@ -541,7 +541,7 @@ void SV_ExecuteClientMessage( client_t* cl )
     int lastframe;
 
     sv_client = cl;
-    sv_player = sv_client->edict;
+    sv_player = sv_client->edictVal;
 
     // only allow one move command
     move_issued = false;

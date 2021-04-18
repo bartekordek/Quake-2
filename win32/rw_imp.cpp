@@ -60,7 +60,7 @@ int SWimp_Init( void *hInstance, void *wndProc )
 ** DDRAW surfaces.
 **
 ** The necessary width and height parameters are grabbed from
-** vid.width and vid.height.
+** quake2::getInstance()->vid.width and quake2::getInstance()->vid.height.
 */
 static bool SWimp_InitGraphics( bool fullscreen )
 {
@@ -68,25 +68,25 @@ static bool SWimp_InitGraphics( bool fullscreen )
     SWimp_Shutdown ();
 
     // create a new window
-    VID_CreateWindow_1 (vid.width, vid.height, WINDOW_STYLE);
+    VID_CreateWindow_1 (quake2::getInstance()->vid.width, quake2::getInstance()->vid.height, WINDOW_STYLE);
 
     // initialize the appropriate subsystem
     if ( !fullscreen )
     {
-        if ( !DIB_Init( &vid.buffer, &vid.rowbytes ) )
+        if ( !DIB_Init( &quake2::getInstance()->vid.buffer, &quake2::getInstance()->vid.rowbytes ) )
         {
-            vid.buffer = 0;
-            vid.rowbytes = 0;
+            quake2::getInstance()->vid.buffer = 0;
+            quake2::getInstance()->vid.rowbytes = 0;
 
             return false;
         }
     }
     else
     {
-        if ( !DDRAW_Init( &vid.buffer, &vid.rowbytes ) )
+        if ( !DDRAW_Init( &quake2::getInstance()->vid.buffer, &quake2::getInstance()->vid.rowbytes ) )
         {
-            vid.buffer = 0;
-            vid.rowbytes = 0;
+            quake2::getInstance()->vid.buffer = 0;
+            quake2::getInstance()->vid.rowbytes = 0;
 
             return false;
         }
@@ -115,8 +115,8 @@ void SWimp_EndFrame (void)
 
         BitBlt( sww_state.hDC,
                 0, 0,
-                vid.width,
-                vid.height,
+                quake2::getInstance()->vid.width,
+                quake2::getInstance()->vid.height,
                 sww_state.hdcDIBSection,
                 0, 0,
                 SRCCOPY );
@@ -134,10 +134,10 @@ void SWimp_EndFrame (void)
 
         r.left = 0;
         r.top = 0;
-        r.right = vid.width;
-        r.bottom = vid.height;
+        r.right = quake2::getInstance()->vid.width;
+        r.bottom = quake2::getInstance()->vid.height;
         // TODO:
-        // sww_state.lpddsOffScreenBuffer->lpVtbl->Unlock( sww_state.lpddsOffScreenBuffer, vid.buffer );
+        // sww_state.lpddsOffScreenBuffer->lpVtbl->Unlock( sww_state.lpddsOffScreenBuffer, quake2::getInstance()->vid.buffer );
 
         // if ( sww_state.modex )
         // {
@@ -184,8 +184,8 @@ void SWimp_EndFrame (void)
 
         // sww_state.lpddsOffScreenBuffer->lpVtbl->Lock( sww_state.lpddsOffScreenBuffer, NULL, &ddsd, DDLOCK_WAIT, NULL );
 
-        // vid.buffer = ( pixel_t*) ddsd.lpSurface;
-        // vid.rowbytes = ddsd.lPitch;
+        // quake2::getInstance()->vid.buffer = ( pixel_t*) ddsd.lpSurface;
+        // quake2::getInstance()->vid.rowbytes = ddsd.lPitch;
     }
 }
 
@@ -263,8 +263,8 @@ void SWimp_SetPalette( const unsigned char *palette )
 {
     // MGL - what the fuck was kendall doing here?!
     // clear screen to black and change palette
-    //    for (i=0 ; i<vid.height ; i++)
-    //        memset (vid.buffer + i*vid.rowbytes, 0, vid.width);
+    //    for (i=0 ; i<quake2::getInstance()->vid.height ; i++)
+    //        memset (quake2::getInstance()->vid.buffer + i*quake2::getInstance()->vid.rowbytes, 0, quake2::getInstance()->vid.width);
 
     if ( !palette )
         palette = ( const unsigned char * ) sw_state.currentpalette;

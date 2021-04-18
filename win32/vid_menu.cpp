@@ -38,16 +38,11 @@ static cvar *gl_ext_palettedtexture;
 static cvar *gl_finish;
 
 cvar *sw_mode;
-static cvar *sw_stipplealpha;
 
 extern void M_ForceMenuOff( void );
 
 /*
-====================================================================
-
-MENU INTERACTION
-
-====================================================================
+WMENU INTERACTION
 */
 #define SOFTWARE_MENU 0
 #define OPENGL_MENU   1
@@ -203,10 +198,8 @@ static void CancelChanges( void *unused )
     M_PopMenu();
 }
 
-/*
-** VID_MenuInit
-*/
-void VID_MenuInit( void )
+
+void VID_MenuInit()
 {
     static const char *resolutions[] =
     {
@@ -252,8 +245,8 @@ void VID_MenuInit( void )
     if ( !gl_finish )
         gl_finish = Cvar_Get( "gl_finish", "0", CVAR_ARCHIVE );
 
-    if ( !sw_stipplealpha )
-        sw_stipplealpha = Cvar_Get( "sw_stipplealpha", "0", CVAR_ARCHIVE );
+    if ( !quake2::getInstance()->sw_stipplealpha )
+        quake2::getInstance()->sw_stipplealpha = Cvar_Get( "sw_stipplealpha", "0", CVAR_ARCHIVE );
 
     s_mode_list[SOFTWARE_MENU].curvalue = sw_mode->value;
     s_mode_list[OPENGL_MENU].curvalue = gl_mode->value;
@@ -283,9 +276,9 @@ void VID_MenuInit( void )
             s_ref_list[s_current_menu_index].curvalue = REF_OPENGL;
     }
 
-    s_software_menu.x = viddef.width * 0.50;
+    s_software_menu.x = quake2::getInstance()->viddef.width * 0.50;
     s_software_menu.nitems = 0;
-    s_opengl_menu.x = viddef.width * 0.50;
+    s_opengl_menu.x = quake2::getInstance()->viddef.width * 0.50;
     s_opengl_menu.nitems = 0;
 
     for ( i = 0; i < 2; i++ )
@@ -344,7 +337,7 @@ void VID_MenuInit( void )
     s_stipple_box.generic.x    = 0;
     s_stipple_box.generic.y    = 60;
     s_stipple_box.generic.name    = "stipple alpha";
-    s_stipple_box.curvalue = sw_stipplealpha->value;
+    s_stipple_box.curvalue = quake2::getInstance()->sw_stipplealpha->value;
     s_stipple_box.itemnames = (char**)yesno_names;
 
     s_tq_slider.generic.type    = MTYPE_SLIDER;
@@ -414,7 +407,7 @@ void VID_MenuDraw (void)
     ** draw the banner
     */
     re.DrawGetPicSize( &w, &h, "m_banner_video" );
-    re.DrawPic( viddef.width / 2 - w / 2, viddef.height /2 - 110, "m_banner_video" );
+    re.DrawPic( quake2::getInstance()->viddef.width / 2 - w / 2, quake2::getInstance()->viddef.height /2 - 110, "m_banner_video" );
 
     /*
     ** move cursor to a reasonable starting position

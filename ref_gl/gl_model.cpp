@@ -1060,7 +1060,7 @@ void ref_gl_R_BeginRegistration( char* model )
     cvar* flushmap;
 
     registration_sequence++;
-    r_oldviewcluster = -1;  // force markleafs
+    quake2::getInstance()->r_oldviewcluster = -1;  // force markleafs
 
     // Com_sprintf (fullname, sizeof(fullname), "maps/%s.bsp", model);
 
@@ -1071,7 +1071,7 @@ void ref_gl_R_BeginRegistration( char* model )
         ref_gl_Mod_Free( &mod_known[0] );
     r_worldmodel = ref_gl_Mod_ForName( fullname, true );
 
-    r_viewcluster = -1;
+    quake2::getInstance()->r_viewcluster = -1;
 }
 
 struct model_s* ref_gl_R_RegisterModel( char* name )

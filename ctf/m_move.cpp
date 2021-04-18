@@ -204,7 +204,7 @@ bool SV_movestep (edict *ent, vec3_t move, bool relink)
     }
 
 // push down from a step height above the wished position
-    if (!(ent->monsterinfo.aiflags & AI_NOSTEP))
+    if (!(ent->monsterinfoVal.aiflags & AI_NOSTEP))
         stepsize = STEPSIZE;
     else
         stepsize = 1;

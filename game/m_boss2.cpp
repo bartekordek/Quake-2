@@ -413,20 +413,20 @@ mmove_t boss2_move_death = {FRAME_death2, FRAME_death50, boss2_frames_death, bos
 
 void boss2_stand (edict *self)
 {
-        self->monsterinfo.currentmove = &boss2_move_stand;
+        self->monsterinfoVal.currentmove = &boss2_move_stand;
 }
 
 void boss2_run (edict *self)
 {
-    if (self->monsterinfo.aiflags & AI_STAND_GROUND)
-        self->monsterinfo.currentmove = &boss2_move_stand;
+    if (self->monsterinfoVal.aiflags & AI_STAND_GROUND)
+        self->monsterinfoVal.currentmove = &boss2_move_stand;
     else
-        self->monsterinfo.currentmove = &boss2_move_run;
+        self->monsterinfoVal.currentmove = &boss2_move_run;
 }
 
 void boss2_walk (edict *self)
 {
-    self->monsterinfo.currentmove = &boss2_move_walk;
+    self->monsterinfoVal.currentmove = &boss2_move_walk;
 }
 
 void boss2_attack (edict *self)
@@ -439,31 +439,31 @@ void boss2_attack (edict *self)
 
     if (range <= 125)
     {
-        self->monsterinfo.currentmove = &boss2_move_attack_pre_mg;
+        self->monsterinfoVal.currentmove = &boss2_move_attack_pre_mg;
     }
     else
     {
         if (random() <= 0.6)
-            self->monsterinfo.currentmove = &boss2_move_attack_pre_mg;
+            self->monsterinfoVal.currentmove = &boss2_move_attack_pre_mg;
         else
-            self->monsterinfo.currentmove = &boss2_move_attack_rocket;
+            self->monsterinfoVal.currentmove = &boss2_move_attack_rocket;
     }
 }
 
 void boss2_attack_mg (edict *self)
 {
-    self->monsterinfo.currentmove = &boss2_move_attack_mg;
+    self->monsterinfoVal.currentmove = &boss2_move_attack_mg;
 }
 
 void boss2_reattack_mg (edict *self)
 {
     if ( infront(self, self->enemy) )
         if (random() <= 0.7)
-            self->monsterinfo.currentmove = &boss2_move_attack_mg;
+            self->monsterinfoVal.currentmove = &boss2_move_attack_mg;
         else
-            self->monsterinfo.currentmove = &boss2_move_attack_post_mg;
+            self->monsterinfoVal.currentmove = &boss2_move_attack_post_mg;
     else
-        self->monsterinfo.currentmove = &boss2_move_attack_post_mg;
+        self->monsterinfoVal.currentmove = &boss2_move_attack_post_mg;
 }
 
 
@@ -480,17 +480,17 @@ void boss2_pain (edict *self, edict *other, float kick, int damage)
     if (damage < 10)
     {
         quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain3, 1, ATTN_NONE, 0);
-        self->monsterinfo.currentmove = &boss2_move_pain_light;
+        self->monsterinfoVal.currentmove = &boss2_move_pain_light;
     }
     else if (damage < 30)
     {
         quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain1, 1, ATTN_NONE, 0);
-        self->monsterinfo.currentmove = &boss2_move_pain_light;
+        self->monsterinfoVal.currentmove = &boss2_move_pain_light;
     }
     else
     {
         quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain2, 1, ATTN_NONE, 0);
-        self->monsterinfo.currentmove = &boss2_move_pain_heavy;
+        self->monsterinfoVal.currentmove = &boss2_move_pain_heavy;
     }
 }
 
@@ -510,7 +510,7 @@ void boss2_die (edict *self, edict *inflictor, edict *attacker, int damage, vec3
     self->deadflag = DEAD_DEAD;
     self->takedamage = DAMAGE_NO;
     self->count = 0;
-    self->monsterinfo.currentmove = &boss2_move_death;
+    self->monsterinfoVal.currentmove = &boss2_move_death;
 #if 0
     int        n;
 
@@ -533,7 +533,7 @@ void boss2_die (edict *self, edict *inflictor, edict *attacker, int damage, vec3
 
     self->deadflag = DEAD_DEAD;
     self->takedamage = DAMAGE_YES;
-    self->monsterinfo.currentmove = &boss2_move_death;
+    self->monsterinfoVal.currentmove = &boss2_move_death;
 #endif
 }
 
@@ -573,24 +573,24 @@ bool Boss2_CheckAttack (edict *self)
     // melee attack
     if (enemy_range == RANGE_MELEE)
     {
-        if (self->monsterinfo.melee)
-            self->monsterinfo.attack_state = AS_MELEE;
+        if (self->monsterinfoVal.melee)
+            self->monsterinfoVal.attack_state = AS_MELEE;
         else
-            self->monsterinfo.attack_state = AS_MISSILE;
+            self->monsterinfoVal.attack_state = AS_MISSILE;
         return true;
     }
 
 // missile attack
-    if (!self->monsterinfo.attack)
+    if (!self->monsterinfoVal.attack)
         return false;
 
-    if (level.time < self->monsterinfo.attack_finished)
+    if (level.time < self->monsterinfoVal.attack_finished)
         return false;
 
     if (enemy_range == RANGE_FAR)
         return false;
 
-    if (self->monsterinfo.aiflags & AI_STAND_GROUND)
+    if (self->monsterinfoVal.aiflags & AI_STAND_GROUND)
     {
         chance = 0.4;
     }
@@ -613,17 +613,17 @@ bool Boss2_CheckAttack (edict *self)
 
     if (random () < chance)
     {
-        self->monsterinfo.attack_state = AS_MISSILE;
-        self->monsterinfo.attack_finished = level.time + 2*random();
+        self->monsterinfoVal.attack_state = AS_MISSILE;
+        self->monsterinfoVal.attack_finished = level.time + 2*random();
         return true;
     }
 
     if (self->flags & FL_FLY)
     {
         if (random() < 0.3)
-            self->monsterinfo.attack_state = AS_SLIDING;
+            self->monsterinfoVal.attack_state = AS_SLIDING;
         else
-            self->monsterinfo.attack_state = AS_STRAIGHT;
+            self->monsterinfoVal.attack_state = AS_STRAIGHT;
     }
 
     return false;
@@ -664,16 +664,16 @@ void SP_monster_boss2 (edict *self)
     self->pain = boss2_pain;
     self->die = boss2_die;
 
-    self->monsterinfo.stand = boss2_stand;
-    self->monsterinfo.walk = boss2_walk;
-    self->monsterinfo.run = boss2_run;
-    self->monsterinfo.attack = boss2_attack;
-    self->monsterinfo.search = boss2_search;
-    self->monsterinfo.checkattack = Boss2_CheckAttack;
+    self->monsterinfoVal.stand = boss2_stand;
+    self->monsterinfoVal.walk = boss2_walk;
+    self->monsterinfoVal.run = boss2_run;
+    self->monsterinfoVal.attack = boss2_attack;
+    self->monsterinfoVal.search = boss2_search;
+    self->monsterinfoVal.checkattack = Boss2_CheckAttack;
     quake2::getInstance()->gi.linkentity (self);
 
-    self->monsterinfo.currentmove = &boss2_move_stand;
-    self->monsterinfo.scale = MODEL_SCALE;
+    self->monsterinfoVal.currentmove = &boss2_move_stand;
+    self->monsterinfoVal.scale = MODEL_SCALE;
 
     flymonster_start (self);
 }

@@ -3,7 +3,7 @@
 
 
 
-typedef void (*Key_Event_fp_t)(int key, qboolean down);
+typedef void (*Key_Event_fp_t)(int key, bool down);
 
 extern void (*KBD_Update_fp)(void);
 extern void (*KBD_Init_fp)(Key_Event_fp_t fp);

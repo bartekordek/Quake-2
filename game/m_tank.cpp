@@ -114,7 +114,7 @@ mmove_t    tank_move_stand = {FRAME_stand01, FRAME_stand30, tank_frames_stand, N
 
 void tank_stand (edict *self)
 {
-    self->monsterinfo.currentmove = &tank_move_stand;
+    self->monsterinfoVal.currentmove = &tank_move_stand;
 }
 
 
@@ -166,7 +166,7 @@ mmove_t    tank_move_stop_walk = {FRAME_walk21, FRAME_walk25, tank_frames_stop_w
 
 void tank_walk (edict *self)
 {
-        self->monsterinfo.currentmove = &tank_move_walk;
+        self->monsterinfoVal.currentmove = &tank_move_walk;
 }
 
 
@@ -219,24 +219,24 @@ mmove_t    tank_move_stop_run = {FRAME_walk21, FRAME_walk25, tank_frames_stop_ru
 void tank_run (edict *self)
 {
     if (self->enemy && self->enemy->client)
-        self->monsterinfo.aiflags |= AI_BRUTAL;
+        self->monsterinfoVal.aiflags |= AI_BRUTAL;
     else
-        self->monsterinfo.aiflags &= ~AI_BRUTAL;
+        self->monsterinfoVal.aiflags &= ~AI_BRUTAL;
 
-    if (self->monsterinfo.aiflags & AI_STAND_GROUND)
+    if (self->monsterinfoVal.aiflags & AI_STAND_GROUND)
     {
-        self->monsterinfo.currentmove = &tank_move_stand;
+        self->monsterinfoVal.currentmove = &tank_move_stand;
         return;
     }
 
-    if (self->monsterinfo.currentmove == &tank_move_walk ||
-        self->monsterinfo.currentmove == &tank_move_start_run)
+    if (self->monsterinfoVal.currentmove == &tank_move_walk ||
+        self->monsterinfoVal.currentmove == &tank_move_start_run)
     {
-        self->monsterinfo.currentmove = &tank_move_run;
+        self->monsterinfoVal.currentmove = &tank_move_run;
     }
     else
     {
-        self->monsterinfo.currentmove = &tank_move_start_run;
+        self->monsterinfoVal.currentmove = &tank_move_start_run;
     }
 }
 
@@ -316,11 +316,11 @@ void tank_pain (edict *self, edict *other, float kick, int damage)
         return;        // no pain anims in nightmare
 
     if (damage <= 30)
-        self->monsterinfo.currentmove = &tank_move_pain1;
+        self->monsterinfoVal.currentmove = &tank_move_pain1;
     else if (damage <= 60)
-        self->monsterinfo.currentmove = &tank_move_pain2;
+        self->monsterinfoVal.currentmove = &tank_move_pain2;
     else
-        self->monsterinfo.currentmove = &tank_move_pain3;
+        self->monsterinfoVal.currentmove = &tank_move_pain3;
 };
 
 
@@ -471,10 +471,10 @@ void tank_reattack_blaster (edict *self)
             if (self->enemy->health > 0)
                 if (random() <= 0.6)
                 {
-                    self->monsterinfo.currentmove = &tank_move_reattack_blast;
+                    self->monsterinfoVal.currentmove = &tank_move_reattack_blast;
                     return;
                 }
-    self->monsterinfo.currentmove = &tank_move_attack_post_blast;
+    self->monsterinfoVal.currentmove = &tank_move_attack_post_blast;
 }
 
 
@@ -641,15 +641,15 @@ void tank_refire_rocket (edict *self)
             if (visible(self, self->enemy) )
                 if (random() <= 0.4)
                 {
-                    self->monsterinfo.currentmove = &tank_move_attack_fire_rocket;
+                    self->monsterinfoVal.currentmove = &tank_move_attack_fire_rocket;
                     return;
                 }
-    self->monsterinfo.currentmove = &tank_move_attack_post_rocket;
+    self->monsterinfoVal.currentmove = &tank_move_attack_post_rocket;
 }
 
 void tank_doattack_rocket (edict *self)
 {
-    self->monsterinfo.currentmove = &tank_move_attack_fire_rocket;
+    self->monsterinfoVal.currentmove = &tank_move_attack_fire_rocket;
 }
 
 void tank_attack(edict *self)
@@ -660,8 +660,8 @@ void tank_attack(edict *self)
 
     if (self->enemy->health < 0)
     {
-        self->monsterinfo.currentmove = &tank_move_attack_strike;
-        self->monsterinfo.aiflags &= ~AI_BRUTAL;
+        self->monsterinfoVal.currentmove = &tank_move_attack_strike;
+        self->monsterinfoVal.aiflags &= ~AI_BRUTAL;
         return;
     }
 
@@ -673,28 +673,28 @@ void tank_attack(edict *self)
     if (range <= 125)
     {
         if (r < 0.4)
-            self->monsterinfo.currentmove = &tank_move_attack_chain;
+            self->monsterinfoVal.currentmove = &tank_move_attack_chain;
         else
-            self->monsterinfo.currentmove = &tank_move_attack_blast;
+            self->monsterinfoVal.currentmove = &tank_move_attack_blast;
     }
     else if (range <= 250)
     {
         if (r < 0.5)
-            self->monsterinfo.currentmove = &tank_move_attack_chain;
+            self->monsterinfoVal.currentmove = &tank_move_attack_chain;
         else
-            self->monsterinfo.currentmove = &tank_move_attack_blast;
+            self->monsterinfoVal.currentmove = &tank_move_attack_blast;
     }
     else
     {
         if (r < 0.33)
-            self->monsterinfo.currentmove = &tank_move_attack_chain;
+            self->monsterinfoVal.currentmove = &tank_move_attack_chain;
         else if (r < 0.66)
         {
-            self->monsterinfo.currentmove = &tank_move_attack_pre_rocket;
+            self->monsterinfoVal.currentmove = &tank_move_attack_pre_rocket;
             self->pain_debounce_time = level.time + 5.0;    // no pain for a while
         }
         else
-            self->monsterinfo.currentmove = &tank_move_attack_blast;
+            self->monsterinfoVal.currentmove = &tank_move_attack_blast;
     }
 }
 
@@ -776,7 +776,7 @@ void tank_die (edict *self, edict *inflictor, edict *attacker, int damage, vec3_
     self->deadflag = DEAD_DEAD;
     self->takedamage = DAMAGE_YES;
 
-    self->monsterinfo.currentmove = &tank_move_death;
+    self->monsterinfoVal.currentmove = &tank_move_death;
 
 }
 
@@ -835,19 +835,19 @@ void SP_monster_tank (edict *self)
 
     self->pain = tank_pain;
     self->die = tank_die;
-    self->monsterinfo.stand = tank_stand;
-    self->monsterinfo.walk = tank_walk;
-    self->monsterinfo.run = tank_run;
-    self->monsterinfo.dodge = NULL;
-    self->monsterinfo.attack = tank_attack;
-    self->monsterinfo.melee = NULL;
-    self->monsterinfo.sight = tank_sight;
-    self->monsterinfo.idle = tank_idle;
+    self->monsterinfoVal.stand = tank_stand;
+    self->monsterinfoVal.walk = tank_walk;
+    self->monsterinfoVal.run = tank_run;
+    self->monsterinfoVal.dodge = NULL;
+    self->monsterinfoVal.attack = tank_attack;
+    self->monsterinfoVal.melee = NULL;
+    self->monsterinfoVal.sight = tank_sight;
+    self->monsterinfoVal.idle = tank_idle;
 
     quake2::getInstance()->gi.linkentity (self);
 
-    self->monsterinfo.currentmove = &tank_move_stand;
-    self->monsterinfo.scale = MODEL_SCALE;
+    self->monsterinfoVal.currentmove = &tank_move_stand;
+    self->monsterinfoVal.scale = MODEL_SCALE;
 
     walkmonster_start(self);
 

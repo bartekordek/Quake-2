@@ -210,10 +210,10 @@ mmove_t soldier_move_stand4 = {FRAME_stand401, FRAME_stand452, soldier_frames_st
 
 void soldier_stand (edict *self)
 {
-    if ((self->monsterinfo.currentmove == &soldier_move_stand3) || (random() < 0.8))
-        self->monsterinfo.currentmove = &soldier_move_stand1;
+    if ((self->monsterinfoVal.currentmove == &soldier_move_stand3) || (random() < 0.8))
+        self->monsterinfoVal.currentmove = &soldier_move_stand1;
     else
-        self->monsterinfo.currentmove = &soldier_move_stand3;
+        self->monsterinfoVal.currentmove = &soldier_move_stand3;
 }
 
 
@@ -224,7 +224,7 @@ void soldier_stand (edict *self)
 void soldier_walk1_random (edict *self)
 {
     if (random() > 0.1)
-        self->monsterinfo.nextframe = FRAME_walk101;
+        self->monsterinfoVal.nextframe = FRAME_walk101;
 }
 
 mframe_t soldier_frames_walk1 [] =
@@ -283,9 +283,9 @@ mmove_t soldier_move_walk2 = {FRAME_walk209, FRAME_walk218, soldier_frames_walk2
 void soldier_walk (edict *self)
 {
     if (random() < 0.5)
-        self->monsterinfo.currentmove = &soldier_move_walk1;
+        self->monsterinfoVal.currentmove = &soldier_move_walk1;
     else
-        self->monsterinfo.currentmove = &soldier_move_walk2;
+        self->monsterinfoVal.currentmove = &soldier_move_walk2;
 }
 
 
@@ -315,21 +315,21 @@ mmove_t soldier_move_run = {FRAME_run03, FRAME_run08, soldier_frames_run, NULL};
 
 void soldier_run (edict *self)
 {
-    if (self->monsterinfo.aiflags & AI_STAND_GROUND)
+    if (self->monsterinfoVal.aiflags & AI_STAND_GROUND)
     {
-        self->monsterinfo.currentmove = &soldier_move_stand1;
+        self->monsterinfoVal.currentmove = &soldier_move_stand1;
         return;
     }
 
-    if (self->monsterinfo.currentmove == &soldier_move_walk1 ||
-        self->monsterinfo.currentmove == &soldier_move_walk2 ||
-        self->monsterinfo.currentmove == &soldier_move_start_run)
+    if (self->monsterinfoVal.currentmove == &soldier_move_walk1 ||
+        self->monsterinfoVal.currentmove == &soldier_move_walk2 ||
+        self->monsterinfoVal.currentmove == &soldier_move_start_run)
     {
-        self->monsterinfo.currentmove = &soldier_move_run;
+        self->monsterinfoVal.currentmove = &soldier_move_run;
     }
     else
     {
-        self->monsterinfo.currentmove = &soldier_move_start_run;
+        self->monsterinfoVal.currentmove = &soldier_move_start_run;
     }
 }
 
@@ -416,8 +416,8 @@ void soldier_pain (edict *self, edict *other, float kick, int damage)
 
     if (level.time < self->pain_debounce_time)
     {
-        if ((self->velocity[2] > 100) && ( (self->monsterinfo.currentmove == &soldier_move_pain1) || (self->monsterinfo.currentmove == &soldier_move_pain2) || (self->monsterinfo.currentmove == &soldier_move_pain3)))
-            self->monsterinfo.currentmove = &soldier_move_pain4;
+        if ((self->velocity[2] > 100) && ( (self->monsterinfoVal.currentmove == &soldier_move_pain1) || (self->monsterinfoVal.currentmove == &soldier_move_pain2) || (self->monsterinfoVal.currentmove == &soldier_move_pain3)))
+            self->monsterinfoVal.currentmove = &soldier_move_pain4;
         return;
     }
 
@@ -433,7 +433,7 @@ void soldier_pain (edict *self, edict *other, float kick, int damage)
 
     if (self->velocity[2] > 100)
     {
-        self->monsterinfo.currentmove = &soldier_move_pain4;
+        self->monsterinfoVal.currentmove = &soldier_move_pain4;
         return;
     }
 
@@ -443,11 +443,11 @@ void soldier_pain (edict *self, edict *other, float kick, int damage)
     r = random();
 
     if (r < 0.33)
-        self->monsterinfo.currentmove = &soldier_move_pain1;
+        self->monsterinfoVal.currentmove = &soldier_move_pain1;
     else if (r < 0.66)
-        self->monsterinfo.currentmove = &soldier_move_pain2;
+        self->monsterinfoVal.currentmove = &soldier_move_pain2;
     else
-        self->monsterinfo.currentmove = &soldier_move_pain3;
+        self->monsterinfoVal.currentmove = &soldier_move_pain3;
 }
 
 
@@ -511,15 +511,15 @@ void soldier_fire (edict *self, int flash_number)
     }
     else
     {
-        if (!(self->monsterinfo.aiflags & AI_HOLD_FRAME))
-            self->monsterinfo.pausetime = level.time + (3 + rand() % 8) * FRAMETIME;
+        if (!(self->monsterinfoVal.aiflags & AI_HOLD_FRAME))
+            self->monsterinfoVal.pausetime = level.time + (3 + rand() % 8) * FRAMETIME;
 
         monster_fire_bullet (self, start, aim, 2, 4, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, flash_index);
 
-        if (level.time >= self->monsterinfo.pausetime)
-            self->monsterinfo.aiflags &= ~AI_HOLD_FRAME;
+        if (level.time >= self->monsterinfoVal.pausetime)
+            self->monsterinfoVal.aiflags &= ~AI_HOLD_FRAME;
         else
-            self->monsterinfo.aiflags |= AI_HOLD_FRAME;
+            self->monsterinfoVal.aiflags |= AI_HOLD_FRAME;
     }
 }
 
@@ -539,9 +539,9 @@ void soldier_attack1_refire1 (edict *self)
         return;
 
     if ( ((skill->value == 3) && (random() < 0.5)) || (range(self, self->enemy) == RANGE_MELEE) )
-        self->monsterinfo.nextframe = FRAME_attak102;
+        self->monsterinfoVal.nextframe = FRAME_attak102;
     else
-        self->monsterinfo.nextframe = FRAME_attak110;
+        self->monsterinfoVal.nextframe = FRAME_attak110;
 }
 
 void soldier_attack1_refire2 (edict *self)
@@ -553,7 +553,7 @@ void soldier_attack1_refire2 (edict *self)
         return;
 
     if ( ((skill->value == 3) && (random() < 0.5)) || (range(self, self->enemy) == RANGE_MELEE) )
-        self->monsterinfo.nextframe = FRAME_attak102;
+        self->monsterinfoVal.nextframe = FRAME_attak102;
 }
 
 mframe_t soldier_frames_attack1 [] =
@@ -589,9 +589,9 @@ void soldier_attack2_refire1 (edict *self)
         return;
 
     if ( ((skill->value == 3) && (random() < 0.5)) || (range(self, self->enemy) == RANGE_MELEE) )
-        self->monsterinfo.nextframe = FRAME_attak204;
+        self->monsterinfoVal.nextframe = FRAME_attak204;
     else
-        self->monsterinfo.nextframe = FRAME_attak216;
+        self->monsterinfoVal.nextframe = FRAME_attak216;
 }
 
 void soldier_attack2_refire2 (edict *self)
@@ -603,7 +603,7 @@ void soldier_attack2_refire2 (edict *self)
         return;
 
     if ( ((skill->value == 3) && (random() < 0.5)) || (range(self, self->enemy) == RANGE_MELEE) )
-        self->monsterinfo.nextframe = FRAME_attak204;
+        self->monsterinfoVal.nextframe = FRAME_attak204;
 }
 
 mframe_t soldier_frames_attack2 [] =
@@ -633,18 +633,18 @@ mmove_t soldier_move_attack2 = {FRAME_attak201, FRAME_attak218, soldier_frames_a
 
 void soldier_duck_down (edict *self)
 {
-    if (self->monsterinfo.aiflags & AI_DUCKED)
+    if (self->monsterinfoVal.aiflags & AI_DUCKED)
         return;
-    self->monsterinfo.aiflags |= AI_DUCKED;
+    self->monsterinfoVal.aiflags |= AI_DUCKED;
     self->maxs[2] -= 32;
     self->takedamage = DAMAGE_YES;
-    self->monsterinfo.pausetime = level.time + 1;
+    self->monsterinfoVal.pausetime = level.time + 1;
     quake2::getInstance()->gi.linkentity (self);
 }
 
 void soldier_duck_up (edict *self)
 {
-    self->monsterinfo.aiflags &= ~AI_DUCKED;
+    self->monsterinfoVal.aiflags &= ~AI_DUCKED;
     self->maxs[2] += 32;
     self->takedamage = DAMAGE_AIM;
     quake2::getInstance()->gi.linkentity (self);
@@ -658,8 +658,8 @@ void soldier_fire3 (edict *self)
 
 void soldier_attack3_refire (edict *self)
 {
-    if ((level.time + 0.4) < self->monsterinfo.pausetime)
-        self->monsterinfo.nextframe = FRAME_attak303;
+    if ((level.time + 0.4) < self->monsterinfoVal.pausetime)
+        self->monsterinfoVal.nextframe = FRAME_attak303;
 }
 
 mframe_t soldier_frames_attack3 [] =
@@ -686,7 +686,7 @@ void soldier_fire4 (edict *self)
 //        return;
 //
 //    if ( ((skill->value == 3) && (random() < 0.5)) || (range(self, self->enemy) == RANGE_MELEE) )
-//        self->monsterinfo.nextframe = FRAME_attak402;
+//        self->monsterinfoVal.nextframe = FRAME_attak402;
 }
 
 mframe_t soldier_frames_attack4 [] =
@@ -714,7 +714,7 @@ void soldier_attack5_refire (edict *self)
         return;
 
     if ( ((skill->value == 3) && (random() < 0.5)) || (range(self, self->enemy) == RANGE_MELEE) )
-        self->monsterinfo.nextframe = FRAME_attak505;
+        self->monsterinfoVal.nextframe = FRAME_attak505;
 }
 
 mframe_t soldier_frames_attack5 [] =
@@ -747,7 +747,7 @@ void soldier_attack6_refire (edict *self)
         return;
 
     if (skill->value == 3)
-        self->monsterinfo.nextframe = FRAME_runs03;
+        self->monsterinfoVal.nextframe = FRAME_runs03;
 }
 
 mframe_t soldier_frames_attack6 [] =
@@ -774,13 +774,13 @@ void soldier_attack(edict *self)
     if (self->s.skinnum < 4)
     {
         if (random() < 0.5)
-            self->monsterinfo.currentmove = &soldier_move_attack1;
+            self->monsterinfoVal.currentmove = &soldier_move_attack1;
         else
-            self->monsterinfo.currentmove = &soldier_move_attack2;
+            self->monsterinfoVal.currentmove = &soldier_move_attack2;
     }
     else
     {
-        self->monsterinfo.currentmove = &soldier_move_attack4;
+        self->monsterinfoVal.currentmove = &soldier_move_attack4;
     }
 }
 
@@ -799,7 +799,7 @@ void soldier_sight(edict *self, edict *other)
     if ((skill->value > 0) && (range(self, self->enemy) >= RANGE_MID))
     {
         if (random() > 0.5)
-            self->monsterinfo.currentmove = &soldier_move_attack6;
+            self->monsterinfoVal.currentmove = &soldier_move_attack6;
     }
 }
 
@@ -809,10 +809,10 @@ void soldier_sight(edict *self, edict *other)
 
 void soldier_duck_hold (edict *self)
 {
-    if (level.time >= self->monsterinfo.pausetime)
-        self->monsterinfo.aiflags &= ~AI_HOLD_FRAME;
+    if (level.time >= self->monsterinfoVal.pausetime)
+        self->monsterinfoVal.aiflags &= ~AI_HOLD_FRAME;
     else
-        self->monsterinfo.aiflags |= AI_HOLD_FRAME;
+        self->monsterinfoVal.aiflags |= AI_HOLD_FRAME;
 }
 
 mframe_t soldier_frames_duck [] =
@@ -838,32 +838,32 @@ void soldier_dodge (edict *self, edict *attacker, float eta)
 
     if (skill->value == 0)
     {
-        self->monsterinfo.currentmove = &soldier_move_duck;
+        self->monsterinfoVal.currentmove = &soldier_move_duck;
         return;
     }
 
-    self->monsterinfo.pausetime = level.time + eta + 0.3;
+    self->monsterinfoVal.pausetime = level.time + eta + 0.3;
     r = random();
 
     if (skill->value == 1)
     {
         if (r > 0.33)
-            self->monsterinfo.currentmove = &soldier_move_duck;
+            self->monsterinfoVal.currentmove = &soldier_move_duck;
         else
-            self->monsterinfo.currentmove = &soldier_move_attack3;
+            self->monsterinfoVal.currentmove = &soldier_move_attack3;
         return;
     }
 
     if (skill->value >= 2)
     {
         if (r > 0.66)
-            self->monsterinfo.currentmove = &soldier_move_duck;
+            self->monsterinfoVal.currentmove = &soldier_move_duck;
         else
-            self->monsterinfo.currentmove = &soldier_move_attack3;
+            self->monsterinfoVal.currentmove = &soldier_move_attack3;
         return;
     }
 
-    self->monsterinfo.currentmove = &soldier_move_attack3;
+    self->monsterinfoVal.currentmove = &soldier_move_attack3;
 }
 
 
@@ -1175,21 +1175,21 @@ void soldier_die (edict *self, edict *inflictor, edict *attacker, int damage, ve
     if (fabs((self->s.origin[2] + self->viewheight) - point[2]) <= 4)
     {
         // head shot
-        self->monsterinfo.currentmove = &soldier_move_death3;
+        self->monsterinfoVal.currentmove = &soldier_move_death3;
         return;
     }
 
     n = rand() % 5;
     if (n == 0)
-        self->monsterinfo.currentmove = &soldier_move_death1;
+        self->monsterinfoVal.currentmove = &soldier_move_death1;
     else if (n == 1)
-        self->monsterinfo.currentmove = &soldier_move_death2;
+        self->monsterinfoVal.currentmove = &soldier_move_death2;
     else if (n == 2)
-        self->monsterinfo.currentmove = &soldier_move_death4;
+        self->monsterinfoVal.currentmove = &soldier_move_death4;
     else if (n == 3)
-        self->monsterinfo.currentmove = &soldier_move_death5;
+        self->monsterinfoVal.currentmove = &soldier_move_death5;
     else
-        self->monsterinfo.currentmove = &soldier_move_death6;
+        self->monsterinfoVal.currentmove = &soldier_move_death6;
 }
 
 
@@ -1201,7 +1201,7 @@ void SP_monster_soldier_x (edict *self)
 {
 
     self->s.modelindex = quake2::getInstance()->gi.modelindex ("models/monsters/soldier/tris.md2");
-    self->monsterinfo.scale = MODEL_SCALE;
+    self->monsterinfoVal.scale = MODEL_SCALE;
     VectorSet (self->mins, -16, -16, -24);
     VectorSet (self->maxs, 16, 16, 32);
     self->movetype = MOVETYPE_STEP;
@@ -1217,17 +1217,17 @@ void SP_monster_soldier_x (edict *self)
     self->pain = soldier_pain;
     self->die = soldier_die;
 
-    self->monsterinfo.stand = soldier_stand;
-    self->monsterinfo.walk = soldier_walk;
-    self->monsterinfo.run = soldier_run;
-    self->monsterinfo.dodge = soldier_dodge;
-    self->monsterinfo.attack = soldier_attack;
-    self->monsterinfo.melee = NULL;
-    self->monsterinfo.sight = soldier_sight;
+    self->monsterinfoVal.stand = soldier_stand;
+    self->monsterinfoVal.walk = soldier_walk;
+    self->monsterinfoVal.run = soldier_run;
+    self->monsterinfoVal.dodge = soldier_dodge;
+    self->monsterinfoVal.attack = soldier_attack;
+    self->monsterinfoVal.melee = NULL;
+    self->monsterinfoVal.sight = soldier_sight;
 
     quake2::getInstance()->gi.linkentity (self);
 
-    self->monsterinfo.stand (self);
+    self->monsterinfoVal.stand (self);
 
     walkmonster_start (self);
 }

@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // cl_main.c  -- client main loop
 
 #include "client/client.hpp"
+#include "client/vid.hpp"
 #include "server/server.hpp"
 #include "shared/defines.hpp"
 #include "shared/quake2.hpp"

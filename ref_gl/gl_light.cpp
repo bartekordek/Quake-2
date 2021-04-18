@@ -40,7 +40,7 @@ void ref_gl_R_RenderDlight( dlight_t* light )
 
     rad = light->intensity * 0.35;
 
-    VectorSubtract( light->origin, r_origin, v );
+    VectorSubtract( light->origin, quake2::getInstance()->r_origin, v );
 #if 0
     // FIXME?
     if (VectorLength (v) < rad)
@@ -53,15 +53,15 @@ void ref_gl_R_RenderDlight( dlight_t* light )
     qglBegin( GL_TRIANGLE_FAN );
     qglColor3f( light->color[0] * 0.2, light->color[1] * 0.2,
                 light->color[2] * 0.2 );
-    for ( i = 0; i < 3; i++ ) v[i] = light->origin[i] - vpn[i] * rad;
+    for ( i = 0; i < 3; i++ ) v[i] = light->origin[i] - quake2::getInstance()->vpn[i] * rad;
     qglVertex3fv( v );
     qglColor3f( 0, 0, 0 );
     for ( i = 16; i >= 0; i-- )
     {
         a = i / 16.0 * M_PI * 2;
         for ( j = 0; j < 3; j++ )
-            v[j] = light->origin[j] + vright[j] * cos( a ) * rad +
-                   vup[j] * sin( a ) * rad;
+            v[j] = light->origin[j] + quake2::getInstance()->vright[j] * cos( a ) * rad +
+                   quake2::getInstance()->vup[j] * sin( a ) * rad;
         qglVertex3fv( v );
     }
     qglEnd();
@@ -81,7 +81,7 @@ void ref_gl_R_RenderDlights( void )
         return;
 
     quake2::getInstance()->r_dlightframecount =
-        r_framecount + 1;  // because the count hasn't
+        quake2::getInstance()->quake2::getInstance()->r_framecount + 1;  // because the count hasn't
                            //  advanced yet for this frame
     qglDepthMask( 0 );
     qglDisable( GL_TEXTURE_2D );
@@ -152,15 +152,12 @@ void ref_gl_R_PushDlights( void )
         return;
 
     quake2::getInstance()->r_dlightframecount =
-        r_framecount + 1;  // because the count hasn't
+        quake2::getInstance()->quake2::getInstance()->r_framecount + 1;  // because the count hasn't
                            //  advanced yet for this frame
     l = r_newrefdef.dlights;
     for ( i = 0; i < r_newrefdef.num_dlights; i++, l++ )
         ref_gl_R_MarkLights( l, 1 << i, r_worldmodel->nodes );
 }
-
-plane_s* lightplane;  // used as shadow plane
-vec3_t lightspot;
 
 int ref_gl_RecursiveLightPoint( mnode_s* node, vec3_t start, vec3_t end )
 {
@@ -204,8 +201,8 @@ int ref_gl_RecursiveLightPoint( mnode_s* node, vec3_t start, vec3_t end )
         return -1;  // didn't hit anuthing
 
     // check for impact on this node
-    VectorCopy( mid, lightspot );
-    lightplane = plane;
+    VectorCopy( mid, quake2::getInstance()->lightspot );
+    quake2::getInstance()->lightplane = plane;
 
     surf = r_worldmodel->surfaces + node->firstsurface;
     for ( i = 0; i < node->numsurfaces; i++, surf++ )
@@ -541,7 +538,7 @@ void ref_gl_R_BuildLightMap( msurface_t* surf, byte* dest, int stride )
     }
 
     // add all the dynamic lights
-    if ( surf->dlightframe == r_framecount )
+    if ( surf->dlightframe == quake2::getInstance()->r_framecount )
         ref_gl_R_AddDynamicLights( surf );
 
 // put into texture format

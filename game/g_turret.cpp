@@ -312,22 +312,22 @@ void turret_driver_think (edict *self)
     {
         if (!FindTarget (self))
             return;
-        self->monsterinfo.trail_time = level.time;
-        self->monsterinfo.aiflags &= ~AI_LOST_SIGHT;
+        self->monsterinfoVal.trail_time = level.time;
+        self->monsterinfoVal.aiflags &= ~AI_LOST_SIGHT;
     }
     else
     {
         if (visible (self, self->enemy))
         {
-            if (self->monsterinfo.aiflags & AI_LOST_SIGHT)
+            if (self->monsterinfoVal.aiflags & AI_LOST_SIGHT)
             {
-                self->monsterinfo.trail_time = level.time;
-                self->monsterinfo.aiflags &= ~AI_LOST_SIGHT;
+                self->monsterinfoVal.trail_time = level.time;
+                self->monsterinfoVal.aiflags &= ~AI_LOST_SIGHT;
             }
         }
         else
         {
-            self->monsterinfo.aiflags |= AI_LOST_SIGHT;
+            self->monsterinfoVal.aiflags |= AI_LOST_SIGHT;
             return;
         }
     }
@@ -339,14 +339,14 @@ void turret_driver_think (edict *self)
     vectoangles (dir, self->target_ent->move_angles);
 
     // decide if we should shoot
-    if (level.time < self->monsterinfo.attack_finished)
+    if (level.time < self->monsterinfoVal.attack_finished)
         return;
 
     reaction_time = (3 - skill->value) * 1.0;
-    if ((level.time - self->monsterinfo.trail_time) < reaction_time)
+    if ((level.time - self->monsterinfoVal.trail_time) < reaction_time)
         return;
 
-    self->monsterinfo.attack_finished = level.time + reaction_time + 1.0;
+    self->monsterinfoVal.attack_finished = level.time + reaction_time + 1.0;
     //FIXME how do we really want to pass this along?
     self->target_ent->spawnflags |= 65536;
 }
@@ -404,7 +404,7 @@ void SP_turret_driver (edict *self)
     self->viewheight = 24;
 
     self->die = turret_driver_die;
-    self->monsterinfo.stand = infantry_stand;
+    self->monsterinfoVal.stand = infantry_stand;
 
     self->flags |= FL_NO_KNOCKBACK;
 
@@ -416,7 +416,7 @@ void SP_turret_driver (edict *self)
     self->use = monster_use;
     self->clipmask = MASK_MONSTERSOLID;
     VectorCopy (self->s.origin, self->s.old_origin);
-    self->monsterinfo.aiflags |= AI_STAND_GROUND|AI_DUCKED;
+    self->monsterinfoVal.aiflags |= AI_STAND_GROUND|AI_DUCKED;
 
     if (st.item)
     {

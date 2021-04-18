@@ -68,7 +68,7 @@ void SV_DropClient( client_t* drop )
     {
         // call the prog function for removing a client
         // this will remove the body, among other things
-        quake2::getInstance()->quake2::getInstance()->ge.ClientDisconnect( drop->edict );
+        quake2::getInstance()->quake2::getInstance()->ge.ClientDisconnect( drop->edictVal );
     }
 
     if ( drop->download )
@@ -115,7 +115,7 @@ char* SV_StatusString( void )
         if ( cl->state == cs_connected || cl->state == cs_spawned )
         {
             // Com_sprintf (player, sizeof(player), "%i %i
-            // \"%s\"\n",cl->edict->client->ps.stats[STAT_FRAGS], cl->ping,
+            // \"%s\"\n",cl->edictVal->client->ps.stats[STAT_FRAGS], cl->ping,
             // cl->name);
             playerLength = strlen( player );
             if ( statusLength + playerLength >= sizeof( status ) )
@@ -382,7 +382,7 @@ gotnewcl:
     sv_client = newcl;
     edictnum = ( newcl - svs.clients ) + 1;
     ent = Edict_num( edictnum );
-    newcl->edict = ent;
+    newcl->edictVal = ent;
     newcl->challenge = challenge;  // save challenge for checksumming
 
     // get the game a chance to reject this connection or modify the userinfo
@@ -566,7 +566,7 @@ void SV_CalcPings( void )
 #endif
 
             // let the game dll know about the ping
-            cl->edict->client->ping = cl->ping;
+            cl->edictVal->client->ping = cl->ping;
     }
 }
 
@@ -898,7 +898,7 @@ void SV_UserinfoChanged( client_t* cl )
     int i;
 
     // call prog code to allow overrides
-    quake2::getInstance()->quake2::getInstance()->ge.ClientUserinfoChanged( cl->edict, cl->userinfo );
+    quake2::getInstance()->quake2::getInstance()->ge.ClientUserinfoChanged( cl->edictVal, cl->userinfo );
 
     // name for C code
     strncpy( cl->name, Info_ValueForKey( cl->userinfo, "name" ),

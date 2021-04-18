@@ -29,7 +29,7 @@
 
 GLXContext                gl_cx;
 
-static qboolean            doShm;
+static bool            doShm;
 static Display            *x_disp;
 static Colormap            x_cmap;
 static Window            x_win;
@@ -68,8 +68,8 @@ int current_framebuffer;
 static int                x_shmeventtype;
 //static XShmSegmentInfo    x_shminfo;
 
-static qboolean            oktodraw = false;
-static qboolean            X11_active = false;
+static bool            oktodraw = false;
+static bool            X11_active = false;
 
 struct
 {
@@ -105,7 +105,7 @@ typedef unsigned short PIXEL;
 
 // this is inside the renderer shared lib, so these are called from vid_so
 
-static qboolean        mouse_avail;
+static bool        mouse_avail;
 static int     mouse_buttonstate;
 static int     mouse_oldbuttonstate;
 static int   mouse_x, mouse_y;
@@ -117,7 +117,7 @@ static cvar    *_windowed_mouse;
 static cvar    *m_filter;
 static cvar    *in_mouse;
 
-static qboolean    mlooking;
+static bool    mlooking;
 
 // state struct passed in Init
 static in_state_t    *in_state;
@@ -144,7 +144,7 @@ static void InitSig(void)
 /*
 ** GLimp_SetMode
 */
-int GLimp_SetMode( int *pwidth, int *pheight, int mode, qboolean fullscreen )
+int GLimp_SetMode( int *pwidth, int *pheight, int mode, bool fullscreen )
 {
     int width, height;
     GLint attribs[32];
@@ -240,7 +240,7 @@ void GLimp_EndFrame (void)
 /*
 ** GLimp_AppActivate
 */
-void GLimp_AppActivate( qboolean active )
+void GLimp_AppActivate( bool active )
 {
 }
 
@@ -279,7 +279,7 @@ static Cursor CreateNullCursor(Display *display, Window root)
 ** The necessary width and height parameters are grabbed from
 ** vid.width and vid.height.
 */
-qboolean GLimp_InitGraphics( qboolean fullscreen )
+bool GLimp_InitGraphics( bool fullscreen )
 {
     int pnum, i;
     XVisualInfo template;

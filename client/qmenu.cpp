@@ -40,10 +40,8 @@ static void SpinControl_DoSlide( menulist_s* s, int dir );
 #define RCOLUMN_OFFSET 16
 #define LCOLUMN_OFFSET -16
 
-extern viddef_t viddef;
-
-#define VID_WIDTH viddef.width
-#define VID_HEIGHT viddef.height
+#define VID_WIDTH quake2::getInstance()->viddef.width
+#define VID_HEIGHT quake2::getInstance()->viddef.height
 
 #define Draw_Char re.DrawChar
 #define Draw_Fill re.DrawFill

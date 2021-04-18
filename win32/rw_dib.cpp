@@ -125,8 +125,8 @@ bool DIB_Init( unsigned char **ppbuffer, int *ppitch )
     ** fill in the BITMAPINFO struct
     */
     pbmiDIB->bmiHeader.biSize          = sizeof(BITMAPINFOHEADER);
-    pbmiDIB->bmiHeader.biWidth         = vid.width;
-    pbmiDIB->bmiHeader.biHeight        = vid.height;
+    pbmiDIB->bmiHeader.biWidth         = quake2::getInstance()->vid.width;
+    pbmiDIB->bmiHeader.biHeight        = quake2::getInstance()->vid.height;
     pbmiDIB->bmiHeader.biPlanes        = 1;
     pbmiDIB->bmiHeader.biBitCount      = 8;
     pbmiDIB->bmiHeader.biCompression   = BI_RGB;
@@ -165,20 +165,20 @@ bool DIB_Init( unsigned char **ppbuffer, int *ppitch )
     if ( pbmiDIB->bmiHeader.biHeight > 0 )
     {
         // bottom up
-        *ppbuffer    = sww_state.pDIBBase + ( vid.height - 1 ) * vid.width;
-        *ppitch        = -vid.width;
+        *ppbuffer    = sww_state.pDIBBase + ( quake2::getInstance()->vid.height - 1 ) * quake2::getInstance()->vid.width;
+        *ppitch        = -quake2::getInstance()->vid.width;
     }
     else
     {
         // top down
         *ppbuffer    = sww_state.pDIBBase;
-        *ppitch        = vid.width;
+        *ppitch        = quake2::getInstance()->vid.width;
     }
 
     /*
     ** clear the DIB memory buffer
     */
-    memset( sww_state.pDIBBase, 0xff, vid.width * vid.height );
+    memset( sww_state.pDIBBase, 0xff, quake2::getInstance()->vid.width * quake2::getInstance()->vid.height );
 
     if ( ( sww_state.hdcDIBSection = CreateCompatibleDC( sww_state.hDC ) ) == NULL )
     {

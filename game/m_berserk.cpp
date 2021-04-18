@@ -60,7 +60,7 @@ mmove_t berserk_move_stand = {FRAME_stand1, FRAME_stand5, berserk_frames_stand, 
 
 void berserk_stand (edict *self)
 {
-    self->monsterinfo.currentmove = &berserk_move_stand;
+    self->monsterinfoVal.currentmove = &berserk_move_stand;
 }
 
 mframe_t berserk_frames_stand_fidget [] =
@@ -90,12 +90,12 @@ mmove_t berserk_move_stand_fidget = {FRAME_standb1, FRAME_standb20, berserk_fram
 
 void berserk_fidget (edict *self)
 {
-    if (self->monsterinfo.aiflags & AI_STAND_GROUND)
+    if (self->monsterinfoVal.aiflags & AI_STAND_GROUND)
         return;
     if (random() > 0.15)
         return;
 
-    self->monsterinfo.currentmove = &berserk_move_stand_fidget;
+    self->monsterinfoVal.currentmove = &berserk_move_stand_fidget;
     quake2::getInstance()->gi.sound (self, CHAN_WEAPON, sound_idle, 1, ATTN_IDLE, 0);
 }
 
@@ -119,7 +119,7 @@ mmove_t berserk_move_walk = {FRAME_walkc1, FRAME_walkc11, berserk_frames_walk, N
 
 void berserk_walk (edict *self)
 {
-    self->monsterinfo.currentmove = &berserk_move_walk;
+    self->monsterinfoVal.currentmove = &berserk_move_walk;
 }
 
 /*
@@ -160,10 +160,10 @@ mmove_t berserk_move_run1 = {FRAME_run1, FRAME_run6, berserk_frames_run1, NULL};
 
 void berserk_run (edict *self)
 {
-    if (self->monsterinfo.aiflags & AI_STAND_GROUND)
-        self->monsterinfo.currentmove = &berserk_move_stand;
+    if (self->monsterinfoVal.aiflags & AI_STAND_GROUND)
+        self->monsterinfoVal.currentmove = &berserk_move_stand;
     else
-        self->monsterinfo.currentmove = &berserk_move_run1;
+        self->monsterinfoVal.currentmove = &berserk_move_run1;
 }
 
 
@@ -249,9 +249,9 @@ mmove_t berserk_move_attack_strike = {FRAME_att_c21, FRAME_att_c34, berserk_fram
 void berserk_melee (edict *self)
 {
     if ((rand() % 2) == 0)
-        self->monsterinfo.currentmove = &berserk_move_attack_spike;
+        self->monsterinfoVal.currentmove = &berserk_move_attack_spike;
     else
-        self->monsterinfo.currentmove = &berserk_move_attack_club;
+        self->monsterinfoVal.currentmove = &berserk_move_attack_club;
 }
 
 
@@ -327,9 +327,9 @@ void berserk_pain (edict *self, edict *other, float kick, int damage)
         return;        // no pain anims in nightmare
 
     if ((damage < 20) || (random() < 0.5))
-        self->monsterinfo.currentmove = &berserk_move_pain1;
+        self->monsterinfoVal.currentmove = &berserk_move_pain1;
     else
-        self->monsterinfo.currentmove = &berserk_move_pain2;
+        self->monsterinfoVal.currentmove = &berserk_move_pain2;
 }
 
 
@@ -402,9 +402,9 @@ void berserk_die (edict *self, edict *inflictor, edict *attacker, int damage, ve
     self->takedamage = DAMAGE_YES;
 
     if (damage >= 50)
-        self->monsterinfo.currentmove = &berserk_move_death1;
+        self->monsterinfoVal.currentmove = &berserk_move_death1;
     else
-        self->monsterinfo.currentmove = &berserk_move_death2;
+        self->monsterinfoVal.currentmove = &berserk_move_death2;
 }
 
 
@@ -439,17 +439,17 @@ void SP_monster_berserk (edict *self)
     self->pain = berserk_pain;
     self->die = berserk_die;
 
-    self->monsterinfo.stand = berserk_stand;
-    self->monsterinfo.walk = berserk_walk;
-    self->monsterinfo.run = berserk_run;
-    self->monsterinfo.dodge = NULL;
-    self->monsterinfo.attack = NULL;
-    self->monsterinfo.melee = berserk_melee;
-    self->monsterinfo.sight = berserk_sight;
-    self->monsterinfo.search = berserk_search;
+    self->monsterinfoVal.stand = berserk_stand;
+    self->monsterinfoVal.walk = berserk_walk;
+    self->monsterinfoVal.run = berserk_run;
+    self->monsterinfoVal.dodge = NULL;
+    self->monsterinfoVal.attack = NULL;
+    self->monsterinfoVal.melee = berserk_melee;
+    self->monsterinfoVal.sight = berserk_sight;
+    self->monsterinfoVal.search = berserk_search;
 
-    self->monsterinfo.currentmove = &berserk_move_stand;
-    self->monsterinfo.scale = MODEL_SCALE;
+    self->monsterinfoVal.currentmove = &berserk_move_stand;
+    self->monsterinfoVal.scale = MODEL_SCALE;
 
     quake2::getInstance()->gi.linkentity (self);
 

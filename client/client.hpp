@@ -38,7 +38,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "screen.hpp"
 #include "shared/player_state.hpp"
 #include "sound.hpp"
-#include "vid.hpp"
 
 //=============================================================================
 
@@ -105,7 +104,7 @@ typedef struct
 
     bool refresh_prepped;  // false if on new level or new ref dll
     bool sound_prepped;    // ambient sounds can start
-    bool force_refdef;     // vid has changed, so we can't use a paused refdef
+    bool force_refdef;     // quake2::getInstance()->vid has changed, so we can't use a paused refdef
 
     int parse_entities;  // index (not anded off) into cl_parse_entities[]
 

@@ -118,25 +118,25 @@ mmove_t parasite_move_end_fidget = {FRAME_stand28, FRAME_stand35, parasite_frame
 
 void parasite_end_fidget (edict *self)
 {
-    self->monsterinfo.currentmove = &parasite_move_end_fidget;
+    self->monsterinfoVal.currentmove = &parasite_move_end_fidget;
 }
 
 void parasite_do_fidget (edict *self)
 {
-    self->monsterinfo.currentmove = &parasite_move_fidget;
+    self->monsterinfoVal.currentmove = &parasite_move_fidget;
 }
 
 void parasite_refidget (edict *self)
 {
     if (random() <= 0.8)
-        self->monsterinfo.currentmove = &parasite_move_fidget;
+        self->monsterinfoVal.currentmove = &parasite_move_fidget;
     else
-        self->monsterinfo.currentmove = &parasite_move_end_fidget;
+        self->monsterinfoVal.currentmove = &parasite_move_end_fidget;
 }
 
 void parasite_idle (edict *self)
 {
-    self->monsterinfo.currentmove = &parasite_move_start_fidget;
+    self->monsterinfoVal.currentmove = &parasite_move_start_fidget;
 }
 
 
@@ -164,7 +164,7 @@ mmove_t    parasite_move_stand = {FRAME_stand01, FRAME_stand17, parasite_frames_
 
 void parasite_stand (edict *self)
 {
-    self->monsterinfo.currentmove = &parasite_move_stand;
+    self->monsterinfoVal.currentmove = &parasite_move_stand;
 }
 
 
@@ -200,18 +200,18 @@ mmove_t parasite_move_stop_run = {FRAME_run10, FRAME_run15, parasite_frames_stop
 
 void parasite_start_run (edict *self)
 {
-    if (self->monsterinfo.aiflags & AI_STAND_GROUND)
-        self->monsterinfo.currentmove = &parasite_move_stand;
+    if (self->monsterinfoVal.aiflags & AI_STAND_GROUND)
+        self->monsterinfoVal.currentmove = &parasite_move_stand;
     else
-        self->monsterinfo.currentmove = &parasite_move_start_run;
+        self->monsterinfoVal.currentmove = &parasite_move_start_run;
 }
 
 void parasite_run (edict *self)
 {
-    if (self->monsterinfo.aiflags & AI_STAND_GROUND)
-        self->monsterinfo.currentmove = &parasite_move_stand;
+    if (self->monsterinfoVal.aiflags & AI_STAND_GROUND)
+        self->monsterinfoVal.currentmove = &parasite_move_stand;
     else
-        self->monsterinfo.currentmove = &parasite_move_run;
+        self->monsterinfoVal.currentmove = &parasite_move_run;
 }
 
 
@@ -247,12 +247,12 @@ mmove_t parasite_move_stop_walk = {FRAME_run10, FRAME_run15, parasite_frames_sto
 
 void parasite_start_walk (edict *self)
 {
-    self->monsterinfo.currentmove = &parasite_move_start_walk;
+    self->monsterinfoVal.currentmove = &parasite_move_start_walk;
 }
 
 void parasite_walk (edict *self)
 {
-    self->monsterinfo.currentmove = &parasite_move_walk;
+    self->monsterinfoVal.currentmove = &parasite_move_walk;
 }
 
 
@@ -290,7 +290,7 @@ void parasite_pain (edict *self, edict *other, float kick, int damage)
     else
         quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain2, 1, ATTN_NORM, 0);
 
-    self->monsterinfo.currentmove = &parasite_move_pain1;
+    self->monsterinfoVal.currentmove = &parasite_move_pain1;
 }
 
 
@@ -433,9 +433,9 @@ Break Stuff Ends
 void parasite_attack (edict *self)
 {
 //    if (random() <= 0.2)
-//        self->monsterinfo.currentmove = &parasite_move_break;
+//        self->monsterinfoVal.currentmove = &parasite_move_break;
 //    else
-        self->monsterinfo.currentmove = &parasite_move_drain;
+        self->monsterinfoVal.currentmove = &parasite_move_drain;
 }
 
 
@@ -492,7 +492,7 @@ void parasite_die (edict *self, edict *inflictor, edict *attacker, int damage, v
     quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_die, 1, ATTN_NORM, 0);
     self->deadflag = DEAD_DEAD;
     self->takedamage = DAMAGE_YES;
-    self->monsterinfo.currentmove = &parasite_move_death;
+    self->monsterinfoVal.currentmove = &parasite_move_death;
 }
 
 /*
@@ -536,17 +536,17 @@ void SP_monster_parasite (edict *self)
     self->pain = parasite_pain;
     self->die = parasite_die;
 
-    self->monsterinfo.stand = parasite_stand;
-    self->monsterinfo.walk = parasite_start_walk;
-    self->monsterinfo.run = parasite_start_run;
-    self->monsterinfo.attack = parasite_attack;
-    self->monsterinfo.sight = parasite_sight;
-    self->monsterinfo.idle = parasite_idle;
+    self->monsterinfoVal.stand = parasite_stand;
+    self->monsterinfoVal.walk = parasite_start_walk;
+    self->monsterinfoVal.run = parasite_start_run;
+    self->monsterinfoVal.attack = parasite_attack;
+    self->monsterinfoVal.sight = parasite_sight;
+    self->monsterinfoVal.idle = parasite_idle;
 
     quake2::getInstance()->gi.linkentity (self);
 
-    self->monsterinfo.currentmove = &parasite_move_stand;
-    self->monsterinfo.scale = MODEL_SCALE;
+    self->monsterinfoVal.currentmove = &parasite_move_stand;
+    self->monsterinfoVal.scale = MODEL_SCALE;
 
     walkmonster_start (self);
 }

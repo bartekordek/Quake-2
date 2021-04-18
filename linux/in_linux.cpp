@@ -1,6 +1,6 @@
 // in_null.c -- for systems without a mouse
 
-#include "../client/client.h"
+#include "client/client.hpp"
 
 cvar_t    *in_mouse;
 cvar_t    *in_joystick;
@@ -23,7 +23,7 @@ void IN_Move (usercmd_t *cmd)
 {
 }
 
-void IN_Activate (qboolean active)
+void IN_Activate (bool active)
 {
 }
 

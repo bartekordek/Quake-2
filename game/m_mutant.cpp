@@ -142,7 +142,7 @@ mmove_t mutant_move_stand = {FRAME_stand101, FRAME_stand151, mutant_frames_stand
 
 void mutant_stand (edict *self)
 {
-    self->monsterinfo.currentmove = &mutant_move_stand;
+    self->monsterinfoVal.currentmove = &mutant_move_stand;
 }
 
 
@@ -153,7 +153,7 @@ void mutant_stand (edict *self)
 void mutant_idle_loop (edict *self)
 {
     if (random() < 0.75)
-        self->monsterinfo.nextframe = FRAME_stand155;
+        self->monsterinfoVal.nextframe = FRAME_stand155;
 }
 
 mframe_t mutant_frames_idle [] =
@@ -176,7 +176,7 @@ mmove_t mutant_move_idle = {FRAME_stand152, FRAME_stand164, mutant_frames_idle, 
 
 void mutant_idle (edict *self)
 {
-    self->monsterinfo.currentmove = &mutant_move_idle;
+    self->monsterinfoVal.currentmove = &mutant_move_idle;
     quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_idle, 1, ATTN_IDLE, 0);
 }
 
@@ -206,7 +206,7 @@ mmove_t mutant_move_walk = {FRAME_walk05, FRAME_walk16, mutant_frames_walk, NULL
 
 void mutant_walk_loop (edict *self)
 {
-    self->monsterinfo.currentmove = &mutant_move_walk;
+    self->monsterinfoVal.currentmove = &mutant_move_walk;
 }
 
 mframe_t mutant_frames_start_walk [] =
@@ -220,7 +220,7 @@ mmove_t mutant_move_start_walk = {FRAME_walk01, FRAME_walk04, mutant_frames_star
 
 void mutant_walk (edict *self)
 {
-    self->monsterinfo.currentmove = &mutant_move_start_walk;
+    self->monsterinfoVal.currentmove = &mutant_move_start_walk;
 }
 
 
@@ -241,10 +241,10 @@ mmove_t mutant_move_run = {FRAME_run03, FRAME_run08, mutant_frames_run, NULL};
 
 void mutant_run (edict *self)
 {
-    if (self->monsterinfo.aiflags & AI_STAND_GROUND)
-        self->monsterinfo.currentmove = &mutant_move_stand;
+    if (self->monsterinfoVal.aiflags & AI_STAND_GROUND)
+        self->monsterinfoVal.currentmove = &mutant_move_stand;
     else
-        self->monsterinfo.currentmove = &mutant_move_run;
+        self->monsterinfoVal.currentmove = &mutant_move_run;
 }
 
 
@@ -280,7 +280,7 @@ void mutant_check_refire (edict *self)
         return;
 
     if ( ((skill->value == 3) && (random() < 0.5)) || (range(self, self->enemy) == RANGE_MELEE) )
-        self->monsterinfo.nextframe = FRAME_attack09;
+        self->monsterinfoVal.nextframe = FRAME_attack09;
 }
 
 mframe_t mutant_frames_attack [] =
@@ -297,7 +297,7 @@ mmove_t mutant_move_attack = {FRAME_attack09, FRAME_attack15, mutant_frames_atta
 
 void mutant_melee (edict *self)
 {
-    self->monsterinfo.currentmove = &mutant_move_attack;
+    self->monsterinfoVal.currentmove = &mutant_move_attack;
 }
 
 
@@ -333,7 +333,7 @@ void mutant_jump_touch (edict *self, edict *other, plane_s *plane, csurface_s *s
     {
         if (self->groundentity)
         {
-            self->monsterinfo.nextframe = FRAME_attack02;
+            self->monsterinfoVal.nextframe = FRAME_attack02;
             self->touch = NULL;
         }
         return;
@@ -352,8 +352,8 @@ void mutant_jump_takeoff (edict *self)
     VectorScale (forward, 600, self->velocity);
     self->velocity[2] = 250;
     self->groundentity = NULL;
-    self->monsterinfo.aiflags |= AI_DUCKED;
-    self->monsterinfo.attack_finished = level.time + 3;
+    self->monsterinfoVal.aiflags |= AI_DUCKED;
+    self->monsterinfoVal.attack_finished = level.time + 3;
     self->touch = mutant_jump_touch;
 }
 
@@ -362,15 +362,15 @@ void mutant_check_landing (edict *self)
     if (self->groundentity)
     {
         quake2::getInstance()->gi.sound (self, CHAN_WEAPON, sound_thud, 1, ATTN_NORM, 0);
-        self->monsterinfo.attack_finished = 0;
-        self->monsterinfo.aiflags &= ~AI_DUCKED;
+        self->monsterinfoVal.attack_finished = 0;
+        self->monsterinfoVal.aiflags &= ~AI_DUCKED;
         return;
     }
 
-    if (level.time > self->monsterinfo.attack_finished)
-        self->monsterinfo.nextframe = FRAME_attack02;
+    if (level.time > self->monsterinfoVal.attack_finished)
+        self->monsterinfoVal.nextframe = FRAME_attack02;
     else
-        self->monsterinfo.nextframe = FRAME_attack05;
+        self->monsterinfoVal.nextframe = FRAME_attack05;
 }
 
 mframe_t mutant_frames_jump [] =
@@ -388,7 +388,7 @@ mmove_t mutant_move_jump = {FRAME_attack01, FRAME_attack08, mutant_frames_jump, 
 
 void mutant_jump (edict *self)
 {
-    self->monsterinfo.currentmove = &mutant_move_jump;
+    self->monsterinfoVal.currentmove = &mutant_move_jump;
 }
 
 
@@ -437,13 +437,13 @@ bool mutant_checkattack (edict *self)
 
     if (mutant_check_melee(self))
     {
-        self->monsterinfo.attack_state = AS_MELEE;
+        self->monsterinfoVal.attack_state = AS_MELEE;
         return true;
     }
 
     if (mutant_check_jump(self))
     {
-        self->monsterinfo.attack_state = AS_MISSILE;
+        self->monsterinfoVal.attack_state = AS_MISSILE;
         // FIXME play a jump sound here
         return true;
     }
@@ -512,17 +512,17 @@ void mutant_pain (edict *self, edict *other, float kick, int damage)
     if (r < 0.33)
     {
         quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain1, 1, ATTN_NORM, 0);
-        self->monsterinfo.currentmove = &mutant_move_pain1;
+        self->monsterinfoVal.currentmove = &mutant_move_pain1;
     }
     else if (r < 0.66)
     {
         quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain2, 1, ATTN_NORM, 0);
-        self->monsterinfo.currentmove = &mutant_move_pain2;
+        self->monsterinfoVal.currentmove = &mutant_move_pain2;
     }
     else
     {
         quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain1, 1, ATTN_NORM, 0);
-        self->monsterinfo.currentmove = &mutant_move_pain3;
+        self->monsterinfoVal.currentmove = &mutant_move_pain3;
     }
 }
 
@@ -596,9 +596,9 @@ void mutant_die (edict *self, edict *inflictor, edict *attacker, int damage, vec
     self->s.skinnum = 1;
 
     if (random() < 0.5)
-        self->monsterinfo.currentmove = &mutant_move_death1;
+        self->monsterinfoVal.currentmove = &mutant_move_death1;
     else
-        self->monsterinfo.currentmove = &mutant_move_death2;
+        self->monsterinfoVal.currentmove = &mutant_move_death2;
 }
 
 
@@ -643,21 +643,21 @@ void SP_monster_mutant (edict *self)
     self->pain = mutant_pain;
     self->die = mutant_die;
 
-    self->monsterinfo.stand = mutant_stand;
-    self->monsterinfo.walk = mutant_walk;
-    self->monsterinfo.run = mutant_run;
-    self->monsterinfo.dodge = NULL;
-    self->monsterinfo.attack = mutant_jump;
-    self->monsterinfo.melee = mutant_melee;
-    self->monsterinfo.sight = mutant_sight;
-    self->monsterinfo.search = mutant_search;
-    self->monsterinfo.idle = mutant_idle;
-    self->monsterinfo.checkattack = mutant_checkattack;
+    self->monsterinfoVal.stand = mutant_stand;
+    self->monsterinfoVal.walk = mutant_walk;
+    self->monsterinfoVal.run = mutant_run;
+    self->monsterinfoVal.dodge = NULL;
+    self->monsterinfoVal.attack = mutant_jump;
+    self->monsterinfoVal.melee = mutant_melee;
+    self->monsterinfoVal.sight = mutant_sight;
+    self->monsterinfoVal.search = mutant_search;
+    self->monsterinfoVal.idle = mutant_idle;
+    self->monsterinfoVal.checkattack = mutant_checkattack;
 
     quake2::getInstance()->gi.linkentity (self);
 
-    self->monsterinfo.currentmove = &mutant_move_stand;
+    self->monsterinfoVal.currentmove = &mutant_move_stand;
 
-    self->monsterinfo.scale = MODEL_SCALE;
+    self->monsterinfoVal.scale = MODEL_SCALE;
     walkmonster_start (self);
 }

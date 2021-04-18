@@ -3,7 +3,7 @@
 
 #include "../client/client.h"
 
-void CDAudio_Play(int track, qboolean looping)
+void CDAudio_Play(int track, bool looping)
 {
         Com_Printf_G("XXX - CDAudio_Play %i (%i)\n", track, looping);
 }

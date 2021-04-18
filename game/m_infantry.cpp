@@ -74,7 +74,7 @@ mmove_t infantry_move_stand = {FRAME_stand50, FRAME_stand71, infantry_frames_sta
 
 void infantry_stand (edict *self)
 {
-    self->monsterinfo.currentmove = &infantry_move_stand;
+    self->monsterinfoVal.currentmove = &infantry_move_stand;
 }
 
 
@@ -134,7 +134,7 @@ mmove_t infantry_move_fidget = {FRAME_stand01, FRAME_stand49, infantry_frames_fi
 
 void infantry_fidget (edict *self)
 {
-    self->monsterinfo.currentmove = &infantry_move_fidget;
+    self->monsterinfoVal.currentmove = &infantry_move_fidget;
     quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_idle, 1, ATTN_IDLE, 0);
 }
 
@@ -157,7 +157,7 @@ mmove_t infantry_move_walk = {FRAME_walk03, FRAME_walk14, infantry_frames_walk, 
 
 void infantry_walk (edict *self)
 {
-    self->monsterinfo.currentmove = &infantry_move_walk;
+    self->monsterinfoVal.currentmove = &infantry_move_walk;
 }
 
 mframe_t infantry_frames_run [] =
@@ -175,10 +175,10 @@ mmove_t infantry_move_run = {FRAME_run01, FRAME_run08, infantry_frames_run, NULL
 
 void infantry_run (edict *self)
 {
-    if (self->monsterinfo.aiflags & AI_STAND_GROUND)
-        self->monsterinfo.currentmove = &infantry_move_stand;
+    if (self->monsterinfoVal.aiflags & AI_STAND_GROUND)
+        self->monsterinfoVal.currentmove = &infantry_move_stand;
     else
-        self->monsterinfo.currentmove = &infantry_move_run;
+        self->monsterinfoVal.currentmove = &infantry_move_run;
 }
 
 
@@ -230,12 +230,12 @@ void infantry_pain (edict *self, edict *other, float kick, int damage)
     n = rand() % 2;
     if (n == 0)
     {
-        self->monsterinfo.currentmove = &infantry_move_pain1;
+        self->monsterinfoVal.currentmove = &infantry_move_pain1;
         quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain1, 1, ATTN_NORM, 0);
     }
     else
     {
-        self->monsterinfo.currentmove = &infantry_move_pain2;
+        self->monsterinfoVal.currentmove = &infantry_move_pain2;
         quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain2, 1, ATTN_NORM, 0);
     }
 }
@@ -410,17 +410,17 @@ void infantry_die (edict *self, edict *inflictor, edict *attacker, int damage, v
     n = rand() % 3;
     if (n == 0)
     {
-        self->monsterinfo.currentmove = &infantry_move_death1;
+        self->monsterinfoVal.currentmove = &infantry_move_death1;
         quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_die2, 1, ATTN_NORM, 0);
     }
     else if (n == 1)
     {
-        self->monsterinfo.currentmove = &infantry_move_death2;
+        self->monsterinfoVal.currentmove = &infantry_move_death2;
         quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_die1, 1, ATTN_NORM, 0);
     }
     else
     {
-        self->monsterinfo.currentmove = &infantry_move_death3;
+        self->monsterinfoVal.currentmove = &infantry_move_death3;
         quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_die2, 1, ATTN_NORM, 0);
     }
 }
@@ -428,26 +428,26 @@ void infantry_die (edict *self, edict *inflictor, edict *attacker, int damage, v
 
 void infantry_duck_down (edict *self)
 {
-    if (self->monsterinfo.aiflags & AI_DUCKED)
+    if (self->monsterinfoVal.aiflags & AI_DUCKED)
         return;
-    self->monsterinfo.aiflags |= AI_DUCKED;
+    self->monsterinfoVal.aiflags |= AI_DUCKED;
     self->maxs[2] -= 32;
     self->takedamage = DAMAGE_YES;
-    self->monsterinfo.pausetime = level.time + 1;
+    self->monsterinfoVal.pausetime = level.time + 1;
     quake2::getInstance()->gi.linkentity (self);
 }
 
 void infantry_duck_hold (edict *self)
 {
-    if (level.time >= self->monsterinfo.pausetime)
-        self->monsterinfo.aiflags &= ~AI_HOLD_FRAME;
+    if (level.time >= self->monsterinfoVal.pausetime)
+        self->monsterinfoVal.aiflags &= ~AI_HOLD_FRAME;
     else
-        self->monsterinfo.aiflags |= AI_HOLD_FRAME;
+        self->monsterinfoVal.aiflags |= AI_HOLD_FRAME;
 }
 
 void infantry_duck_up (edict *self)
 {
-    self->monsterinfo.aiflags &= ~AI_DUCKED;
+    self->monsterinfoVal.aiflags &= ~AI_DUCKED;
     self->maxs[2] += 32;
     self->takedamage = DAMAGE_AIM;
     quake2::getInstance()->gi.linkentity (self);
@@ -471,7 +471,7 @@ void infantry_dodge (edict *self, edict *attacker, float eta)
     if (!self->enemy)
         self->enemy = attacker;
 
-    self->monsterinfo.currentmove = &infantry_move_duck;
+    self->monsterinfoVal.currentmove = &infantry_move_duck;
 }
 
 
@@ -481,17 +481,17 @@ void infantry_cock_gun (edict *self)
 
     quake2::getInstance()->gi.sound (self, CHAN_WEAPON, sound_weapon_cock, 1, ATTN_NORM, 0);
     n = (rand() & 15) + 3 + 7;
-    self->monsterinfo.pausetime = level.time + n * FRAMETIME;
+    self->monsterinfoVal.pausetime = level.time + n * FRAMETIME;
 }
 
 void infantry_fire (edict *self)
 {
     InfantryMachineGun (self);
 
-    if (level.time >= self->monsterinfo.pausetime)
-        self->monsterinfo.aiflags &= ~AI_HOLD_FRAME;
+    if (level.time >= self->monsterinfoVal.pausetime)
+        self->monsterinfoVal.aiflags &= ~AI_HOLD_FRAME;
     else
-        self->monsterinfo.aiflags |= AI_HOLD_FRAME;
+        self->monsterinfoVal.aiflags |= AI_HOLD_FRAME;
 }
 
 mframe_t infantry_frames_attack1 [] =
@@ -545,9 +545,9 @@ mmove_t infantry_move_attack2 = {FRAME_attak201, FRAME_attak208, infantry_frames
 void infantry_attack(edict *self)
 {
     if (range (self, self->enemy) == RANGE_MELEE)
-        self->monsterinfo.currentmove = &infantry_move_attack2;
+        self->monsterinfoVal.currentmove = &infantry_move_attack2;
     else
-        self->monsterinfo.currentmove = &infantry_move_attack1;
+        self->monsterinfoVal.currentmove = &infantry_move_attack1;
 }
 
 
@@ -589,19 +589,19 @@ void SP_monster_infantry (edict *self)
     self->pain = infantry_pain;
     self->die = infantry_die;
 
-    self->monsterinfo.stand = infantry_stand;
-    self->monsterinfo.walk = infantry_walk;
-    self->monsterinfo.run = infantry_run;
-    self->monsterinfo.dodge = infantry_dodge;
-    self->monsterinfo.attack = infantry_attack;
-    self->monsterinfo.melee = NULL;
-    self->monsterinfo.sight = infantry_sight;
-    self->monsterinfo.idle = infantry_fidget;
+    self->monsterinfoVal.stand = infantry_stand;
+    self->monsterinfoVal.walk = infantry_walk;
+    self->monsterinfoVal.run = infantry_run;
+    self->monsterinfoVal.dodge = infantry_dodge;
+    self->monsterinfoVal.attack = infantry_attack;
+    self->monsterinfoVal.melee = NULL;
+    self->monsterinfoVal.sight = infantry_sight;
+    self->monsterinfoVal.idle = infantry_fidget;
 
     quake2::getInstance()->gi.linkentity (self);
 
-    self->monsterinfo.currentmove = &infantry_move_stand;
-    self->monsterinfo.scale = MODEL_SCALE;
+    self->monsterinfoVal.currentmove = &infantry_move_stand;
+    self->monsterinfoVal.scale = MODEL_SCALE;
 
     walkmonster_start (self);
 }

@@ -92,6 +92,7 @@ static aedge_t    aedges[12] = {
 */
 unsigned long R_AliasCheckFrameBBox( daliasframe_t *frame, float worldxf[3][4] )
 {
+    auto view_clipplanes = quake2::getInstance()->view_clipplanes;
     unsigned long aggregate_and_clipcode = ~0U,
                   aggregate_or_clipcode = 0;
     int           i;
@@ -275,7 +276,7 @@ void R_AliasPreparePoints (void)
     pstverts = (dstvert_t *)((byte *)s_pmdl + s_pmdl->ofs_st);
     ptri = (dtriangle_t *)((byte *)s_pmdl + s_pmdl->ofs_tris);
 
-    if ( ( quake2::getInstance()->currententity->flags & RF_WEAPONMODEL ) && ( r_lefthand->value == 1.0F ) )
+    if ( ( quake2::getInstance()->currententity->flags & RF_WEAPONMODEL ) && ( quake2::getInstance()->r_lefthand->value == 1.0F ) )
     {
         for (i=0 ; i<s_pmdl->num_tris ; i++, ptri++)
         {
@@ -380,24 +381,24 @@ void R_AliasSetUpTransform (void)
         aliasoldworldtransform[i][0] = aliasworldtransform[i][2] =  s_alias_up[i];
     }
 
-    aliasworldtransform[0][3] = quake2::getInstance()->currententity->origin[0]-r_origin[0];
-    aliasworldtransform[1][3] = quake2::getInstance()->currententity->origin[1]-r_origin[1];
-    aliasworldtransform[2][3] = quake2::getInstance()->currententity->origin[2]-r_origin[2];
+    aliasworldtransform[0][3] = quake2::getInstance()->currententity->origin[0]-quake2::getInstance()->r_origin[0];
+    aliasworldtransform[1][3] = quake2::getInstance()->currententity->origin[1]-quake2::getInstance()->r_origin[1];
+    aliasworldtransform[2][3] = quake2::getInstance()->currententity->origin[2]-quake2::getInstance()->r_origin[2];
 
-    aliasoldworldtransform[0][3] = quake2::getInstance()->currententity->oldorigin[0]-r_origin[0];
-    aliasoldworldtransform[1][3] = quake2::getInstance()->currententity->oldorigin[1]-r_origin[1];
-    aliasoldworldtransform[2][3] = quake2::getInstance()->currententity->oldorigin[2]-r_origin[2];
+    aliasoldworldtransform[0][3] = quake2::getInstance()->currententity->oldorigin[0]-quake2::getInstance()->r_origin[0];
+    aliasoldworldtransform[1][3] = quake2::getInstance()->currententity->oldorigin[1]-quake2::getInstance()->r_origin[1];
+    aliasoldworldtransform[2][3] = quake2::getInstance()->currententity->oldorigin[2]-quake2::getInstance()->r_origin[2];
 
 // FIXME: can do more efficiently than full concatenation
 //    memcpy( rotationmatrix, t2matrix, sizeof( rotationmatrix ) );
 
 //    R_ConcatTransforms (t2matrix, tmatrix, rotationmatrix);
 
-// TODO: should be global, set when vright, etc., set
-    VectorCopy (vright, viewmatrix[0]);
-    VectorCopy (vup, viewmatrix[1]);
+// TODO: should be global, set when quake2::getInstance()->vright, etc., set
+    VectorCopy (quake2::getInstance()->vright, viewmatrix[0]);
+    VectorCopy (quake2::getInstance()->vup, viewmatrix[1]);
     VectorInverse (viewmatrix[1]);
-    VectorCopy (vpn, viewmatrix[2]);
+    VectorCopy (quake2::getInstance()->vpn, viewmatrix[2]);
 
     viewmatrix[0][3] = 0;
     viewmatrix[1][3] = 0;
@@ -1050,14 +1051,14 @@ void R_AliasDrawModel (void)
 
     s_pmdl = (dmdl_t *)currentmodel->extradata;
 
-    if ( r_lerpmodels->value == 0 )
+    if ( quake2::getInstance()->quake2::getInstance()->r_lerpmodels->value == 0 )
         quake2::getInstance()->currententity->backlerp = 0;
 
     if ( quake2::getInstance()->currententity->flags & RF_WEAPONMODEL )
     {
-        if ( r_lefthand->value == 1.0F )
+        if ( quake2::getInstance()->r_lefthand->value == 1.0F )
             aliasxscale = -aliasxscale;
-        else if ( r_lefthand->value == 2.0F )
+        else if ( quake2::getInstance()->r_lefthand->value == 2.0F )
             return;
     }
 
@@ -1072,7 +1073,7 @@ void R_AliasDrawModel (void)
     // trivial accept status
     if ( R_AliasCheckBBox() == BBOX_TRIVIAL_REJECT )
     {
-        if ( ( quake2::getInstance()->currententity->flags & RF_WEAPONMODEL ) && ( r_lefthand->value == 1.0F ) )
+        if ( ( quake2::getInstance()->currententity->flags & RF_WEAPONMODEL ) && ( quake2::getInstance()->r_lefthand->value == 1.0F ) )
         {
             aliasxscale = -aliasxscale;
         }
@@ -1181,7 +1182,7 @@ void R_AliasDrawModel (void)
 
     R_AliasPreparePoints ();
 
-    if ( ( quake2::getInstance()->currententity->flags & RF_WEAPONMODEL ) && ( r_lefthand->value == 1.0F ) )
+    if ( ( quake2::getInstance()->currententity->flags & RF_WEAPONMODEL ) && ( quake2::getInstance()->r_lefthand->value == 1.0F ) )
     {
         aliasxscale = -aliasxscale;
     }

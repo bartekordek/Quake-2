@@ -103,7 +103,7 @@ mmove_t brain_move_stand = {FRAME_stand01, FRAME_stand30, brain_frames_stand, NU
 
 void brain_stand (edict *self)
 {
-    self->monsterinfo.currentmove = &brain_move_stand;
+    self->monsterinfoVal.currentmove = &brain_move_stand;
 }
 
 
@@ -151,7 +151,7 @@ mmove_t brain_move_idle = {FRAME_stand31, FRAME_stand60, brain_frames_idle, brai
 void brain_idle (edict *self)
 {
     quake2::getInstance()->gi.sound (self, CHAN_AUTO, sound_idle3, 1, ATTN_IDLE, 0);
-    self->monsterinfo.currentmove = &brain_move_idle;
+    self->monsterinfoVal.currentmove = &brain_move_idle;
 }
 
 
@@ -179,7 +179,7 @@ mmove_t brain_move_walk1 = {FRAME_walk101, FRAME_walk111, brain_frames_walk1, NU
 void brain_walk2_cycle (edict *self)
 {
     if (random() > 0.1)
-        self->monsterinfo.nextframe = FRAME_walk220;
+        self->monsterinfoVal.nextframe = FRAME_walk220;
 }
 
 mframe_t brain_frames_walk2 [] =
@@ -234,9 +234,9 @@ mmove_t brain_move_walk2 = {FRAME_walk201, FRAME_walk240, brain_frames_walk2, NU
 void brain_walk (edict *self)
 {
 //    if (random() <= 0.5)
-        self->monsterinfo.currentmove = &brain_move_walk1;
+        self->monsterinfoVal.currentmove = &brain_move_walk1;
 //    else
-//        self->monsterinfo.currentmove = &brain_move_walk2;
+//        self->monsterinfoVal.currentmove = &brain_move_walk2;
 }
 
 
@@ -312,9 +312,9 @@ mmove_t brain_move_pain1 = {FRAME_pain101, FRAME_pain121, brain_frames_pain1, br
 
 void brain_duck_down (edict *self)
 {
-    if (self->monsterinfo.aiflags & AI_DUCKED)
+    if (self->monsterinfoVal.aiflags & AI_DUCKED)
         return;
-    self->monsterinfo.aiflags |= AI_DUCKED;
+    self->monsterinfoVal.aiflags |= AI_DUCKED;
     self->maxs[2] -= 32;
     self->takedamage = DAMAGE_YES;
     quake2::getInstance()->gi.linkentity (self);
@@ -322,15 +322,15 @@ void brain_duck_down (edict *self)
 
 void brain_duck_hold (edict *self)
 {
-    if (level.time >= self->monsterinfo.pausetime)
-        self->monsterinfo.aiflags &= ~AI_HOLD_FRAME;
+    if (level.time >= self->monsterinfoVal.pausetime)
+        self->monsterinfoVal.aiflags &= ~AI_HOLD_FRAME;
     else
-        self->monsterinfo.aiflags |= AI_HOLD_FRAME;
+        self->monsterinfoVal.aiflags |= AI_HOLD_FRAME;
 }
 
 void brain_duck_up (edict *self)
 {
-    self->monsterinfo.aiflags &= ~AI_DUCKED;
+    self->monsterinfoVal.aiflags &= ~AI_DUCKED;
     self->maxs[2] += 32;
     self->takedamage = DAMAGE_AIM;
     quake2::getInstance()->gi.linkentity (self);
@@ -357,8 +357,8 @@ void brain_dodge (edict *self, edict *attacker, float eta)
     if (!self->enemy)
         self->enemy = attacker;
 
-    self->monsterinfo.pausetime = level.time + eta + 0.5;
-    self->monsterinfo.currentmove = &brain_move_duck;
+    self->monsterinfoVal.pausetime = level.time + eta + 0.5;
+    self->monsterinfoVal.currentmove = &brain_move_duck;
 }
 
 
@@ -454,7 +454,7 @@ mmove_t brain_move_attack1 = {FRAME_attak101, FRAME_attak118, brain_frames_attac
 void brain_chest_open (edict *self)
 {
     self->spawnflags &= ~65536;
-    self->monsterinfo.power_armor_type = POWER_ARMOR_NONE;
+    self->monsterinfoVal.power_armor_type = POWER_ARMOR_NONE;
     quake2::getInstance()->gi.sound (self, CHAN_BODY, sound_chest_open, 1, ATTN_NORM, 0);
 }
 
@@ -470,11 +470,11 @@ void brain_tentacle_attack (edict *self)
 
 void brain_chest_closed (edict *self)
 {
-    self->monsterinfo.power_armor_type = POWER_ARMOR_SCREEN;
+    self->monsterinfoVal.power_armor_type = POWER_ARMOR_SCREEN;
     if (self->spawnflags & 65536)
     {
         self->spawnflags &= ~65536;
-        self->monsterinfo.currentmove = &brain_move_attack1;
+        self->monsterinfoVal.currentmove = &brain_move_attack1;
     }
 }
 
@@ -503,9 +503,9 @@ mmove_t brain_move_attack2 = {FRAME_attak201, FRAME_attak217, brain_frames_attac
 void brain_melee(edict *self)
 {
     if (random() <= 0.5)
-        self->monsterinfo.currentmove = &brain_move_attack1;
+        self->monsterinfoVal.currentmove = &brain_move_attack1;
     else
-        self->monsterinfo.currentmove = &brain_move_attack2;
+        self->monsterinfoVal.currentmove = &brain_move_attack2;
 }
 
 
@@ -531,11 +531,11 @@ mmove_t brain_move_run = {FRAME_walk101, FRAME_walk111, brain_frames_run, NULL};
 
 void brain_run (edict *self)
 {
-    self->monsterinfo.power_armor_type = POWER_ARMOR_SCREEN;
-    if (self->monsterinfo.aiflags & AI_STAND_GROUND)
-        self->monsterinfo.currentmove = &brain_move_stand;
+    self->monsterinfoVal.power_armor_type = POWER_ARMOR_SCREEN;
+    if (self->monsterinfoVal.aiflags & AI_STAND_GROUND)
+        self->monsterinfoVal.currentmove = &brain_move_stand;
     else
-        self->monsterinfo.currentmove = &brain_move_run;
+        self->monsterinfoVal.currentmove = &brain_move_run;
 }
 
 
@@ -557,17 +557,17 @@ void brain_pain (edict *self, edict *other, float kick, int damage)
     if (r < 0.33)
     {
         quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain1, 1, ATTN_NORM, 0);
-        self->monsterinfo.currentmove = &brain_move_pain1;
+        self->monsterinfoVal.currentmove = &brain_move_pain1;
     }
     else if (r < 0.66)
     {
         quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain2, 1, ATTN_NORM, 0);
-        self->monsterinfo.currentmove = &brain_move_pain2;
+        self->monsterinfoVal.currentmove = &brain_move_pain2;
     }
     else
     {
         quake2::getInstance()->gi.sound (self, CHAN_VOICE, sound_pain1, 1, ATTN_NORM, 0);
-        self->monsterinfo.currentmove = &brain_move_pain3;
+        self->monsterinfoVal.currentmove = &brain_move_pain3;
     }
 }
 
@@ -588,7 +588,7 @@ void brain_die (edict *self, edict *inflictor, edict *attacker, int damage, vec3
     int        n;
 
     self->s.effects = 0;
-    self->monsterinfo.power_armor_type = POWER_ARMOR_NONE;
+    self->monsterinfoVal.power_armor_type = POWER_ARMOR_NONE;
 
 // check for gib
     if (self->health <= self->gib_health)
@@ -611,9 +611,9 @@ void brain_die (edict *self, edict *inflictor, edict *attacker, int damage, vec3
     self->deadflag = DEAD_DEAD;
     self->takedamage = DAMAGE_YES;
     if (random() <= 0.5)
-        self->monsterinfo.currentmove = &brain_move_death1;
+        self->monsterinfoVal.currentmove = &brain_move_death1;
     else
-        self->monsterinfo.currentmove = &brain_move_death2;
+        self->monsterinfoVal.currentmove = &brain_move_death2;
 }
 
 /*QUAKED monster_brain (1 .5 0) (-16 -16 -24) (16 16 32) Ambush Trigger_Spawn Sight
@@ -654,23 +654,23 @@ void SP_monster_brain (edict *self)
     self->pain = brain_pain;
     self->die = brain_die;
 
-    self->monsterinfo.stand = brain_stand;
-    self->monsterinfo.walk = brain_walk;
-    self->monsterinfo.run = brain_run;
-    self->monsterinfo.dodge = brain_dodge;
-//    self->monsterinfo.attack = brain_attack;
-    self->monsterinfo.melee = brain_melee;
-    self->monsterinfo.sight = brain_sight;
-    self->monsterinfo.search = brain_search;
-    self->monsterinfo.idle = brain_idle;
+    self->monsterinfoVal.stand = brain_stand;
+    self->monsterinfoVal.walk = brain_walk;
+    self->monsterinfoVal.run = brain_run;
+    self->monsterinfoVal.dodge = brain_dodge;
+//    self->monsterinfoVal.attack = brain_attack;
+    self->monsterinfoVal.melee = brain_melee;
+    self->monsterinfoVal.sight = brain_sight;
+    self->monsterinfoVal.search = brain_search;
+    self->monsterinfoVal.idle = brain_idle;
 
-    self->monsterinfo.power_armor_type = POWER_ARMOR_SCREEN;
-    self->monsterinfo.power_armor_power = 100;
+    self->monsterinfoVal.power_armor_type = POWER_ARMOR_SCREEN;
+    self->monsterinfoVal.power_armor_power = 100;
 
     quake2::getInstance()->gi.linkentity (self);
 
-    self->monsterinfo.currentmove = &brain_move_stand;
-    self->monsterinfo.scale = MODEL_SCALE;
+    self->monsterinfoVal.currentmove = &brain_move_stand;
+    self->monsterinfoVal.scale = MODEL_SCALE;
 
     walkmonster_start (self);
 }

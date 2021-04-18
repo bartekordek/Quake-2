@@ -7,9 +7,8 @@
 #include <sys/mman.h>
 #include <sys/time.h>
 
-#include "../linux/glob.h"
-
-#include "../qcommon/qcommon.h"
+#include "linux/glob.hpp"
+#include "qcommon/qcommon.hpp"
 
 //===============================================================================
 
@@ -116,7 +115,7 @@ static    char    findpath[MAX_OSPATH];
 static    char    findpattern[MAX_OSPATH];
 static    DIR        *fdir;
 
-static qboolean CompareAttributes(char *path, char *name,
+static bool CompareAttributes(char *path, char *name,
     unsigned musthave, unsigned canthave )
 {
     struct stat st;
