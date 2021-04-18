@@ -514,7 +514,8 @@ void ref_soft_R_DrawEntitiesOnList( void )
                 ref_soft_R_DrawNullModel();
                 continue;
             }
-            VectorCopy( quake2::getInstance()->currententity->origin, r_entorigin );
+            VectorCopy( quake2::getInstance()->currententity->origin,
+                        r_entorigin );
             VectorSubtract( r_origin, r_entorigin, modelorg );
 
             switch ( currentmodel->type )
@@ -559,7 +560,8 @@ void ref_soft_R_DrawEntitiesOnList( void )
                 ref_soft_R_DrawNullModel();
                 continue;
             }
-            VectorCopy( quake2::getInstance()->currententity->origin, r_entorigin );
+            VectorCopy( quake2::getInstance()->currententity->origin,
+                        r_entorigin );
             VectorSubtract( r_origin, r_entorigin, modelorg );
 
             switch ( currentmodel->type )
@@ -735,7 +737,7 @@ void ref_soft_R_DrawBEntitiesOnList( void )
 
     VectorCopy( modelorg, oldorigin );
     insubmodel = true;
-    r_dlightframecount = r_framecount;
+    quake2::getInstance()->r_dlightframecount = r_framecount;
 
     for ( i = 0; i < r_newrefdef.num_entities; i++ )
     {
@@ -753,8 +755,10 @@ void ref_soft_R_DrawBEntitiesOnList( void )
         // trivial accept status
         RotatedBBox( currentmodel->mins, currentmodel->maxs,
                      quake2::getInstance()->currententity->angles, mins, maxs );
-        VectorAdd( mins, quake2::getInstance()->currententity->origin, minmaxs );
-        VectorAdd( maxs, quake2::getInstance()->currententity->origin, ( minmaxs + 3 ) );
+        VectorAdd( mins, quake2::getInstance()->currententity->origin,
+                   minmaxs );
+        VectorAdd( maxs, quake2::getInstance()->currententity->origin,
+                   ( minmaxs + 3 ) );
 
         clipflags = ref_soft_R_BmodelCheckBBox( minmaxs );
         if ( clipflags == BMODEL_FULLY_CLIPPED )
@@ -916,7 +920,8 @@ void ref_soft_R_SetLightLevel( void )
     vec3_t light;
 
     if ( ( r_newrefdef.rdflags & RDF_NOWORLDMODEL ) ||
-         ( !r_drawentities->value ) || ( !quake2::getInstance()->currententity ) )
+         ( !r_drawentities->value ) ||
+         ( !quake2::getInstance()->currententity ) )
     {
         r_lightlevel->value = 150.0;
         return;

@@ -21,8 +21,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "gl_local.hpp"
 
-int r_dlightframecount;
-
 #define DLIGHT_CUTOFF 64
 
 /*
@@ -82,8 +80,9 @@ void ref_gl_R_RenderDlights( void )
     if ( !gl_flashblend->value )
         return;
 
-    r_dlightframecount = r_framecount + 1;  // because the count hasn't
-                                            //  advanced yet for this frame
+    quake2::getInstance()->r_dlightframecount =
+        r_framecount + 1;  // because the count hasn't
+                           //  advanced yet for this frame
     qglDepthMask( 0 );
     qglDisable( GL_TEXTURE_2D );
     qglShadeModel( GL_SMOOTH );
@@ -132,10 +131,10 @@ void ref_gl_R_MarkLights( dlight_t* light, int bit, mnode_s* node )
     surf = r_worldmodel->surfaces + node->firstsurface;
     for ( i = 0; i < node->numsurfaces; i++, surf++ )
     {
-        if ( surf->dlightframe != r_dlightframecount )
+        if ( surf->dlightframe != quake2::getInstance()->r_dlightframecount )
         {
             surf->dlightbits = 0;
-            surf->dlightframe = r_dlightframecount;
+            surf->dlightframe = quake2::getInstance()->r_dlightframecount;
         }
         surf->dlightbits |= bit;
     }
@@ -152,22 +151,14 @@ void ref_gl_R_PushDlights( void )
     if ( gl_flashblend->value )
         return;
 
-    r_dlightframecount = r_framecount + 1;  // because the count hasn't
-                                            //  advanced yet for this frame
+    quake2::getInstance()->r_dlightframecount =
+        r_framecount + 1;  // because the count hasn't
+                           //  advanced yet for this frame
     l = r_newrefdef.dlights;
     for ( i = 0; i < r_newrefdef.num_dlights; i++, l++ )
         ref_gl_R_MarkLights( l, 1 << i, r_worldmodel->nodes );
 }
 
-/*
-=============================================================================
-
-LIGHT SAMPLING
-
-=============================================================================
-*/
-
-vec3_t pointcolor;
 plane_s* lightplane;  // used as shadow plane
 vec3_t lightspot;
 
@@ -244,7 +235,7 @@ int ref_gl_RecursiveLightPoint( mnode_s* node, vec3_t start, vec3_t end )
         dt >>= 4;
 
         lightmap = surf->samples;
-        VectorCopy( vec3_origin, pointcolor );
+        VectorCopy( vec3_origin, quake2::getInstance()->pointcolor );
         if ( lightmap )
         {
             vec3_t scale;
@@ -259,9 +250,12 @@ int ref_gl_RecursiveLightPoint( mnode_s* node, vec3_t start, vec3_t end )
                         gl_modulate->value *
                         r_newrefdef.lightstyles[surf->styles[maps]].rgb[i];
 
-                pointcolor[0] += lightmap[0] * scale[0] * ( 1.0 / 255 );
-                pointcolor[1] += lightmap[1] * scale[1] * ( 1.0 / 255 );
-                pointcolor[2] += lightmap[2] * scale[2] * ( 1.0 / 255 );
+                quake2::getInstance()->pointcolor[0] +=
+                    lightmap[0] * scale[0] * ( 1.0 / 255 );
+                quake2::getInstance()->pointcolor[1] +=
+                    lightmap[1] * scale[1] * ( 1.0 / 255 );
+                quake2::getInstance()->pointcolor[2] +=
+                    lightmap[2] * scale[2] * ( 1.0 / 255 );
                 lightmap += 3 * ( ( surf->extents[0] >> 4 ) + 1 ) *
                             ( ( surf->extents[1] >> 4 ) + 1 );
             }
@@ -307,7 +301,7 @@ void ref_gl_R_LightPoint( vec3_t p, vec3_t color )
     }
     else
     {
-        VectorCopy( pointcolor, color );
+        VectorCopy( quake2::getInstance()->pointcolor, color );
     }
 
     //

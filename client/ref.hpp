@@ -21,7 +21,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
-#include "../qcommon/qcommon.hpp"
+#include "qcommon/qcommon.hpp"
+#include "shared/dlight.hpp"
 
 #define MAX_DLIGHTS 32
 #define MAX_ENTITIES 128
@@ -52,24 +53,17 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 typedef struct
 {
     vec3_t origin;
-    vec3_t color;
-    float intensity;
-} dlight_t;
-
-typedef struct
-{
-    vec3_t origin;
     int color;
     float alpha;
 } particle_t;
 
-typedef struct
+struct lightstyle_t
 {
     float rgb[3];  // 0.0 - 2.0
     float white;   // highest of rgb
-} lightstyle_t;
+};
 
-typedef struct
+struct refdef_t
 {
     int x, y, width, height;  // in virtual screen coordinates
     float fov_x, fov_y;
@@ -91,7 +85,7 @@ typedef struct
 
     int num_particles;
     particle_t* particles;
-} refdef_t;
+};
 
 #define API_VERSION 3
 

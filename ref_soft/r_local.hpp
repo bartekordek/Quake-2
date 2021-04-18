@@ -675,7 +675,6 @@ extern mleaf_t* r_viewleaf;
 extern int r_viewcluster, r_oldviewcluster;
 
 extern int r_clipflags;
-extern int r_dlightframecount;
 extern bool r_fov_greater_than_90;
 
 extern image_t* r_notexture_mip;

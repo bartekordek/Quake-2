@@ -21,6 +21,9 @@ public:
     entity_s* currententity = nullptr;
     image_t* draw_chars = nullptr;
 
+    int r_dlightframecount;
+    vec3_t pointcolor;
+
     ~quake2();
 
 protected:
