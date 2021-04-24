@@ -22,97 +22,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "shared/enum_rserr.hpp"
 
 void ref_gl_R_Clear( void );
-
-refimport_t ri;
-
-model_t* r_worldmodel;
-
-float gldepthmin, gldepthmax;
-
-glconfig_t gl_config;
-glstate_t gl_state;
-
-image_t* r_notexture;        // use for bad textures
-image_t* r_particletexture;  // little dot for particles
-
-model_t* currentmodel;
-
-plane_s frustum[4];
-
-int r_visframecount;  // bumped when going to a new PVS
-
-int c_brush_polys, c_alias_polys;
-
-float v_blend[4];  // final blending color
-
 void ref_gl_GL_Strings_f( void );
-
-float r_world_matrix[16];
-float r_base_world_matrix[16];
-
-//
-// screen size info
-//
-refdef_t r_newrefdef;
-
-cvar* r_norefresh;
-cvar* r_drawentities;
-cvar* r_speeds;
-
-cvar* r_lightlevel;  // FIXME: This is a HACK to get the client's light level
-
-cvar* gl_nosubimage;
-cvar* gl_allow_software;
-
-cvar* gl_vertex_arrays;
-
-cvar* gl_particle_min_size;
-cvar* gl_particle_max_size;
-cvar* gl_particle_size;
-cvar* gl_particle_att_a;
-cvar* gl_particle_att_b;
-cvar* gl_particle_att_c;
-
-cvar* gl_ext_swapinterval;
-cvar* gl_ext_palettedtexture;
-cvar* gl_ext_multitexture;
-cvar* gl_ext_pointparameters;
-cvar* gl_ext_compiled_vertex_array;
-
-cvar* gl_log;
-cvar* gl_bitdepth;
-cvar* gl_drawbuffer;
-cvar* gl_driver;
-cvar* gl_lightmap;
-cvar* gl_shadows;
-cvar* gl_mode;
-cvar* gl_dynamic;
-cvar* gl_monolightmap;
-cvar* gl_modulate;
-cvar* gl_nobind;
-cvar* gl_round_down;
-cvar* gl_picmip;
-cvar* gl_skymip;
-cvar* gl_showtris;
-cvar* gl_ztrick;
-cvar* gl_finish;
-cvar* gl_clear;
-cvar* gl_cull;
-cvar* gl_polyblend;
-cvar* gl_flashblend;
-cvar* gl_playermip;
-cvar* gl_saturatelighting;
-cvar* gl_swapinterval;
-cvar* gl_texturemode;
-cvar* gl_texturealphamode;
-cvar* gl_texturesolidmode;
-cvar* gl_lockpvs;
-
-cvar* gl_3dlabs_broken;
-
-cvar* vid_fullscreen;
-cvar* vid_gamma;
-cvar* vid_ref;
 
 /*
 Returns true if the box is completely outside the frustom
@@ -124,7 +34,7 @@ bool ref_gl_R_CullBox( vec3_t mins, vec3_t maxs )
     if ( quake2::getInstance()->r_nocull->value )
         return false;
 
-    for ( i = 0; i < 4; i++ )
+    for ( int i = 0; i < 4; i++ )
         if ( BOX_ON_PLANE_SIDE( mins, maxs, &frustum[i] ) == 2 )
             return true;
     return false;

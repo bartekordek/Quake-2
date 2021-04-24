@@ -180,4 +180,10 @@ char* toChar( const std::string& someString );
 
 #define MAXTOUCH 32
 
+#define TEXNUM_LIGHTMAPS 1024
+#define TEXNUM_SCRAPS 1152
+#define TEXNUM_IMAGES 1153
+
+#define MAX_GLTEXTURES 1024
+
 #endif  // ____SHARED_DEFINES_H__

@@ -62,7 +62,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define ROLL 2
 
 /*
-
   skins will be outline flood filled and mip mapped
   pics and sprites with alpha will be outline flood filled
   pic won't be mip mapped
@@ -71,14 +70,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   sprite frame
   wall texture
   pic
-
 */
-
-#define TEXNUM_LIGHTMAPS 1024
-#define TEXNUM_SCRAPS 1152
-#define TEXNUM_IMAGES 1153
-
-#define MAX_GLTEXTURES 1024
 
 //===================================================================
 
@@ -103,91 +95,6 @@ typedef struct
 
 #define BACKFACE_EPSILON 0.01
 
-//====================================================
-
-extern image_t gltextures[MAX_GLTEXTURES];
-extern int numgltextures;
-extern image_t* r_notexture;
-extern image_t* r_particletexture;
-extern model_t* currentmodel;
-extern int r_visframecount;
-extern plane_s frustum[4];
-extern int c_brush_polys, c_alias_polys;
-
-extern int gl_filter_min, gl_filter_max;
-
-//
-// screen size info
-//
-extern refdef_t r_newrefdef;
-
-extern cvar*
-    r_lightlevel;  // FIXME: This is a HACK to get the client's light level
-
-extern cvar* gl_vertex_arrays;
-
-extern cvar* gl_ext_swapinterval;
-extern cvar* gl_ext_palettedtexture;
-extern cvar* gl_ext_multitexture;
-extern cvar* gl_ext_pointparameters;
-extern cvar* gl_ext_compiled_vertex_array;
-
-extern cvar* gl_particle_min_size;
-extern cvar* gl_particle_max_size;
-extern cvar* gl_particle_size;
-extern cvar* gl_particle_att_a;
-extern cvar* gl_particle_att_b;
-extern cvar* gl_particle_att_c;
-
-extern cvar* gl_nosubimage;
-extern cvar* gl_bitdepth;
-extern cvar* gl_mode;
-extern cvar* gl_log;
-extern cvar* gl_lightmap;
-extern cvar* gl_shadows;
-extern cvar* gl_dynamic;
-extern cvar* gl_monolightmap;
-extern cvar* gl_nobind;
-extern cvar* gl_round_down;
-extern cvar* gl_picmip;
-extern cvar* gl_skymip;
-extern cvar* gl_showtris;
-extern cvar* gl_finish;
-extern cvar* gl_ztrick;
-extern cvar* gl_clear;
-extern cvar* gl_cull;
-extern cvar* gl_poly;
-extern cvar* gl_texsort;
-extern cvar* gl_polyblend;
-extern cvar* gl_flashblend;
-extern cvar* gl_lightmaptype;
-extern cvar* gl_modulate;
-extern cvar* gl_playermip;
-extern cvar* gl_drawbuffer;
-extern cvar* gl_3dlabs_broken;
-extern cvar* gl_driver;
-extern cvar* gl_swapinterval;
-extern cvar* gl_texturemode;
-extern cvar* gl_texturealphamode;
-extern cvar* gl_texturesolidmode;
-extern cvar* gl_saturatelighting;
-extern cvar* gl_lockpvs;
-
-extern cvar* vid_fullscreen;
-extern cvar* vid_gamma;
-
-extern cvar* intensity;
-
-extern int gl_lightmap_format;
-extern int gl_solid_format;
-extern int gl_alpha_format;
-extern int gl_tex_solid_format;
-extern int gl_tex_alpha_format;
-
-extern int c_visible_lightmaps;
-extern int c_visible_textures;
-
-extern float r_world_matrix[16];
 
 void R_TranslatePlayerSkin( int playernum );
 void ref_gl_GL_Bind( int texnum );
