@@ -128,7 +128,7 @@ void CL_RegisterTEntSounds (void)
 	char	name[MAX_QPATH];
 
 	// PMM - version stuff
-//	Com_Printf_G ("%s\n", ROGUE_VERSION_STRING);
+//	Com_Printf_C ("%s\n", ROGUE_VERSION_STRING);
 	// PMM
 	cl_sfx_ric1 = S_RegisterSound ("world/ric1.wav");
 	cl_sfx_ric2 = S_RegisterSound ("world/ric2.wav");
@@ -345,7 +345,7 @@ int CL_ParseBeam (struct model_s *model)
 			return ent;
 		}
 	}
-	Com_Printf_G ("beam list overflow!\n");
+	Com_Printf_C ("beam list overflow!\n");
 	return ent;
 }
 
@@ -367,7 +367,7 @@ int CL_ParseBeam2 (struct model_s *model)
 	MSG_ReadPos (&net_message, end);
 	MSG_ReadPos (&net_message, offset);
 
-//	Com_Printf_G ("end- %f %f %f\n", end[0], end[1], end[2]);
+//	Com_Printf_C ("end- %f %f %f\n", end[0], end[1], end[2]);
 
 // override any beam with the same entity
 
@@ -397,7 +397,7 @@ int CL_ParseBeam2 (struct model_s *model)
 			return ent;
 		}
 	}
-	Com_Printf_G ("beam list overflow!\n");
+	Com_Printf_C ("beam list overflow!\n");
 	return ent;
 }
 
@@ -430,7 +430,7 @@ int CL_ParsePlayerBeam (struct model_s *model)
 	else
 		MSG_ReadPos (&net_message, offset);
 
-//	Com_Printf_G ("end- %f %f %f\n", end[0], end[1], end[2]);
+//	Com_Printf_C ("end- %f %f %f\n", end[0], end[1], end[2]);
 
 // override any beam with the same entity
 // PMM - For player beams, we only want one per player (entity) so..
@@ -462,7 +462,7 @@ int CL_ParsePlayerBeam (struct model_s *model)
 			return ent;
 		}
 	}
-	Com_Printf_G ("beam list overflow!\n");
+	Com_Printf_C ("beam list overflow!\n");
 	return ent;
 }
 //rogue
@@ -489,7 +489,7 @@ int CL_ParseLightning (struct model_s *model)
 	for (i=0, b=cl_beams ; i< MAX_BEAMS ; i++, b++)
 		if (b->entity == srcEnt && b->dest_entity == destEnt)
 		{
-//			Com_Printf_G("%d: OVERRIDE  %d -> %d\n", cl.time, srcEnt, destEnt);
+//			Com_Printf_C("%d: OVERRIDE  %d -> %d\n", cl.time, srcEnt, destEnt);
 			b->entity = srcEnt;
 			b->dest_entity = destEnt;
 			b->model = model;
@@ -505,7 +505,7 @@ int CL_ParseLightning (struct model_s *model)
 	{
 		if (!b->model || b->endtime < cl.time)
 		{
-//			Com_Printf_G("%d: NORMAL  %d -> %d\n", cl.time, srcEnt, destEnt);
+//			Com_Printf_C("%d: NORMAL  %d -> %d\n", cl.time, srcEnt, destEnt);
 			b->entity = srcEnt;
 			b->dest_entity = destEnt;
 			b->model = model;
@@ -516,7 +516,7 @@ int CL_ParseLightning (struct model_s *model)
 			return srcEnt;
 		}
 	}
-	Com_Printf_G ("beam list overflow!\n");
+	Com_Printf_C ("beam list overflow!\n");
 	return srcEnt;
 }
 
@@ -567,7 +567,7 @@ void CL_ParseSteam (void)
 	id = MSG_ReadShort (&net_message);		// an id of -1 is an instant effect
 	if (id != -1) // sustains
 	{
-//			Com_Printf_G ("Sustain effect id %d\n", id);
+//			Com_Printf_C ("Sustain effect id %d\n", id);
 		free_sustain = NULL;
 		for (i=0, s=cl_sustains; i<MAX_SUSTAINS; i++, s++)
 		{
@@ -593,7 +593,7 @@ void CL_ParseSteam (void)
 		}
 		else
 		{
-//				Com_Printf_G ("No free sustains!\n");
+//				Com_Printf_C ("No free sustains!\n");
 			// FIXME - read the stuff anyway
 			cnt = MSG_ReadByte (&net_message);
 			MSG_ReadPos (&net_message, pos);
@@ -1279,7 +1279,7 @@ void CL_AddBeams (void)
 		// through the tesla mine (instead it goes through the target)
 		if ((b->model == cl_mod_lightning) && (d <= model_length))
 		{
-//			Com_Printf_G ("special case\n");
+//			Com_Printf_C ("special case\n");
 			VectorCopy (b->end, ent.origin);
 			// offset to push beam outside of tesla model (negative because dist is from end to start
 			// for this beam)
@@ -1311,7 +1311,7 @@ void CL_AddBeams (void)
 				ent.angles[2] = rand()%360;
 			}
 
-//			Com_Printf_G("B: %d -> %d\n", b->entity, b->dest_entity);
+//			Com_Printf_C("B: %d -> %d\n", b->entity, b->dest_entity);
 			V_AddEntity (&ent);
 
 			for (j=0 ; j<3 ; j++)
@@ -1323,16 +1323,16 @@ void CL_AddBeams (void)
 
 
 /*
-//				Com_Printf_G ("Endpoint:  %f %f %f\n", b->end[0], b->end[1], b->end[2]);
-//				Com_Printf_G ("Pred View Angles:  %f %f %f\n", cl.predicted_angles[0], cl.predicted_angles[1], cl.predicted_angles[2]);
-//				Com_Printf_G ("Act View Angles: %f %f %f\n", cl.refdef.viewangles[0], cl.refdef.viewangles[1], cl.refdef.viewangles[2]);
+//				Com_Printf_C ("Endpoint:  %f %f %f\n", b->end[0], b->end[1], b->end[2]);
+//				Com_Printf_C ("Pred View Angles:  %f %f %f\n", cl.predicted_angles[0], cl.predicted_angles[1], cl.predicted_angles[2]);
+//				Com_Printf_C ("Act View Angles: %f %f %f\n", cl.refdef.viewangles[0], cl.refdef.viewangles[1], cl.refdef.viewangles[2]);
 //				VectorCopy (cl.predicted_origin, b->start);
 //				b->start[2] += 22;	// adjust for view height
 //				if (fabs(cl.refdef.vieworg[2] - b->start[2]) >= 10) {
 //					b->start[2] = cl.refdef.vieworg[2];
 //				}
 
-//				Com_Printf_G ("Time:  %d %d %f\n", cl.time, cls.realtime, cls.frametime);
+//				Com_Printf_C ("Time:  %d %d %f\n", cl.time, cls.realtime, cls.frametime);
 */
 
 extern cvar_t *hand;
@@ -1478,11 +1478,11 @@ void CL_AddPlayerBeams (void)
 			if (b->entity != cl.playernum+1)
 			{
 				framenum = 2;
-//				Com_Printf_G ("Third person\n");
+//				Com_Printf_C ("Third person\n");
 				ent.angles[0] = -pitch;
 				ent.angles[1] = yaw + 180.0;
 				ent.angles[2] = 0;
-//				Com_Printf_G ("%f %f - %f %f %f\n", -pitch, yaw+180.0, b->offset[0], b->offset[1], b->offset[2]);
+//				Com_Printf_C ("%f %f - %f %f %f\n", -pitch, yaw+180.0, b->offset[0], b->offset[1], b->offset[2]);
 				AngleVectors(ent.angles, f, r, u);
 
 				// if it's a non-origin offset, it's a player, so use the hardcoded player offset
@@ -1535,7 +1535,7 @@ void CL_AddPlayerBeams (void)
 		// through the tesla mine (instead it goes through the target)
 		if ((b->model == cl_mod_lightning) && (d <= model_length))
 		{
-//			Com_Printf_G ("special case\n");
+//			Com_Printf_C ("special case\n");
 			VectorCopy (b->end, ent.origin);
 			// offset to push beam outside of tesla model (negative because dist is from end to start
 			// for this beam)
@@ -1578,7 +1578,7 @@ void CL_AddPlayerBeams (void)
 				ent.angles[2] = rand()%360;
 			}
 
-//			Com_Printf_G("B: %d -> %d\n", b->entity, b->dest_entity);
+//			Com_Printf_C("B: %d -> %d\n", b->entity, b->dest_entity);
 			V_AddEntity (&ent);
 
 			for (j=0 ; j<3 ; j++)
@@ -1720,7 +1720,7 @@ void CL_ProcessSustain ()
 		if (s->id)
 			if ((s->endtime >= cl.time) && (cl.time >= s->nextthink))
 			{
-//				Com_Printf_G ("think %d %d %d\n", cl.time, s->nextthink, s->thinkinterval);
+//				Com_Printf_C ("think %d %d %d\n", cl.time, s->nextthink, s->thinkinterval);
 				s->think (s);
 			}
 			else if (s->endtime < cl.time)

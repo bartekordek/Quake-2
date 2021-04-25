@@ -97,7 +97,7 @@ void Com_EndRedirect (void)
 ================
 Com_DPrintf
 
-A Com_Printf_G that only shows up if the "developer" cvar is set
+A Com_Printf_C that only shows up if the "developer" cvar is set
 ================
 */
 void Com_DPrintf (char *fmt, ...)
@@ -112,7 +112,7 @@ void Com_DPrintf (char *fmt, ...)
     vsprintf (msg,fmt,argptr);
     va_end (argptr);
 
-    Com_Printf_G ("%s", msg);
+    Com_Printf_C ("%s", msg);
 }
 
 
@@ -146,7 +146,7 @@ void Com_Error (int code, char *fmt, ...)
     }
     else if (code == ERR_DROP)
     {
-        Com_Printf_G ("********************\nERROR: %s\n********************\n", msg);
+        Com_Printf_C ("********************\nERROR: %s\n********************\n", msg);
         SV_Shutdown (va("Server crashed: %s\n", msg), false);
         CL_Drop ();
         recursive = false;
@@ -850,7 +850,7 @@ void *SZ_GetSpace (sizebuf_t *buf, int length)
         if (length > buf->maxsize)
             Com_Error (ERR_FATAL, "SZ_GetSpace: %i is > full buffer size", length);
 
-        Com_Printf_G ("SZ_GetSpace: overflow\n");
+        Com_Printf_C ("SZ_GetSpace: overflow\n");
         SZ_Clear (buf);
         buf->overflowed = true;
     }
@@ -1012,11 +1012,11 @@ void Info_Print (char *s)
         }
         else
             *o = 0;
-        Com_Printf_G ("%s", key);
+        Com_Printf_C ("%s", key);
 
         if (!*s)
         {
-            Com_Printf_G ("MISSING VALUE\n");
+            Com_Printf_C ("MISSING VALUE\n");
             return;
         }
 
@@ -1028,7 +1028,7 @@ void Info_Print (char *s)
 
         if (*s)
             s++;
-        Com_Printf_G ("%s\n", value);
+        Com_Printf_C ("%s\n", value);
     }
 }
 
@@ -1087,7 +1087,7 @@ Z_Stats_f
 */
 void Z_Stats_f (void)
 {
-    Com_Printf_G ("%i bytes in %i blocks\n", z_bytes, z_count);
+    Com_Printf_C ("%i bytes in %i blocks\n", z_bytes, z_count);
 }
 
 /*
@@ -1420,10 +1420,11 @@ void Qcommon_Init (int argc, char **argv)
     // add + commands from command line
     if (!Cbuf_AddLateCommands ())
     {    // if the user didn't give any commands, run default action
+        char* someText = "dedicated_start\n";
         if (!dedicated->value)
-            Cbuf_AddText ("d1\n");
-        else
-            Cbuf_AddText ("dedicated_start\n");
+            someText = "d1\n";
+
+        Cbuf_AddText (someText);
         Cbuf_Execute ();
     }
     else
@@ -1432,7 +1433,7 @@ void Qcommon_Init (int argc, char **argv)
         SCR_EndLoadingPlaque ();
     }
 
-    Com_Printf_G ("====== Quake2 Initialized ======\n\n");
+    Com_Printf_C ("====== Quake2 Initialized ======\n\n");
 }
 
 /*
@@ -1486,7 +1487,7 @@ void Qcommon_Frame (int msec)
         extern    int c_traces, c_brush_traces;
         extern    int    c_pointcontents;
 
-        Com_Printf_G ("%4i traces  %4i points\n", c_traces, c_pointcontents);
+        Com_Printf_C ("%4i traces  %4i points\n", c_traces, c_pointcontents);
         c_traces = 0;
         c_brush_traces = 0;
         c_pointcontents = 0;
@@ -1525,7 +1526,7 @@ void Qcommon_Frame (int msec)
         rf = time_after_ref - time_before_ref;
         sv -= gm;
         cl -= rf;
-        Com_Printf_G ("all:%3i sv:%3i gm:%3i cl:%3i rf:%3i\n",
+        Com_Printf_C ("all:%3i sv:%3i gm:%3i cl:%3i rf:%3i\n",
             all, sv, gm, cl, rf);
     }
 }

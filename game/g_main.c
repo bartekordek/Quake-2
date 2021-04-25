@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "g_local.h"
 #include "shared/g_client.h"
+#include "shared/edict.h"
 
 game_locals_t    game;
 level_locals_t    level;
@@ -132,7 +133,7 @@ game_export_t *GetGameAPI (game_import_t *import)
 
     globals.ServerCommand = ServerCommand;
 
-    globals.edict_size = sizeof(struct edict_s);
+    globals.edict_size = sizeof(edict_t);
 
     return &globals;
 }

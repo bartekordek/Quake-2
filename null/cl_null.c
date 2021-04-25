@@ -33,7 +33,7 @@ void Cmd_ForwardToServer (void)
 	char *cmd;
 
 	cmd = Cmd_Argv(0);
-	Com_Printf_G ("Unknown command \"%s\"\n", cmd);
+	Com_Printf_C ("Unknown command \"%s\"\n", cmd);
 }
 
 void SCR_DebugGraph (float value, int color)

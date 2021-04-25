@@ -70,7 +70,7 @@ void PF_dprintf (char *fmt, ...)
     vsprintf (msg, fmt, argptr);
     va_end (argptr);
 
-    Com_Printf_G ("%s", msg);
+    Com_Printf_C ("%s", msg);
 }
 
 
@@ -101,7 +101,7 @@ void PF_cprintf (struct edict_s *ent, int level, char *fmt, ...)
     if (ent)
         SV_ClientPrintf (svs.clients+(n-1), level, "%s", msg);
     else
-        Com_Printf_G ("%s", msg);
+        Com_Printf_C ("%s", msg);
 }
 
 
@@ -385,7 +385,9 @@ void SV_InitGameProgs (void)
     import.SetAreaPortalState = CM_SetAreaPortalState;
     import.AreasConnected = CM_AreasConnected;
 
-    ge = (game_export_t *)Sys_GetGameAPI (&import);
+    //ge = (game_export_t *)Sys_GetGameAPI (&import);
+    ge = GetGameAPI (&import);
+
 
     if (!ge)
         Com_Error (ERR_DROP, "failed to load game DLL");

@@ -382,7 +382,7 @@ void SV_AreaEdicts_r (areanode_t *node)
 
 		if (area_count == area_maxcount)
 		{
-			Com_Printf_G ("SV_AreaEdicts: MAXCOUNT\n");
+			Com_Printf_C ("SV_AreaEdicts: MAXCOUNT\n");
 			return;
 		}
 

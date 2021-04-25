@@ -75,7 +75,7 @@ void VID_Printf (int print_level, char *fmt, ...)
 	va_end (argptr);
 
 	if (print_level == PRINT_ALL)
-		Com_Printf_G ("%s", msg);
+		Com_Printf_C ("%s", msg);
 	else
 		Com_DPrintf ("%s", msg);
 }
@@ -213,7 +213,7 @@ qboolean VID_LoadRefresh( char *name )
 #ifndef REF_HARD_LINKED
 	getcwd(curpath, sizeof(curpath));
 
-	Com_Printf_G( "------- Loading %s -------\n", name );
+	Com_Printf_C( "------- Loading %s -------\n", name );
 
 	// now run through the search paths
 	path = NULL;
@@ -223,7 +223,7 @@ qboolean VID_LoadRefresh( char *name )
 		if (!path)
 			return NULL;		// couldn't find one anywhere
 		sprintf (fn, "%s/%s/%s", curpath, path, name);
-		Com_Printf_G ("Trying to load library (%s)\n", fn);
+		Com_Printf_C ("Trying to load library (%s)\n", fn);
 
 		reflib_library = dlopen( fn, RTLD_NOW );
 		if (reflib_library)
@@ -327,7 +327,7 @@ qboolean VID_LoadRefresh( char *name )
 	KBD_Init_fp(Do_Key_Event);
 	Real_IN_Init();
 
-	Com_Printf_G( "------------------------------------\n");
+	Com_Printf_C( "------------------------------------\n");
 	reflib_active = true;
 	return true;
 }
@@ -365,10 +365,10 @@ void VID_CheckChanges (void)
 		if ( !VID_LoadRefresh( name ) )
 		{
 		        if ( strcmp (vid_ref->string, "soft") == 0 ) {
-			        Com_Printf_G("Refresh failed\n");
+			        Com_Printf_C("Refresh failed\n");
 				sw_mode = Cvar_Get( "sw_mode", "0", 0 );
 				if (sw_mode->value != 0) {
-				        Com_Printf_G("Trying mode 0\n");
+				        Com_Printf_C("Trying mode 0\n");
 					Cvar_SetValue("sw_mode", 0);
 					if ( !VID_LoadRefresh( name ) )
 						Com_Error (ERR_FATAL, "Couldn't fall back to software refresh!");

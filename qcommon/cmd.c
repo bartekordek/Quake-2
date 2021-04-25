@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // cmd.c -- Quake script command processing module
 
 #include "qcommon.h"
+#include <stdio.h>
 
 void Cmd_ForwardToServer (void);
 
@@ -95,7 +96,7 @@ void Cbuf_AddText (char *text)
 
 	if (cmd_text.cursize + l >= cmd_text.maxsize)
 	{
-		Com_Printf_G ("Cbuf_AddText: overflow\n");
+		Com_Printf_C ("Cbuf_AddText: overflow\n");
 		return;
 	}
 	SZ_Write (&cmd_text, text, strlen (text));
@@ -194,12 +195,13 @@ Cbuf_Execute
 void Cbuf_Execute (void)
 {
 	int		i;
+	int j;
 	char	*text;
 	char	line[1024];
 	int		quotes;
 
 	alias_count = 0;		// don't allow infinite alias loops
-
+	j = 0;
 	while (cmd_text.cursize)
 	{
 // find a \n or ; line break
@@ -234,7 +236,13 @@ void Cbuf_Execute (void)
 		}
 
 // execute the command line
+        printf( "Executing %s, line %i.\n", line, j );
+        if( strstr( line, "demomap idlog.cin" ) )
+        {
+            printf( "Executing %s, line %i.\n", line, j );
+        }
 		Cmd_ExecuteString (line);
+		++j;
 
 		if (cmd_wait)
 		{
@@ -244,6 +252,7 @@ void Cbuf_Execute (void)
 			break;
 		}
 	}
+    printf( "END\n" );
 }
 
 
@@ -375,7 +384,7 @@ void Cmd_Exec_f (void)
 
 	if (Cmd_Argc () != 2)
 	{
-		Com_Printf_G ("exec <filename> : execute a script file\n");
+		Com_Printf_C ("exec <filename> : execute a script file\n");
 		return;
 	}
 
@@ -411,8 +420,8 @@ void Cmd_Echo_f (void)
 	int		i;
 
 	for (i=1 ; i<Cmd_Argc() ; i++)
-		Com_Printf_G ("%s ",Cmd_Argv(i));
-	Com_Printf_G ("\n");
+		Com_Printf_C ("%s ",Cmd_Argv(i));
+	Com_Printf_C ("\n");
 }
 
 /*
@@ -431,16 +440,16 @@ void Cmd_Alias_f (void)
 
 	if (Cmd_Argc() == 1)
 	{
-		Com_Printf_G ("Current alias commands:\n");
+		Com_Printf_C ("Current alias commands:\n");
 		for (a = cmd_alias ; a ; a=a->next)
-			Com_Printf_G ("%s : %s\n", a->name, a->value);
+			Com_Printf_C ("%s : %s\n", a->name, a->value);
 		return;
 	}
 
 	s = Cmd_Argv(1);
 	if (strlen(s) >= MAX_ALIAS_NAME)
 	{
-		Com_Printf_G ("Alias name is too long\n");
+		Com_Printf_C ("Alias name is too long\n");
 		return;
 	}
 
@@ -554,7 +563,7 @@ char *Cmd_MacroExpandString (char *text)
 	len = strlen (scan);
 	if (len >= MAX_STRING_CHARS)
 	{
-		Com_Printf_G ("Line exceeded %i chars, discarded.\n", MAX_STRING_CHARS);
+		Com_Printf_C ("Line exceeded %i chars, discarded.\n", MAX_STRING_CHARS);
 		return NULL;
 	}
 
@@ -580,7 +589,7 @@ char *Cmd_MacroExpandString (char *text)
 		len += j;
 		if (len >= MAX_STRING_CHARS)
 		{
-			Com_Printf_G ("Expanded line exceeded %i chars, discarded.\n", MAX_STRING_CHARS);
+			Com_Printf_C ("Expanded line exceeded %i chars, discarded.\n", MAX_STRING_CHARS);
 			return NULL;
 		}
 
@@ -594,14 +603,14 @@ char *Cmd_MacroExpandString (char *text)
 
 		if (++count == 100)
 		{
-			Com_Printf_G ("Macro expansion loop, discarded.\n");
+			Com_Printf_C ("Macro expansion loop, discarded.\n");
 			return NULL;
 		}
 	}
 
 	if (inquote)
 	{
-		Com_Printf_G ("Line has unmatched quote, discarded.\n");
+		Com_Printf_C ("Line has unmatched quote, discarded.\n");
 		return NULL;
 	}
 
@@ -695,7 +704,7 @@ void	Cmd_AddCommand (char *cmd_name, xcommand_t function)
 // fail if the command is a variable name
 	if (Cvar_VariableString(cmd_name)[0])
 	{
-		Com_Printf_G ("Cmd_AddCommand: %s already defined as a var\n", cmd_name);
+		Com_Printf_C ("Cmd_AddCommand: %s already defined as a var\n", cmd_name);
 		return;
 	}
 
@@ -704,7 +713,7 @@ void	Cmd_AddCommand (char *cmd_name, xcommand_t function)
 	{
 		if (!strcmp (cmd_name, cmd->name))
 		{
-			Com_Printf_G ("Cmd_AddCommand: %s already defined\n", cmd_name);
+			Com_Printf_C ("Cmd_AddCommand: %s already defined\n", cmd_name);
 			return;
 		}
 	}
@@ -731,7 +740,7 @@ void	Cmd_RemoveCommand (char *cmd_name)
 		cmd = *back;
 		if (!cmd)
 		{
-			Com_Printf_G ("Cmd_RemoveCommand: %s not added\n", cmd_name);
+			Com_Printf_C ("Cmd_RemoveCommand: %s not added\n", cmd_name);
 			return;
 		}
 		if (!strcmp (cmd_name, cmd->name))
@@ -841,7 +850,7 @@ void	Cmd_ExecuteString (char *text)
 		{
 			if (++alias_count == ALIAS_LOOP_COUNT)
 			{
-				Com_Printf_G ("ALIAS_LOOP_COUNT\n");
+				Com_Printf_C ("ALIAS_LOOP_COUNT\n");
 				return;
 			}
 			Cbuf_InsertText (a->value);
@@ -869,8 +878,8 @@ void Cmd_List_f (void)
 
 	i = 0;
 	for (cmd=cmd_functions ; cmd ; cmd=cmd->next, i++)
-		Com_Printf_G ("%s\n", cmd->name);
-	Com_Printf_G ("%i commands\n", i);
+		Com_Printf_C ("%s\n", cmd->name);
+	Com_Printf_C ("%i commands\n", i);
 }
 
 /*

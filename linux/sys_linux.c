@@ -216,7 +216,7 @@ void *Sys_GetGameAPI (void *parms)
 
 	getcwd(curpath, sizeof(curpath));
 
-	Com_Printf_G("------- Loading %s -------", gamename);
+	Com_Printf_C("------- Loading %s -------", gamename);
 
 	// now run through the search paths
 	path = NULL;

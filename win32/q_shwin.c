@@ -92,7 +92,7 @@ int Hunk_End (void)
 #endif
 
     hunkcount++;
-//Com_Printf_G ("hunkcount: %i\n", hunkcount);
+//Com_Printf_C ("hunkcount: %i\n", hunkcount);
     return cursize;
 }
 

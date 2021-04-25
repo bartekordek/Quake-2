@@ -93,17 +93,17 @@ void S_SoundInfo_f(void)
 {
     if (!sound_started)
     {
-        Com_Printf_G ("sound system not started\n");
+        Com_Printf_C ("sound system not started\n");
         return;
     }
 
-    Com_Printf_G("%5d stereo\n", dma.channels - 1);
-    Com_Printf_G("%5d samples\n", dma.samples);
-    Com_Printf_G("%5d samplepos\n", dma.samplepos);
-    Com_Printf_G("%5d samplebits\n", dma.samplebits);
-    Com_Printf_G("%5d submission_chunk\n", dma.submission_chunk);
-    Com_Printf_G("%5d speed\n", dma.speed);
-    Com_Printf_G("0x%x dma buffer\n", dma.buffer);
+    Com_Printf_C("%5d stereo\n", dma.channels - 1);
+    Com_Printf_C("%5d samples\n", dma.samples);
+    Com_Printf_C("%5d samplepos\n", dma.samplepos);
+    Com_Printf_C("%5d samplebits\n", dma.samplebits);
+    Com_Printf_C("%5d submission_chunk\n", dma.submission_chunk);
+    Com_Printf_C("%5d speed\n", dma.speed);
+    Com_Printf_C("0x%x dma buffer\n", dma.buffer);
 }
 
 
@@ -117,11 +117,11 @@ void S_Init (void)
 {
     cvar_t    *cv;
 
-    Com_Printf_G("\n------- sound initialization -------\n");
+    Com_Printf_C("\n------- sound initialization -------\n");
 
     cv = Cvar_Get ("s_initsound", "1", 0);
     if (!cv->value)
-        Com_Printf_G ("not initializing.\n");
+        Com_Printf_C ("not initializing.\n");
     else
     {
         s_volume = Cvar_Get ("s_volume", "0.7", CVAR_ARCHIVE);
@@ -148,12 +148,12 @@ void S_Init (void)
         soundtime = 0;
         paintedtime = 0;
 
-        Com_Printf_G ("sound sampling rate: %i\n", dma.speed);
+        Com_Printf_C ("sound sampling rate: %i\n", dma.speed);
 
         S_StopAllSounds ();
     }
 
-    Com_Printf_G("------------------------------------\n");
+    Com_Printf_C("------------------------------------\n");
 }
 
 
@@ -553,7 +553,7 @@ void S_IssuePlaysound (playsound_t *ps)
     sfxcache_t    *sc;
 
     if (s_show->value)
-        Com_Printf_G ("Issue %i\n", ps->begin);
+        Com_Printf_C ("Issue %i\n", ps->begin);
     // pick a channel to play on
     ch = S_PickChannel(ps->entnum, ps->entchannel);
     if (!ch)
@@ -745,7 +745,7 @@ void S_StartLocalSound (char *sound)
     sfx = S_RegisterSound (sound);
     if (!sfx)
     {
-        Com_Printf_G ("S_StartLocalSound: can't cache %s\n", sound);
+        Com_Printf_C ("S_StartLocalSound: can't cache %s\n", sound);
         return;
     }
     S_StartSound (NULL, cl.playernum+1, 0, sfx, 1, 1, 0);
@@ -920,7 +920,7 @@ void S_RawSamples (int samples, int rate, int width, int channels, byte *data)
         s_rawend = paintedtime;
     scale = (float)rate / dma.speed;
 
-//Com_Printf_G ("%i < %i < %i\n", soundtime, paintedtime, s_rawend);
+//Com_Printf_C ("%i < %i < %i\n", soundtime, paintedtime, s_rawend);
     if (channels == 2 && width == 2)
     {
         if (scale == 1.0)
@@ -1068,11 +1068,11 @@ void S_Update(vec3_t origin, vec3_t forward, vec3_t right, vec3_t up)
         for (i=0 ; i<MAX_CHANNELS; i++, ch++)
             if (ch->sfx && (ch->leftvol || ch->rightvol) )
             {
-                Com_Printf_G ("%3i %3i %s\n", ch->leftvol, ch->rightvol, ch->sfx->name);
+                Com_Printf_C ("%3i %3i %s\n", ch->leftvol, ch->rightvol, ch->sfx->name);
                 total++;
             }
 
-        Com_Printf_G ("----(%i)---- painted: %i\n", total, paintedtime);
+        Com_Printf_C ("----(%i)---- painted: %i\n", total, paintedtime);
     }
 
 // mix some sound
@@ -1196,19 +1196,19 @@ void S_SoundList(void)
             size = sc->length*sc->width*(sc->stereo+1);
             total += size;
             if (sc->loopstart >= 0)
-                Com_Printf_G ("L");
+                Com_Printf_C ("L");
             else
-                Com_Printf_G (" ");
-            Com_Printf_G("(%2db) %6i : %s\n",sc->width*8,  size, sfx->name);
+                Com_Printf_C (" ");
+            Com_Printf_C("(%2db) %6i : %s\n",sc->width*8,  size, sfx->name);
         }
         else
         {
             if (sfx->name[0] == '*')
-                Com_Printf_G("  placeholder : %s\n", sfx->name);
+                Com_Printf_C("  placeholder : %s\n", sfx->name);
             else
-                Com_Printf_G("  not loaded  : %s\n", sfx->name);
+                Com_Printf_C("  not loaded  : %s\n", sfx->name);
         }
     }
-    Com_Printf_G ("Total resident: %i\n", total);
+    Com_Printf_C ("Total resident: %i\n", total);
 }
 

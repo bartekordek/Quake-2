@@ -214,7 +214,7 @@ void SCR_CenterPrint (char *str)
     }
 
     // echo it to the console
-    Com_Printf_G("\n\n\35\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\37\n\n");
+    Com_Printf_C("\n\n\35\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\37\n\n");
 
     s = str;
     do
@@ -234,7 +234,7 @@ void SCR_CenterPrint (char *str)
         line[i] = '\n';
         line[i+1] = 0;
 
-        Com_Printf_G ("%s", line);
+        Com_Printf_C ("%s", line);
 
         while (*s && *s != '\n')
             s++;
@@ -243,7 +243,7 @@ void SCR_CenterPrint (char *str)
             break;
         s++;        // skip the \n
     } while (1);
-    Com_Printf_G("\n\n\35\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\37\n\n");
+    Com_Printf_C("\n\n\35\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\37\n\n");
     Con_ClearNotify ();
 }
 
@@ -375,7 +375,7 @@ void SCR_Sky_f (void)
 
     if (Cmd_Argc() < 2)
     {
-        Com_Printf_G ("Usage: sky <basename> <rotate> <axis x y z>\n");
+        Com_Printf_C ("Usage: sky <basename> <rotate> <axis x y z>\n");
         return;
     }
     if (Cmd_Argc() > 2)
@@ -655,7 +655,7 @@ void SCR_TimeRefresh_f (void)
 
     stop = win32_Sys_Milliseconds ();
     time = (stop-start)/1000.0;
-    Com_Printf_G ("%f seconds (%f fps)\n", time, 128/time);
+    Com_Printf_C ("%f seconds (%f fps)\n", time, 128/time);
 }
 
 /*
@@ -1277,7 +1277,7 @@ void SCR_UpdateScreen (void)
         if (win32_Sys_Milliseconds() - cls.disable_screen > 120000)
         {
             cls.disable_screen = 0;
-            Com_Printf_G ("Loading plaque timed out.\n");
+            Com_Printf_C ("Loading plaque timed out.\n");
         }
         return;
     }

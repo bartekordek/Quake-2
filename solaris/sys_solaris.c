@@ -208,7 +208,7 @@ void *Sys_GetGameAPI (void *parms)
 
 	getcwd(curpath, sizeof(curpath));
 
-	Com_Printf_G("------- Loading %s -------", gamename);
+	Com_Printf_C("------- Loading %s -------", gamename);
 
 	// now run through the search paths
 	path = NULL;
@@ -224,7 +224,7 @@ void *Sys_GetGameAPI (void *parms)
 			Com_DPrintf ("LoadLibrary (%s)\n",name);
 			break;
 		} else
-			Com_Printf_G("error: %s\n", dlerror());
+			Com_Printf_C("error: %s\n", dlerror());
 	}
 
 	GetGameAPI = (void *)dlsym (game_library, "GetGameAPI");

@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 /*
 =============================================================================
 
-Com_Printf_G redirection
+Com_Printf_C redirection
 
 =============================================================================
 */
@@ -92,7 +92,7 @@ void SV_BroadcastPrintf (int level, char *fmt, ...)
 		for (i=0 ; i<1023 && string[i] ; i++)
 			copy[i] = string[i]&127;
 		copy[i] = 0;
-		Com_Printf_G ("%s", copy);
+		Com_Printf_C ("%s", copy);
 	}
 
 	for (i=0, cl = svs.clients ; i<maxclients->value; i++, cl++)
@@ -396,14 +396,14 @@ qboolean SV_SendClientDatagram (client_t *client)
 	// it is necessary for this to be after the WriteEntities
 	// so that entity references will be current
 	if (client->datagram.overflowed)
-		Com_Printf_G ("WARNING: datagram overflowed for %s\n", client->name);
+		Com_Printf_C ("WARNING: datagram overflowed for %s\n", client->name);
 	else
 		SZ_Write (&msg, client->datagram.data, client->datagram.cursize);
 	SZ_Clear (&client->datagram);
 
 	if (msg.overflowed)
 	{	// must have room left for the packet header
-		Com_Printf_G ("WARNING: msg overflowed for %s\n", client->name);
+		Com_Printf_C ("WARNING: msg overflowed for %s\n", client->name);
 		SZ_Clear (&msg);
 	}
 

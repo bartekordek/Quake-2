@@ -169,6 +169,6 @@ typedef struct edict_s
     // common data blocks
     moveinfo_t        moveinfo;
     monsterinfo_t    monsterinfo;
-};
+} edict_t;
 
 #endif // ____SHARED_EDICT_H__

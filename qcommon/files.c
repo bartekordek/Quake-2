@@ -592,7 +592,7 @@ void FS_SetGamedir (char *dir)
 	if (strstr(dir, "..") || strstr(dir, "/")
 		|| strstr(dir, "\\") || strstr(dir, ":") )
 	{
-		Com_Printf_G ("Gamedir should be a single filename, not a path\n");
+		Com_Printf_C ("Gamedir should be a single filename, not a path\n");
 		return;
 	}
 
@@ -648,7 +648,7 @@ void FS_Link_f (void)
 
 	if (Cmd_Argc() != 3)
 	{
-		Com_Printf_G ("USAGE: link <from> <to>\n");
+		Com_Printf_C ("USAGE: link <from> <to>\n");
 		return;
 	}
 
@@ -755,8 +755,8 @@ void FS_Dir_f( void )
 				*tmp = '/';
 			tmp++;
 		}
-		Com_Printf_G( "Directory of %s\n", findname );
-		Com_Printf_G( "----\n" );
+		Com_Printf_C( "Directory of %s\n", findname );
+		Com_Printf_C( "----\n" );
 
 		if ( ( dirnames = FS_ListFiles( findname, &ndirs, 0, 0 ) ) != 0 )
 		{
@@ -765,15 +765,15 @@ void FS_Dir_f( void )
 			for ( i = 0; i < ndirs-1; i++ )
 			{
 				if ( strrchr( dirnames[i], '/' ) )
-					Com_Printf_G( "%s\n", strrchr( dirnames[i], '/' ) + 1 );
+					Com_Printf_C( "%s\n", strrchr( dirnames[i], '/' ) + 1 );
 				else
-					Com_Printf_G( "%s\n", dirnames[i] );
+					Com_Printf_C( "%s\n", dirnames[i] );
 
 				free( dirnames[i] );
 			}
 			free( dirnames );
 		}
-		Com_Printf_G( "\n" );
+		Com_Printf_C( "\n" );
 	};
 }
 
@@ -788,20 +788,20 @@ void FS_Path_f (void)
 	searchpath_t	*s;
 	filelink_t		*l;
 
-	Com_Printf_G ("Current search path:\n");
+	Com_Printf_C ("Current search path:\n");
 	for (s=fs_searchpaths ; s ; s=s->next)
 	{
 		if (s == fs_base_searchpaths)
-			Com_Printf_G ("----------\n");
+			Com_Printf_C ("----------\n");
 		if (s->pack)
-			Com_Printf_G ("%s (%i files)\n", s->pack->filename, s->pack->numfiles);
+			Com_Printf_C ("%s (%i files)\n", s->pack->filename, s->pack->numfiles);
 		else
-			Com_Printf_G ("%s\n", s->filename);
+			Com_Printf_C ("%s\n", s->filename);
 	}
 
-	Com_Printf_G ("\nLinks:\n");
+	Com_Printf_C ("\nLinks:\n");
 	for (l=fs_links ; l ; l=l->next)
-		Com_Printf_G ("%s : %s\n", l->from, l->to);
+		Com_Printf_C ("%s : %s\n", l->from, l->to);
 }
 
 /*

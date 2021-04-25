@@ -286,13 +286,13 @@ qboolean	NET_GetPacket (netsrc_t sock, netadr_t *net_from, sizebuf_t *net_messag
 
 			if (err == EWOULDBLOCK || err == ECONNREFUSED)
 				continue;
-			Com_Printf_G ("NET_GetPacket: %s", NET_ErrorString());
+			Com_Printf_C ("NET_GetPacket: %s", NET_ErrorString());
 			continue;
 		}
 
 		if (ret == net_message->maxsize)
 		{
-			Com_Printf_G ("Oversize packet from %s\n", NET_AdrToString (*net_from));
+			Com_Printf_C ("Oversize packet from %s\n", NET_AdrToString (*net_from));
 			continue;
 		}
 
@@ -350,7 +350,7 @@ void NET_SendPacket (netsrc_t sock, int length, void *data, netadr_t to)
 	ret = sendto (net_socket, data, length, 0, (struct sockaddr *)&addr, sizeof(addr) );
 	if (ret == -1)
 	{
-		Com_Printf_G ("NET_SendPacket ERROR: %i\n", NET_ErrorString());
+		Com_Printf_C ("NET_SendPacket ERROR: %i\n", NET_ErrorString());
 	}
 }
 
@@ -450,21 +450,21 @@ int NET_Socket (char *net_interface, int port)
 
 	if ((newsocket = socket (PF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1)
 	{
-		Com_Printf_G ("ERROR: UDP_OpenSocket: socket:", NET_ErrorString());
+		Com_Printf_C ("ERROR: UDP_OpenSocket: socket:", NET_ErrorString());
 		return 0;
 	}
 
 	// make it non-blocking
 	if (ioctl (newsocket, FIONBIO, &_true) == -1)
 	{
-		Com_Printf_G ("ERROR: UDP_OpenSocket: ioctl FIONBIO:%s\n", NET_ErrorString());
+		Com_Printf_C ("ERROR: UDP_OpenSocket: ioctl FIONBIO:%s\n", NET_ErrorString());
 		return 0;
 	}
 
 	// make it broadcast capable
 	if (setsockopt(newsocket, SOL_SOCKET, SO_BROADCAST, (char *)&i, sizeof(i)) == -1)
 	{
-		Com_Printf_G ("ERROR: UDP_OpenSocket: setsockopt SO_BROADCAST:%s\n", NET_ErrorString());
+		Com_Printf_C ("ERROR: UDP_OpenSocket: setsockopt SO_BROADCAST:%s\n", NET_ErrorString());
 		return 0;
 	}
 
@@ -482,7 +482,7 @@ int NET_Socket (char *net_interface, int port)
 
 	if( bind (newsocket, (void *)&address, sizeof(address)) == -1)
 	{
-		Com_Printf_G ("ERROR: UDP_OpenSocket: bind: %s\n", NET_ErrorString());
+		Com_Printf_C ("ERROR: UDP_OpenSocket: bind: %s\n", NET_ErrorString());
 		close (newsocket);
 		return 0;
 	}

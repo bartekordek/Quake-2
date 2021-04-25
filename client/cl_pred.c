@@ -52,7 +52,7 @@ void CL_CheckPredictionError (void)
 	else
 	{
 		if (cl_showmiss->value && (delta[0] || delta[1] || delta[2]) )
-			Com_Printf_G ("prediction miss on %i: %i\n", cl.frame.serverframe,
+			Com_Printf_C ("prediction miss on %i: %i\n", cl.frame.serverframe,
 			delta[0] + delta[1] + delta[2]);
 
 		VectorCopy (cl.frame.playerstate.pmove.origin, cl.predicted_origins[frame]);
@@ -229,7 +229,7 @@ void CL_PredictMovement (void)
 	if (current - ack >= CMD_BACKUP)
 	{
 		if (cl_showmiss->value)
-			Com_Printf_G ("exceeded CMD_BACKUP\n");
+			Com_Printf_C ("exceeded CMD_BACKUP\n");
 		return;
 	}
 

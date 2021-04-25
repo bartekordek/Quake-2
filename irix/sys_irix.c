@@ -214,7 +214,7 @@ void *Sys_GetGameAPI (void *parms)
 
 	getcwd(curpath, sizeof(curpath));
 
-	Com_Printf_G("------- Loading %s -------", gamename);
+	Com_Printf_C("------- Loading %s -------", gamename);
 
 	// now run through the search paths
 	path = NULL;
@@ -224,7 +224,7 @@ void *Sys_GetGameAPI (void *parms)
 		if (!path)
 			return NULL;		// couldn't find one anywhere
 		sprintf (name, "%s/%s/%s", curpath, path, gamename);
-		Com_Printf_G ("Trying to load library (%s)\n",name);
+		Com_Printf_C ("Trying to load library (%s)\n",name);
 		game_library = dlopen (name, RTLD_NOW );
 		if (game_library)
 		{
@@ -313,7 +313,7 @@ void Sys_CopyProtect(void)
 	if (checked)
 		return;
 
-        Com_Printf_G("XXX - Sys_CopyProtect disabled\n");
+        Com_Printf_C("XXX - Sys_CopyProtect disabled\n");
 	checked = true;
 	return;
 

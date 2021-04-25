@@ -27,7 +27,7 @@ void VID_Printf (int print_level, char *fmt, ...)
         va_end (argptr);
 
         if (print_level == PRINT_ALL)
-                Com_Printf_G ("%s", msg);
+                Com_Printf_C ("%s", msg);
         else
                 Com_DPrintf ("%s", msg);
 }

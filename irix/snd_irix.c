@@ -43,7 +43,7 @@ qboolean SNDDMA_Init(void)
 	dma.samplebits = 16;
 
     if (dma.samplebits != 16) {
-	Com_Printf_G("Don't currently support %i-bit data.  Forcing 16-bit.\n",
+	Com_Printf_C("Don't currently support %i-bit data.  Forcing 16-bit.\n",
 		   dma.samplebits);
 	dma.samplebits = 16;
 	Cvar_SetValue( "s_loadas8bit", false );
@@ -74,14 +74,14 @@ qboolean SNDDMA_Init(void)
 	break;
     default:
 	dma.speed = AL_RATE_22050;
-	Com_Printf_G("Don't currently support %i kHz sample rate.  Using %i.\n",
+	Com_Printf_C("Don't currently support %i kHz sample rate.  Using %i.\n",
 		   (int)s_khz->value, (int)(dma.speed/1000));
     }
 
     sndchannels = Cvar_Get("sndchannels", "2", CVAR_ARCHIVE);
     dma.channels = (int)sndchannels->value;
     if (dma.channels != 2)
-	Com_Printf_G("Don't currently support %i sound channels.  Try 2.\n",
+	Com_Printf_C("Don't currently support %i sound channels.  Try 2.\n",
 		   sndchannels);
 
     /***********************/

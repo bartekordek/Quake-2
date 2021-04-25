@@ -174,7 +174,7 @@ void SV_SpawnServer (char *server, char *spawnpoint, server_state_t serverstate,
 	if (attractloop)
 		Cvar_Set ("paused", "0");
 
-	Com_Printf_G ("------- Server Initialization -------\n");
+	Com_Printf_C ("------- Server Initialization -------\n");
 
 	Com_DPrintf ("SpawnServer: %s\n",server);
 	if (sv.demofile)
@@ -276,7 +276,7 @@ void SV_SpawnServer (char *server, char *spawnpoint, server_state_t serverstate,
 	// set serverinfo variable
 	Cvar_FullSet ("mapname", sv.name, CVAR_SERVERINFO | CVAR_NOSET);
 
-	Com_Printf_G ("-------------------------------------\n");
+	Com_Printf_C ("-------------------------------------\n");
 }
 
 /*
@@ -311,7 +311,7 @@ void SV_InitGame (void)
 
 	if (Cvar_VariableValue ("coop") && Cvar_VariableValue ("deathmatch"))
 	{
-		Com_Printf_G("Deathmatch and Coop both set, disabling Coop\n");
+		Com_Printf_C("Deathmatch and Coop both set, disabling Coop\n");
 		Cvar_FullSet ("coop", "0",  CVAR_SERVERINFO | CVAR_LATCH);
 	}
 

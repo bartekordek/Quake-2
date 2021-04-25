@@ -70,7 +70,7 @@ void Com_Printf_G(char *msg, ...)
 
 /*
 =============
-Com_Printf_G
+Com_Printf_C
 
 Both client and server can use this, and it will output
 to the apropriate place.

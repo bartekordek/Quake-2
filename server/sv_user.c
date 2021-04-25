@@ -65,7 +65,7 @@ void SV_New_f (void)
 
 	if (sv_client->state != cs_connected)
 	{
-		Com_Printf_G ("New not valid -- already spawned\n");
+		Com_Printf_C ("New not valid -- already spawned\n");
 		return;
 	}
 
@@ -129,14 +129,14 @@ void SV_Configstrings_f (void)
 
 	if (sv_client->state != cs_connected)
 	{
-		Com_Printf_G ("configstrings not valid -- already spawned\n");
+		Com_Printf_C ("configstrings not valid -- already spawned\n");
 		return;
 	}
 
 	// handle the case of a level changing while a client was connecting
 	if ( atoi(Cmd_Argv(1)) != svs.spawncount )
 	{
-		Com_Printf_G ("SV_Configstrings_f from different level\n");
+		Com_Printf_C ("SV_Configstrings_f from different level\n");
 		SV_New_f ();
 		return;
 	}
@@ -186,14 +186,14 @@ void SV_Baselines_f (void)
 
 	if (sv_client->state != cs_connected)
 	{
-		Com_Printf_G ("baselines not valid -- already spawned\n");
+		Com_Printf_C ("baselines not valid -- already spawned\n");
 		return;
 	}
 
 	// handle the case of a level changing while a client was connecting
 	if ( atoi(Cmd_Argv(1)) != svs.spawncount )
 	{
-		Com_Printf_G ("SV_Baselines_f from different level\n");
+		Com_Printf_C ("SV_Baselines_f from different level\n");
 		SV_New_f ();
 		return;
 	}
@@ -242,7 +242,7 @@ void SV_Begin_f (void)
 	// handle the case of a level changing while a client was connecting
 	if ( atoi(Cmd_Argv(1)) != svs.spawncount )
 	{
-		Com_Printf_G ("SV_Begin_f from different level\n");
+		Com_Printf_C ("SV_Begin_f from different level\n");
 		SV_New_f ();
 		return;
 	}
@@ -555,7 +555,7 @@ void SV_ExecuteClientMessage (client_t *cl)
 	{
 		if (net_message.readcount > net_message.cursize)
 		{
-			Com_Printf_G ("SV_ReadClientMessage: badread\n");
+			Com_Printf_C ("SV_ReadClientMessage: badread\n");
 			SV_DropClient (cl);
 			return;
 		}
@@ -567,7 +567,7 @@ void SV_ExecuteClientMessage (client_t *cl)
 		switch (c)
 		{
 		default:
-			Com_Printf_G ("SV_ReadClientMessage: unknown command char\n");
+			Com_Printf_C ("SV_ReadClientMessage: unknown command char\n");
 			SV_DropClient (cl);
 			return;
 
@@ -628,7 +628,7 @@ void SV_ExecuteClientMessage (client_t *cl)
 
 //if (net_drop > 2)
 
-//	Com_Printf_G ("drop %i\n", net_drop);
+//	Com_Printf_C ("drop %i\n", net_drop);
 					while (net_drop > 2)
 					{
 						SV_ClientThink (cl, &cl->lastcmd);

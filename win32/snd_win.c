@@ -113,12 +113,12 @@ static qboolean DS_CreateBuffers( void )
     format.cbSize = 0;
     format.nAvgBytesPerSec = format.nSamplesPerSec*format.nBlockAlign;
 
-	Com_Printf_G( "Creating DS buffers\n" );
+	Com_Printf_C( "Creating DS buffers\n" );
 
 	Com_DPrintf("...setting EXCLUSIVE coop level: " );
 	if ( DS_OK != pDS->lpVtbl->SetCooperativeLevel( pDS, cl_hwnd, DSSCL_EXCLUSIVE ) )
 	{
-		Com_Printf_G ("failed\n");
+		Com_Printf_C ("failed\n");
 		FreeSound ();
 		return false;
 	}
@@ -156,7 +156,7 @@ static qboolean DS_CreateBuffers( void )
 		}
 	}
 	else
-		Com_Printf_G( "failed\n" );
+		Com_Printf_C( "failed\n" );
 
 	if ( !primary_format_set || !s_primary->value)
 	{
@@ -173,7 +173,7 @@ static qboolean DS_CreateBuffers( void )
 		Com_DPrintf( "...creating secondary buffer: " );
 		if (DS_OK != pDS->lpVtbl->CreateSoundBuffer(pDS, &dsbuf, &pDSBuf, NULL))
 		{
-			Com_Printf_G( "failed\n" );
+			Com_Printf_C( "failed\n" );
 			FreeSound ();
 			return false;
 		}
@@ -185,21 +185,21 @@ static qboolean DS_CreateBuffers( void )
 
 		if (DS_OK != pDSBuf->lpVtbl->GetCaps (pDSBuf, &dsbcaps))
 		{
-			Com_Printf_G ("*** GetCaps failed ***\n");
+			Com_Printf_C ("*** GetCaps failed ***\n");
 			FreeSound ();
 			return false;
 		}
 
-		Com_Printf_G ("...using secondary sound buffer\n");
+		Com_Printf_C ("...using secondary sound buffer\n");
 	}
 	else
 	{
-		Com_Printf_G( "...using primary buffer\n" );
+		Com_Printf_C( "...using primary buffer\n" );
 
 		Com_DPrintf( "...setting WRITEPRIMARY coop level: " );
 		if (DS_OK != pDS->lpVtbl->SetCooperativeLevel (pDS, cl_hwnd, DSSCL_WRITEPRIMARY))
 		{
-			Com_Printf_G( "failed\n" );
+			Com_Printf_C( "failed\n" );
 			FreeSound ();
 			return false;
 		}
@@ -207,7 +207,7 @@ static qboolean DS_CreateBuffers( void )
 
 		if (DS_OK != pDSPBuf->lpVtbl->GetCaps (pDSPBuf, &dsbcaps))
 		{
-			Com_Printf_G ("*** GetCaps failed ***\n");
+			Com_Printf_C ("*** GetCaps failed ***\n");
 			return false;
 		}
 
@@ -218,7 +218,7 @@ static qboolean DS_CreateBuffers( void )
 	pDSBuf->lpVtbl->Play(pDSBuf, 0, 0, DSBPLAY_LOOPING);
 
 	if (snd_firsttime)
-		Com_Printf_G("   %d channel(s)\n"
+		Com_Printf_C("   %d channel(s)\n"
 		               "   %d bits/sample\n"
 					   "   %d bytes/sec\n",
 					   dma.channels, dma.samplebits, dma.speed);
@@ -364,7 +364,7 @@ sndinitstat SNDDMA_InitDirect (void)
 	else
 		dma.speed = 11025;
 
-	Com_Printf_G( "Initializing DirectSound\n");
+	Com_Printf_C( "Initializing DirectSound\n");
 
 	if ( !hInstDS )
 	{
@@ -374,7 +374,7 @@ sndinitstat SNDDMA_InitDirect (void)
 
 		if (hInstDS == NULL)
 		{
-			Com_Printf_G ("failed\n");
+			Com_Printf_C ("failed\n");
 			return SIS_FAILURE;
 		}
 
@@ -383,37 +383,26 @@ sndinitstat SNDDMA_InitDirect (void)
 
 		if (!pDirectSoundCreate)
 		{
-			Com_Printf_G ("*** couldn't get DS proc addr ***\n");
+			Com_Printf_C ("*** couldn't get DS proc addr ***\n");
 			return SIS_FAILURE;
 		}
 	}
 
 	Com_DPrintf( "...creating DS object: " );
-	while ( ( hresult = iDirectSoundCreate( NULL, &pDS, NULL ) ) != DS_OK )
-	{
-		if (hresult != DSERR_ALLOCATED)
-		{
-			Com_Printf_G( "failed\n" );
-			return SIS_FAILURE;
-		}
 
-		if (MessageBox (NULL,
-						"The sound hardware is in use by another app.\n\n"
-					    "Select Retry to try to start sound again or Cancel to run Quake with no sound.",
-						"Sound not available",
-						MB_RETRYCANCEL | MB_SETFOREGROUND | MB_ICONEXCLAMATION) != IDRETRY)
-		{
-			Com_Printf_G ("failed, hardware already in use\n" );
-			return SIS_NOTAVAIL;
-		}
+	do
+	{
+		hresult = iDirectSoundCreate( NULL, &pDS, NULL );
+
 	}
+	while( hresult != DS_OK );
 	Com_DPrintf( "ok\n" );
 
 	dscaps.dwSize = sizeof(dscaps);
 
 	if ( DS_OK != pDS->lpVtbl->GetCaps( pDS, &dscaps ) )
 	{
-		Com_Printf_G ("*** couldn't get DS caps ***\n");
+		Com_Printf_C ("*** couldn't get DS caps ***\n");
 	}
 
 	if ( dscaps.dwFlags & DSCAPS_EMULDRIVER )
@@ -447,7 +436,7 @@ qboolean SNDDMA_InitWav (void)
 	int				i;
 	HRESULT			hr;
 
-	Com_Printf_G( "Initializing wave sound\n" );
+	Com_Printf_C( "Initializing wave sound\n" );
 
 	snd_sent = 0;
 	snd_completed = 0;
@@ -481,7 +470,7 @@ qboolean SNDDMA_InitWav (void)
 	{
 		if (hr != MMSYSERR_ALLOCATED)
 		{
-			Com_Printf_G ("failed\n");
+			Com_Printf_C ("failed\n");
 			return false;
 		}
 
@@ -491,7 +480,7 @@ qboolean SNDDMA_InitWav (void)
 						"Sound not available",
 						MB_RETRYCANCEL | MB_SETFOREGROUND | MB_ICONEXCLAMATION) != IDRETRY)
 		{
-			Com_Printf_G ("hw in use\n" );
+			Com_Printf_C ("hw in use\n" );
 			return false;
 		}
 	}
@@ -508,7 +497,7 @@ qboolean SNDDMA_InitWav (void)
 	hData = GlobalAlloc(GMEM_MOVEABLE | GMEM_SHARE, gSndBufSize);
 	if (!hData)
 	{
-		Com_Printf_G( " failed\n" );
+		Com_Printf_C( " failed\n" );
 		FreeSound ();
 		return false;
 	}
@@ -518,7 +507,7 @@ qboolean SNDDMA_InitWav (void)
 	lpData = GlobalLock(hData);
 	if (!lpData)
 	{
-		Com_Printf_G( " failed\n" );
+		Com_Printf_C( " failed\n" );
 		FreeSound ();
 		return false;
 	}
@@ -536,7 +525,7 @@ qboolean SNDDMA_InitWav (void)
 
 	if (hWaveHdr == NULL)
 	{
-		Com_Printf_G( "failed\n" );
+		Com_Printf_C( "failed\n" );
 		FreeSound ();
 		return false;
 	}
@@ -547,7 +536,7 @@ qboolean SNDDMA_InitWav (void)
 
 	if (lpWaveHdr == NULL)
 	{
-		Com_Printf_G( "failed\n" );
+		Com_Printf_C( "failed\n" );
 		FreeSound ();
 		return false;
 	}
@@ -564,7 +553,7 @@ qboolean SNDDMA_InitWav (void)
 		if (waveOutPrepareHeader(hWaveOut, lpWaveHdr+i, sizeof(WAVEHDR)) !=
 				MMSYSERR_NOERROR)
 		{
-			Com_Printf_G ("failed\n");
+			Com_Printf_C ("failed\n");
 			FreeSound ();
 			return false;
 		}
@@ -614,12 +603,12 @@ int SNDDMA_Init(void)
 				snd_isdirect = true;
 
 				if (snd_firsttime)
-					Com_Printf_G ("dsound init succeeded\n" );
+					Com_Printf_C ("dsound init succeeded\n" );
 			}
 			else
 			{
 				snd_isdirect = false;
-				Com_Printf_G ("*** dsound init failed ***\n");
+				Com_Printf_C ("*** dsound init failed ***\n");
 			}
 		}
 	}
@@ -638,11 +627,11 @@ int SNDDMA_Init(void)
 			if (snd_iswave)
 			{
 				if (snd_firsttime)
-					Com_Printf_G ("Wave sound init succeeded\n");
+					Com_Printf_C ("Wave sound init succeeded\n");
 			}
 			else
 			{
-				Com_Printf_G ("Wave sound init failed\n");
+				Com_Printf_C ("Wave sound init failed\n");
 			}
 		}
 	}
@@ -654,7 +643,7 @@ int SNDDMA_Init(void)
 	if (!dsound_init && !wav_init)
 	{
 		if (snd_firsttime)
-			Com_Printf_G ("*** No sound device initialized ***\n");
+			Com_Printf_C ("*** No sound device initialized ***\n");
 
 		return 0;
 	}
@@ -717,7 +706,7 @@ void SNDDMA_BeginPainting (void)
 
 	// if the buffer was lost or stopped, restore it and/or restart it
 	if (pDSBuf->lpVtbl->GetStatus (pDSBuf, &dwStatus) != DS_OK)
-		Com_Printf_G ("Couldn't get sound buffer status\n");
+		Com_Printf_C ("Couldn't get sound buffer status\n");
 
 	if (dwStatus & DSBSTATUS_BUFFERLOST)
 		pDSBuf->lpVtbl->Restore (pDSBuf);
@@ -735,7 +724,7 @@ void SNDDMA_BeginPainting (void)
 	{
 		if (hresult != DSERR_BUFFERLOST)
 		{
-			Com_Printf_G( "S_TransferStereo16: Lock failed with error '%s'\n", DSoundError( hresult ) );
+			Com_Printf_C( "S_TransferStereo16: Lock failed with error '%s'\n", DSoundError( hresult ) );
 			S_Shutdown ();
 			return;
 		}
@@ -792,7 +781,7 @@ void SNDDMA_Submit(void)
 		snd_completed++;	// this buffer has been played
 	}
 
-//Com_Printf_G ("completed %i\n", snd_completed);
+//Com_Printf_C ("completed %i\n", snd_completed);
 	//
 	// submit a few new sound blocks
 	//
@@ -800,8 +789,8 @@ void SNDDMA_Submit(void)
 	{
 		h = lpWaveHdr + ( snd_sent&WAV_MASK );
 	if (paintedtime/256 <= snd_sent)
-		break;	//	Com_Printf_G ("submit overrun\n");
-//Com_Printf_G ("send %i\n", snd_sent);
+		break;	//	Com_Printf_C ("submit overrun\n");
+//Com_Printf_C ("send %i\n", snd_sent);
 		snd_sent++;
 		/*
 		 * Now the data block can be sent to the output device. The
@@ -812,7 +801,7 @@ void SNDDMA_Submit(void)
 
 		if (wResult != MMSYSERR_NOERROR)
 		{
-			Com_Printf_G ("Failed to write block to device\n");
+			Com_Printf_C ("Failed to write block to device\n");
 			FreeSound ();
 			return;
 		}

@@ -143,7 +143,7 @@ void SVC_Status (void)
     Netchan_OutOfBandPrint (NS_SERVER, net_from, "print\n%s", SV_StatusString());
 #if 0
     Com_BeginRedirect (RD_PACKET, sv_outputbuf, SV_OUTPUTBUF_LENGTH, SV_FlushRedirect);
-    Com_Printf_G (SV_StatusString());
+    Com_Printf_C (SV_StatusString());
     Com_EndRedirect ();
 #endif
 }
@@ -156,7 +156,7 @@ SVC_Ack
 */
 void SVC_Ack (void)
 {
-    Com_Printf_G ("Ping acknowledge from %s\n", NET_AdrToString(net_from));
+    Com_Printf_C ("Ping acknowledge from %s\n", NET_AdrToString(net_from));
 }
 
 /*
@@ -298,7 +298,7 @@ void SVC_DirectConnect (void)
     {
         if (!NET_IsLocalAddress (adr))
         {
-            Com_Printf_G ("Remote connect in attract loop.  Ignored.\n");
+            Com_Printf_C ("Remote connect in attract loop.  Ignored.\n");
             Netchan_OutOfBandPrint (NS_SERVER, adr, "print\nConnection refused.\n");
             return;
         }
@@ -341,7 +341,7 @@ void SVC_DirectConnect (void)
                 Com_DPrintf ("%s:reconnect rejected : too soon\n", NET_AdrToString (adr));
                 return;
             }
-            Com_Printf_G ("%s:reconnect\n", NET_AdrToString (adr));
+            Com_Printf_C ("%s:reconnect\n", NET_AdrToString (adr));
             newcl = cl;
             goto gotnewcl;
         }
@@ -432,15 +432,15 @@ void SVC_RemoteCommand (void)
     i = Rcon_Validate ();
 
     if (i == 0)
-        Com_Printf_G ("Bad rcon from %s:\n%s\n", NET_AdrToString (net_from), net_message.data+4);
+        Com_Printf_C ("Bad rcon from %s:\n%s\n", NET_AdrToString (net_from), net_message.data+4);
     else
-        Com_Printf_G ("Rcon from %s:\n%s\n", NET_AdrToString (net_from), net_message.data+4);
+        Com_Printf_C ("Rcon from %s:\n%s\n", NET_AdrToString (net_from), net_message.data+4);
 
     Com_BeginRedirect (RD_PACKET, sv_outputbuf, SV_OUTPUTBUF_LENGTH, SV_FlushRedirect);
 
     if (!Rcon_Validate ())
     {
-        Com_Printf_G ("Bad rcon_password.\n");
+        Com_Printf_C ("Bad rcon_password.\n");
     }
     else
     {
@@ -498,7 +498,7 @@ void SV_ConnectionlessPacket (void)
     else if (!strcmp(c, "rcon"))
         SVC_RemoteCommand ();
     else
-        Com_Printf_G ("bad connectionless packet from %s:\n%s\n"
+        Com_Printf_C ("bad connectionless packet from %s:\n%s\n"
         , NET_AdrToString (net_from), s);
 }
 
@@ -621,7 +621,7 @@ void SV_ReadPackets (void)
                 continue;
             if (cl->netchan.remote_address.port != net_from.port)
             {
-                Com_Printf_G ("SV_ReadPackets: fixing up a translated port\n");
+                Com_Printf_C ("SV_ReadPackets: fixing up a translated port\n");
                 cl->netchan.remote_address.port = net_from.port;
             }
 
@@ -735,7 +735,7 @@ void SV_RunGameFrame (void)
         if (sv.time < svs.realtime)
         {
             if (sv_showclamp->value)
-                Com_Printf_G ("sv highclamp\n");
+                Com_Printf_C ("sv highclamp\n");
             svs.realtime = sv.time;
         }
     }
@@ -777,7 +777,7 @@ void SV_Frame (int msec)
         if (sv.time - svs.realtime > 100)
         {
             if (sv_showclamp->value)
-                Com_Printf_G ("sv lowclamp\n");
+                Com_Printf_C ("sv lowclamp\n");
             svs.realtime = sv.time - 100;
         }
         NET_Sleep(sv.time - svs.realtime);
@@ -846,7 +846,7 @@ void Master_Heartbeat (void)
     for (i=0 ; i<MAX_MASTERS ; i++)
         if (master_adr[i].port)
         {
-            Com_Printf_G ("Sending heartbeat to %s\n", NET_AdrToString (master_adr[i]));
+            Com_Printf_C ("Sending heartbeat to %s\n", NET_AdrToString (master_adr[i]));
             Netchan_OutOfBandPrint (NS_SERVER, master_adr[i], "heartbeat\n%s", string);
         }
 }
@@ -873,7 +873,7 @@ void Master_Shutdown (void)
         if (master_adr[i].port)
         {
             if (i > 0)
-                Com_Printf_G ("Sending heartbeat to %s\n", NET_AdrToString (master_adr[i]));
+                Com_Printf_C ("Sending heartbeat to %s\n", NET_AdrToString (master_adr[i]));
             Netchan_OutOfBandPrint (NS_SERVER, master_adr[i], "shutdown");
         }
 }

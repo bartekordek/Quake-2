@@ -1141,7 +1141,7 @@ skipwhite:
 
 	if (len == MAX_TOKEN_CHARS)
 	{
-//		Com_Printf_G ("Token exceeded %i chars, discarded.\n", MAX_TOKEN_CHARS);
+//		Com_Printf_C ("Token exceeded %i chars, discarded.\n", MAX_TOKEN_CHARS);
 		len = 0;
 	}
 	com_token[len] = 0;
@@ -1231,7 +1231,7 @@ void Com_sprintf (char *dest, int size, char *fmt, ...)
 	len = vsprintf (bigbuffer,fmt,argptr);
 	va_end (argptr);
 	if (len >= size)
-		Com_Printf_G ("Com_sprintf: overflow of %i in %i\n", len, size);
+		Com_Printf_C ("Com_sprintf: overflow of %i in %i\n", len, size);
 	strncpy (dest, bigbuffer, size-1);
 }
 
@@ -1302,7 +1302,7 @@ void Info_RemoveKey (char *s, char *key)
 
 	if (strstr (key, "\\"))
 	{
-//		Com_Printf_G ("Can't use a key with a \\\n");
+//		Com_Printf_C ("Can't use a key with a \\\n");
 		return;
 	}
 
@@ -1368,25 +1368,25 @@ void Info_SetValueForKey (char *s, char *key, char *value)
 
 	if (strstr (key, "\\") || strstr (value, "\\") )
 	{
-		Com_Printf_G ("Can't use keys or values with a \\\n");
+		Com_Printf_C ("Can't use keys or values with a \\\n");
 		return;
 	}
 
 	if (strstr (key, ";") )
 	{
-		Com_Printf_G ("Can't use keys or values with a semicolon\n");
+		Com_Printf_C ("Can't use keys or values with a semicolon\n");
 		return;
 	}
 
 	if (strstr (key, "\"") || strstr (value, "\"") )
 	{
-		Com_Printf_G ("Can't use keys or values with a \"\n");
+		Com_Printf_C ("Can't use keys or values with a \"\n");
 		return;
 	}
 
 	if (strlen(key) > MAX_INFO_KEY-1 || strlen(value) > MAX_INFO_KEY-1)
 	{
-		Com_Printf_G ("Keys and values must be < 64 characters.\n");
+		Com_Printf_C ("Keys and values must be < 64 characters.\n");
 		return;
 	}
 	Info_RemoveKey (s, key);
@@ -1397,7 +1397,7 @@ void Info_SetValueForKey (char *s, char *key, char *value)
 
 	if (strlen(newi) + strlen(s) > maxsize)
 	{
-		Com_Printf_G ("Info string length exceeded\n");
+		Com_Printf_C ("Info string length exceeded\n");
 		return;
 	}
 
