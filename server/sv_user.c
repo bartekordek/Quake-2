@@ -19,7 +19,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 // sv_user.c -- server code for moving users
 
-#include "server.h"
+#include "server/server.h"
+#include "shared/shared_objects.h"
 
 struct edict_s	*sv_player;
 
@@ -104,7 +105,7 @@ void SV_New_f (void)
 	if (sv.state == ss_game)
 	{
 		// set up the entity for the client
-		ent = EDICT_NUM(playernum+1);
+		ent = EdictNum(playernum+1);
 		ent->s.number = playernum+1;
 		sv_client->edict = ent;
 		memset (&sv_client->lastcmd, 0, sizeof(sv_client->lastcmd));
@@ -250,7 +251,7 @@ void SV_Begin_f (void)
 	sv_client->state = cs_spawned;
 
 	// call the game begin function
-	ge->ClientBegin (sv_player);
+	ge.ClientBegin (sv_player);
 
 	Cbuf_InsertFromDefer ();
 }
@@ -491,7 +492,7 @@ void SV_ExecuteUserCommand (char *s)
 		}
 
 	if (!u->name && sv.state == ss_game)
-		ge->ClientCommand (sv_player);
+		ge.ClientCommand (sv_player);
 
 //	SV_EndRedirect ();
 }
@@ -517,7 +518,7 @@ void SV_ClientThink (client_t *cl, usercmd_t *cmd)
 		return;
 	}
 
-	ge->ClientThink (cl->edict, cmd);
+	ge.ClientThink (cl->edict, cmd);
 }
 
 

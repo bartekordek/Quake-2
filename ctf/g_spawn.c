@@ -495,7 +495,7 @@ void G_FindTeams (void)
 
 	c = 0;
 	c2 = 0;
-	for (i=1, e=g_edicts+i ; i < globals.num_edicts ; i++,e++)
+	for (i=1, e=g_edicts+i ; i < ge.num_edicts ; i++,e++)
 	{
 		if (!e->inuse)
 			continue;
@@ -507,7 +507,7 @@ void G_FindTeams (void)
 		e->teammaster = e;
 		c++;
 		c2++;
-		for (j=i+1, e2=e+1 ; j < globals.num_edicts ; j++,e2++)
+		for (j=i+1, e2=e+1 ; j < ge.num_edicts ; j++,e2++)
 		{
 			if (!e2->inuse)
 				continue;

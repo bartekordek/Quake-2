@@ -1,3 +1,5 @@
+#ifdef DUPA
+
 /*
 ** GLW_IMP.C
 **
@@ -38,7 +40,7 @@ static fxMesaContext fc = NULL;
 
 #define NUM_RESOLUTIONS 3
 
-static resolutions[NUM_RESOLUTIONS][3]={ 
+static resolutions[NUM_RESOLUTIONS][3]={
   { 512, 384, GR_RESOLUTION_512x384 },
   { 640, 400, GR_RESOLUTION_640x400 },
   { 640, 480, GR_RESOLUTION_640x480 }
@@ -54,7 +56,7 @@ static int findres(int *width, int *height)
 			*height = resolutions[i][1];
 			return resolutions[i][2];
 		}
-        
+
 	*width = 640;
 	*height = 480;
 	return GR_RESOLUTION_640x480;
@@ -111,7 +113,7 @@ int GLimp_SetMode( int *pwidth, int *pheight, int mode, qboolean fullscreen )
 	attribs[4] = 1;
 	attribs[5] = FXMESA_NONE;
 
-	fc = fxMesaCreateContext(0, findres(&width, &height), GR_REFRESH_75Hz, 
+	fc = fxMesaCreateContext(0, findres(&width, &height), GR_REFRESH_75Hz,
 		attribs);
 	if (!fc)
 		return rserr_invalid_mode;
@@ -148,7 +150,7 @@ void GLimp_Shutdown( void )
 ** GLimp_Init
 **
 ** This routine is responsible for initializing the OS specific portions
-** of OpenGL.  
+** of OpenGL.
 */
 int GLimp_Init( void *hinstance, void *wndproc )
 {
@@ -166,7 +168,7 @@ void GLimp_BeginFrame( float camera_seperation )
 
 /*
 ** GLimp_EndFrame
-** 
+**
 ** Responsible for doing a swapbuffers and possibly for other stuff
 ** as yet to be determined.  Probably better not to make this a GLimp
 ** function and instead do a call to GLimp_SwapBuffers.
@@ -204,3 +206,4 @@ void Fake_glColorTableEXT( GLenum target, GLenum internalformat,
 }
 
 
+#endif

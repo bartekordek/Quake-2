@@ -228,7 +228,7 @@ static struct edict_s *loc_findradius (struct edict_s *from, vec3_t org, float r
 		from = g_edicts;
 	else
 		from++;
-	for ( ; from < &g_edicts[globals.num_edicts]; from++)
+	for ( ; from < &g_edicts[ge.num_edicts]; from++)
 	{
 		if (!from->inuse)
 			continue;
@@ -1984,7 +1984,7 @@ void CTFResetTech(void)
 	struct edict_s *ent;
 	int i;
 
-	for (ent = g_edicts + 1, i = 1; i < globals.num_edicts; i++, ent++) {
+	for (ent = g_edicts + 1, i = 1; i < ge.num_edicts; i++, ent++) {
 		if (ent->inuse)
 			if (ent->item && (ent->item->flags & IT_TECH))
 				G_FreeEdict(ent);
@@ -2607,7 +2607,7 @@ void CTFResetAllPlayers(void)
 	CTFResetTech();
 	CTFResetFlags();
 
-	for (ent = g_edicts + 1, i = 1; i < globals.num_edicts; i++, ent++) {
+	for (ent = g_edicts + 1, i = 1; i < ge.num_edicts; i++, ent++) {
 		if (ent->inuse && !ent->client) {
 			if (ent->solid == SOLID_NOT && ent->think == DoRespawn &&
 				ent->nextthink >= level.time) {

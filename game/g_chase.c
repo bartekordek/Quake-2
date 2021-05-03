@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "g_local.h"
 #include "shared/g_client.h"
 #include "shared/edict.h"
+#include "shared/shared_objects.h"
 
 void UpdateChaseCam(struct edict_s *ent)
 {

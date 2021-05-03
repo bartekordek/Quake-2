@@ -1,5 +1,6 @@
 #include "shared/shared_functions.h"
-#include "shared/defines.h"
+#include "shared/edict.h"
+#include "shared/shared_objects.h"
 
 #ifdef _WIN32
 #include <vadefs.h>
@@ -324,4 +325,32 @@ void SV_FlushRedirect (int sv_redirected, char *outputbuf)
         MSG_WriteByte (&sv_client->netchan.message, PRINT_HIGH);
         MSG_WriteString (&sv_client->netchan.message, outputbuf);
     }
+}
+
+int NumForEdict( struct edict_s* e )
+{
+    return (
+        (byte *)(e)-(byte *)ge.edicts
+        ) / ge.edict_size;
+}
+
+edict_t* EdictNum( int n )
+{
+    if( ge.edict_size == 0 )
+    {
+        return NULL;
+    }
+
+    edict_t* edictsArray = ge.edicts;
+    //edict_s* sizeTimesCount = ge.edict_size*(n);
+
+    edict_t* result = &edictsArray[n];
+
+    return result;
+    // return (
+    //     (edict_s *)
+    //     (
+    //         (byte *)ge.edicts + ge.edict_size*(n)
+    //     )
+    //     );
 }

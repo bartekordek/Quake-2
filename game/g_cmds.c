@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "m_player.h"
 #include "shared/defines.h"
 #include "shared/g_client.h"
+#include "shared/shared_objects.h"
 
 char *ClientTeam (struct edict_s *ent)
 {

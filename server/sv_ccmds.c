@@ -18,7 +18,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
-#include "server.h"
+#include "server/server.h"
+#include "shared/shared_objects.h"
 
 /*
 ===============================================================================
@@ -294,7 +295,7 @@ void SV_WriteLevelFile (void)
 	fclose (f);
 
 	Com_sprintf (name, sizeof(name), "%s/save/current/%s.sav", FS_Gamedir(), sv.name);
-	ge->WriteLevel (name);
+	ge.WriteLevel (name);
 }
 
 /*
@@ -322,7 +323,7 @@ void SV_ReadLevelFile (void)
 	fclose (f);
 
 	Com_sprintf (name, sizeof(name), "%s/save/current/%s.sav", FS_Gamedir(), sv.name);
-	ge->ReadLevel (name);
+	ge.ReadLevel (name);
 }
 
 /*
@@ -395,7 +396,7 @@ void SV_WriteServerFile (qboolean autosave)
 
 	// write game state
 	Com_sprintf (name, sizeof(name), "%s/save/current/game.ssv", FS_Gamedir());
-	ge->WriteGame (name, autosave);
+	ge.WriteGame (name, autosave);
 }
 
 /*
@@ -446,7 +447,7 @@ void SV_ReadServerFile (void)
 
 	// read game state
 	Com_sprintf (name, sizeof(name), "%s/save/current/game.ssv", FS_Gamedir());
-	ge->ReadGame (name);
+	ge.ReadGame (name);
 }
 
 
@@ -1005,13 +1006,13 @@ Let the game dll handle a command
 */
 void SV_ServerCommand_f (void)
 {
-	if (!ge)
+	if (ge.initialized != true)
 	{
 		Com_Printf_C ("No game loaded.\n");
 		return;
 	}
 
-	ge->ServerCommand();
+	ge.ServerCommand();
 }
 
 //===========================================================

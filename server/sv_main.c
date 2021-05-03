@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "server/server.h"
+#include "shared/shared_objects.h"
 
 netadr_t    master_adr[MAX_MASTERS];    // address of group servers
 
@@ -70,7 +71,7 @@ void SV_DropClient (client_t *drop)
     {
         // call the prog function for removing a client
         // this will remove the body, among other things
-        ge->ClientDisconnect (drop->edict);
+        ge.ClientDisconnect (drop->edict);
     }
 
     if (drop->download)
@@ -371,12 +372,12 @@ gotnewcl:
     *newcl = temp;
     sv_client = newcl;
     edictnum = (newcl-svs.clients)+1;
-    ent = EDICT_NUM(edictnum);
+    ent = EdictNum(edictnum);
     newcl->edict = ent;
     newcl->challenge = challenge; // save challenge for checksumming
 
     // get the game a chance to reject this connection or modify the userinfo
-    if (!(ge->ClientConnect (ent, userinfo)))
+    if (!(ge.ClientConnect (ent, userinfo)))
     {
         if (*Info_ValueForKey (userinfo, "rejmsg"))
             Netchan_OutOfBandPrint (NS_SERVER, adr, "print\n%s\nConnection refused.\n",
@@ -699,9 +700,9 @@ void SV_PrepWorldFrame (void)
     struct edict_s    *ent;
     int        i;
 
-    for (i=0 ; i<ge->num_edicts ; i++, ent++)
+    for (i=0 ; i<ge.num_edicts ; i++, ent++)
     {
-        ent = EDICT_NUM(i);
+        ent = EdictNum(i);
         // events only last for a single message
         ent->s.event = 0;
     }
@@ -729,7 +730,7 @@ void SV_RunGameFrame (void)
     // don't run if paused
     if (!sv_paused->value || maxclients->value > 1)
     {
-        ge->RunFrame ();
+        ge.RunFrame ();
 
         // never get more than one tic behind
         if (sv.time < svs.realtime)
@@ -895,7 +896,7 @@ void SV_UserinfoChanged (client_t *cl)
     int        i;
 
     // call prog code to allow overrides
-    ge->ClientUserinfoChanged (cl->edict, cl->userinfo);
+    ge.ClientUserinfoChanged (cl->edict, cl->userinfo);
 
     // name for C code
     strncpy (cl->name, Info_ValueForKey (cl->userinfo, "name"), sizeof(cl->name)-1);

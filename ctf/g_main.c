@@ -23,8 +23,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 game_locals_t	game;
 level_locals_t	level;
-game_import_t	gi;
-game_export_t	globals;
 spawn_temp_t	st;
 
 int	sm_meat_index;
@@ -97,45 +95,6 @@ void ShutdownGame (void)
 
 	gi.FreeTags (TAG_LEVEL);
 	gi.FreeTags (TAG_GAME);
-}
-
-
-/*
-=================
-GetGameAPI
-
-Returns a pointer to the structure with all entry points
-and global variables
-=================
-*/
-game_export_t *GetGameAPI (game_import_t *import)
-{
-	gi = *import;
-
-	globals.apiversion = GAME_API_VERSION;
-	globals.Init = InitGame;
-	globals.Shutdown = ShutdownGame;
-	globals.SpawnEntities = SpawnEntities;
-
-	globals.WriteGame = WriteGame;
-	globals.ReadGame = ReadGame;
-	globals.WriteLevel = WriteLevel;
-	globals.ReadLevel = ReadLevel;
-
-	globals.ClientThink = ClientThink;
-	globals.ClientConnect = ClientConnect;
-	globals.ClientUserinfoChanged = ClientUserinfoChanged;
-	globals.ClientDisconnect = ClientDisconnect;
-	globals.ClientBegin = ClientBegin;
-	globals.ClientCommand = ClientCommand;
-
-	globals.RunFrame = G_RunFrame;
-
-	globals.ServerCommand = ServerCommand;
-
-	globals.edict_size = sizeof(struct edict_s);
-
-	return &globals;
 }
 
 #ifndef GAME_HARD_LINKED
@@ -381,7 +340,7 @@ void G_RunFrame (void)
 	// even the world gets a chance to think
 	//
 	ent = &g_edicts[0];
-	for (i=0 ; i<globals.num_edicts ; i++, ent++)
+	for (i=0 ; i<ge.num_edicts ; i++, ent++)
 	{
 		if (!ent->inuse)
 			continue;

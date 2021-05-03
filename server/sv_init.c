@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "server/server.h"
+#include "shared/shared_objects.h"
 
 server_static_t	svs;				// persistant server info
 server_t		sv;					// local server
@@ -91,9 +92,9 @@ void SV_CreateBaseline (void)
 	struct edict_s			*svent;
 	int				entnum;
 
-	for (entnum = 1; entnum < ge->num_edicts ; entnum++)
+	for (entnum = 1; entnum < ge.num_edicts ; entnum++)
 	{
-		svent = EDICT_NUM(entnum);
+		svent = EdictNum(entnum);
 		if (!svent->inuse)
 			continue;
 		if (!svent->s.modelindex && !svent->s.sound && !svent->s.effects)
@@ -150,7 +151,7 @@ void SV_CheckForSavegame (void)
 		previousState = sv.state;				// PGM
 		sv.state = ss_loading;					// PGM
 		for (i=0 ; i<100 ; i++)
-			ge->RunFrame ();
+			ge.RunFrame ();
 
 		sv.state = previousState;				// PGM
 	}
@@ -257,11 +258,11 @@ void SV_SpawnServer (char *server, char *spawnpoint, server_state_t serverstate,
 	Com_SetServerState (sv.state);
 
 	// load and spawn all other entities
-	ge->SpawnEntities ( sv.name, CM_EntityString(), spawnpoint );
+	ge.SpawnEntities ( sv.name, CM_EntityString(), spawnpoint );
 
 	// run two frames to allow everything to settle
-	ge->RunFrame ();
-	ge->RunFrame ();
+	ge.RunFrame ();
+	ge.RunFrame ();
 
 	// all precaches are complete
 	sv.state = serverstate;
@@ -289,8 +290,10 @@ A brand new game has been started
 void SV_InitGame (void)
 {
 	int		i;
-	struct edict_s	*ent;
+	edict_t* ent;
 	char	idmaster[32];
+
+	ent = NULL;
 
 	if (svs.initialized)
 	{
@@ -366,7 +369,7 @@ void SV_InitGame (void)
 	SV_InitGameProgs ();
 	for (i=0 ; i<maxclients->value ; i++)
 	{
-		ent = EDICT_NUM(i+1);
+		ent = EdictNum(i);
 		ent->s.number = i+1;
 		svs.clients[i].edict = ent;
 		memset (&svs.clients[i].lastcmd, 0, sizeof(svs.clients[i].lastcmd));

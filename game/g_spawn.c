@@ -475,7 +475,7 @@ void G_FindTeams (void)
 
 	c = 0;
 	c2 = 0;
-	for (i=1, e=g_edicts+i ; i < globals.num_edicts ; i++,e++)
+	for (i=1, e=g_edicts+i ; i < ge.num_edicts ; i++,e++)
 	{
 		if (!e->inuse)
 			continue;
@@ -487,7 +487,7 @@ void G_FindTeams (void)
 		e->teammaster = e;
 		c++;
 		c2++;
-		for (j=i+1, e2=e+1 ; j < globals.num_edicts ; j++,e2++)
+		for (j=i+1, e2=e+1 ; j < ge.num_edicts ; j++,e2++)
 		{
 			if (!e2->inuse)
 				continue;
@@ -606,8 +606,8 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 
 #ifdef DEBUG
 	i = 1;
-	ent = EDICT_NUM(i);
-	while (i < globals.num_edicts) {
+	ent = EdictNum(i);
+	while (i < ge.num_edicts) {
 		if (ent->inuse != 0 || ent->inuse != 1)
 			Com_DPrintf("Invalid entity %d\n", i);
 		i++, ent++;

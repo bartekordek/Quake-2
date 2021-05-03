@@ -19,7 +19,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 // world.c -- world query functions
 
-#include "server.h"
+#include "server/server.h"
+#include "shared/shared_objects.h"
 
 /*
 ===============================================================================
@@ -175,7 +176,7 @@ void SV_LinkEdict (struct edict_s *ent)
 	if (ent->area.prev)
 		SV_UnlinkEdict (ent);	// unlink from old position
 
-	if (ent == ge->edicts)
+	if (ent == ge.edicts)
 		return;		// don't add the world
 
 	if (!ent->inuse)
@@ -634,7 +635,7 @@ trace_t SV_Trace (vec3_t start, vec3_t mins, vec3_t maxs, vec3_t end, struct edi
 
 	// clip to world
 	clip.trace = CM_BoxTrace (start, end, mins, maxs, 0, contentmask);
-	clip.trace.ent = ge->edicts;
+	clip.trace.ent = ge.edicts;
 	if (clip.trace.fraction == 0)
 		return clip.trace;		// blocked by the world
 

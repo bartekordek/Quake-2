@@ -18,7 +18,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
-#include "g_local.h"
+#include "game/g_local.h"
+#include "shared/edict.h"
+#include "shared/shared_objects.h"
 
 #define Function(f) {#f, f}
 
@@ -211,14 +213,15 @@ void InitGame (void)
 
 	// initialize all entities for this game
 	game.maxentities = maxentities->value;
-	g_edicts =  gi.TagMalloc (game.maxentities * sizeof(g_edicts[0]), TAG_GAME);
-	globals.edicts = g_edicts;
-	globals.max_edicts = game.maxentities;
+    int me = game.maxentities;
+    ge.edicts = gi.TagMalloc( game.maxentities * sizeof( edict_t ), TAG_GAME );
+    g_edicts = ge.edicts;
+	ge.max_edicts = game.maxentities;
 
 	// initialize all clients for this game
 	game.maxclients = maxclients->value;
 	game.clients = gi.TagMalloc (game.maxclients * sizeof(game.clients[0]), TAG_GAME);
-	globals.num_edicts = game.maxclients+1;
+	ge.num_edicts = game.maxclients+1;
 }
 
 //=========================================================
@@ -504,7 +507,7 @@ void ReadGame (char *filename)
 	}
 
 	g_edicts =  gi.TagMalloc (game.maxentities * sizeof(g_edicts[0]), TAG_GAME);
-	globals.edicts = g_edicts;
+	ge.edicts = g_edicts;
 
 	fread (&game, sizeof(game), 1, f);
 	game.clients = gi.TagMalloc (game.maxclients * sizeof(game.clients[0]), TAG_GAME);
@@ -648,7 +651,7 @@ void WriteLevel (char *filename)
 	WriteLevelLocals (f);
 
 	// write out all the entities
-	for (i=0 ; i<globals.num_edicts ; i++)
+	for (i=0 ; i<ge.num_edicts ; i++)
 	{
 		ent = &g_edicts[i];
 		if (!ent->inuse)
@@ -697,7 +700,7 @@ void ReadLevel (char *filename)
 
 	// wipe all the entities
 	memset (g_edicts, 0, game.maxentities*sizeof(g_edicts[0]));
-	globals.num_edicts = maxclients->value+1;
+	ge.num_edicts = maxclients->value+1;
 
 	// check edict size
 	fread (&i, sizeof(i), 1, f);
@@ -732,8 +735,8 @@ void ReadLevel (char *filename)
 		}
 		if (entnum == -1)
 			break;
-		if (entnum >= globals.num_edicts)
-			globals.num_edicts = entnum+1;
+		if (entnum >= ge.num_edicts)
+			ge.num_edicts = entnum+1;
 
 		ent = &g_edicts[entnum];
 		ReadEdict (f, ent);
@@ -754,7 +757,7 @@ void ReadLevel (char *filename)
 	}
 
 	// do any load time things at this point
-	for (i=0 ; i<globals.num_edicts ; i++)
+	for (i=0 ; i<ge.num_edicts ; i++)
 	{
 		ent = &g_edicts[i];
 

@@ -1039,6 +1039,7 @@ qboolean R_SetMode (void)
 	}
 
 	fullscreen = vid_fullscreen->value;
+    fullscreen = false;
 
 	vid_fullscreen->modified = false;
 	gl_mode->modified = false;

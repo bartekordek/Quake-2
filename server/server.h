@@ -70,8 +70,8 @@ typedef struct
     qboolean    timedemo;        // don't time sync
 } server_t;
 
-#define EDICT_NUM(n) ((struct edict_s *)((byte *)ge->edicts + ge->edict_size*(n)))
-#define NUM_FOR_EDICT(e) ( ((byte *)(e)-(byte *)ge->edicts ) / ge->edict_size)
+//#define EDICT_NUM(n) ((struct edict_s *)((byte *)ge.edicts + ge.edict_size*(n)))
+//#define NUM_FOR_EDICT(e) ( ((byte *)(e)-(byte *)ge.edicts ) / ge.edict_size)
 
 
 typedef enum
@@ -296,7 +296,6 @@ void SV_Error (char *error, ...);
 //
 // sv_game.c
 //
-extern    game_export_t    *ge;
 
 void SV_InitGameProgs (void);
 void SV_ShutdownGameProgs (void);

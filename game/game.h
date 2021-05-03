@@ -129,6 +129,8 @@ typedef struct
     void    (*AddCommandString) (char *text);
 
     void    (*DebugGraph) (float value, int color);
+
+    qboolean initialized;
 } game_import_t;
 
 //
@@ -186,6 +188,8 @@ typedef struct
     int edict_size;
     int num_edicts;        // current number, <= max_edicts
     int max_edicts;
+
+    qboolean initialized;
 } game_export_t;
 
 game_export_t *GetGameApi (game_import_t *import);

@@ -277,7 +277,7 @@ void SV_StartSound (vec3_t origin, struct edict_s *entity, int channel,
 	if (timeofs < 0 || timeofs > 0.255)
 		Com_Error (ERR_FATAL, "SV_StartSound: timeofs = %f", timeofs);
 
-	ent = NUM_FOR_EDICT(entity);
+	ent = NumForEdict(entity);
 
 	if (channel & 8)	// no PHS flag
 	{

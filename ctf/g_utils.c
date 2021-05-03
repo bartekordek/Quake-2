@@ -51,7 +51,7 @@ struct edict_s *G_Find (struct edict_s *from, int fieldofs, char *match)
 	else
 		from++;
 
-	for ( ; from < &g_edicts[globals.num_edicts] ; from++)
+	for ( ; from < &g_edicts[ge.num_edicts] ; from++)
 	{
 		if (!from->inuse)
 			continue;
@@ -84,7 +84,7 @@ struct edict_s *findradius (struct edict_s *from, vec3_t org, float rad)
 		from = g_edicts;
 	else
 		from++;
-	for ( ; from < &g_edicts[globals.num_edicts]; from++)
+	for ( ; from < &g_edicts[ge.num_edicts]; from++)
 	{
 		if (!from->inuse)
 			continue;
@@ -425,7 +425,7 @@ struct edict_s *G_Spawn (void)
 	struct edict_s		*e;
 
 	e = &g_edicts[(int)maxclients->value+1];
-	for ( i=maxclients->value+1 ; i<globals.num_edicts ; i++, e++)
+	for ( i=maxclients->value+1 ; i<ge.num_edicts ; i++, e++)
 	{
 		// the first couple seconds of server time can involve a lot of
 		// freeing and allocating, so relax the replacement policy
@@ -439,7 +439,7 @@ struct edict_s *G_Spawn (void)
 	if (i == game.maxentities)
 		gi.error ("ED_Alloc: no free edicts");
 
-	globals.num_edicts++;
+	ge.num_edicts++;
 	G_InitEdict (e);
 	return e;
 }

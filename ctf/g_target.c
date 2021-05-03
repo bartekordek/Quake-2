@@ -763,7 +763,7 @@ void target_earthquake_think (struct edict_s *self)
 		self->last_move_time = level.time + 0.5;
 	}
 
-	for (i=1, e=g_edicts+i; i < globals.num_edicts; i++,e++)
+	for (i=1, e=g_edicts+i; i < ge.num_edicts; i++,e++)
 	{
 		if (!e->inuse)
 			continue;

@@ -22,8 +22,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 // g_local.h -- local definitions for game module
 
-#include "q_shared.h"
+#include "game/q_shared.h"
 #include "shared/edict.h"
+#include "shared/shared_objects.h"
 
 // define GAME_INCLUDE so that game.h does not define the
 // short, server-visible gclient_t and struct edict_s structures,
@@ -322,8 +323,6 @@ typedef struct
 
 extern    game_locals_t    game;
 extern    level_locals_t    level;
-game_import_t    gi;
-extern    game_export_t    globals;
 extern    spawn_temp_t    st;
 
 extern    int    sm_meat_index;

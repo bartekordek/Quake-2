@@ -18,7 +18,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
-#include "server.h"
+#include "server/server.h"
+#include "shared/shared_objects.h"
 
 /*
 =============================================================================
@@ -571,9 +572,9 @@ void SV_BuildClientFrame (client_t *client)
 
 	c_fullsend = 0;
 
-	for (e=1 ; e<ge->num_edicts ; e++)
+	for (e=1 ; e<ge.num_edicts ; e++)
 	{
-		ent = EDICT_NUM(e);
+		ent = EdictNum(e);
 
 		// ignore ents without visible models
 		if (ent->svflags & SVF_NOCLIENT)
@@ -699,8 +700,8 @@ void SV_RecordDemoMessage (void)
 	MSG_WriteByte (&buf, svc_packetentities);
 
 	e = 1;
-	ent = EDICT_NUM(e);
-	while (e < ge->num_edicts)
+	ent = EdictNum(e);
+	while (e < ge.num_edicts)
 	{
 		// ignore ents without visible models unless they have an effect
 		if (ent->inuse &&
@@ -710,7 +711,7 @@ void SV_RecordDemoMessage (void)
 			MSG_WriteDeltaEntity (&nostate, &ent->s, &buf, false, true);
 
 		e++;
-		ent = EDICT_NUM(e);
+		ent = EdictNum(e);
 	}
 
 	MSG_WriteShort (&buf, 0);		// end of packetentities

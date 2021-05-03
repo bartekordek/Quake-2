@@ -449,7 +449,7 @@ qboolean SV_Push (struct edict_s *pusher, vec3_t move, vec3_t amove)
 
 // see if any solid entities are inside the final position
 	check = g_edicts+1;
-	for (e = 1; e < globals.num_edicts; e++, check++)
+	for (e = 1; e < ge.num_edicts; e++, check++)
 	{
 		if (!check->inuse)
 			continue;
