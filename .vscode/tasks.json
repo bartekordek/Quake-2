@@ -7,9 +7,22 @@
             "label": "[UTILITY][FIX HEADEERS]",
             "type": "shell",
             "command": "python FixHeaders.py",
-            "group": {
-                "kind": "build"
-            },
+            "problemMatcher": [
+                "$gradle"
+            ],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "dedicated",
+                "showReuseMessage": true,
+                "clear": true
+            }
+        },
+        {
+            "label": "[UTILITY][REPLACE TABS WITH SPACES]",
+            "type": "shell",
+            "command": "python ReplaceTabsWithSpaces.py",
             "problemMatcher": [
                 "$gradle"
             ],
@@ -46,23 +59,23 @@
         {
             "label": "[LINUX][BUILD][DEBUG]",
             "type": "shell",
-            "command": "cmake --build Build-LINUX --target Quake-2 --config DEBUG -j1",
+            "command": "cmake --build Build-LINUX --target Quake-2 --config DEBUG -j16",
             "group": {
                 "kind": "build",
                 "isDefault": true
             },
             "problemMatcher": [
-                "$gradle"
+                "$gcc"
             ],
             "presentation": {
-                "echo":false,
+                "echo": false,
                 "reveal": "always",
                 "focus": false,
                 "panel": "dedicated",
                 "showReuseMessage": true,
                 "clear": true
             },
-            "dependsOn":"[LINUX][CMAKE][CREATE]"
+            "dependsOn": "[LINUX][CMAKE][CREATE]"
         },
         {
             "label": "[WINDOWS][CMAKE][CREATE]",
@@ -88,25 +101,20 @@
         {
             "label": "[WINDOWS][BUILD][DEBUG]",
             "type": "shell",
-            "command": "cmake --build Build-Windows --target Quake-2 --config DEBUG",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
+            "command": "cmake --build Build-Windows --config DEBUG",
             "problemMatcher": [
-                "$gradle"
+                "$msCompile"
             ],
             "presentation": {
-                "echo":false,
+                "echo": false,
                 "reveal": "always",
                 "focus": false,
                 "panel": "dedicated",
                 "showReuseMessage": true,
                 "clear": true
             },
-            "dependsOn":"[WINDOWS][CMAKE][CREATE]"
-        }
-        ,
+            "dependsOn": "[WINDOWS][CMAKE][CREATE]"
+        },
         {
             "label": "[WINDOWS][BUILD][CLEAN]",
             "type": "shell",
@@ -119,14 +127,14 @@
                 "$gradle"
             ],
             "presentation": {
-                "echo":false,
+                "echo": false,
                 "reveal": "always",
                 "focus": false,
                 "panel": "new",
                 "showReuseMessage": true,
                 "clear": false
             },
-            "dependsOn":"[WINDOWS][CMAKE][CREATE]"
+            "dependsOn": "[WINDOWS][CMAKE][CREATE]"
         }
     ]
 }

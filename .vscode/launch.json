@@ -20,13 +20,28 @@
             "preLaunchTask": "[WINDOWS][BUILD][DEBUG]"
         },
         {
-            "name": "Python: Current File",
+            "name": "[UTILITY][PYTHON][RENAME C TO CPP]",
+            "type": "python",
+            "request": "launch",
+            "program": "CtoCPP.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "name": "[UTILITY][PYTHON][ADD GUARDS]",
             "type": "python",
             "request": "launch",
             "program": "FixHeaders.py",
             "console": "integratedTerminal",
-            "cwd": "${workspaceFolder}",
-            "args": ["win32/winquake.h"]
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "name": "[UTILITY][PYTHON][REPLACE TABS WITH SPACES]",
+            "type": "python",
+            "request": "launch",
+            "program": "ReplaceTabsWithSpaces.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}"
         }
     ]
 }
