@@ -562,8 +562,8 @@ qboolean VID_LoadRefresh( char *name )
 
     if ( reflib_active )
     {
-        re.Shutdown();
-        VID_FreeReflib ();
+        //re.Shutdown();
+        //VID_FreeReflib ();
     }
 
     Com_Printf_C( "------- Loading %s -------\n", name );

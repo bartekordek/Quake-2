@@ -334,18 +334,20 @@ int NumForEdict( struct edict_s* e )
         ) / ge.edict_size;
 }
 
+
+//https://stackoverflow.com/questions/25789895/returned-pointers-value-unexpectedly-changed-after-a-function-call
+// Edict should be on the heap.
 edict_t* EdictNum( int n )
 {
+    long unsigned int add;
     if( ge.edict_size == 0 )
     {
         return NULL;
     }
 
-    edict_t* edictsArray = ge.edicts;
-    //edict_s* sizeTimesCount = ge.edict_size*(n);
-
-    edict_t* result = &edictsArray[n];
-
+    edict_t* result = &ge.edicts[n];
+    add = result;
+    add = add / 8;
     return result;
     // return (
     //     (edict_s *)
