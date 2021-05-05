@@ -213,8 +213,12 @@ void InitGame (void)
 
 	// initialize all entities for this game
 	game.maxentities = maxentities->value;
-    int me = game.maxentities;
-    ge.edicts = gi.TagMalloc( game.maxentities * sizeof( edict_t ), TAG_GAME );
+	// https://stackoverflow.com/questions/25789895/returned-pointers-value-unexpectedly-changed-after-a-function-call
+	// TODO: changed to heap?
+    size_t size = game.maxentities * sizeof( edict_t );
+    ge.edicts = (edict_t*)malloc( size );
+    //ge.edicts = gi.TagMalloc( game.maxentities * sizeof( edict_t ), TAG_GAME );
+    memset( ge.edicts, 0, size );
     g_edicts = ge.edicts;
 	ge.max_edicts = game.maxentities;
 

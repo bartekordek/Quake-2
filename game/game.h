@@ -184,7 +184,7 @@ typedef struct
     // can vary in size from one game to another.
     //
     // The size will be fixed when ge->Init() is called
-    struct edict_s* edicts;
+    edict_t* edicts;
     int edict_size;
     int num_edicts;        // current number, <= max_edicts
     int max_edicts;

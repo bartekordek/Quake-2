@@ -55,14 +55,14 @@
                 "$gradle"
             ],
             "presentation": {
-                "echo":false,
+                "echo": false,
                 "reveal": "always",
                 "focus": false,
                 "panel": "dedicated",
                 "showReuseMessage": true,
                 "clear": true
             },
-            "dependsOn":"[LINUX][CMAKE][CREATE]"
+            "dependsOn": "[LINUX][CMAKE][CREATE]"
         },
         {
             "label": "[WINDOWS][CMAKE][CREATE]",
@@ -75,6 +75,7 @@
             "problemMatcher": [
                 "$gradle"
             ],
+            "runOptions": {},
             "presentation": {
                 "echo": true,
                 "reveal": "always",
@@ -97,16 +98,15 @@
                 "$gradle"
             ],
             "presentation": {
-                "echo":false,
+                "echo": false,
                 "reveal": "always",
                 "focus": false,
                 "panel": "dedicated",
                 "showReuseMessage": true,
                 "clear": true
             },
-            "dependsOn":"[WINDOWS][CMAKE][CREATE]"
-        }
-        ,
+            "dependsOn": "[WINDOWS][CMAKE][CREATE]"
+        },
         {
             "label": "[WINDOWS][BUILD][CLEAN]",
             "type": "shell",
@@ -119,14 +119,14 @@
                 "$gradle"
             ],
             "presentation": {
-                "echo":false,
+                "echo": false,
                 "reveal": "always",
                 "focus": false,
                 "panel": "new",
                 "showReuseMessage": true,
                 "clear": false
             },
-            "dependsOn":"[WINDOWS][CMAKE][CREATE]"
+            "dependsOn": "[WINDOWS][CMAKE][CREATE]"
         }
     ]
 }

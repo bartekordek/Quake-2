@@ -3041,6 +3041,7 @@ qboolean QGL_Init( const char *dllname )
 		putenv( envbuffer );
 	}
 
+	// OpenGL should be loaded automatically.
 	if ( ( glw_state.hinstOpenGL = LoadLibrary( dllname ) ) == 0 )
 	{
 		char *buf = NULL;

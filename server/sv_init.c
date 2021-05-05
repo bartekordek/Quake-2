@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "server/server.h"
 #include "shared/shared_objects.h"
+#include "shared/edict.h"
 
 server_static_t	svs;				// persistant server info
 server_t		sv;					// local server
@@ -291,6 +292,7 @@ void SV_InitGame (void)
 {
 	int		i;
 	edict_t* ent;
+    long unsigned int add;
 	char	idmaster[32];
 
 	ent = NULL;
@@ -369,6 +371,8 @@ void SV_InitGame (void)
 	SV_InitGameProgs ();
 	for (i=0 ; i<maxclients->value ; i++)
 	{
+        add = EdictNum( i );
+        add = add / 8;
 		ent = EdictNum(i);
 		ent->s.number = i+1;
 		svs.clients[i].edict = ent;
