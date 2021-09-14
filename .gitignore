@@ -1,0 +1,5 @@
+Build-Windows
+Build-Linux
+.vs
+*.sln
+.dccache
