@@ -1,3 +1,6 @@
+#ifndef ____LINUX_QASM_H__
+#define ____LINUX_QASM_H__
+
 #ifndef __ASM_I386__
 #define __ASM_I386__
 
@@ -457,3 +460,6 @@
 #define mtri_shift			4
 
 #endif
+
+
+#endif // ____LINUX_QASM_H__

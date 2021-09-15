@@ -1,3 +1,6 @@
+#ifndef ____LINUX_D_IFACEA_H__
+#define ____LINUX_D_IFACEA_H__
+
 //
 // d_ifacea.h
 //
@@ -77,3 +80,6 @@
 #define atd_seamfixupX16	32
 #define atd_size			36
 
+
+
+#endif // ____LINUX_D_IFACEA_H__

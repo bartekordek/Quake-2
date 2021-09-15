@@ -10,10 +10,6 @@ if( MSVC )
 endif()
 
 
-file(MAKE_DIRECTORY Build-Windows)
-file(MAKE_DIRECTORY Build-Linux)
-
-
 if( MSVC )
     # Disable warnings for time being. W4 to turn them on.
     add_compile_options( /W0 )
@@ -29,6 +25,12 @@ source_group( TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SOURCES} )
 add_library( ${EXEC} SHARED ${SOURCES} )
 
 set_property( TARGET ${EXEC} PROPERTY "LINK_LIBRARY_DEPENDENCIES" true )
+
+set( DEPENDENCIES
+shared
+win32
+)
+
 if (MSVC)
     list(APPEND LIBS msvcmrtd )
     target_link_libraries( ${EXEC} ${DEPENDENCIES} )

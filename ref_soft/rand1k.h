@@ -1,3 +1,6 @@
+#ifndef ____REF_SOFT_RAND1K_H__
+#define ____REF_SOFT_RAND1K_H__
+
 /*
 Copyright (C) 1997-2001 Id Software, Inc.
 
@@ -121,3 +124,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 208, 11, 208, 61, 229, 65, 68, 53, 58, 216,
 223, 227, 216, 155, 10, 44, 47, 91, 115, 47,
 228, 159, 139, 233
+
+
+#endif // ____REF_SOFT_RAND1K_H__

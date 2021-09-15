@@ -1,3 +1,6 @@
+#ifndef ____CTF_P_MENU_H__
+#define ____CTF_P_MENU_H__
+
 /*
 Copyright (C) 1997-2001 Id Software, Inc.
 
@@ -47,3 +50,6 @@ void PMenu_Update(edict_t *ent);
 void PMenu_Next(edict_t *ent);
 void PMenu_Prev(edict_t *ent);
 void PMenu_Select(edict_t *ent);
+
+
+#endif // ____CTF_P_MENU_H__

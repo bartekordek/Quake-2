@@ -1,3 +1,6 @@
+#ifndef ____REF_SOFT_ANORMS_H__
+#define ____REF_SOFT_ANORMS_H__
+
 /*
 Copyright (C) 1997-2001 Id Software, Inc.
 
@@ -179,3 +182,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 {-0.425325, -0.688191, -0.587785}, 
 {-0.587785, -0.425325, -0.688191}, 
 {-0.688191, -0.587785, -0.425325}, 
+
+
+#endif // ____REF_SOFT_ANORMS_H__

@@ -1,3 +1,6 @@
+#ifndef ____WIN32_WINQUAKE_H__
+#define ____WIN32_WINQUAKE_H__
+
 /*
 Copyright (C) 1997-2001 Id Software, Inc.
 
@@ -42,3 +45,6 @@ void IN_MouseEvent (int mstate);
 
 extern int		window_center_x, window_center_y;
 extern RECT		window_rect;
+
+
+#endif // ____WIN32_WINQUAKE_H__

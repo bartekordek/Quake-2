@@ -1,3 +1,6 @@
+#ifndef ____REF_GL_QGL_H__
+#define ____REF_GL_QGL_H__
+
 /*
 Copyright (C) 1997-2001 Id Software, Inc.
 
@@ -440,3 +443,6 @@ extern BOOL ( WINAPI * qwglSetDeviceGammaRampEXT ) ( const unsigned char *pRed, 
 #define GL_TEXTURE1_SGIS					0x835F
 
 #endif
+
+
+#endif // ____REF_GL_QGL_H__

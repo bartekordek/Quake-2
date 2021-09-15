@@ -1,3 +1,6 @@
+#ifndef ____REF_SOFT_ASM_DRAW_H__
+#define ____REF_SOFT_ASM_DRAW_H__
+
 //
 // asm_draw.h
 //
@@ -119,3 +122,6 @@
 								// !!! d_polysa.s must be changed to match !!!
 #define mtri_shift			4
 
+
+
+#endif // ____REF_SOFT_ASM_DRAW_H__

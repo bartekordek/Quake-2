@@ -1,8 +1,14 @@
 {
-	"folders": [
-		{
-			"path": "."
-		}
-	],
-	"settings": {}
+    "folders": [
+        {
+            "path": "."
+        }
+    ],
+    "settings": {
+        "files.associations": {
+            "qcommon.h": "c",
+            "gl_local.h": "c",
+            "anormtab.h": "c"
+        }
+    }
 }

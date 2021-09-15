@@ -1,3 +1,6 @@
+#ifndef ____LINUX_RW_LINUX_H__
+#define ____LINUX_RW_LINUX_H__
+
 
 
 typedef void (*Key_Event_fp_t)(int key, qboolean down);
@@ -14,3 +17,6 @@ typedef struct in_state {
 	int *in_strafe_state;
 } in_state_t;
 
+
+
+#endif // ____LINUX_RW_LINUX_H__

@@ -1,5 +1,8 @@
-Build-Windows
-Build-Linux
+.dccache
 .vs
 *.sln
-.dccache
+build
+Build-Linux
+Build-Windows
+Build.Log
+runDir

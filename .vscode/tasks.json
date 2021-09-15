@@ -1,0 +1,193 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "[UTILITY][FIX HEADEERS]",
+            "type": "shell",
+            "command": "python FixHeaders.py",
+            "group": {
+                "kind": "build"
+            },
+            "problemMatcher": [
+                "$gradle"
+            ],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "dedicated",
+                "showReuseMessage": true,
+                "clear": true
+            }
+        },
+        {
+            "label": "[LINUX][CMAKE][CREATE]",
+            "type": "shell",
+            "command": "cmake --build Build-Linux -DCMAKE_BUILD_TYPE=Debug",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$gradle"
+            ],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "dedicated",
+                "showReuseMessage": true,
+                "clear": true
+            },
+            "dependsOn": "[UTILITY][FIX HEADEERS]"
+        },
+        {
+            "label": "[LINUX][BUILD][DEBUG]",
+            "type": "shell",
+            "command": "cmake --build Build-LINUX --target Quake-2 --config DEBUG -j1",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$gradle"
+            ],
+            "presentation": {
+                "echo": false,
+                "reveal": "always",
+                "focus": false,
+                "panel": "dedicated",
+                "showReuseMessage": true,
+                "clear": true
+            },
+            "dependsOn": "[LINUX][CMAKE][CREATE]"
+        },
+        {
+            "label": "[WINDOWS][CMAKE][CREATE]",
+            "type": "shell",
+            "command": "cmake --build Build-Windows --config DEBUG",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$gradle"
+            ],
+            "runOptions": {},
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": true
+            },
+            "dependsOn": "[UTILITY][FIX HEADEERS]"
+        },
+        {
+            "label": "[WINDOWS][BUILD][DEBUG]",
+            "type": "shell",
+            "command": "cmake --build Build-Windows --target Quake-2 --config DEBUG",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$gradle"
+            ],
+            "presentation": {
+                "echo": false,
+                "reveal": "always",
+                "focus": false,
+                "panel": "dedicated",
+                "showReuseMessage": true,
+                "clear": true
+            },
+            "dependsOn": "[WINDOWS][CMAKE][CREATE]"
+        },
+        {
+            "label": "[WINDOWS][BUILD][CLEAN]",
+            "type": "shell",
+            "command": "cmake --build Build-Windows --target clean --config DEBUG",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$gradle"
+            ],
+            "presentation": {
+                "echo": false,
+                "reveal": "always",
+                "focus": false,
+                "panel": "dedicated",
+                "showReuseMessage": true,
+                "clear": true
+            },
+            "dependsOn": "[WINDOWS][CMAKE][CREATE]"
+        },
+        {
+            "label": "[WINDOWS][BUILD][DEBUG][shared]",
+            "type": "shell",
+            "command": "cmake --build Build-Windows --target shared --config DEBUG",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$gradle"
+            ],
+            "presentation": {
+                "echo": false,
+                "reveal": "always",
+                "focus": false,
+                "panel": "dedicated",
+                "showReuseMessage": true,
+                "clear": true
+            }
+        },
+        {
+            "label": "[WINDOWS][BUILD][DEBUG][ref_gl]",
+            "type": "shell",
+            "command": "cmake --build Build-Windows --target ref_gl --config DEBUG",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$gradle"
+            ],
+            "presentation": {
+                "echo": false,
+                "reveal": "always",
+                "focus": false,
+                "panel": "dedicated",
+                "showReuseMessage": true,
+                "clear": true
+            }
+        },
+        {
+            "label": "[WINDOWS][BUILD][DEBUG][win32]",
+            "type": "shell",
+            "command": "cmake --build Build-Windows --target win32 --config DEBUG",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$gradle"
+            ],
+            "presentation": {
+                "echo": false,
+                "reveal": "always",
+                "focus": false,
+                "panel": "dedicated",
+                "showReuseMessage": true,
+                "clear": true
+            },
+            "dependsOn": "[WINDOWS][CMAKE][CREATE]"
+        }
+    ]
+}

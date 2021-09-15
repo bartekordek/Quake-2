@@ -1,3 +1,6 @@
+#ifndef ____REF_SOFT_R_LOCAL_H__
+#define ____REF_SOFT_R_LOCAL_H__
+
 /*
 Copyright (C) 1997-2001 Id Software, Inc.
 
@@ -847,3 +850,6 @@ void		SWimp_Shutdown( void );
 rserr_t		SWimp_SetMode( int *pwidth, int *pheight, int mode, qboolean fullscreen );
 void		SWimp_AppActivate( qboolean active );
 
+
+
+#endif // ____REF_SOFT_R_LOCAL_H__

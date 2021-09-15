@@ -1,3 +1,6 @@
+#ifndef ____WIN32_RW_WIN_H__
+#define ____WIN32_RW_WIN_H__
+
 /*
 Copyright (C) 1997-2001 Id Software, Inc.
 
@@ -66,3 +69,6 @@ void     DDRAW_Shutdown( void );
 void     DDRAW_SetPalette( const unsigned char *palette );
 
 #endif
+
+
+#endif // ____WIN32_RW_WIN_H__

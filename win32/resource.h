@@ -1,3 +1,6 @@
+#ifndef ____WIN32_RESOURCE_H__
+#define ____WIN32_RESOURCE_H__
+
 //{{NO_DEPENDENCIES}}
 // Microsoft Developer Studio generated include file.
 // Used by q2.rc
@@ -14,3 +17,6 @@
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
+
+
+#endif // ____WIN32_RESOURCE_H__
