@@ -461,9 +461,9 @@ void* Sys_GetGameAPI( void* parms )
 #endif
 #endif
 
-    if( game_library )
-        Com_Error( ERR_FATAL,
-                   "Sys_GetGameAPI without win32_Sys_UnloadingGame" );
+    //if( game_library )
+    //    Com_Error( ERR_FATAL,
+    //               "Sys_GetGameAPI without win32_Sys_UnloadingGame" );
 
     // check the current debug directory first for development purposes
     _getcwd( cwd, sizeof( cwd ) );
@@ -619,7 +619,8 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
         //            oldtime, time);
 
         //    _controlfp( ~( _EM_ZERODIVIDE /*| _EM_INVALID*/ ), _MCW_EM );
-        _controlfp( _PC_24, _MCW_PC );
+        //_controlfp( _PC_24, _MCW_PC );
+        _controlfp( _PC_24, _PC_64 );
         Qcommon_Frame( time );
 
         oldtime = newtime;

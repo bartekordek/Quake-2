@@ -5,6 +5,8 @@
 #include "server/sv_game.h"
 #include "shared/edict.h"
 
+#include "win32/sys_win.h"
+
 game_export_t ge;
 game_import_t gi;
 
@@ -99,8 +101,8 @@ void initGame()
         gi.SetAreaPortalState = CM_SetAreaPortalState;
         gi.AreasConnected = CM_AreasConnected;
 
-        // ge = (game_export_t *)Sys_GetGameAPI (&import);
-        // ge = GetGameAPI( &import );
+        //ge = (game_export_t *)sys_getgameapi (&import);
+        ge = *(game_export_t*) Sys_GetGameAPI( NULL );
 
         if( ge.initialized != true )
             Com_Error( ERR_DROP, "failed to load game DLL" );
