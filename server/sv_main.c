@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "server/server.h"
 #include "shared/shared_objects.h"
+#include "shared/shared_functions.h"
 
 netadr_t    master_adr[MAX_MASTERS];    // address of group servers
 

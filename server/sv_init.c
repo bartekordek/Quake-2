@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "server/server.h"
 #include "shared/shared_objects.h"
+#include "shared/shared_functions.h"
 #include "shared/edict.h"
 
 server_static_t	svs;				// persistant server info
@@ -290,12 +291,8 @@ A brand new game has been started
 */
 void SV_InitGame (void)
 {
-	int		i;
-	edict_t* ent;
-    long unsigned int add;
+	long unsigned int add;
 	char	idmaster[32];
-
-	ent = NULL;
 
 	if (svs.initialized)
 	{
@@ -369,13 +366,13 @@ void SV_InitGame (void)
 
 	// init game
 	SV_InitGameProgs ();
-	for (i=0 ; i<maxclients->value ; i++)
+	edict_t* edict = NULL;
+	int i = 0;
+	for (; i<maxclients->value ; i++)
 	{
-        add = EdictNum( i );
-        add = add / 8;
-		ent = EdictNum(i);
-		ent->s.number = i+1;
-		svs.clients[i].edict = ent;
+		edict = EdictNum( i );
+		edict->s.number = i+1;
+		svs.clients[i].edict = edict;
 		memset (&svs.clients[i].lastcmd, 0, sizeof(svs.clients[i].lastcmd));
 	}
 }
