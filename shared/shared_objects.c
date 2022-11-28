@@ -7,7 +7,7 @@
 
 #include "win32/sys_win.h"
 
-game_export_t ge;
+volatile game_export_t ge;
 game_import_t gi;
 
 void initGame()
@@ -102,7 +102,7 @@ void initGame()
         gi.AreasConnected = CM_AreasConnected;
 
         //ge = (game_export_t *)sys_getgameapi (&import);
-        ge = *(game_export_t*) Sys_GetGameAPI( NULL );
+        //ge = *(game_export_t*) Sys_GetGameAPI( NULL );
 
         if( ge.initialized != true )
             Com_Error( ERR_DROP, "failed to load game DLL" );

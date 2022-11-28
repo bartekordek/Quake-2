@@ -4,7 +4,7 @@
 
 #include "game/game.h"
 
-extern game_export_t ge;
+extern volatile game_export_t ge;
 extern game_import_t gi;
 
 void initGame();

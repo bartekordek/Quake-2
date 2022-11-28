@@ -424,8 +424,8 @@ static HINSTANCE game_library;
 
 void win32_Sys_UnloadGame( void )
 {
-    if( !FreeLibrary( game_library ) )
-        Com_Error( ERR_FATAL, "FreeLibrary failed for game library" );
+    //if( !FreeLibrary( game_library ) )
+    //    Com_Error( ERR_FATAL, "FreeLibrary failed for game library" );
     game_library = NULL;
 }
 
