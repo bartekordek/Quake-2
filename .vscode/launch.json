@@ -20,7 +20,7 @@
             "preLaunchTask": "[WINDOWS][BUILD][DEBUG]"
         },
         {
-            "name": "Python: Current File",
+            "name": "[Python][FixHeaders][Debug]",
             "type": "python",
             "request": "launch",
             "program": "FixHeaders.py",
