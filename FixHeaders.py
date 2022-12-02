@@ -38,4 +38,5 @@ for root, dirs, files in os.walk("."):
     for file in files:
         if file.endswith(".h"):
             headerPath = os.path.join(root, file)
-            FixHeaderFile( headerPath )
+            if "deps" not in headerPath:
+                FixHeaderFile( headerPath )
