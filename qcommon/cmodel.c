@@ -137,14 +137,14 @@ CMod_LoadSubmodels
 */
 void CMod_LoadSubmodels (lump_t *l)
 {
-	dmodel_t	*in;
+	dmodel_serialization_t* in = NULL;
 	cmodel_t	*out;
 	int			i, j, count;
 
 	in = (void *)(cmod_base + l->fileofs);
-	if (l->filelen % sizeof(*in))
+	if (l->filelen % sizeof( *in ))
 		Com_Error (ERR_DROP, "MOD_LoadBmodel: funny lump size");
-	count = l->filelen / sizeof(*in);
+	count = l->filelen / sizeof( *in );
 
 	if (count < 1)
 		Com_Error (ERR_DROP, "Map with no models");
@@ -156,6 +156,11 @@ void CMod_LoadSubmodels (lump_t *l)
 	for ( i=0 ; i<count ; i++, in++, out++)
 	{
 		out = &map_cmodels[i];
+
+		if( i == 12 )
+		{
+			int wat = 0;
+		}
 
 		for (j=0 ; j<3 ; j++)
 		{	// spread the mins / maxs by a pixel
@@ -215,9 +220,9 @@ void CMod_LoadNodes (lump_t *l)
 	int			i, j, count;
 
 	in = (void *)(cmod_base + l->fileofs);
-	if (l->filelen % sizeof(*in))
+	if (l->filelen % sizeof( dnode_t ))
 		Com_Error (ERR_DROP, "MOD_LoadBmodel: funny lump size");
-	count = l->filelen / sizeof(*in);
+	count = l->filelen / sizeof( dnode_t );
 
 	if (count < 1)
 		Com_Error (ERR_DROP, "Map has no nodes");
@@ -228,8 +233,10 @@ void CMod_LoadNodes (lump_t *l)
 
 	numnodes = count;
 
-	for (i=0 ; i<count ; i++, out++, in++)
+	cnode_t* testNode = NULL;
+	for (i=0 ; i<count ; ++i, out++, in++)
 	{
+		testNode = &map_nodes[i];
 		out->plane = map_planes + LittleLong(in->planenum);
 		for (j=0 ; j<2 ; j++)
 		{
@@ -637,15 +644,21 @@ cmodel_t *CM_LoadMap (char *name, qboolean clientload, unsigned *checksum)
 CM_InlineModel
 ==================
 */
-cmodel_t	*CM_InlineModel (char *name)
+cmodel_t* CM_InlineModel( char* name )
 {
 	int		num;
 
-	if (!name || name[0] != '*')
-		Com_Error (ERR_DROP, "CM_InlineModel: bad name");
-	num = atoi (name+1);
-	if (num < 1 || num >= numcmodels)
-		Com_Error (ERR_DROP, "CM_InlineModel: bad number");
+	if( !name || name[0] != '*' )
+	{
+		Com_Error( ERR_DROP, "CM_InlineModel: bad name" );
+	}
+
+	num = atoi( name + 1 );
+	if( num < 1 || num >= numcmodels )
+	{
+		Com_Error( ERR_DROP, "CM_InlineModel: bad number" );
+	}
+
 
 	return &map_cmodels[num];
 }
@@ -742,12 +755,18 @@ void CM_InitBoxHull (void)
 
 		// nodes
 		c = &map_nodes[box_headnode+i];
-		c->plane = map_planes + (numplanes+i*2);
+		//c->plane = map_planes + (numplanes+i*2);
+		c->plane = &map_planes[numplanes + i * 2];
 		c->children[side] = -1 - emptyleaf;
 		if (i != 5)
 			c->children[side^1] = box_headnode+i + 1;
 		else
 			c->children[side^1] = -1 - numleafs;
+
+		if( (c->children[0] == 68394 ) || ( c->children[1] == 68394 ) )
+		{
+			int g = 10;
+		}
 
 		// planes
 		p = &box_planes[i*2];
@@ -806,7 +825,7 @@ int CM_PointLeafnum_r (vec3_t p, int num)
 
 	while (num >= 0)
 	{
-		node = map_nodes + num;
+		node = &map_nodes[num];
 		plane = node->plane;
 
 		if (plane->type < 3)
@@ -1227,8 +1246,14 @@ CM_RecursiveHullCheck
 */
 void CM_RecursiveHullCheck (int num, float p1f, float p2f, vec3_t p1, vec3_t p2)
 {
-	cnode_t		*node;
-	plane_t	*plane;
+	if( num >= numnodes )
+	{
+		int i = 0;
+		return;
+	}
+
+	cnode_t* node;
+	plane_t* plane;
 	float		t1, t2, offset;
 	float		frac, frac2;
 	float		idist;
@@ -1237,13 +1262,13 @@ void CM_RecursiveHullCheck (int num, float p1f, float p2f, vec3_t p1, vec3_t p2)
 	int			side;
 	float		midf;
 
-	if (trace_trace.fraction <= p1f)
+	if( trace_trace.fraction <= p1f )
 		return;		// already hit something nearer
 
 	// if < 0, we are in a leaf node
-	if (num < 0)
+	if( num < 0 )
 	{
-		CM_TraceToLeaf (-1-num);
+		CM_TraceToLeaf( -1 - num );
 		return;
 	}
 
@@ -1251,10 +1276,10 @@ void CM_RecursiveHullCheck (int num, float p1f, float p2f, vec3_t p1, vec3_t p2)
 	// find the point distances to the seperating plane
 	// and the offset for the size of the box
 	//
-	node = map_nodes + num;
+	node = &map_nodes[num];
 	plane = node->plane;
 
-	if (plane->type < 3)
+	if( plane->type < 3 )
 	{
 		t1 = p1[plane->type] - plane->dist;
 		t2 = p2[plane->type] - plane->dist;
@@ -1262,49 +1287,49 @@ void CM_RecursiveHullCheck (int num, float p1f, float p2f, vec3_t p1, vec3_t p2)
 	}
 	else
 	{
-		t1 = DotProduct (plane->normal, p1) - plane->dist;
-		t2 = DotProduct (plane->normal, p2) - plane->dist;
-		if (trace_ispoint)
+		t1 = DotProduct( plane->normal, p1 ) - plane->dist;
+		t2 = DotProduct( plane->normal, p2 ) - plane->dist;
+		if( trace_ispoint )
 			offset = 0;
 		else
-			offset = fabs(trace_extents[0]*plane->normal[0]) +
-				fabs(trace_extents[1]*plane->normal[1]) +
-				fabs(trace_extents[2]*plane->normal[2]);
+			offset = fabs( trace_extents[0] * plane->normal[0] ) +
+			fabs( trace_extents[1] * plane->normal[1] ) +
+			fabs( trace_extents[2] * plane->normal[2] );
 	}
 
 
 #if 0
-CM_RecursiveHullCheck (node->children[0], p1f, p2f, p1, p2);
-CM_RecursiveHullCheck (node->children[1], p1f, p2f, p1, p2);
-return;
+	CM_RecursiveHullCheck( node->children[0], p1f, p2f, p1, p2 );
+	CM_RecursiveHullCheck( node->children[1], p1f, p2f, p1, p2 );
+	return;
 #endif
 
 	// see which sides we need to consider
-	if (t1 >= offset && t2 >= offset)
+	if( t1 >= offset && t2 >= offset )
 	{
-		CM_RecursiveHullCheck (node->children[0], p1f, p2f, p1, p2);
+		CM_RecursiveHullCheck( node->children[0], p1f, p2f, p1, p2 );
 		return;
 	}
-	if (t1 < -offset && t2 < -offset)
+	if( t1 < -offset && t2 < -offset )
 	{
-		CM_RecursiveHullCheck (node->children[1], p1f, p2f, p1, p2);
+		CM_RecursiveHullCheck( node->children[1], p1f, p2f, p1, p2 );
 		return;
 	}
 
 	// put the crosspoint DIST_EPSILON pixels on the near side
-	if (t1 < t2)
+	if( t1 < t2 )
 	{
-		idist = 1.0/(t1-t2);
+		idist = 1.0 / ( t1 - t2 );
 		side = 1;
-		frac2 = (t1 + offset + DIST_EPSILON)*idist;
-		frac = (t1 - offset + DIST_EPSILON)*idist;
+		frac2 = ( t1 + offset + DIST_EPSILON ) * idist;
+		frac = ( t1 - offset + DIST_EPSILON ) * idist;
 	}
-	else if (t1 > t2)
+	else if( t1 > t2 )
 	{
-		idist = 1.0/(t1-t2);
+		idist = 1.0 / ( t1 - t2 );
 		side = 0;
-		frac2 = (t1 - offset - DIST_EPSILON)*idist;
-		frac = (t1 + offset + DIST_EPSILON)*idist;
+		frac2 = ( t1 - offset - DIST_EPSILON ) * idist;
+		frac = ( t1 + offset + DIST_EPSILON ) * idist;
 	}
 	else
 	{
@@ -1314,29 +1339,29 @@ return;
 	}
 
 	// move up to the node
-	if (frac < 0)
+	if( frac < 0 )
 		frac = 0;
-	if (frac > 1)
+	if( frac > 1 )
 		frac = 1;
 
-	midf = p1f + (p2f - p1f)*frac;
-	for (i=0 ; i<3 ; i++)
-		mid[i] = p1[i] + frac*(p2[i] - p1[i]);
+	midf = p1f + ( p2f - p1f ) * frac;
+	for( i = 0; i < 3; i++ )
+		mid[i] = p1[i] + frac * ( p2[i] - p1[i] );
 
-	CM_RecursiveHullCheck (node->children[side], p1f, midf, p1, mid);
+	CM_RecursiveHullCheck( node->children[side], p1f, midf, p1, mid );
 
 
 	// go past the node
-	if (frac2 < 0)
+	if( frac2 < 0 )
 		frac2 = 0;
-	if (frac2 > 1)
+	if( frac2 > 1 )
 		frac2 = 1;
 
-	midf = p1f + (p2f - p1f)*frac2;
-	for (i=0 ; i<3 ; i++)
-		mid[i] = p1[i] + frac2*(p2[i] - p1[i]);
+	midf = p1f + ( p2f - p1f ) * frac2;
+	for( i = 0; i < 3; i++ )
+		mid[i] = p1[i] + frac2 * ( p2[i] - p1[i] );
 
-	CM_RecursiveHullCheck (node->children[side^1], midf, p2f, mid, p2);
+	CM_RecursiveHullCheck( node->children[side ^ 1], midf, p2f, mid, p2 );
 }
 
 

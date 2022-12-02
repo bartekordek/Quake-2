@@ -403,13 +403,13 @@ float RadiusFromBounds (vec3_t mins, vec3_t maxs)
 ref_gl_Mod_LoadSubmodels
 =================
 */
-void ref_gl_Mod_LoadSubmodels (lump_t *l)
+void ref_gl_Mod_LoadSubmodels( model_t* loadmodel, byte* inMod_base, lump_t* l )
 {
-	dmodel_t* in;
-	dmodel_t* out;
+	dmodel_serialization_t* in;
+	model_t* out;
 	int i, j, count;
 
-	in = (void *)(mod_base + l->fileofs);
+	in = (void *)( inMod_base + l->fileofs);
 	if (l->filelen % sizeof(*in))
 		ri.Sys_Error (ERR_DROP, "MOD_LoadBmodel: funny lump size in %s",loadmodel->name);
 	count = l->filelen / sizeof(*in);
@@ -427,9 +427,18 @@ void ref_gl_Mod_LoadSubmodels (lump_t *l)
 			out->origin[j] = LittleFloat (in->origin[j]);
 		}
 		out->radius = RadiusFromBounds (out->mins, out->maxs);
-		out->headnode = LittleLong (in->headnode);
-		out->firstface = LittleLong (in->firstface);
-		out->numfaces = LittleLong (in->numfaces);
+		out->firstnode = LittleLong (in->headnode);
+		out->firstmodelsurface = LittleLong (in->firstface);
+		out->nummodelsurfaces = LittleLong (in->numfaces);
+
+		// visleafs
+		out->numleafs = 0;
+		//  check limits
+		if( out->firstnode >= loadmodel->numnodes )
+		{
+			ri.Sys_Error( ERR_DROP, "%s: Inline model %i has bad firstnode",
+						  __func__, i );
+		}
 	}
 }
 
@@ -907,36 +916,8 @@ void ref_gl_Mod_LoadBrushModel (model_t *mod, void *buffer)
 	ref_gl_Mod_LoadVisibility (&header->lumps[LUMP_VISIBILITY]);
 	ref_gl_Mod_LoadLeafs (&header->lumps[LUMP_LEAFS]);
 	ref_gl_Mod_LoadNodes (&header->lumps[LUMP_NODES]);
-	ref_gl_Mod_LoadSubmodels (&header->lumps[LUMP_MODELS]);
+	ref_gl_Mod_LoadSubmodels (mod, mod_base, &header->lumps[LUMP_MODELS]);
 	mod->numframes = 2;		// regular and alternate animation
-
-//
-// set up the submodels
-//
-	for (i=0 ; i<mod->numsubmodels ; i++)
-	{
-		model_t	*starmod;
-
-		bm = &mod->submodels[i];
-		starmod = &mod_inline[i];
-
-		*starmod = *loadmodel;
-
-		starmod->firstmodelsurface = bm->firstface;
-		starmod->nummodelsurfaces = bm->numfaces;
-		starmod->firstnode = bm->headnode;
-		if (starmod->firstnode >= loadmodel->numnodes)
-			ri.Sys_Error (ERR_DROP, "Inline model %i has bad firstnode", i);
-
-		VectorCopy (bm->maxs, starmod->maxs);
-		VectorCopy (bm->mins, starmod->mins);
-		starmod->radius = bm->radius;
-
-		if (i == 0)
-			*loadmodel = *starmod;
-
-		starmod->numleafs = bm->visleafs;
-	}
 }
 
 /*

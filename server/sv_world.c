@@ -551,6 +551,10 @@ void SV_ClipMoveToEntities ( moveclip_t *clip )
 
 		// might intersect, so do an exact clip
 		headnode = SV_HullForEntity (touch);
+		if( headnode == 7500 )
+		{
+			int i = 0;
+		}
 		angles = touch->s.angles;
 		if (touch->solid != SOLID_BSP)
 			angles = vec3_origin;	// boxes don't rotate

@@ -12,6 +12,14 @@ typedef struct
 {
     vec3_t        mins, maxs;
     vec3_t        origin;        // for sounds or lights
+    int            headnode;
+    int            firstface, numfaces;
+} dmodel_serialization_t;
+
+typedef struct
+{
+    vec3_t        mins, maxs;
+    vec3_t        origin;        // for sounds or lights
     float        radius;
     int            headnode;
     int            visleafs;        // not including the solid leaf 0

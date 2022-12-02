@@ -76,6 +76,11 @@ V_AddEntity
 */
 void V_AddEntity (entity_t *ent)
 {
+    if( r_numentities == 11 )
+    {
+        int i = 0;
+    }
+
     if (r_numentities >= MAX_ENTITIES)
         return;
     r_entities[r_numentities++] = *ent;
@@ -530,7 +535,9 @@ void V_RenderView( float stereo_separation )
         cl.refdef.rdflags = cl.frame.playerstate.rdflags;
 
         // sort entities for better cache locality
-        qsort( cl.refdef.entities, cl.refdef.num_entities, sizeof( cl.refdef.entities[0] ), (int (*)(const void *, const void *))entitycmpfnc );
+        size_t numOfElements = cl.refdef.num_entities;
+        size_t elementSize = sizeof( cl.refdef.entities[0] );
+        qsort( cl.refdef.entities, numOfElements, elementSize, (int (*)(const void *, const void *))entitycmpfnc );
     }
 
     re.RenderFrame (&cl.refdef);
