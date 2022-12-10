@@ -141,6 +141,8 @@ void VID_Printf (int print_level, char *fmt, ...)
 
 void VID_Error (int err_level, char *fmt, ...)
 {
+    assert(false);
+
     va_list        argptr;
     char        msg[MAXPRINTMSG];
     static qboolean    inupdate;

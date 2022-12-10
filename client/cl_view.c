@@ -76,7 +76,7 @@ V_AddEntity
 */
 void V_AddEntity (entity_t *ent)
 {
-    if( r_numentities == 11 )
+    if( r_numentities == 8 )
     {
         int i = 0;
     }

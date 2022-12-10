@@ -200,7 +200,7 @@ ref_gl_Mod_ForName
 Loads in a model for the given name
 ==================
 */
-model_t *ref_gl_Mod_ForName (char *name, qboolean crash)
+model_t *ref_gl_Mod_ForName (char *name, model_t* parent_model, qboolean crash)
 {
 	model_t	*mod;
 	unsigned *buf;
@@ -217,7 +217,9 @@ model_t *ref_gl_Mod_ForName (char *name, qboolean crash)
 		i = atoi(name+1);
 		if (i < 1 || !r_worldmodel || i >= r_worldmodel->numsubmodels)
 			ri.Sys_Error (ERR_DROP, "bad inline model number");
-		return &mod_inline[i];
+
+		return &parent_model->submodels[i];
+		//return &mod_inline[i];
 	}
 
 	//
@@ -1120,7 +1122,7 @@ void ref_gl_R_BeginRegistration (char *model)
 	flushmap = ri.Cvar_Get ("flushmap", "0", 0);
 	if ( strcmp(mod_known[0].name, fullname) || flushmap->value)
 		ref_gl_Mod_Free (&mod_known[0]);
-	r_worldmodel = ref_gl_Mod_ForName(fullname, true);
+	r_worldmodel = ref_gl_Mod_ForName(fullname, NULL, true);
 
 	r_viewcluster = -1;
 }
@@ -1132,7 +1134,7 @@ struct model_s *ref_gl_R_RegisterModel (char *name)
 	dsprite_t	*sprout;
 	dmdl_t		*pheader;
 
-	mod = ref_gl_Mod_ForName (name, false);
+	mod = ref_gl_Mod_ForName (name, r_worldmodel, false);
 	if (mod)
 	{
 		mod->registration_sequence = registration_sequence;
