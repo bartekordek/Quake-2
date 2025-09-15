@@ -492,7 +492,8 @@ void *Sys_GetGameAPI (void *parms)
 #else
 	const char *debugdir = "debugaxp";
 #endif
-
+#else
+	const char *gamename = "game.dll";
 #endif
 
 	if (game_library)
@@ -500,7 +501,7 @@ void *Sys_GetGameAPI (void *parms)
 
 	// check the current debug directory first for development purposes
 	_getcwd (cwd, sizeof(cwd));
-	Com_sprintf (name, sizeof(name), "%s/%s/%s", cwd, debugdir, gamename);
+	Com_sprintf(name, sizeof(name), "%s\\%s", cwd, gamename);
 	game_library = LoadLibrary ( name );
 	if (game_library)
 	{
@@ -652,7 +653,7 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 //			Con_Printf ("time:%5.2f - %5.2f = %5.2f\n", newtime, oldtime, time);
 
 		//	_controlfp( ~( _EM_ZERODIVIDE /*| _EM_INVALID*/ ), _MCW_EM );
-		_controlfp( _PC_24, _MCW_PC );
+		//_controlfp( _PC_24, _MCW_PC ); Disabled, for now it seems that it has no effect, and also, generates error.
 		Qcommon_Frame (time);
 
 		oldtime = newtime;
