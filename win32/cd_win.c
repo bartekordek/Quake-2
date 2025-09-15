@@ -35,6 +35,7 @@ static byte 	remap[100];
 static byte		cdrom;
 static byte		playTrack;
 static byte		maxTrack;
+static qboolean enableCDAutio = false;
 
 cvar_t *cd_nocd;
 cvar_t *cd_loopcount;
@@ -434,6 +435,11 @@ void CDAudio_Update(void)
 
 int CDAudio_Init(void)
 {
+	if (enableCDAutio == false)
+	{
+		return;
+	}
+
 	DWORD	dwReturn;
 	MCI_OPEN_PARMS	mciOpenParms;
     MCI_SET_PARMS	mciSetParms;
