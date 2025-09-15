@@ -43,6 +43,8 @@ set( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${Q2_OUTPUT_DIR} )
 set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${Q2_OUTPUT_DIR} )
 
 # Add sub directories
-add_subdirectory( ctf )
-add_subdirectory( game )
-add_subdirectory( ref_soft )
+add_subdirectory(ctf)
+add_subdirectory(game)
+add_subdirectory(ref_gl)
+add_subdirectory(ref_soft)
+add_subdirectory(quake2)
