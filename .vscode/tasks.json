@@ -1,0 +1,94 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "[WINDOWS][CMAKE][CREATE]",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "cmake",
+                "-S",
+                ".",
+                "-B Build-Windows"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "dedicated",
+                "showReuseMessage": false,
+                "clear": true
+            },
+            "options": {
+                "cwd": "${workspaceFolder}"
+            }
+        },
+        {
+            "label": "[WINDOWS][BUILD][All][WithCreate]",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "--build",
+                "Build-Windows",
+                "--config",
+                "Debug",
+                "-j16"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "dedicated",
+                "showReuseMessage": false,
+                "clear": true
+            },
+            "problemMatcher": [
+                "$msCompile"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "dependsOn": "[WINDOWS][CMAKE][CREATE]"
+        },
+        {
+            "label": "[WINDOWS][BUILD][All][WihtoutCreate]",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "--build",
+                "Build-Windows",
+                "--config",
+                "Debug",
+                "-j16"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "dedicated",
+                "showReuseMessage": false,
+                "clear": true
+            },
+            "problemMatcher": [
+                "$msCompile"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            }
+        }
+    ]
+}

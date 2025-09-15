@@ -1,6 +1,6 @@
 project(quake-2-main)
 
-message( "CMAKE BUILD TYPE: ${CMAKE_BUILD_TYPE}" )
+message("CMAKE BUILD TYPE: ${CMAKE_BUILD_TYPE}")
 
 macro(CmakeToWindow InputPath OutputPath)
     string(REGEX REPLACE "/" "\\\\" ${OutputPath} "${InputPath}")
@@ -21,10 +21,10 @@ file( RELATIVE_PATH CUL_RENEGATE_DIR ${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_
 message( "CUL_RENEGATE_DIR: ${CUL_RENEGATE_DIR}" )
 
 set( CMAKE_POSITION_INDEPENDENT_CODE ON )
-set( CUL_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR} )
+set( Q2_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR} )
 set( CUL_TESTS_RUN_DIR "${CMAKE_CURRENT_SOURCE_DIR}/runDir" )
 
-set( ENV{CUL_ROOT_DIR} ${CUL_ROOT_DIR} )
+set( ENV{Q2_ROOT_DIR} ${Q2_ROOT_DIR} )
 set( ENV{CUL_DLL} ${CUL_TESTS_RUN_DIR} )
 
 set( CUL_BUILD_ROOT ${CMAKE_SOURCE_DIR} )
@@ -44,3 +44,5 @@ set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${Q2_OUTPUT_DIR} )
 
 # Add sub directories
 add_subdirectory( ctf )
+add_subdirectory( game )
+add_subdirectory( ref_soft )
