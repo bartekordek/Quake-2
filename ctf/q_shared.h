@@ -1,3 +1,6 @@
+#ifndef __ctf_q_shared_h__
+#define __ctf_q_shared_h__
+
 /*
 Copyright (C) 1997-2001 Id Software, Inc.
 
@@ -31,6 +34,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #endif
 
+#include "shared.h"
+
 #include <assert.h>
 #include <math.h>
 #include <stdio.h>
@@ -58,12 +63,6 @@ typedef enum {false, true}	qboolean;
 #ifndef NULL
 #define NULL ((void *)0)
 #endif
-
-
-// angle indexes
-#define	PITCH				0		// up / down
-#define	YAW					1		// left / right
-#define	ROLL				2		// fall over
 
 #define	MAX_STRING_CHARS	1024	// max length of a string passed to Cmd_TokenizeString
 #define	MAX_STRING_TOKENS	80		// max tokens resulting from Cmd_TokenizeString
@@ -1198,3 +1197,5 @@ typedef struct
 extern int vidref_val;
 // PGM
 // ==================
+
+#endif // __ctf_q_shared_h__

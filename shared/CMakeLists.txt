@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.0.0)
 
 set( CMAKE_C_STANDARD 90 )
 
-set( PROJECT_NAME game )
+set( PROJECT_NAME shared )
 
 project(${PROJECT_NAME} LANGUAGES C)
 
@@ -41,8 +41,8 @@ endif()
 file( GLOB_RECURSE SOURCES *.h *.c )
 
 source_group( TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SOURCES} )
-add_library( ${PROJECT_NAME} SHARED ${SOURCES} )
-set( DEPENDENCIES PUBLIC shared)
+add_library( ${PROJECT_NAME} STATIC ${SOURCES} )
+set( DEPENDENCIES)
 set_property( TARGET ${PROJECT_NAME} PROPERTY "LINK_LIBRARY_DEPENDENCIES" true )
 
 if (MSVC)

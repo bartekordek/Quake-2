@@ -49,7 +49,7 @@ list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/win32/qgl_win.c)
 
 add_library( ${PROJECT_NAME} SHARED ${SOURCES} )
 
-set(DEPENDENCIES)
+set(DEPENDENCIES shared)
 if (MSVC)
 list(APPEND DEPENDENCIES winmm )
 endif()

@@ -1,3 +1,6 @@
+#ifndef __game_q_shared_h__
+#define __game_q_shared_h__
+
 /*
 Copyright (C) 1997-2001 Id Software, Inc.
 
@@ -17,22 +20,12 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
-
-#ifndef __game_q_shared_h__
-#define __game_q_shared_h__
 	
 // q_shared.h -- included first by ALL program modules
 
-#ifdef _WIN32
-// unknown pragmas are SUPPOSED to be ignored, but....
-#pragma warning(disable : 4244)     // MIPS
-#pragma warning(disable : 4136)     // X86
-#pragma warning(disable : 4051)     // ALPHA
 
-#pragma warning(disable : 4018)     // signed/unsigned mismatch
-#pragma warning(disable : 4305)		// truncation from const double to float
 
-#endif
+#include "shared.h"
 
 #include <assert.h>
 #include <math.h>
@@ -61,12 +54,6 @@ typedef enum {false, true}	qboolean;
 #ifndef NULL
 #define NULL ((void *)0)
 #endif
-
-
-// angle indexes
-#define	PITCH				0		// up / down
-#define	YAW					1		// left / right
-#define	ROLL				2		// fall over
 
 #define	MAX_STRING_CHARS	1024	// max length of a string passed to Cmd_TokenizeString
 #define	MAX_STRING_TOKENS	80		// max tokens resulting from Cmd_TokenizeString
