@@ -19,6 +19,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 // g_local.h -- local definitions for game module
 
+#ifndef __game_g_local_h__
+#define __game_g_local_h__
+
 #include "q_shared.h"
 
 // define GAME_INCLUDE so that game.h does not define the
@@ -1111,3 +1114,4 @@ struct edict_s
 	monsterinfo_t	monsterinfo;
 };
 
+#endif // __game_g_local_h__

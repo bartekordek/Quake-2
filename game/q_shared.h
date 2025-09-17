@@ -17,6 +17,9 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
+
+#ifndef __game_q_shared_h__
+#define __game_q_shared_h__
 	
 // q_shared.h -- included first by ALL program modules
 
@@ -1198,3 +1201,5 @@ typedef struct
 extern int vidref_val;
 // PGM
 // ==================
+
+#endif // __game_q_shared_h__

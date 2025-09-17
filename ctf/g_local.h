@@ -19,6 +19,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 // g_local.h -- local definitions for game module
 
+#ifndef _ctf_g_local_h
+#define _ctf_g_local_h
+
 #include "q_shared.h"
 
 // define GAME_INCLUDE so that game.h does not define the
@@ -1143,3 +1146,4 @@ struct edict_s
 #include "g_ctf.h"
 //ZOID
 
+#endif // _ctf_g_local_h
