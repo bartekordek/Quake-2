@@ -61,7 +61,7 @@
             "dependsOn": "[WINDOWS][CMAKE][CREATE]"
         },
         {
-            "label": "[WINDOWS][BUILD][All][WihtoutCreate]",
+            "label": "[WINDOWS][BUILD][All][WihtoutCreate][Debug]",
             "type": "shell",
             "command": "cmake",
             "args": [
@@ -70,6 +70,32 @@
                 "--config",
                 "Debug",
                 "-j16"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "dedicated",
+                "showReuseMessage": false,
+                "clear": true
+            },
+            "problemMatcher": [
+                "$msCompile"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            }
+        },
+        {
+            "label": "[WINDOWS][BUILD][CopyBinariesToQuakeDir][Debug]",
+            "type": "shell",
+            "command": "CopyBinaries.bat",
+            "args": [
+                "Debug"
             ],
             "group": {
                 "kind": "build",
