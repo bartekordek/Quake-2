@@ -94,8 +94,8 @@ target_link_libraries(${PROJECT_NAME} ${DEPENDENCIES})
 
 if (MSVC)
     set_target_properties( ${PROJECT_NAME} PROPERTIES LINK_FLAGS "/INCREMENTAL:NO" )
-
-    add_custom_command( TARGET ${PROJECT_NAME}
-        POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$(Configuration) $(LocalDebuggerWorkingDirectory) )
+    message("CMAKE_BINARY_DIR : ${CMAKE_BINARY_DIR}")
+    add_custom_command( TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_BINARY_DIR}/$(Configuration)/ $(LocalDebuggerWorkingDirectory)
+            COMMENT "Copying data")
 endif()
