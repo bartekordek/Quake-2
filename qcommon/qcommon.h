@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // qcommon.h -- definitions common between client and server, but not game.dll
 
 #include "shared/shared.h"
-
+#include "shared/cvar.h"
 
 #define	VERSION		3.19
 
