@@ -24,6 +24,7 @@ set( CMAKE_POSITION_INDEPENDENT_CODE ON )
 set( Q2_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR} )
 
 set( ENV{Q2_ROOT_DIR} ${Q2_ROOT_DIR} )
+set(ENV{Q2_DEPS_ROOT} ${Q2_ROOT_DIR}/deps)
 
 list( APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules" )
 
@@ -34,3 +35,8 @@ add_subdirectory(quake2)
 add_subdirectory(ref_gl)
 add_subdirectory(ref_soft)
 add_subdirectory(shared)
+add_subdirectory(win32)
+
+set(SDL_STATIC ON CACHE BOOL "SDL Static" FORCE)
+set(SDL_SHARED OFF CACHE BOOL "SDL Dynamic" FORCE)
+add_subdirectory(deps/SDL)

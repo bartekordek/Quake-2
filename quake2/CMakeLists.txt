@@ -14,6 +14,9 @@ else()
     endif()
 endif()
 
+file( GLOB_RECURSE SOURCES *.h *.c )
+source_group( TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SOURCES} )
+
 list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/client/cl_cin.c)
 list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/client/cl_ents.c)
 list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/client/cl_fx.c)
@@ -58,18 +61,25 @@ list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/win32/conproc.c)
 list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/win32/in_win.c)
 list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/win32/net_wins.c)
 list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/win32/q_shwin.c)
-list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/win32/snd_win.c)
+#list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/win32/snd_win.c)
 list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/win32/sys_win.c)
 list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/win32/vid_dll.c)
 list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/win32/vid_menu.c)
 
 set(DEPENDENCIES
+PUBLIC SDL3-static
 PRIVATE game
 PRIVATE ref_gl
-PRIVATE ref_soft)
+PRIVATE ref_soft
+PRIVATE shared)
+
 if (MSVC)
-list(APPEND DEPENDENCIES PRIVATE winmm PRIVATE Ws2_32 )
+list(APPEND DEPENDENCIES PRIVATE win32 PRIVATE winmm PRIVATE Ws2_32)
 endif()
+
+set(SDL_INCLUDE_DIR $ENV{Q2_DEPS_ROOT}/SDL/include)
+message("SDL_INCLUDE_DIR: ${SDL_INCLUDE_DIR}")
+include_directories( SYSTEM ${SDL_INCLUDE_DIR} )
 
 add_executable(${PROJECT_NAME} WIN32 ${SOURCES})
 target_compile_definitions(${PROJECT_NAME} PRIVATE CPUSTRING="x64" C_ONLY=1 WIN32 _WINDOWS )

@@ -584,6 +584,9 @@ void ParseCommandLine (LPSTR lpCmdLine)
 
 }
 
+#define OLD_WINMAIN 0
+
+#if OLD_WINMAIN
 /*
 ==================
 WinMain
@@ -662,3 +665,5 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 	// never gets here
     return TRUE;
 }
+
+#endif // OLD_WINMAIN
