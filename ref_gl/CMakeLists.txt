@@ -49,7 +49,7 @@ list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/win32/qgl_win.c)
 
 add_library( ${PROJECT_NAME} SHARED ${SOURCES} )
 
-set(DEPENDENCIES shared)
+set(DEPENDENCIES PRIVATE shared PRIVATE SDL3-static)
 if (MSVC)
 list(APPEND DEPENDENCIES winmm )
 endif()
