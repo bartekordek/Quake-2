@@ -2,6 +2,13 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
 
+#include "shared/boolean.h"
+#include "shared/cvar.h"
+
+extern	cvar_t* dedicated;
+
+qboolean	Minimized;
+
 #ifdef _WIN32
 #include <windows.h>
 
@@ -39,6 +46,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	Qcommon_Init(argc, argv);
 	oldtime = Sys_Milliseconds();
+
+	/* main window message loop */
+	while(1)
+	{
+		// if at a full screen console, don't update unless needed
+		if(Minimized || (dedicated && dedicated->value))
+		{
+			Sleep(1);
+		}
+	}
 
 }
 #endif // _WIN32
