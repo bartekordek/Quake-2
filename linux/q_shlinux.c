@@ -9,7 +9,7 @@
 
 #include "../linux/glob.h"
 
-#include "../qcommon/qcommon.h"
+#include "qcommon/qcommon.h"
 
 //===============================================================================
 
