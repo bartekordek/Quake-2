@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.0.0)
 
 set( CMAKE_C_STANDARD 90 )
 
-set( PROJECT_NAME shared )
+set( PROJECT_NAME windowing )
 
 project(${PROJECT_NAME} LANGUAGES C)
 
@@ -41,16 +41,21 @@ endif()
 file( GLOB_RECURSE SOURCES *.h *.c )
 
 source_group( TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SOURCES} )
-add_library( ${PROJECT_NAME} STATIC ${SOURCES} )
-set( DEPENDENCIES)
+
+add_library( ${PROJECT_NAME} SHARED ${SOURCES} )
+
+set(DEPENDENCIES PRIVATE shared)
+if (MSVC)
+list(APPEND DEPENDENCIES winmm PRIVATE SDL3-static)
+endif()
+
 set_property( TARGET ${PROJECT_NAME} PROPERTY "LINK_LIBRARY_DEPENDENCIES" true )
 
 if (MSVC)
+    list(APPEND LIBS msvcmrtd )
     target_link_options(${PROJECT_NAME} PUBLIC "/INCREMENTAL:NO")
-    target_link_libraries( ${PROJECT_NAME} ${DEPENDENCIES} )
-else()
-    target_link_libraries( ${PROJECT_NAME} ${DEPENDENCIES} )
 endif()
+target_link_libraries(${PROJECT_NAME} ${DEPENDENCIES})
 
 if( MSVC )
 else()
@@ -60,4 +65,5 @@ else()
 endif()
 
 target_include_directories(${PROJECT_NAME} PUBLIC inc)
-target_compile_definitions(${PROJECT_NAME} PRIVATE C_ONLY=1 CPUSTRING="x64" )
+target_include_directories(${PROJECT_NAME} PRIVATE src)
+target_compile_definitions(${PROJECT_NAME} PRIVATE C_ONLY=1 )

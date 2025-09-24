@@ -36,15 +36,6 @@ list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/client/snd_mix.c)
 list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/client/x86.c)
 list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/game/m_flash.c)
 list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/game/q_shared.c)
-list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/qcommon/cmd.c)
-list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/qcommon/cmodel.c)
-list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/qcommon/common.c)
-list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/qcommon/crc.c)
-list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/qcommon/cvar.c)
-list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/qcommon/files.c)
-list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/qcommon/md4.c)
-list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/qcommon/net_chan.c)
-list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/qcommon/pmove.c)
 list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/server/sv_ccmds.c)
 list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/server/sv_ents.c)
 list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/server/sv_game.c)
@@ -66,7 +57,10 @@ list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/win32/vid_menu.c)
 set(DEPENDENCIES
 PRIVATE game
 PRIVATE ref_gl
-PRIVATE ref_soft)
+PRIVATE ref_soft
+PRIVATE shared
+)
+
 if (MSVC)
 list(APPEND DEPENDENCIES PRIVATE winmm PRIVATE Ws2_32 )
 endif()
