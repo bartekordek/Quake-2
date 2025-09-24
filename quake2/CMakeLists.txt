@@ -67,7 +67,7 @@ list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/win32/vid_dll.c)
 list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/win32/vid_menu.c)
 
 set(DEPENDENCIES
-PUBLIC SDL3-static
+PRIVATE SDL3-static
 PRIVATE game
 PRIVATE ref_gl
 PRIVATE ref_soft
