@@ -400,8 +400,8 @@ void Scrap_Upload (void)
 {
 	scrap_uploads++;
 	GL_Bind(TEXNUM_SCRAPS);
-	GL_Upload8 (scrap_texels[0], BLOCK_WIDTH, BLOCK_HEIGHT, false, false );
-	scrap_dirty = false;
+	GL_Upload8 (scrap_texels[0], BLOCK_WIDTH, BLOCK_HEIGHT, e_false, e_false );
+	scrap_dirty = e_false;
 }
 
 /*
@@ -963,7 +963,7 @@ qboolean GL_Upload32 (unsigned *data, int width, int height,  qboolean mipmap)
 	byte		*scan;
 	int comp;
 
-	uploaded_paletted = false;
+	uploaded_paletted = e_false;
 
 	for (scaled_width = 1 ; scaled_width < width ; scaled_width<<=1)
 		;
@@ -1041,7 +1041,7 @@ qboolean GL_Upload32 (unsigned *data, int width, int height,  qboolean mipmap)
 		{
 			if ( qglColorTableEXT && gl_ext_palettedtexture->value && samples == gl_solid_format )
 			{
-				uploaded_paletted = true;
+				uploaded_paletted = e_true;
 				GL_BuildPalettedTexture( paletted_texture, ( unsigned char * ) data, scaled_width, scaled_height );
 				qglTexImage2D( GL_TEXTURE_2D,
 							  0,
@@ -1068,7 +1068,7 @@ qboolean GL_Upload32 (unsigned *data, int width, int height,  qboolean mipmap)
 
 	if ( qglColorTableEXT && gl_ext_palettedtexture->value && ( samples == gl_solid_format ) )
 	{
-		uploaded_paletted = true;
+		uploaded_paletted = e_true;
 		GL_BuildPalettedTexture( paletted_texture, ( unsigned char * ) scaled, scaled_width, scaled_height );
 		qglTexImage2D( GL_TEXTURE_2D,
 					  0,
@@ -1102,7 +1102,7 @@ qboolean GL_Upload32 (unsigned *data, int width, int height,  qboolean mipmap)
 			miplevel++;
 			if ( qglColorTableEXT && gl_ext_palettedtexture->value && samples == gl_solid_format )
 			{
-				uploaded_paletted = true;
+				uploaded_paletted = e_true;
 				GL_BuildPalettedTexture( paletted_texture, ( unsigned char * ) scaled, scaled_width, scaled_height );
 				qglTexImage2D( GL_TEXTURE_2D,
 							  miplevel,
@@ -1154,9 +1154,9 @@ static qboolean IsPowerOf2( int value )
 	while ( 1 )
 	{
 		if ( value == i )
-			return true;
+			return e_true;
 		if ( i > value )
-			return false;
+			return e_false;
 		i <<= 1;
 	}
 }
@@ -1272,7 +1272,7 @@ image_t *GL_LoadPic (char *name, byte *pic, int width, int height, imagetype_t t
 		texnum = Scrap_AllocBlock (image->width, image->height, &x, &y);
 		if (texnum == -1)
 			goto nonscrap;
-		scrap_dirty = true;
+		scrap_dirty = e_true;
 
 		// copy the texels into the scrap block
 		k = 0;
@@ -1280,8 +1280,8 @@ image_t *GL_LoadPic (char *name, byte *pic, int width, int height, imagetype_t t
 			for (j=0 ; j<image->width ; j++, k++)
 				scrap_texels[texnum][(y+i)*BLOCK_WIDTH + x + j] = pic[k];
 		image->texnum = TEXNUM_SCRAPS + texnum;
-		image->scrap = true;
-		image->has_alpha = true;
+		image->scrap = e_true;
+		image->has_alpha = e_true;
 		image->sl = (x+0.01)/(float)BLOCK_WIDTH;
 		image->sh = (x+image->width-0.01)/(float)BLOCK_WIDTH;
 		image->tl = (y+0.01)/(float)BLOCK_WIDTH;
@@ -1290,7 +1290,7 @@ image_t *GL_LoadPic (char *name, byte *pic, int width, int height, imagetype_t t
 	else
 	{
 nonscrap:
-		image->scrap = false;
+		image->scrap = e_false;
 		image->texnum = TEXNUM_IMAGES + (image - gltextures);
 		GL_Bind(image->texnum);
 		if (bits == 8)

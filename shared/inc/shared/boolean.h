@@ -1,10 +1,13 @@
 #ifndef __shared_boolean_h__
 #define __shared_boolean_h__
 
+#undef e_false
+#undef e_true
+
 typedef enum
 {
-	false,
-	true
+	e_false,
+	e_true
 } qboolean;
 
 

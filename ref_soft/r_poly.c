@@ -1195,9 +1195,9 @@ void R_DrawAlphaSurfaces( void )
 		R_BuildPolygonFromSurface( s );
 
 		if (s->texinfo->flags & SURF_TRANS66)
-			R_ClipAndDrawPoly( 0.60f, ( s->texinfo->flags & SURF_WARP) != 0, true );
+			R_ClipAndDrawPoly( 0.60f, ( s->texinfo->flags & SURF_WARP) != 0, e_true );
 		else
-			R_ClipAndDrawPoly( 0.30f, ( s->texinfo->flags & SURF_WARP) != 0, true );
+			R_ClipAndDrawPoly( 0.30f, ( s->texinfo->flags & SURF_WARP) != 0, e_true );
 
 		s = s->nextalphasurface;
 	}
@@ -1239,6 +1239,6 @@ void R_IMFlatShadedQuad( vec3_t a, vec3_t b, vec3_t c, vec3_t d, int color, floa
 
 	r_polyblendcolor = color;
 
-	R_ClipAndDrawPoly( alpha, false, false );
+	R_ClipAndDrawPoly( alpha, e_false, e_false );
 }
 

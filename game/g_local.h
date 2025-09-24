@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define __game_g_local_h__
 
 #include "shared/shared.h"
+#include "shared/config.h"
 
 // define GAME_INCLUDE so that game.h does not define the
 // short, server-visible gclient_t and edict_t structures,
@@ -91,9 +92,9 @@ typedef enum
 	DAMAGE_AIM			// auto targeting recognizes this
 } damage_t;
 
-typedef enum 
+typedef enum
 {
-	WEAPON_READY, 
+	WEAPON_READY,
 	WEAPON_ACTIVATING,
 	WEAPON_DROPPING,
 	WEAPON_FIRING
@@ -222,15 +223,15 @@ typedef struct
 #define IT_POWERUP		32
 
 // gitem_t->weapmodel for weapons indicates model index
-#define WEAP_BLASTER			1 
-#define WEAP_SHOTGUN			2 
-#define WEAP_SUPERSHOTGUN		3 
-#define WEAP_MACHINEGUN			4 
-#define WEAP_CHAINGUN			5 
-#define WEAP_GRENADES			6 
-#define WEAP_GRENADELAUNCHER	7 
-#define WEAP_ROCKETLAUNCHER		8 
-#define WEAP_HYPERBLASTER		9 
+#define WEAP_BLASTER			1
+#define WEAP_SHOTGUN			2
+#define WEAP_SUPERSHOTGUN		3
+#define WEAP_MACHINEGUN			4
+#define WEAP_CHAINGUN			5
+#define WEAP_GRENADES			6
+#define WEAP_GRENADELAUNCHER	7
+#define WEAP_ROCKETLAUNCHER		8
+#define WEAP_HYPERBLASTER		9
 #define WEAP_RAILGUN			10
 #define WEAP_BFG				11
 
@@ -452,9 +453,9 @@ typedef struct
 
 
 
-extern	game_locals_t	game;
-extern	level_locals_t	level;
-extern	game_import_t	gi;
+EXTERNC extern	game_locals_t	game;
+EXTERNC extern	level_locals_t	level;
+EXTERNC extern	game_import_t	gi;
 extern	game_export_t	globals;
 extern	spawn_temp_t	st;
 
@@ -506,7 +507,7 @@ extern	int	body_armor_index;
 extern	int	meansOfDeath;
 
 
-extern	edict_t			*g_edicts;
+EXTERNC extern	edict_t			*g_edicts;
 
 #define	FOFS(x) (int)&(((edict_t *)0)->x)
 #define	STOFS(x) (int)&(((spawn_temp_t *)0)->x)
@@ -518,9 +519,9 @@ extern	edict_t			*g_edicts;
 
 extern	cvar_t	*maxentities;
 extern	cvar_t	*deathmatch;
-extern	cvar_t	*coop;
+EXTERNC extern	cvar_t	*coop;
 extern	cvar_t	*dmflags;
-extern	cvar_t	*skill;
+EXTERNC extern	cvar_t	*skill;
 extern	cvar_t	*fraglimit;
 extern	cvar_t	*timelimit;
 extern	cvar_t	*password;
@@ -572,7 +573,7 @@ extern	cvar_t	*sv_maplist;
 #define FFL_NOSPAWN			2
 
 typedef enum {
-	F_INT, 
+	F_INT,
 	F_FLOAT,
 	F_LSTRING,			// string on disk, pointer in memory, TAG_LEVEL
 	F_GSTRING,			// string on disk, pointer in memory, TAG_GAME
@@ -629,16 +630,16 @@ void Touch_Item (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf
 // g_utils.c
 //
 qboolean	KillBox (edict_t *ent);
-void	G_ProjectSource (vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t result);
+EXTERNC void	G_ProjectSource (vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t result);
 edict_t *G_Find (edict_t *from, int fieldofs, char *match);
 edict_t *findradius (edict_t *from, vec3_t org, float rad);
-edict_t *G_PickTarget (char *targetname);
+EXTERNC edict_t *G_PickTarget (char *targetname);
 void	G_UseTargets (edict_t *ent, edict_t *activator);
 void	G_SetMovedir (vec3_t angles, vec3_t movedir);
 
 void	G_InitEdict (edict_t *e);
-edict_t	*G_Spawn (void);
-void	G_FreeEdict (edict_t *e);
+EXTERNC edict_t	*G_Spawn (void);
+EXTERNC void	G_FreeEdict (edict_t *e);
 
 void	G_TouchTriggers (edict_t *ent);
 void	G_TouchSolids (edict_t *ent);
@@ -646,9 +647,9 @@ void	G_TouchSolids (edict_t *ent);
 char	*G_CopyString (char *in);
 
 float	*tv (float x, float y, float z);
-char	*vtos (vec3_t v);
+EXTERNC char	*vtos (vec3_t v);
 
-float vectoyaw (vec3_t vec);
+EXTERNC float vectoyaw (vec3_t vec);
 void vectoangles (vec3_t vec, vec3_t angles);
 
 //
@@ -690,10 +691,11 @@ void monster_think (edict_t *self);
 void walkmonster_start (edict_t *self);
 void swimmonster_start (edict_t *self);
 void flymonster_start (edict_t *self);
-void AttackFinished (edict_t *self, float time);
+EXTERNC void AttackFinished (edict_t *self, float time);
 void monster_death_use (edict_t *self);
 void M_CatagorizePosition (edict_t *ent);
-qboolean M_CheckAttack (edict_t *self);
+EXTERNC qboolean M_CheckAttack (edict_t *self);
+EXTERNC qboolean FindTarget(edict_t* self);
 void M_FlyCheck (edict_t *self);
 void M_CheckGround (edict_t *ent);
 
@@ -708,20 +710,20 @@ void BecomeExplosion1(edict_t *self);
 //
 // g_ai.c
 //
-void AI_SetSightClient (void);
+EXTERNC void AI_SetSightClient (void);
 
-void ai_stand (edict_t *self, float dist);
-void ai_move (edict_t *self, float dist);
-void ai_walk (edict_t *self, float dist);
-void ai_turn (edict_t *self, float dist);
-void ai_run (edict_t *self, float dist);
-void ai_charge (edict_t *self, float dist);
-int range (edict_t *self, edict_t *other);
+EXTERNC void ai_stand (edict_t *self, float dist);
+EXTERNC void ai_move (edict_t *self, float dist);
+EXTERNC void ai_walk (edict_t *self, float dist);
+EXTERNC void ai_turn (edict_t *self, float dist);
+EXTERNC void ai_run (edict_t *self, float dist);
+EXTERNC void ai_charge (edict_t *self, float dist);
+EXTERNC int range (edict_t *self, edict_t *other);
 
-void FoundTarget (edict_t *self);
-qboolean infront (edict_t *self, edict_t *other);
-qboolean visible (edict_t *self, edict_t *other);
-qboolean FacingIdeal(edict_t *self);
+EXTERNC void FoundTarget(edict_t *self);
+EXTERNC qboolean infront (edict_t *self, edict_t *other);
+EXTERNC qboolean visible (edict_t *self, edict_t *other);
+EXTERNC qboolean FacingIdeal(edict_t *self);
 
 //
 // g_weapon.c
@@ -743,8 +745,8 @@ void fire_bfg (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed, f
 void PlayerTrail_Init (void);
 void PlayerTrail_Add (vec3_t spot);
 void PlayerTrail_New (vec3_t spot);
-edict_t *PlayerTrail_PickFirst (edict_t *self);
-edict_t *PlayerTrail_PickNext (edict_t *self);
+EXTERNC edict_t *PlayerTrail_PickFirst (edict_t *self);
+EXTERNC edict_t *PlayerTrail_PickNext (edict_t *self);
 edict_t	*PlayerTrail_LastSpot (void);
 
 //
@@ -794,9 +796,9 @@ void PlayerNoise(edict_t *who, vec3_t where, int type);
 // m_move.c
 //
 qboolean M_CheckBottom (edict_t *ent);
-qboolean M_walkmove (edict_t *ent, float yaw, float dist);
-void M_MoveToGoal (edict_t *ent, float dist);
-void M_ChangeYaw (edict_t *ent);
+EXTERNC qboolean M_walkmove (edict_t *ent, float yaw, float dist);
+EXTERNC void M_MoveToGoal (edict_t *ent, float dist);
+EXTERNC void M_ChangeYaw (edict_t *ent);
 
 //
 // g_phys.c
@@ -978,7 +980,7 @@ struct edict_s
 
 	// FIXME: move these fields to a server private sv_entity_t
 	link_t		area;				// linked to a division node or leaf
-	
+
 	int			num_clusters;		// if -1, use headnode instead
 	int			clusternums[MAX_ENT_CLUSTERS];
 	int			headnode;			// unused if num_clusters != -1
@@ -1003,7 +1005,7 @@ struct edict_s
 
 	char		*model;
 	float		freetime;			// sv.time when the object was freed
-	
+
 	//
 	// only used locally in game, not by server
 	//

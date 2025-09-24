@@ -115,9 +115,9 @@ void R_DrawSprite (void)
 
 	r_polydesc.stipple_parity = 1;
 	if ( currententity->flags & RF_TRANSLUCENT )
-		R_ClipAndDrawPoly ( currententity->alpha, false, true );
+		R_ClipAndDrawPoly ( currententity->alpha, e_false, e_true );
 	else
-		R_ClipAndDrawPoly ( 1.0F, false, true );
+		R_ClipAndDrawPoly ( 1.0F, e_false, e_true );
 	r_polydesc.stipple_parity = 0;
 }
 

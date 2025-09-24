@@ -74,8 +74,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 typedef struct sizebuf_s
 {
-	qboolean	allowoverflow;	// if false, do a Com_Error
-	qboolean	overflowed;		// set to true if the buffer size failed
+	qboolean	allowoverflow;	// if e_false, do a Com_Error
+	qboolean	overflowed;		// set to e_true if the buffer size failed
 	byte	*data;
 	int		maxsize;
 	int		cursize;
@@ -376,7 +376,7 @@ void Cbuf_AddEarlyCommands (qboolean clear);
 
 qboolean Cbuf_AddLateCommands (void);
 // adds all the remaining + commands from the command line
-// Returns true if any late commands were added, which
+// Returns e_true if any late commands were added, which
 // will keep the demoloop from immediately starting
 
 void Cbuf_Execute (void);
@@ -493,12 +493,12 @@ void	Cvar_GetLatchedVars (void);
 
 qboolean Cvar_Command (void);
 // called by Cmd_ExecuteString when Cmd_Argv(0) doesn't match a known
-// command.  Returns true if the command was a variable reference that
+// command.  Returns e_true if the command was a variable reference that
 // was handled. (print or change)
 
 void 	Cvar_WriteVariables (char *path);
 // appends lines containing "set variable value" for all variables
-// with the archive flag set to true.
+// with the archive flag set to e_true.
 
 void	Cvar_Init (void);
 

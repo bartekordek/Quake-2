@@ -187,12 +187,12 @@ qboolean IsFemale (edict_t *ent)
 	char		*info;
 
 	if (!ent->client)
-		return false;
+		return e_false;
 
 	info = Info_ValueForKey (ent->client->pers.userinfo, "skin");
 	if (info[0] == 'f' || info[0] == 'F')
-		return true;
-	return false;
+		return e_true;
+	return e_false;
 }
 
 
@@ -414,7 +414,7 @@ void TossClientWeapon (edict_t *self)
 		item = NULL;
 
 	if (!((int)(dmflags->value) & DF_QUAD_DROP))
-		quad = false;
+		quad = e_false;
 	else
 		quad = (self->client->quad_framenum > (level.framenum + 10));
 
@@ -637,7 +637,7 @@ void InitClientPersistant (gclient_t *client)
 	client->pers.max_cells		= 200;
 	client->pers.max_slugs		= 50;
 
-	client->pers.connected = true;
+	client->pers.connected = e_true;
 }
 
 
@@ -1116,7 +1116,7 @@ void PutClientInServer (edict_t *ent)
 	ent->takedamage = DAMAGE_AIM;
 	ent->movetype = MOVETYPE_WALK;
 	ent->viewheight = 22;
-	ent->inuse = true;
+	ent->inuse = e_true;
 	ent->classname = "player";
 	ent->mass = 200;
 	ent->solid = SOLID_BBOX;
@@ -1252,7 +1252,7 @@ void ClientBegin (edict_t *ent)
 
 	// if there is already a body waiting for us (a loadgame), just
 	// take it, otherwise spawn one from scratch
-	if (ent->inuse == true)
+	if (ent->inuse == e_true)
 	{
 		// the client has cleared the client side viewangles upon
 		// connecting to the server, which is different than the
@@ -1363,7 +1363,7 @@ void ClientUserinfoChanged (edict_t *ent, char *userinfo)
 ClientConnect
 
 Called when a player begins connecting to the server.
-The game can refuse entrance to a client by returning false.
+The game can refuse entrance to a client by returning e_false.
 If the client is allowed, the connection process will continue
 and eventually get to ClientBegin()
 Changing levels will NOT cause this to be called again, but
@@ -1382,7 +1382,7 @@ qboolean ClientConnect (edict_t *ent, char *userinfo)
 	if (*password->string && strcmp(password->string, "none") && 
 		strcmp(password->string, value)) {
 		Info_SetValueForKey(userinfo, "rejmsg", "Password required or incorrect.");
-		return false;
+		return e_false;
 	}
 
 	// they can connect
@@ -1390,12 +1390,12 @@ qboolean ClientConnect (edict_t *ent, char *userinfo)
 
 	// if there is already a body waiting for us (a loadgame), just
 	// take it, otherwise spawn one from scratch
-	if (ent->inuse == false)
+	if (ent->inuse == e_false)
 	{
 		// clear the respawning variables
 //ZOID -- force team join
 		ent->client->resp.ctf_team = -1;
-		ent->client->resp.id_state = false; 
+		ent->client->resp.id_state = e_false; 
 //ZOID
 		InitClientResp (ent->client);
 		if (!game.autosaved || !ent->client->pers.weapon)
@@ -1407,8 +1407,8 @@ qboolean ClientConnect (edict_t *ent, char *userinfo)
 	if (game.maxclients > 1)
 		gi.dprintf ("%s connected\n", ent->client->pers.netname);
 
-	ent->client->pers.connected = true;
-	return true;
+	ent->client->pers.connected = e_true;
+	return e_true;
 }
 
 /*
@@ -1442,9 +1442,9 @@ void ClientDisconnect (edict_t *ent)
 	gi.unlinkentity (ent);
 	ent->s.modelindex = 0;
 	ent->solid = SOLID_NOT;
-	ent->inuse = false;
+	ent->inuse = e_false;
 	ent->classname = "disconnected";
-	ent->client->pers.connected = false;
+	ent->client->pers.connected = e_false;
 
 	playernum = ent-g_edicts-1;
 	gi.configstring (CS_PLAYERSKINS+playernum, "");
@@ -1506,7 +1506,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		// can exit intermission after five seconds
 		if (level.time > level.intermissiontime + 5.0 
 			&& (ucmd->buttons & BUTTON_ANY) )
-			level.exitintermission = true;
+			level.exitintermission = e_true;
 		return;
 	}
 
@@ -1544,7 +1544,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 
 	if (memcmp(&client->old_pmove, &pm.s, sizeof(pm.s)))
 	{
-		pm.snapinitial = true;
+		pm.snapinitial = e_true;
 //		gi.dprintf ("pmove changed!\n");
 	}
 
@@ -1640,7 +1640,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	{
 		if (!client->weapon_thunk)
 		{
-			client->weapon_thunk = true;
+			client->weapon_thunk = e_true;
 			Think_Weapon (ent);
 		}
 	}
@@ -1659,9 +1659,9 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 
 	if (client->menudirty && client->menutime <= level.time) {
 		PMenu_Do_Update(ent);
-		gi.unicast (ent, true);
+		gi.unicast (ent, e_true);
 		client->menutime = level.time;
-		client->menudirty = false;
+		client->menudirty = e_false;
 	}
 //ZOID
 }
@@ -1693,7 +1693,7 @@ void ClientBeginServerFrame (edict_t *ent)
 		)
 		Think_Weapon (ent);
 	else
-		client->weapon_thunk = false;
+		client->weapon_thunk = e_false;
 
 	if (ent->deadflag)
 	{

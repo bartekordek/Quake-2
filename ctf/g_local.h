@@ -640,7 +640,7 @@ void Touch_Item (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf
 // g_utils.c
 //
 qboolean	KillBox (edict_t *ent);
-void	G_ProjectSource (vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t result);
+EXTERNC void	G_ProjectSource (vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t result);
 edict_t *G_Find (edict_t *from, int fieldofs, char *match);
 edict_t *findradius (edict_t *from, vec3_t org, float rad);
 edict_t *G_PickTarget (char *targetname);
@@ -980,7 +980,7 @@ struct gclient_s
 
 //ZOID
 	void		*ctf_grapple;		// entity of grapple
-	int			ctf_grapplestate;		// true if pulling
+	int			ctf_grapplestate;		// e_true if pulling
 	float		ctf_grapplereleasetime;	// time of grapple release
 	float		ctf_regentime;		// regen tech
 	float		ctf_techsndtime;

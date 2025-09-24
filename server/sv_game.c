@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -61,11 +61,11 @@ PF_dprintf
 Debug print to server console
 ===============
 */
-void PF_dprintf (char *fmt, ...)
+void PF_dprintf (const char *fmt, ...)
 {
 	char		msg[1024];
 	va_list		argptr;
-	
+
 	va_start (argptr,fmt);
 	vsprintf (msg, fmt, argptr);
 	va_end (argptr);
@@ -117,7 +117,7 @@ void PF_centerprintf (edict_t *ent, char *fmt, ...)
 	char		msg[1024];
 	va_list		argptr;
 	int			n;
-	
+
 	n = NUM_FOR_EDICT(ent);
 	if (n < 1 || n > maxclients->value)
 		return;	// Com_Error (ERR_DROP, "centerprintf to a non-client");
@@ -128,7 +128,7 @@ void PF_centerprintf (edict_t *ent, char *fmt, ...)
 
 	MSG_WriteByte (&sv.multicast,svc_centerprint);
 	MSG_WriteString (&sv.multicast,msg);
-	PF_Unicast (ent, true);
+	PF_Unicast (ent, e_true);
 }
 
 
@@ -143,7 +143,7 @@ void PF_error (char *fmt, ...)
 {
 	char		msg[1024];
 	va_list		argptr;
-	
+
 	va_start (argptr,fmt);
 	vsprintf (msg, fmt, argptr);
 	va_end (argptr);
@@ -168,7 +168,7 @@ void PF_setmodel (edict_t *ent, char *name)
 		Com_Error (ERR_DROP, "PF_setmodel: NULL");
 
 	i = SV_ModelIndex (name);
-		
+
 //	ent->model = name;
 	ent->s.modelindex = i;
 
@@ -199,7 +199,7 @@ void PF_Configstring (int index, char *val)
 
 	// change the string in sv
 	strcpy (sv.configstrings[index], val);
-	
+
 	if (sv.state != ss_loading)
 	{	// send the update to everyone
 		SZ_Clear (&sv.multicast);
@@ -247,10 +247,10 @@ qboolean PF_inPVS (vec3_t p1, vec3_t p2)
 	cluster = CM_LeafCluster (leafnum);
 	area2 = CM_LeafArea (leafnum);
 	if ( mask && (!(mask[cluster>>3] & (1<<(cluster&7)) ) ) )
-		return false;
+		return e_false;
 	if (!CM_AreasConnected (area1, area2))
-		return false;		// a door blocks sight
-	return true;
+		return e_false;		// a door blocks sight
+	return e_true;
 }
 
 
@@ -277,11 +277,11 @@ qboolean PF_inPHS (vec3_t p1, vec3_t p2)
 	cluster = CM_LeafCluster (leafnum);
 	area2 = CM_LeafArea (leafnum);
 	if ( mask && (!(mask[cluster>>3] & (1<<(cluster&7)) ) ) )
-		return false;		// more than one bounce away
+		return e_false;		// more than one bounce away
 	if (!CM_AreasConnected (area1, area2))
-		return false;		// a door blocks hearing
+		return e_false;		// a door blocks hearing
 
-	return true;
+	return e_true;
 }
 
 void PF_StartSound (edict_t *entity, int channel, int sound_num, float volume,

@@ -65,7 +65,7 @@ typedef struct image_s
 	char    name[MAX_QPATH];        // game path, including extension
 	imagetype_t     type;
 	int             width, height;
-	qboolean        transparent;    // true if any 255 pixels in image
+	qboolean        transparent;    // e_true if any 255 pixels in image
 	int             registration_sequence;  // 0 = free
 	byte		*pixels[4];				// mip levels
 } image_t;

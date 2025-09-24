@@ -62,7 +62,7 @@ void CL_DownloadFileName(char *dest, int destlen, char *fn)
 ===============
 CL_CheckOrDownloadFile
 
-Returns true if the file exists, otherwise it attempts
+Returns e_true if the file exists, otherwise it attempts
 to start a download from the server.
 ===============
 */
@@ -74,12 +74,12 @@ qboolean	CL_CheckOrDownloadFile (char *filename)
 	if (strstr (filename, ".."))
 	{
 		Com_Printf ("Refusing to download a path with ..\n");
-		return true;
+		return e_true;
 	}
 
 	if (FS_LoadFile (filename, NULL) != -1)
 	{	// it exists, no need to download
-		return true;
+		return e_true;
 	}
 
 	strcpy (cls.downloadname, filename);
@@ -119,7 +119,7 @@ qboolean	CL_CheckOrDownloadFile (char *filename)
 
 	cls.downloadnumber++;
 
-	return false;
+	return e_false;
 }
 
 /*
@@ -347,7 +347,7 @@ void CL_ParseServerData (void)
 		Com_Printf ("%c%s\n", 2, str);
 
 		// need to prep refresh at next oportunity
-		cl.refresh_prepped = false;
+		cl.refresh_prepped = e_false;
 	}
 }
 
@@ -534,7 +534,7 @@ void CL_ParseConfigString (void)
 	else if (i == CS_CDTRACK)
 	{
 		if (cl.refresh_prepped)
-			CDAudio_Play (atoi(cl.configstrings[CS_CDTRACK]), true);
+			CDAudio_Play (atoi(cl.configstrings[CS_CDTRACK]), e_true);
 	}
 	else if (i >= CS_MODELS && i < CS_MODELS+MAX_MODELS)
 	{

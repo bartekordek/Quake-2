@@ -39,6 +39,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define YAW 1	// left / right
 #define ROLL 2	// fall over
 
+#include "shared/config.h"
+
 #include <assert.h>
 #include <math.h>
 #include <stdio.h>
@@ -133,7 +135,7 @@ typedef int fixed16_t;
 
 struct cplane_s;
 
-extern vec3_t vec3_origin;
+EXTERNC extern vec3_t vec3_origin;
 
 #define nanmask (255 << 23)
 
@@ -167,9 +169,9 @@ void _VectorCopy(vec3_t in, vec3_t out);
 void ClearBounds(vec3_t mins, vec3_t maxs);
 void AddPointToBounds(vec3_t v, vec3_t mins, vec3_t maxs);
 int VectorCompare(vec3_t v1, vec3_t v2);
-vec_t VectorLength(vec3_t v);
+EXTERNC vec_t VectorLength(vec3_t v);
 void CrossProduct(vec3_t v1, vec3_t v2, vec3_t cross);
-vec_t VectorNormalize(vec3_t v); // returns vector length
+EXTERNC vec_t VectorNormalize(vec3_t v); // returns vector length
 vec_t VectorNormalize2(vec3_t v, vec3_t out);
 void VectorInverse(vec3_t v);
 void VectorScale(vec3_t in, vec_t scale, vec3_t out);
@@ -178,9 +180,9 @@ int Q_log2(int val);
 void R_ConcatRotations(float in1[3][3], float in2[3][3], float out[3][3]);
 void R_ConcatTransforms(float in1[3][4], float in2[3][4], float out[3][4]);
 
-void AngleVectors(vec3_t angles, vec3_t forward, vec3_t right, vec3_t up);
+EXTERNC void AngleVectors(vec3_t angles, vec3_t forward, vec3_t right, vec3_t up);
 int BoxOnPlaneSide(vec3_t emins, vec3_t emaxs, struct cplane_s *plane);
-float anglemod(float a);
+EXTERNC float anglemod(float a);
 float LerpAngle(float a1, float a2, float frac);
 
 #define BOX_ON_PLANE_SIDE(emins, emaxs, p)                                                                 \
@@ -394,8 +396,8 @@ typedef struct mapsurface_s // used internally due to name len probs //ZOID
 // a trace is returned when a box is swept through the world
 typedef struct
 {
-	qboolean allsolid;	 // if true, plane is not valid
-	qboolean startsolid; // if true, the initial point was in a solid area
+	qboolean allsolid;	 // if e_true, plane is not valid
+	qboolean startsolid; // if e_true, the initial point was in a solid area
 	float fraction;		 // time completed, 1.0 = didn't hit anything
 	vec3_t endpos;		 // final position
 	cplane_t plane;		 // surface normal at impact

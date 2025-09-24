@@ -2,6 +2,7 @@
 cmake_minimum_required(VERSION 3.0.0)
 
 set( CMAKE_C_STANDARD 90 )
+set(CMAKE_CXX_STANDARD 23)
 
 set( PROJECT_NAME game )
 
@@ -38,7 +39,7 @@ else()
 endif()
 
 
-file( GLOB_RECURSE SOURCES *.h *.c )
+file( GLOB_RECURSE SOURCES *.h *.c *.hpp *.cpp )
 
 source_group( TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SOURCES} )
 add_library( ${PROJECT_NAME} SHARED ${SOURCES} )
