@@ -1,7 +1,7 @@
 #cmake -DCMAKE_BUILD_TYPE=Debug
 cmake_minimum_required(VERSION 3.0.0)
 
-set( CMAKE_C_STANDARD 90 )
+set( CMAKE_C_STANDARD 17 )
 
 set( PROJECT_NAME shared )
 
@@ -17,13 +17,9 @@ if( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC" )
     add_compile_options( /MP )
     add_compile_options( "/wd4266" )
     add_compile_options( "/wd4820" )
+    add_compile_options( "/wd4996")
     add_compile_options( "/wd4710" )
     add_compile_options( "/wd5045" )
-
-    find_package( RapidJSON REQUIRED )
-    if( RapidJSON_FOUND )
-        include_directories( SYSTEM ${RapidJSON_INCLUDE_DIRS} )
-    endif( RapidJSON_FOUND )
 else()
     if(CMAKE_CXX_SIMULATE_ID MATCHES "MSVC")
         message(STATUS "WARNING: building clang-cl version.")
