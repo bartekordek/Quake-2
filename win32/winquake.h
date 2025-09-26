@@ -1,3 +1,6 @@
+#ifndef __win_quake_h__
+#define __win_quake_h__
+
 /*
 Copyright (C) 1997-2001 Id Software, Inc.
 
@@ -21,6 +24,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #pragma warning( disable : 4229 )  // mgraph gets this
 
+#include "shared/boolean.h"
 #include <windows.h>
 
 #include <dsound.h>
@@ -42,3 +46,5 @@ void IN_MouseEvent (int mstate);
 
 extern int		window_center_x, window_center_y;
 extern RECT		window_rect;
+
+#endif	// __win_quake_h__

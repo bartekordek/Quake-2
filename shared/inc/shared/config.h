@@ -7,4 +7,6 @@
 #define EXTERNC
 #endif
 
+#define MAXPRINTMSG 4096
+
 #endif // __shared_config_h__
