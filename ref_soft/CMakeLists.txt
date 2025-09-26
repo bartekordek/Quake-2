@@ -42,7 +42,7 @@ file( GLOB_RECURSE SOURCES *.h *.c )
 
 source_group( TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SOURCES} )
 
-list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/game/q_shared.c)
+list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/game/src/q_shared.c)
 list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/win32/q_shwin.c)
 list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/win32/rw_ddraw.c)
 list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/win32/rw_dib.c)
