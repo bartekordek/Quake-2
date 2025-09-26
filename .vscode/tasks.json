@@ -30,12 +30,45 @@
             }
         },
         {
-            "label": "[WINDOWS][BUILD][All][WithCreate]",
+            "label": "[WINDOWS][BUILD][All][WithCreate][Debug]",
             "type": "shell",
             "command": "cmake",
             "args": [
                 "--build",
                 "Build-Windows",
+                "--config",
+                "Debug",
+                "-j16"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "dedicated",
+                "showReuseMessage": false,
+                "clear": true
+            },
+            "problemMatcher": [
+                "$msCompile"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "dependsOn": "[WINDOWS][CMAKE][CREATE]"
+        },
+        {
+            "label": "[WINDOWS][BUILD][shared][WithCreate][Debug]",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "--build",
+                "Build-Windows",
+                "--target",
+                "shared",
                 "--config",
                 "Debug",
                 "-j16"
