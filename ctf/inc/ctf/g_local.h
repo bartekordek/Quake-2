@@ -28,10 +28,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // short, server-visible gclient_t and edict_t structures,
 // because we define the full size ones in this file
 #define	GAME_INCLUDE
-#include "game.h"
+#include "ctf/game.h"
 
 //ZOID
-#include "p_menu.h"
+#include "ctf/p_menu.h"
 //ZOID
 
 // the "gameversion" client command will print this plus compile date
@@ -1143,7 +1143,7 @@ struct edict_s
 };
 
 //ZOID
-#include "g_ctf.h"
+#include "ctf/g_ctf.h"
 //ZOID
 
 #endif // _ctf_g_local_h

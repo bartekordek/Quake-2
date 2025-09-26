@@ -21,11 +21,6 @@ if( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC" )
     add_compile_options( "/wd4820" )
     add_compile_options( "/wd4710" )
     add_compile_options( "/wd5045" )
-
-    find_package( RapidJSON REQUIRED )
-    if( RapidJSON_FOUND )
-        include_directories( SYSTEM ${RapidJSON_INCLUDE_DIRS} )
-    endif( RapidJSON_FOUND )
 else()
     if(CMAKE_CXX_SIMULATE_ID MATCHES "MSVC")
         message(STATUS "WARNING: building clang-cl version.")
@@ -65,6 +60,4 @@ else()
     endif()
 endif()
 
-target_include_directories(${PROJECT_NAME} PUBLIC .)
-
-
+target_include_directories(${PROJECT_NAME} PUBLIC inc PRIVATE src)

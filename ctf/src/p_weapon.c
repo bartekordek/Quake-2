@@ -19,8 +19,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 // g_weapon.c
 
-#include "g_local.h"
-#include "m_player.h"
+#include "ctf/g_local.h"
+#include "ctf/m_player.h"
 
 
 static qboolean	is_quad;
