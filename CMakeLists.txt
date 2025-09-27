@@ -45,3 +45,5 @@ add_subdirectory(quake2)
 add_subdirectory(ref_gl)
 add_subdirectory(ref_soft)
 add_subdirectory(shared)
+
+add_subdirectory(deps/SDL)
