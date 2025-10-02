@@ -681,9 +681,9 @@ Common between server and client so prediction matches
 ==============================================================
 */
 
-extern float pm_airaccelerate;
+EXTERNC extern float pm_airaccelerate;
 
-void Pmove (pmove_t *pmove);
+EXTERNC void Pmove (pmove_t *pmove);
 
 /*
 ==============================================================

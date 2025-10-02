@@ -133,7 +133,7 @@ typedef int fixed16_t;
 
 struct cplane_s;
 
-extern vec3_t vec3_origin;
+EXTERNC extern vec3_t vec3_origin;
 
 #define nanmask (255 << 23)
 
@@ -156,27 +156,27 @@ extern long Q_ftol(float f);
 #define VectorNegate(a, b) (b[0] = -a[0], b[1] = -a[1], b[2] = -a[2])
 #define VectorSet(v, x, y, z) (v[0] = (x), v[1] = (y), v[2] = (z))
 
-void VectorMA(vec3_t veca, float scale, vec3_t vecb, vec3_t vecc);
+EXTERNC void VectorMA(vec3_t veca, float scale, vec3_t vecb, vec3_t vecc);
 
 // just in case you do't want to use the macros
-vec_t _DotProduct(vec3_t v1, vec3_t v2);
-void _VectorSubtract(vec3_t veca, vec3_t vecb, vec3_t out);
-void _VectorAdd(vec3_t veca, vec3_t vecb, vec3_t out);
-void _VectorCopy(vec3_t in, vec3_t out);
+EXTERNC vec_t _DotProduct(vec3_t v1, vec3_t v2);
+EXTERNC void _VectorSubtract(vec3_t veca, vec3_t vecb, vec3_t out);
+EXTERNC void _VectorAdd(vec3_t veca, vec3_t vecb, vec3_t out);
+EXTERNC void _VectorCopy(vec3_t in, vec3_t out);
 
-void ClearBounds(vec3_t mins, vec3_t maxs);
-void AddPointToBounds(vec3_t v, vec3_t mins, vec3_t maxs);
-int VectorCompare(vec3_t v1, vec3_t v2);
-vec_t VectorLength(vec3_t v);
-void CrossProduct(vec3_t v1, vec3_t v2, vec3_t cross);
-vec_t VectorNormalize(vec3_t v); // returns vector length
-vec_t VectorNormalize2(vec3_t v, vec3_t out);
-void VectorInverse(vec3_t v);
-void VectorScale(vec3_t in, vec_t scale, vec3_t out);
-int Q_log2(int val);
+EXTERNC void ClearBounds(vec3_t mins, vec3_t maxs);
+EXTERNC void AddPointToBounds(vec3_t v, vec3_t mins, vec3_t maxs);
+EXTERNC int VectorCompare(vec3_t v1, vec3_t v2);
+EXTERNC vec_t VectorLength(vec3_t v);
+EXTERNC void CrossProduct(vec3_t v1, vec3_t v2, vec3_t cross);
+EXTERNC vec_t VectorNormalize(vec3_t v); // returns vector length
+EXTERNC vec_t VectorNormalize2(vec3_t v, vec3_t out);
+EXTERNC void VectorInverse(vec3_t v);
+EXTERNC void VectorScale(vec3_t in, vec_t scale, vec3_t out);
+EXTERNC int Q_log2(int val);
 
-void R_ConcatRotations(float in1[3][3], float in2[3][3], float out[3][3]);
-void R_ConcatTransforms(float in1[3][4], float in2[3][4], float out[3][4]);
+EXTERNC void R_ConcatRotations(float in1[3][3], float in2[3][3], float out[3][3]);
+EXTERNC void R_ConcatTransforms(float in1[3][4], float in2[3][4], float out[3][4]);
 
 EXTERNC void AngleVectors(vec3_t angles, vec3_t forward, vec3_t right, vec3_t up);
 EXTERNC int BoxOnPlaneSide(vec3_t emins, vec3_t emaxs, struct cplane_s *plane);

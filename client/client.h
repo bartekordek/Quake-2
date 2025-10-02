@@ -573,7 +573,7 @@ void CL_DrawInventory (void);
 //
 // cl_pred.c
 //
-void CL_PredictMovement (void);
+EXTERNC void CL_PredictMovement (void);
 
 #if id386
 void x86_TimerStart( void );
