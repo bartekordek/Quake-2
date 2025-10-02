@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 // cmodel.c -- model loading
 
+#include "shared/cmodel.h"
 #include "qcommon/qcommon.h"
 
 typedef struct
@@ -136,11 +137,10 @@ CMod_LoadSubmodels
 */
 void CMod_LoadSubmodels (lump_t *l)
 {
-	dmodel_t	*in;
 	cmodel_t	*out;
 	int			i, j, count;
 
-	in = (void *)(cmod_base + l->fileofs);
+	dmodel_t* in = (dmodel_t*)(cmod_base + l->fileofs);
 	if (l->filelen % sizeof(*in))
 		Com_Error (ERR_DROP, "MOD_LoadBmodel: funny lump size");
 	count = l->filelen / sizeof(*in);
@@ -174,11 +174,10 @@ CMod_LoadSurfaces
 */
 void CMod_LoadSurfaces (lump_t *l)
 {
-	texinfo_t	*in;
 	mapsurface_t	*out;
 	int			i, count;
 
-	in = (void *)(cmod_base + l->fileofs);
+	texinfo_t* in = (texinfo_t*)(cmod_base + l->fileofs);
 	if (l->filelen % sizeof(*in))
 		Com_Error (ERR_DROP, "MOD_LoadBmodel: funny lump size");
 	count = l->filelen / sizeof(*in);
@@ -208,12 +207,11 @@ CMod_LoadNodes
 */
 void CMod_LoadNodes (lump_t *l)
 {
-	dnode_t		*in;
 	int			child;
 	cnode_t		*out;
 	int			i, j, count;
 	
-	in = (void *)(cmod_base + l->fileofs);
+	dnode_t* in = (dnode_t*)(cmod_base + l->fileofs);
 	if (l->filelen % sizeof(*in))
 		Com_Error (ERR_DROP, "MOD_LoadBmodel: funny lump size");
 	count = l->filelen / sizeof(*in);
@@ -247,11 +245,10 @@ CMod_LoadBrushes
 */
 void CMod_LoadBrushes (lump_t *l)
 {
-	dbrush_t	*in;
 	cbrush_t	*out;
 	int			i, count;
 	
-	in = (void *)(cmod_base + l->fileofs);
+	dbrush_t* in = (dbrush_t*)(cmod_base + l->fileofs);
 	if (l->filelen % sizeof(*in))
 		Com_Error (ERR_DROP, "MOD_LoadBmodel: funny lump size");
 	count = l->filelen / sizeof(*in);
@@ -281,10 +278,9 @@ void CMod_LoadLeafs (lump_t *l)
 {
 	int			i;
 	cleaf_t		*out;
-	dleaf_t 	*in;
 	int			count;
 	
-	in = (void *)(cmod_base + l->fileofs);
+	dleaf_t* in = (dleaf_t*)(cmod_base + l->fileofs);
 	if (l->filelen % sizeof(*in))
 		Com_Error (ERR_DROP, "MOD_LoadBmodel: funny lump size");
 	count = l->filelen / sizeof(*in);
@@ -336,11 +332,10 @@ void CMod_LoadPlanes (lump_t *l)
 {
 	int			i, j;
 	cplane_t	*out;
-	dplane_t 	*in;
 	int			count;
 	int			bits;
 	
-	in = (void *)(cmod_base + l->fileofs);
+	dplane_t* in = (dplane_t*)(cmod_base + l->fileofs);
 	if (l->filelen % sizeof(*in))
 		Com_Error (ERR_DROP, "MOD_LoadBmodel: funny lump size");
 	count = l->filelen / sizeof(*in);
@@ -379,10 +374,9 @@ void CMod_LoadLeafBrushes (lump_t *l)
 {
 	int			i;
 	unsigned short	*out;
-	unsigned short 	*in;
 	int			count;
 	
-	in = (void *)(cmod_base + l->fileofs);
+	unsigned short* in = (unsigned short*)(cmod_base + l->fileofs);
 	if (l->filelen % sizeof(*in))
 		Com_Error (ERR_DROP, "MOD_LoadBmodel: funny lump size");
 	count = l->filelen / sizeof(*in);
@@ -409,11 +403,10 @@ void CMod_LoadBrushSides (lump_t *l)
 {
 	int			i, j;
 	cbrushside_t	*out;
-	dbrushside_t 	*in;
 	int			count;
 	int			num;
 
-	in = (void *)(cmod_base + l->fileofs);
+	dbrushside_t* in = (dbrushside_t*)(cmod_base + l->fileofs);
 	if (l->filelen % sizeof(*in))
 		Com_Error (ERR_DROP, "MOD_LoadBmodel: funny lump size");
 	count = l->filelen / sizeof(*in);
@@ -445,10 +438,9 @@ void CMod_LoadAreas (lump_t *l)
 {
 	int			i;
 	carea_t		*out;
-	darea_t 	*in;
 	int			count;
 
-	in = (void *)(cmod_base + l->fileofs);
+	darea_t* in = (darea_t*)(cmod_base + l->fileofs);
 	if (l->filelen % sizeof(*in))
 		Com_Error (ERR_DROP, "MOD_LoadBmodel: funny lump size");
 	count = l->filelen / sizeof(*in);
@@ -477,10 +469,9 @@ void CMod_LoadAreaPortals (lump_t *l)
 {
 	int			i;
 	dareaportal_t		*out;
-	dareaportal_t 	*in;
 	int			count;
 
-	in = (void *)(cmod_base + l->fileofs);
+	dareaportal_t* in = (dareaportal_t*)(cmod_base + l->fileofs);
 	if (l->filelen % sizeof(*in))
 		Com_Error (ERR_DROP, "MOD_LoadBmodel: funny lump size");
 	count = l->filelen / sizeof(*in);

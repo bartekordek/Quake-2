@@ -1,3 +1,6 @@
+#ifndef __q_files_h
+#define __q_files_h
+
 /*
 Copyright (C) 1997-2001 Id Software, Inc.
 
@@ -480,3 +483,5 @@ typedef struct
 	int		numareaportals;
 	int		firstareaportal;
 } darea_t;
+
+#endif // __q_files_h
