@@ -7,7 +7,7 @@ set( PROJECT_NAME ref_gl )
 
 project(${PROJECT_NAME} LANGUAGES C)
 
-set( CMAKE_ENABLE_EXPORTS true )
+set( CMAKE_ENABLE_EXPORTS e_true )
 
 if( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC" )
     message(STATUS "WARNING: building msvc version.")
@@ -54,7 +54,7 @@ if (MSVC)
 list(APPEND DEPENDENCIES winmm )
 endif()
 
-set_property( TARGET ${PROJECT_NAME} PROPERTY "LINK_LIBRARY_DEPENDENCIES" true )
+set_property( TARGET ${PROJECT_NAME} PROPERTY "LINK_LIBRARY_DEPENDENCIES" e_true )
 
 if (MSVC)
     list(APPEND LIBS msvcmrtd )

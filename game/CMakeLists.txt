@@ -7,7 +7,7 @@ set( PROJECT_NAME game )
 
 project(${PROJECT_NAME} LANGUAGES C)
 
-set( CMAKE_ENABLE_EXPORTS true )
+set( CMAKE_ENABLE_EXPORTS e_true )
 
 if( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC" )
     message(STATUS "WARNING: building msvc version.")
@@ -40,7 +40,7 @@ file( GLOB_RECURSE SOURCES *.h *.c )
 source_group( TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SOURCES} )
 add_library( ${PROJECT_NAME} SHARED ${SOURCES} )
 set( DEPENDENCIES PUBLIC shared)
-set_property( TARGET ${PROJECT_NAME} PROPERTY "LINK_LIBRARY_DEPENDENCIES" true )
+set_property( TARGET ${PROJECT_NAME} PROPERTY "LINK_LIBRARY_DEPENDENCIES" e_true )
 
 if (MSVC)
     target_link_options(${PROJECT_NAME} PUBLIC "/INCREMENTAL:NO")

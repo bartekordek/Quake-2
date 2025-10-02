@@ -38,6 +38,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define YAW 1	// left / right
 #define ROLL 2	// fall over
 
+#include "shared/config.h"
 #include <assert.h>
 #include <math.h>
 #include <stdio.h>
@@ -196,13 +197,13 @@ void RotatePointAroundVector(vec3_t dst, const vec3_t dir, const vec3_t point, f
 
 //=============================================
 
-char *COM_SkipPath(char *pathname);
-void COM_StripExtension(char *in, char *out);
-void COM_FileBase(char *in, char *out);
-void COM_FilePath(char *in, char *out);
-void COM_DefaultExtension(char *path, char *extension);
+EXTERNC char *COM_SkipPath(char *pathname);
+EXTERNC void COM_StripExtension(char *in, char *out);
+EXTERNC void COM_FileBase(char *in, char *out);
+EXTERNC void COM_FilePath(char *in, char *out);
+EXTERNC void COM_DefaultExtension(char *path, char *extension);
 
-char *COM_Parse(char **data_p);
+EXTERNC char *COM_Parse(char **data_p);
 // data is an in/out parm, returns a parsed out token
 
 void Com_sprintf(char *dest, int size, char *fmt, ...);
@@ -212,21 +213,21 @@ void Com_PageInMemory(byte *buffer, int size);
 //=============================================
 
 // portable case insensitive compare
-int Q_stricmp(char *s1, char *s2);
-int Q_strcasecmp(char *s1, char *s2);
-int Q_strncasecmp(char *s1, char *s2, int n);
+EXTERNC int Q_stricmp(char *s1, char *s2);
+EXTERNC int Q_strcasecmp(char *s1, char *s2);
+EXTERNC int Q_strncasecmp(char *s1, char *s2, int n);
 
 //=============================================
 
-short BigShort(short l);
-short LittleShort(short l);
-int BigLong(int l);
-int LittleLong(int l);
-float BigFloat(float l);
-float LittleFloat(float l);
+EXTERNC short BigShort(short l);
+EXTERNC short LittleShort(short l);
+EXTERNC int BigLong(int l);
+EXTERNC int LittleLong(int l);
+EXTERNC float BigFloat(float l);
+EXTERNC float LittleFloat(float l);
 
-void Swap_Init(void);
-char *va(char *format, ...);
+EXTERNC void Swap_Init(void);
+EXTERNC char *va(char *format, ...);
 
 //=============================================
 
@@ -237,10 +238,10 @@ char *va(char *format, ...);
 #define MAX_INFO_VALUE 64
 #define MAX_INFO_STRING 512
 
-char *Info_ValueForKey(char *s, char *key);
-void Info_RemoveKey(char *s, char *key);
-void Info_SetValueForKey(char *s, char *key, char *value);
-qboolean Info_Validate(char *s);
+EXTERNC char *Info_ValueForKey(char *s, char *key);
+EXTERNC void Info_RemoveKey(char *s, char *key);
+EXTERNC void Info_SetValueForKey(char *s, char *key, char *value);
+EXTERNC qboolean Info_Validate(char *s);
 
 /*
 ==============================================================
@@ -252,14 +253,14 @@ SYSTEM SPECIFIC
 
 extern int curtime; // time returned by last Sys_Milliseconds
 
-int Sys_Milliseconds(void);
-void Sys_Mkdir(char *path);
+EXTERNC int Sys_Milliseconds(void);
+EXTERNC void Sys_Mkdir(char *path);
 
 // large block stack allocation routines
-void *Hunk_Begin(int maxsize);
-void *Hunk_Alloc(int size);
-void Hunk_Free(void *buf);
-int Hunk_End(void);
+EXTERNC void *Hunk_Begin(int maxsize);
+EXTERNC void *Hunk_Alloc(int size);
+EXTERNC void Hunk_Free(void *buf);
+EXTERNC int Hunk_End(void);
 
 // directory searching
 #define SFF_ARCH 0x01
@@ -271,13 +272,13 @@ int Hunk_End(void);
 /*
 ** pass in an attribute mask of things you wish to REJECT
 */
-char *Sys_FindFirst(char *path, unsigned musthave, unsigned canthave);
-char *Sys_FindNext(unsigned musthave, unsigned canthave);
-void Sys_FindClose(void);
+EXTERNC char *Sys_FindFirst(char *path, unsigned musthave, unsigned canthave);
+EXTERNC char *Sys_FindNext(unsigned musthave, unsigned canthave);
+EXTERNC void Sys_FindClose(void);
 
 // this is only here so the functions in q_shared.c and q_shwin.c can link
-void Sys_Error(char *error, ...);
-void Com_Printf(char *msg, ...);
+EXTERNC void Sys_Error(char *error, ...);
+EXTERNC void Com_Printf(char *msg, ...);
 
 
 
@@ -393,8 +394,8 @@ typedef struct mapsurface_s // used internally due to name len probs //ZOID
 // a trace is returned when a box is swept through the world
 typedef struct
 {
-	qboolean allsolid;	 // if true, plane is not valid
-	qboolean startsolid; // if true, the initial point was in a solid area
+	qboolean allsolid;	 // if e_true, plane is not valid
+	qboolean startsolid; // if e_true, the initial point was in a solid area
 	float fraction;		 // time completed, 1.0 = didn't hit anything
 	vec3_t endpos;		 // final position
 	cplane_t plane;		 // surface normal at impact

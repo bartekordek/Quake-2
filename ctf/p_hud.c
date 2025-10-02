@@ -32,7 +32,7 @@ INTERMISSION
 void MoveClientToIntermission (edict_t *ent)
 {
 	if (deathmatch->value || coop->value)
-		ent->client->showscores = true;
+		ent->client->showscores = e_true;
 	VectorCopy (level.intermission_origin, ent->s.origin);
 	ent->client->ps.pmove.origin[0] = level.intermission_origin[0]*8;
 	ent->client->ps.pmove.origin[1] = level.intermission_origin[1]*8;
@@ -48,7 +48,7 @@ void MoveClientToIntermission (edict_t *ent)
 	ent->client->invincible_framenum = 0;
 	ent->client->breather_framenum = 0;
 	ent->client->enviro_framenum = 0;
-	ent->client->grenade_blew_up = false;
+	ent->client->grenade_blew_up = e_false;
 	ent->client->grenade_time = 0;
 
 	ent->viewheight = 0;
@@ -65,7 +65,7 @@ void MoveClientToIntermission (edict_t *ent)
 	if (deathmatch->value || coop->value)
 	{
 		DeathmatchScoreboardMessage (ent, NULL);
-		gi.unicast (ent, true);
+		gi.unicast (ent, e_true);
 	}
 
 }
@@ -83,7 +83,7 @@ void BeginIntermission (edict_t *targ)
 		CTFCalcScores();
 //ZOID
 
-	game.autosaved = false;
+	game.autosaved = e_false;
 
 	// respawn any dead clients
 	for (i=0 ; i<maxclients->value ; i++)
@@ -274,7 +274,7 @@ Note that it isn't that hard to overflow the 1400 byte message limit!
 void DeathmatchScoreboard (edict_t *ent)
 {
 	DeathmatchScoreboardMessage (ent, ent->enemy);
-	gi.unicast (ent, true);
+	gi.unicast (ent, e_true);
 }
 
 
@@ -287,8 +287,8 @@ Display the scoreboard
 */
 void Cmd_Score_f (edict_t *ent)
 {
-	ent->client->showinventory = false;
-	ent->client->showhelp = false;
+	ent->client->showinventory = e_false;
+	ent->client->showhelp = e_false;
 //ZOID
 	if (ent->client->menu)
 		PMenu_Close(ent);
@@ -299,12 +299,12 @@ void Cmd_Score_f (edict_t *ent)
 
 	if (ent->client->showscores)
 	{
-		ent->client->showscores = false;
-		ent->client->update_chase = true;
+		ent->client->showscores = e_false;
+		ent->client->update_chase = e_true;
 		return;
 	}
 
-	ent->client->showscores = true;
+	ent->client->showscores = e_true;
 
 	DeathmatchScoreboard (ent);
 }
@@ -350,7 +350,7 @@ void HelpComputer (edict_t *ent)
 
 	gi.WriteByte (svc_layout);
 	gi.WriteString (string);
-	gi.unicast (ent, true);
+	gi.unicast (ent, e_true);
 }
 
 
@@ -370,16 +370,16 @@ void Cmd_Help_f (edict_t *ent)
 		return;
 	}
 
-	ent->client->showinventory = false;
-	ent->client->showscores = false;
+	ent->client->showinventory = e_false;
+	ent->client->showscores = e_false;
 
 	if (ent->client->showhelp && (ent->client->resp.game_helpchanged == game.helpchanged))
 	{
-		ent->client->showhelp = false;
+		ent->client->showhelp = e_false;
 		return;
 	}
 
-	ent->client->showhelp = true;
+	ent->client->showhelp = e_true;
 	ent->client->resp.helpchanged = 0;
 	HelpComputer (ent);
 }

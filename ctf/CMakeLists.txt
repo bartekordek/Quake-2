@@ -7,7 +7,7 @@ set( PROJECT_NAME ctf )
 
 project(${PROJECT_NAME} LANGUAGES C)
 
-set( CMAKE_ENABLE_EXPORTS true )
+set( CMAKE_ENABLE_EXPORTS e_true )
 
 
 
@@ -48,7 +48,7 @@ add_library( ${PROJECT_NAME} SHARED ${SOURCES} )
 
 set( DEPENDENCIES PRIVATE shared)
 
-set_property( TARGET ${PROJECT_NAME} PROPERTY "LINK_LIBRARY_DEPENDENCIES" true )
+set_property( TARGET ${PROJECT_NAME} PROPERTY "LINK_LIBRARY_DEPENDENCIES" e_true )
 
 if (MSVC)
     list(APPEND LIBS msvcmrtd )

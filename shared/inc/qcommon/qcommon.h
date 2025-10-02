@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // qcommon.h -- definitions common between client and server, but not game.dll
 
 #include "shared/shared.h"
+#include "shared/config.h"
 #include "shared/cvar.h"
 
 #define	VERSION		3.19
@@ -74,41 +75,41 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 typedef struct sizebuf_s
 {
-	qboolean	allowoverflow;	// if false, do a Com_Error
-	qboolean	overflowed;		// set to true if the buffer size failed
+	qboolean	allowoverflow;	// if e_false, do a Com_Error
+	qboolean	overflowed;		// set to e_true if the buffer size failed
 	byte	*data;
 	int		maxsize;
 	int		cursize;
 	int		readcount;
 } sizebuf_t;
 
-void SZ_Init (sizebuf_t *buf, byte *data, int length);
-void SZ_Clear (sizebuf_t *buf);
-void *SZ_GetSpace (sizebuf_t *buf, int length);
-void SZ_Write (sizebuf_t *buf, void *data, int length);
-void SZ_Print (sizebuf_t *buf, char *data);	// strcats onto the sizebuf
+EXTERNC void SZ_Init (sizebuf_t *buf, byte *data, int length);
+EXTERNC void SZ_Clear (sizebuf_t *buf);
+EXTERNC void *SZ_GetSpace (sizebuf_t *buf, int length);
+EXTERNC void SZ_Write (sizebuf_t *buf, const void *data, int length);
+EXTERNC void SZ_Print (sizebuf_t *buf, char *data);	// strcats onto the sizebuf
 
 //============================================================================
 
 struct usercmd_s;
 struct entity_state_s;
 
-void MSG_WriteChar (sizebuf_t *sb, int c);
-void MSG_WriteByte (sizebuf_t *sb, int c);
-void MSG_WriteShort (sizebuf_t *sb, int c);
-void MSG_WriteLong (sizebuf_t *sb, int c);
-void MSG_WriteFloat (sizebuf_t *sb, float f);
-void MSG_WriteString (sizebuf_t *sb, char *s);
-void MSG_WriteCoord (sizebuf_t *sb, float f);
-void MSG_WritePos (sizebuf_t *sb, vec3_t pos);
-void MSG_WriteAngle (sizebuf_t *sb, float f);
-void MSG_WriteAngle16 (sizebuf_t *sb, float f);
-void MSG_WriteDeltaUsercmd (sizebuf_t *sb, struct usercmd_s *from, struct usercmd_s *cmd);
-void MSG_WriteDeltaEntity (struct entity_state_s *from, struct entity_state_s *to, sizebuf_t *msg, qboolean force, qboolean newentity);
-void MSG_WriteDir (sizebuf_t *sb, vec3_t vector);
+EXTERNC void MSG_WriteChar (sizebuf_t *sb, int c);
+EXTERNC void MSG_WriteByte (sizebuf_t *sb, int c);
+EXTERNC void MSG_WriteShort (sizebuf_t *sb, int c);
+EXTERNC void MSG_WriteLong (sizebuf_t *sb, int c);
+EXTERNC void MSG_WriteFloat (sizebuf_t *sb, float f);
+EXTERNC void MSG_WriteString (sizebuf_t *sb, char *s);
+EXTERNC void MSG_WriteCoord (sizebuf_t *sb, float f);
+EXTERNC void MSG_WritePos (sizebuf_t *sb, vec3_t pos);
+EXTERNC void MSG_WriteAngle (sizebuf_t *sb, float f);
+EXTERNC void MSG_WriteAngle16 (sizebuf_t *sb, float f);
+EXTERNC void MSG_WriteDeltaUsercmd (sizebuf_t *sb, struct usercmd_s *from, struct usercmd_s *cmd);
+EXTERNC void MSG_WriteDeltaEntity (struct entity_state_s *from, struct entity_state_s *to, sizebuf_t *msg, qboolean force, qboolean newentity);
+EXTERNC void MSG_WriteDir (sizebuf_t *sb, vec3_t vector);
 
 
-void	MSG_BeginReading (sizebuf_t *sb);
+EXTERNC void	MSG_BeginReading (sizebuf_t *sb);
 
 int		MSG_ReadChar (sizebuf_t *sb);
 int		MSG_ReadByte (sizebuf_t *sb);
@@ -142,28 +143,28 @@ extern	float	LittleFloat (float l);
 //============================================================================
 
 
-int	COM_Argc (void);
-char *COM_Argv (int arg);	// range and null checked
-void COM_ClearArgv (int arg);
-int COM_CheckParm (char *parm);
-void COM_AddParm (char *parm);
+EXTERNC int	COM_Argc (void);
+EXTERNC char *COM_Argv (int arg);	// range and null checked
+EXTERNC void COM_ClearArgv (int arg);
+EXTERNC int COM_CheckParm (char *parm);
+EXTERNC void COM_AddParm (char *parm);
 
-void COM_Init (void);
-void COM_InitArgv (int argc, char **argv);
+EXTERNC void COM_Init (void);
+EXTERNC void COM_InitArgv (int argc, char **argv);
 
-char *CopyString (char *in);
+EXTERNC char *CopyString (char *in);
 
 //============================================================================
 
-void Info_Print (char *s);
+EXTERNC void Info_Print (char *s);
 
 
 /* crc.h */
 
-void CRC_Init(unsigned short *crcvalue);
-void CRC_ProcessByte(unsigned short *crcvalue, byte data);
-unsigned short CRC_Value(unsigned short crcvalue);
-unsigned short CRC_Block (byte *start, int count);
+EXTERNC void CRC_Init(unsigned short *crcvalue);
+EXTERNC void CRC_ProcessByte(unsigned short *crcvalue, byte data);
+EXTERNC unsigned short CRC_Value(unsigned short crcvalue);
+EXTERNC unsigned short CRC_Block (byte *start, int count);
 
 
 
@@ -356,37 +357,37 @@ The game starts with a Cbuf_AddText ("exec quake.rc\n"); Cbuf_Execute ();
 #define	EXEC_INSERT	1		// insert at current position, but don't run yet
 #define	EXEC_APPEND	2		// add to end of the command buffer
 
-void Cbuf_Init (void);
+EXTERNC void Cbuf_Init (void);
 // allocates an initial text buffer that will grow as needed
 
-void Cbuf_AddText (char *text);
+EXTERNC void Cbuf_AddText (const char *text);
 // as new commands are generated from the console or keybindings,
 // the text is added to the end of the command buffer.
 
-void Cbuf_InsertText (char *text);
+EXTERNC void Cbuf_InsertText (const char *text);
 // when a command wants to issue other commands immediately, the text is
 // inserted at the beginning of the buffer, before any remaining unexecuted
 // commands.
 
-void Cbuf_ExecuteText (int exec_when, char *text);
+EXTERNC void Cbuf_ExecuteText (int exec_when, char *text);
 // this can be used in place of either Cbuf_AddText or Cbuf_InsertText
 
-void Cbuf_AddEarlyCommands (qboolean clear);
+EXTERNC void Cbuf_AddEarlyCommands (qboolean clear);
 // adds all the +set commands from the command line
 
-qboolean Cbuf_AddLateCommands (void);
+EXTERNC qboolean Cbuf_AddLateCommands (void);
 // adds all the remaining + commands from the command line
-// Returns true if any late commands were added, which
+// Returns e_true if any late commands were added, which
 // will keep the demoloop from immediately starting
 
-void Cbuf_Execute (void);
+EXTERNC void Cbuf_Execute (void);
 // Pulls off \n terminated lines of text from the command buffer and sends
 // them through Cmd_ExecuteString.  Stops when the buffer is empty.
 // Normally called once per frame, but may be explicitly invoked.
 // Do not call inside a command function!
 
-void Cbuf_CopyToDefer (void);
-void Cbuf_InsertFromDefer (void);
+EXTERNC void Cbuf_CopyToDefer (void);
+EXTERNC void Cbuf_InsertFromDefer (void);
 // These two functions are used to defer any pending commands while a map
 // is being loaded
 
@@ -401,39 +402,39 @@ then searches for a command or variable that matches the first token.
 
 typedef void (*xcommand_t) (void);
 
-void	Cmd_Init (void);
+EXTERNC void	Cmd_Init (void);
 
-void	Cmd_AddCommand (char *cmd_name, xcommand_t function);
+EXTERNC void	Cmd_AddCommand (char *cmd_name, xcommand_t function);
 // called by the init functions of other parts of the program to
 // register commands and functions to call for them.
 // The cmd_name is referenced later, so it should not be in temp memory
 // if function is NULL, the command will be forwarded to the server
 // as a clc_stringcmd instead of executed locally
-void	Cmd_RemoveCommand (char *cmd_name);
+EXTERNC void	Cmd_RemoveCommand (char *cmd_name);
 
-qboolean Cmd_Exists (char *cmd_name);
+EXTERNC qboolean Cmd_Exists (char *cmd_name);
 // used by the cvar code to check for cvar / command name overlap
 
-char 	*Cmd_CompleteCommand (char *partial);
+EXTERNC char 	*Cmd_CompleteCommand (char *partial);
 // attempts to match a partial command for automatic command line completion
 // returns NULL if nothing fits
 
-int		Cmd_Argc (void);
-char	*Cmd_Argv (int arg);
-char	*Cmd_Args (void);
+EXTERNC int		Cmd_Argc (void);
+EXTERNC char	*Cmd_Argv (int arg);
+EXTERNC char	*Cmd_Args (void);
 // The functions that execute commands get their parameters with these
 // functions. Cmd_Argv () will return an empty string, not a NULL
 // if arg > argc, so string operations are always safe.
 
-void	Cmd_TokenizeString (char *text, qboolean macroExpand);
+EXTERNC void	Cmd_TokenizeString (char *text, qboolean macroExpand);
 // Takes a null terminated string.  Does not need to be /n terminated.
 // breaks the string up into arg tokens.
 
-void	Cmd_ExecuteString (char *text);
+EXTERNC void	Cmd_ExecuteString (char *text);
 // Parses a single line of text into arguments and tries to execute it
 // as if it was typed at the console
 
-void	Cmd_ForwardToServer (void);
+EXTERNC void	Cmd_ForwardToServer (void);
 // adds the current command line as a clc_stringcmd to the client message.
 // things like godmode, noclip, etc, are commands directed to the server,
 // so when they are typed in at the console, they will need to be forwarded.
@@ -462,53 +463,53 @@ interface from being ambiguous.
 
 extern	cvar_t	*cvar_vars;
 
-cvar_t *Cvar_Get (char *var_name, char *value, int flags);
+EXTERNC cvar_t *Cvar_Get (char *var_name, char *value, int flags);
 // creates the variable if it doesn't exist, or returns the existing one
 // if it exists, the value will not be changed, but flags will be ORed in
 // that allows variables to be unarchived without needing bitflags
 
-cvar_t 	*Cvar_Set (char *var_name, char *value);
+EXTERNC cvar_t 	*Cvar_Set (char *var_name, char *value);
 // will create the variable if it doesn't exist
 
-cvar_t *Cvar_ForceSet (char *var_name, char *value);
+EXTERNC cvar_t *Cvar_ForceSet (char *var_name, char *value);
 // will set the variable even if NOSET or LATCH
 
-cvar_t 	*Cvar_FullSet (char *var_name, char *value, int flags);
+EXTERNC cvar_t 	*Cvar_FullSet (char *var_name, char *value, int flags);
 
-void	Cvar_SetValue (char *var_name, float value);
+EXTERNC void	Cvar_SetValue (char *var_name, float value);
 // expands value to a string and calls Cvar_Set
 
-float	Cvar_VariableValue (char *var_name);
+EXTERNC float	Cvar_VariableValue (char *var_name);
 // returns 0 if not defined or non numeric
 
-char	*Cvar_VariableString (char *var_name);
+EXTERNC char	*Cvar_VariableString (char *var_name);
 // returns an empty string if not defined
 
-char 	*Cvar_CompleteVariable (char *partial);
+EXTERNC char 	*Cvar_CompleteVariable (char *partial);
 // attempts to match a partial variable name for command line completion
 // returns NULL if nothing fits
 
-void	Cvar_GetLatchedVars (void);
+EXTERNC void	Cvar_GetLatchedVars (void);
 // any CVAR_LATCHED variables that have been set will now take effect
 
-qboolean Cvar_Command (void);
+EXTERNC qboolean Cvar_Command (void);
 // called by Cmd_ExecuteString when Cmd_Argv(0) doesn't match a known
-// command.  Returns true if the command was a variable reference that
+// command.  Returns e_true if the command was a variable reference that
 // was handled. (print or change)
 
-void 	Cvar_WriteVariables (char *path);
+EXTERNC void 	Cvar_WriteVariables (char *path);
 // appends lines containing "set variable value" for all variables
-// with the archive flag set to true.
+// with the archive flag set to e_true.
 
-void	Cvar_Init (void);
+EXTERNC void	Cvar_Init (void);
 
-char	*Cvar_Userinfo (void);
+EXTERNC char	*Cvar_Userinfo (void);
 // returns an info string containing all the CVAR_USERINFO cvars
 
-char	*Cvar_Serverinfo (void);
+EXTERNC char	*Cvar_Serverinfo (void);
 // returns an info string containing all the CVAR_SERVERINFO cvars
 
-extern	qboolean	userinfo_modified;
+EXTERNC extern	qboolean	userinfo_modified;
 // this is set each time a CVAR_USERINFO variable is changed
 // so that the client knows to send it to the server
 
@@ -692,26 +693,26 @@ FILESYSTEM
 ==============================================================
 */
 
-void	FS_InitFilesystem (void);
-void	FS_SetGamedir (char *dir);
-char	*FS_Gamedir (void);
-char	*FS_NextPath (char *prevpath);
-void	FS_ExecAutoexec (void);
+EXTERNC void	FS_InitFilesystem (void);
+EXTERNC void	FS_SetGamedir (char *dir);
+EXTERNC char	*FS_Gamedir (void);
+EXTERNC char	*FS_NextPath (char *prevpath);
+EXTERNC void	FS_ExecAutoexec (void);
 
-int		FS_FOpenFile (char *filename, FILE **file);
-void	FS_FCloseFile (FILE *f);
+EXTERNC int		FS_FOpenFile (char *filename, FILE **file);
+EXTERNC void	FS_FCloseFile (FILE *f);
 // note: this can't be called from another DLL, due to MS libc issues
 
-int		FS_LoadFile (char *path, void **buffer);
+EXTERNC int		FS_LoadFile (char *path, void **buffer);
 // a null buffer will just return the file length without loading
 // a -1 length is not present
 
-void	FS_Read (void *buffer, int len, FILE *f);
+EXTERNC void	FS_Read (void *buffer, int len, FILE *f);
 // properly handles partial reads
 
-void	FS_FreeFile (void *buffer);
+EXTERNC void	FS_FreeFile (void *buffer);
 
-void	FS_CreatePath (char *path);
+EXTERNC void	FS_CreatePath (char *path);
 
 
 /*
@@ -734,12 +735,12 @@ MISC
 #define	PRINT_ALL		0
 #define PRINT_DEVELOPER	1	// only print when "developer 1"
 
-void		Com_BeginRedirect (int target, char *buffer, int buffersize, void (*flush));
-void		Com_EndRedirect (void);
-void 		Com_Printf (char *fmt, ...);
-void 		Com_DPrintf (char *fmt, ...);
-void 		Com_Error (int code, char *fmt, ...);
-void 		Com_Quit (void);
+EXTERNC void		Com_BeginRedirect (int target, char *buffer, int buffersize, void (*flush));
+EXTERNC void		Com_EndRedirect (void);
+EXTERNC void 		Com_Printf (char *fmt, ...);
+EXTERNC void 		Com_DPrintf (char *fmt, ...);
+EXTERNC void 		Com_Error (int code, char *fmt, ...);
+EXTERNC void 		Com_Quit (void);
 
 int			Com_ServerState (void);		// this should have just been a cvar...
 void		Com_SetServerState (int state);
@@ -763,14 +764,14 @@ extern	int		time_after_game;
 extern	int		time_before_ref;
 extern	int		time_after_ref;
 
-void Z_Free (void *ptr);
-void *Z_Malloc (int size);			// returns 0 filled memory
-void *Z_TagMalloc (int size, int tag);
-void Z_FreeTags (int tag);
+EXTERNC void Z_Free (void *ptr);
+EXTERNC void *Z_Malloc (int size);			// returns 0 filled memory
+EXTERNC void *Z_TagMalloc (int size, int tag);
+EXTERNC void Z_FreeTags (int tag);
 
-void Qcommon_Init (int argc, char **argv);
-void Qcommon_Frame (int msec);
-void Qcommon_Shutdown (void);
+EXTERNC void Qcommon_Init (int argc, char **argv);
+EXTERNC void Qcommon_Frame (int msec);
+EXTERNC void Qcommon_Shutdown (void);
 
 #define NUMVERTEXNORMALS	162
 extern	vec3_t	bytedirs[NUMVERTEXNORMALS];

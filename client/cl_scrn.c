@@ -430,7 +430,7 @@ void SCR_Init (void)
 	Cmd_AddCommand ("sizedown",SCR_SizeDown_f);
 	Cmd_AddCommand ("sky",SCR_Sky_f);
 
-	scr_initialized = true;
+	scr_initialized = e_true;
 }
 
 
@@ -479,7 +479,7 @@ void SCR_DrawLoading (void)
 	if (!scr_draw_loading)
 		return;
 
-	scr_draw_loading = false;
+	scr_draw_loading = e_false;
 	re.DrawGetPicSize (&w, &h, "loading");
 	re.DrawPic ((viddef.width-w)/2, (viddef.height-h)/2, "loading");
 }
@@ -560,7 +560,7 @@ SCR_BeginLoadingPlaque
 void SCR_BeginLoadingPlaque (void)
 {
 	S_StopAllSounds ();
-	cl.sound_prepped = false;		// don't play ambients
+	cl.sound_prepped = e_false;		// don't play ambients
 	CDAudio_Stop ();
 	if (cls.disable_screen)
 		return;
@@ -1316,7 +1316,7 @@ void SCR_UpdateScreen (void)
 			int		w, h;
 
 			re.CinematicSetPalette(NULL);
-			scr_draw_loading = false;
+			scr_draw_loading = e_false;
 			re.DrawGetPicSize (&w, &h, "loading");
 			re.DrawPic ((viddef.width-w)/2, (viddef.height-h)/2, "loading");
 //			re.EndFrame();
@@ -1331,7 +1331,7 @@ void SCR_UpdateScreen (void)
 				if (cl.cinematicpalette_active)
 				{
 					re.CinematicSetPalette(NULL);
-					cl.cinematicpalette_active = false;
+					cl.cinematicpalette_active = e_false;
 				}
 				M_Draw ();
 //				re.EndFrame();
@@ -1342,7 +1342,7 @@ void SCR_UpdateScreen (void)
 				if (cl.cinematicpalette_active)
 				{
 					re.CinematicSetPalette(NULL);
-					cl.cinematicpalette_active = false;
+					cl.cinematicpalette_active = e_false;
 				}
 				SCR_DrawConsole ();
 //				re.EndFrame();
@@ -1362,7 +1362,7 @@ void SCR_UpdateScreen (void)
 			if (cl.cinematicpalette_active)
 			{
 				re.CinematicSetPalette(NULL);
-				cl.cinematicpalette_active = false;
+				cl.cinematicpalette_active = e_false;
 			}
 
 			// do 3D refresh drawing, and then update the screen

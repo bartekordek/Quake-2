@@ -53,7 +53,7 @@ bind g "impulse 5 ; +attack ; wait ; -attack ; impulse 2"
 */
 void Cmd_Wait_f (void)
 {
-	cmd_wait = true;
+	cmd_wait = e_true;
 }
 
 
@@ -87,7 +87,7 @@ Cbuf_AddText
 Adds command text at the end of the buffer
 ============
 */
-void Cbuf_AddText (char *text)
+void Cbuf_AddText (const char *text)
 {
 	int		l;
 	
@@ -111,7 +111,7 @@ Adds a \n to the text
 FIXME: actually change the command buffer to do less copying
 ============
 */
-void Cbuf_InsertText (char *text)
+void Cbuf_InsertText (const char *text)
 {
 	char	*temp;
 	int		templen;
@@ -120,7 +120,7 @@ void Cbuf_InsertText (char *text)
 	templen = cmd_text.cursize;
 	if (templen)
 	{
-		temp = Z_Malloc (templen);
+		temp = (char*)Z_Malloc (templen);
 		memcpy (temp, cmd_text.data, templen);
 		SZ_Clear (&cmd_text);
 	}
@@ -158,7 +158,7 @@ Cbuf_InsertFromDefer
 */
 void Cbuf_InsertFromDefer (void)
 {
-	Cbuf_InsertText (defer_text_buf);
+	Cbuf_InsertText ((const char*)defer_text_buf);
 	defer_text_buf[0] = 0;
 }
 
@@ -240,7 +240,7 @@ void Cbuf_Execute (void)
 		{
 			// skip out while text still remains in buffer, leaving it
 			// for next frame
-			cmd_wait = false;
+			cmd_wait = e_false;
 			break;
 		}
 	}
@@ -289,7 +289,7 @@ Adds command line parameters as script statements
 Commands lead with a + and continue until another + or -
 quake +vid_ref gl +map amlev1
 
-Returns true if any late commands were added, which
+Returns e_true if any late commands were added, which
 will keep the demoloop from immediately starting
 =================
 */
@@ -309,9 +309,9 @@ qboolean Cbuf_AddLateCommands (void)
 		s += strlen (COM_Argv(i)) + 1;
 	}
 	if (!s)
-		return false;
+		return e_false;
 		
-	text = Z_Malloc (s+1);
+	text = (char*)Z_Malloc (s+1);
 	text[0] = 0;
 	for (i=1 ; i<argc ; i++)
 	{
@@ -321,7 +321,7 @@ qboolean Cbuf_AddLateCommands (void)
 	}
 	
 // pull out the commands
-	build = Z_Malloc (s+1);
+	build = (char*)Z_Malloc (s+1);
 	build[0] = 0;
 	
 	for (i=0 ; i<s-1 ; i++)
@@ -343,7 +343,7 @@ qboolean Cbuf_AddLateCommands (void)
 		}
 	}
 
-	ret = (build[0] != 0);
+	ret = (qboolean)(build[0] != 0);
 	if (ret)
 		Cbuf_AddText (build);
 	
@@ -388,7 +388,7 @@ void Cmd_Exec_f (void)
 	Com_Printf ("execing %s\n",Cmd_Argv(1));
 	
 	// the file doesn't have a trailing 0, so we need to copy it off
-	f2 = Z_Malloc(len+1);
+	f2 = (char*)Z_Malloc(len+1);
 	memcpy (f2, f, len);
 	f2[len] = 0;
 
@@ -456,7 +456,7 @@ void Cmd_Alias_f (void)
 
 	if (!a)
 	{
-		a = Z_Malloc (sizeof(cmdalias_t));
+		a = (cmdalias_t*)Z_Malloc (sizeof(cmdalias_t));
 		a->next = cmd_alias;
 		cmd_alias = a;
 	}
@@ -548,7 +548,7 @@ char *Cmd_MacroExpandString (char *text)
 	char	temporary[MAX_STRING_CHARS];
 	char	*token, *start;
 
-	inquote = false;
+	inquote = e_false;
 	scan = text;
 
 	len = strlen (scan);
@@ -563,7 +563,12 @@ char *Cmd_MacroExpandString (char *text)
 	for (i=0 ; i<len ; i++)
 	{
 		if (scan[i] == '"')
-			inquote ^= 1;
+		{
+			int inQuoteInt = (int)inquote;
+			inQuoteInt ^= 1;
+
+			inquote = (qboolean)inQuoteInt;
+		}
 		if (inquote)
 			continue;	// don't expand inside quotes
 		if (scan[i] != '$')
@@ -674,7 +679,7 @@ void Cmd_TokenizeString (char *text, qboolean macroExpand)
 
 		if (cmd_argc < MAX_STRING_TOKENS)
 		{
-			cmd_argv[cmd_argc] = Z_Malloc (strlen(com_token)+1);
+			cmd_argv[cmd_argc] = (char*)Z_Malloc (strlen(com_token)+1);
 			strcpy (cmd_argv[cmd_argc], com_token);
 			cmd_argc++;
 		}
@@ -709,7 +714,7 @@ void	Cmd_AddCommand (char *cmd_name, xcommand_t function)
 		}
 	}
 
-	cmd = Z_Malloc (sizeof(cmd_function_t));
+	cmd = static_cast<decltype(cmd)>(Z_Malloc(sizeof(cmd_function_t)));
 	cmd->name = cmd_name;
 	cmd->function = function;
 	cmd->next = cmd_functions;
@@ -756,10 +761,10 @@ qboolean	Cmd_Exists (char *cmd_name)
 	for (cmd=cmd_functions ; cmd ; cmd=cmd->next)
 	{
 		if (!strcmp (cmd_name,cmd->name))
-			return true;
+			return e_true;
 	}
 
-	return false;
+	return e_false;
 }
 
 
@@ -813,7 +818,7 @@ void	Cmd_ExecuteString (char *text)
 	cmd_function_t	*cmd;
 	cmdalias_t		*a;
 
-	Cmd_TokenizeString (text, true);
+	Cmd_TokenizeString (text, e_true);
 			
 	// execute the command line
 	if (!Cmd_Argc())

@@ -706,7 +706,7 @@ qboolean medic_checkattack (edict_t *self)
 	if (self->monsterinfo.aiflags & AI_MEDIC)
 	{
 		medic_attack(self);
-		return true;
+		return e_true;
 	}
 
 	return M_CheckAttack (self);

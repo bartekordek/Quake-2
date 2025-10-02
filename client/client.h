@@ -93,7 +93,7 @@ typedef struct
 	int			timedemo_frames;
 	int			timedemo_start;
 
-	qboolean	refresh_prepped;	// false if on new level or new ref dll
+	qboolean	refresh_prepped;	// e_false if on new level or new ref dll
 	qboolean	sound_prepped;		// ambient sounds can start
 	qboolean	force_refdef;		// vid has changed, so we can't use a paused refdef
 

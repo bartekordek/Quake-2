@@ -108,9 +108,9 @@ cvar_t	*m_filter;
 
 qboolean	mlooking;
 
-void IN_MLookDown (void) { mlooking = true; }
+void IN_MLookDown (void) { mlooking = e_true; }
 void IN_MLookUp (void) {
-mlooking = false;
+mlooking = e_false;
 if (!freelook->value && lookspring->value)
 		IN_CenterView ();
 }
@@ -122,7 +122,7 @@ int			mouse_x, mouse_y, old_mouse_x, old_mouse_y, mx_accum, my_accum;
 
 int			old_x, old_y;
 
-qboolean	mouseactive;	// false when not focus app
+qboolean	mouseactive;	// e_false when not focus app
 
 qboolean	restore_spi;
 qboolean	mouseinitialized;
@@ -148,13 +148,13 @@ void IN_ActivateMouse (void)
 		return;
 	if (!in_mouse->value)
 	{
-		mouseactive = false;
+		mouseactive = e_false;
 		return;
 	}
 	if (mouseactive)
 		return;
 
-	mouseactive = true;
+	mouseactive = e_true;
 
 	if (mouseparmsvalid)
 		restore_spi = SystemParametersInfo (SPI_SETMOUSE, 0, newmouseparms, 0);
@@ -204,7 +204,7 @@ void IN_DeactivateMouse (void)
 	if (restore_spi)
 		SystemParametersInfo (SPI_SETMOUSE, 0, originalmouseparms, 0);
 
-	mouseactive = false;
+	mouseactive = e_false;
 
 	ClipCursor (NULL);
 	ReleaseCapture ();
@@ -227,7 +227,7 @@ void IN_StartupMouse (void)
 	if ( !cv->value ) 
 		return; 
 
-	mouseinitialized = true;
+	mouseinitialized = e_true;
 	mouseparmsvalid = SystemParametersInfo (SPI_GETMOUSE, 0, originalmouseparms, 0);
 	mouse_buttons = 3;
 }
@@ -250,13 +250,13 @@ void IN_MouseEvent (int mstate)
 		if ( (mstate & (1<<i)) &&
 			!(mouse_oldbuttonstate & (1<<i)) )
 		{
-			Key_Event (K_MOUSE1 + i, true, sys_msg_time);
+			Key_Event (K_MOUSE1 + i, e_true, sys_msg_time);
 		}
 
 		if ( !(mstate & (1<<i)) &&
 			(mouse_oldbuttonstate & (1<<i)) )
 		{
-				Key_Event (K_MOUSE1 + i, false, sys_msg_time);
+				Key_Event (K_MOUSE1 + i, e_false, sys_msg_time);
 		}
 	}	
 		
@@ -491,7 +491,7 @@ void IN_StartupJoystick (void)
 	cvar_t		*cv;
 
  	// assume no joystick
-	joy_avail = false; 
+	joy_avail = e_false; 
 
 	// abort startup if user requests no joystick
 	cv = Cvar_Get ("in_initjoy", "1", CVAR_NOSET);
@@ -542,8 +542,8 @@ void IN_StartupJoystick (void)
 	// mark the joystick as available and advanced initialization not completed
 	// this is needed as cvars are not available during initialization
 
-	joy_avail = true; 
-	joy_advancedinit = false;
+	joy_avail = e_true; 
+	joy_advancedinit = e_false;
 
 	Com_Printf ("\njoystick detected\n\n"); 
 }
@@ -670,13 +670,13 @@ void IN_Commands (void)
 		if ( (buttonstate & (1<<i)) && !(joy_oldbuttonstate & (1<<i)) )
 		{
 			key_index = (i < 4) ? K_JOY1 : K_AUX1;
-			Key_Event (key_index + i, true, 0);
+			Key_Event (key_index + i, e_true, 0);
 		}
 
 		if ( !(buttonstate & (1<<i)) && (joy_oldbuttonstate & (1<<i)) )
 		{
 			key_index = (i < 4) ? K_JOY1 : K_AUX1;
-			Key_Event (key_index + i, false, 0);
+			Key_Event (key_index + i, e_false, 0);
 		}
 	}
 	joy_oldbuttonstate = buttonstate;
@@ -703,12 +703,12 @@ void IN_Commands (void)
 		{
 			if ( (povstate & (1<<i)) && !(joy_oldpovstate & (1<<i)) )
 			{
-				Key_Event (K_AUX29 + i, true, 0);
+				Key_Event (K_AUX29 + i, e_true, 0);
 			}
 
 			if ( !(povstate & (1<<i)) && (joy_oldpovstate & (1<<i)) )
 			{
-				Key_Event (K_AUX29 + i, false, 0);
+				Key_Event (K_AUX29 + i, e_false, 0);
 			}
 		}
 		joy_oldpovstate = povstate;
@@ -730,7 +730,7 @@ qboolean IN_ReadJoystick (void)
 
 	if (joyGetPosEx (joy_id, &ji) == JOYERR_NOERROR)
 	{
-		return true;
+		return e_true;
 	}
 	else
 	{
@@ -738,8 +738,8 @@ qboolean IN_ReadJoystick (void)
 		// turning off the joystick seems too harsh for 1 read error,\
 		// but what should be done?
 		// Com_Printf ("IN_ReadJoystick: no response\n");
-		// joy_avail = false;
-		return false;
+		// joy_avail = e_false;
+		return e_false;
 	}
 }
 
@@ -757,10 +757,10 @@ void IN_JoyMove (usercmd_t *cmd)
 
 	// complete initialization if first time in
 	// this is needed as cvars are not available at initialization time
-	if( joy_advancedinit != true )
+	if( joy_advancedinit != e_true )
 	{
 		Joy_AdvancedUpdate_f();
-		joy_advancedinit = true;
+		joy_advancedinit = e_true;
 	}
 
 	// verify joystick is available and that the user wants to use it
@@ -770,7 +770,7 @@ void IN_JoyMove (usercmd_t *cmd)
 	}
  
 	// collect the joystick data, if possible
-	if (IN_ReadJoystick () != true)
+	if (IN_ReadJoystick () != e_true)
 	{
 		return;
 	}
@@ -801,7 +801,7 @@ void IN_JoyMove (usercmd_t *cmd)
 				if (fabs(fAxisValue) > joy_pitchthreshold->value)
 				{		
 					// if mouse invert is on, invert the joystick pitch value
-					// only absolute control support here (joy_advanced is false)
+					// only absolute control support here (joy_advanced is e_false)
 					if (m_pitch->value < 0.0)
 					{
 						cl.viewangles[PITCH] -= (fAxisValue * joy_pitchsensitivity->value) * aspeed * cl_pitchspeed->value;

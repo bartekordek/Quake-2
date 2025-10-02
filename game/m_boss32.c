@@ -730,7 +730,7 @@ qboolean Makron_CheckAttack (edict_t *self)
 
 		// do we have a clear shot?
 		if (tr.ent != self->enemy)
-			return false;
+			return e_false;
 	}
 	
 	enemy_infront = infront(self, self->enemy);
@@ -748,18 +748,18 @@ qboolean Makron_CheckAttack (edict_t *self)
 			self->monsterinfo.attack_state = AS_MELEE;
 		else
 			self->monsterinfo.attack_state = AS_MISSILE;
-		return true;
+		return e_true;
 	}
 	
 // missile attack
 	if (!self->monsterinfo.attack)
-		return false;
+		return e_false;
 		
 	if (level.time < self->monsterinfo.attack_finished)
-		return false;
+		return e_false;
 		
 	if (enemy_range == RANGE_FAR)
-		return false;
+		return e_false;
 
 	if (self->monsterinfo.aiflags & AI_STAND_GROUND)
 	{
@@ -779,14 +779,14 @@ qboolean Makron_CheckAttack (edict_t *self)
 	}
 	else
 	{
-		return false;
+		return e_false;
 	}
 
 	if (random () < chance)
 	{
 		self->monsterinfo.attack_state = AS_MISSILE;
 		self->monsterinfo.attack_finished = level.time + 2*random();
-		return true;
+		return e_true;
 	}
 
 	if (self->flags & FL_FLY)
@@ -797,7 +797,7 @@ qboolean Makron_CheckAttack (edict_t *self)
 			self->monsterinfo.attack_state = AS_STRAIGHT;
 	}
 
-	return false;
+	return e_false;
 }
 
 

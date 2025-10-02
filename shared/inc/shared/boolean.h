@@ -3,8 +3,8 @@
 
 typedef enum
 {
-	false,
-	true
+	e_false,
+	e_true
 } qboolean;
 
 

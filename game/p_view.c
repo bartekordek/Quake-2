@@ -863,13 +863,13 @@ void G_SetClientFrame (edict_t *ent)
 	client = ent->client;
 
 	if (client->ps.pmove.pm_flags & PMF_DUCKED)
-		duck = true;
+		duck = e_true;
 	else
-		duck = false;
+		duck = e_false;
 	if (xyspeed)
-		run = true;
+		run = e_true;
 	else
-		run = false;
+		run = e_false;
 
 	// check for stand/duck and stop/go transitions
 	if (duck != client->anim_duck && client->anim_priority < ANIM_DEATH)
@@ -1081,7 +1081,7 @@ void ClientEndServerFrame (edict_t *ent)
 	if (ent->client->showscores && !(level.framenum & 31) )
 	{
 		DeathmatchScoreboardMessage (ent, ent->enemy);
-		gi.unicast (ent, false);
+		gi.unicast (ent, e_false);
 	}
 }
 
