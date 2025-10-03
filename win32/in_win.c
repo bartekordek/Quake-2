@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // 02/21/97 JCB Added extended DirectInput code to support external controllers.
 
 #include "../client/client.h"
-#include "winquake.h"
+#include "../quake2/inc/quake2/windows/winquake.h"
 
 extern	unsigned	sys_msg_time;
 

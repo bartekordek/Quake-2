@@ -1,3 +1,6 @@
+#ifndef __input_h__
+#define __input_h__
+
 /*
 Copyright (C) 1997-2001 Id Software, Inc.
 
@@ -19,6 +22,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 // input.h -- external (non-keyboard) input devices
 
+#include "shared/boolean.h"
+
 void IN_Init (void);
 
 void IN_Shutdown (void);
@@ -32,3 +37,5 @@ void IN_Move (usercmd_t *cmd);
 // add additional movement on top of the keyboard move cmd
 
 void IN_Activate (qboolean active);
+
+#endif	// __input_h__

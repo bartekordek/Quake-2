@@ -31,7 +31,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "vid.h"
 #include "screen.h"
 #include "sound.h"
-#include "input.h"
+#include "../quake2/inc/input/input.h"
 #include "keys.h"
 #include "console.h"
 #include "cdaudio.h"

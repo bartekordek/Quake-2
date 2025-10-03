@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 #include "../client/client.h"
-#include "../client/qmenu.h"
+#include "../quake2/inc/quake2/ui/qmenu.h"
 
 #define REF_SOFT	0
 #define REF_OPENGL	1
