@@ -10,7 +10,8 @@
 			"*.config": "xml",
 			"*.vert": "glsl",
 			"*.frag": "glsl",
-			"assert.h": "c"
+			"assert.h": "c",
+			"snd_loc.h": "c"
 		}
 	}
 }
