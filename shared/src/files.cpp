@@ -18,7 +18,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#include "shared/files.h"
 #include "qcommon/qcommon.h"
+#include "../../win32/cd_win.h"
 
 // define this to dissalow any data but the demo pak file
 //#define	NO_ADDONS
@@ -341,7 +343,6 @@ FS_ReadFile
 Properly handles partial reads
 =================
 */
-void CDAudio_Stop(void);
 #define	MAX_READ	0x10000		// read in blocks of 64k
 void FS_Read (void *buffer, int len, FILE *f)
 {
@@ -394,10 +395,7 @@ a null buffer will just return the file length without loading
 int FS_LoadFile (char *path, void **buffer)
 {
 	FILE	*h;
-	byte	*buf;
 	int		len;
-
-	buf = NULL;	// quiet compiler warning
 
 // look for it in the filesystem or pack files
 	len = FS_FOpenFile (path, &h);
@@ -414,7 +412,7 @@ int FS_LoadFile (char *path, void **buffer)
 		return len;
 	}
 
-	buf = Z_Malloc(len);
+	byte* buf = (byte * )Z_Malloc(len);
 	*buffer = buf;
 
 	FS_Read (buf, len, h);
@@ -449,9 +447,7 @@ pack_t *FS_LoadPackFile (char *packfile)
 {
 	dpackheader_t	header;
 	int				i;
-	packfile_t		*newfiles;
 	int				numpackfiles;
-	pack_t			*pack;
 	FILE			*packhandle;
 	dpackfile_t		info[MAX_FILES_IN_PACK];
 	unsigned		checksum;
@@ -471,7 +467,7 @@ pack_t *FS_LoadPackFile (char *packfile)
 	if (numpackfiles > MAX_FILES_IN_PACK)
 		Com_Error (ERR_FATAL, "%s has %i files", packfile, numpackfiles);
 
-	newfiles = Z_Malloc (numpackfiles * sizeof(packfile_t));
+	packfile_t* newfiles = (packfile_t*)Z_Malloc (numpackfiles * sizeof(packfile_t));
 
 	fseek (packhandle, header.dirofs, SEEK_SET);
 	fread (info, 1, header.dirlen, packhandle);
@@ -491,7 +487,7 @@ pack_t *FS_LoadPackFile (char *packfile)
 		newfiles[i].filelen = LittleLong(info[i].filelen);
 	}
 
-	pack = Z_Malloc (sizeof (pack_t));
+	pack_t* pack = (pack_t*)Z_Malloc (sizeof (pack_t));
 	strcpy (pack->filename, packfile);
 	pack->handle = packhandle;
 	pack->numfiles = numpackfiles;
@@ -513,7 +509,6 @@ then loads and adds pak1.pak pak2.pak ...
 void FS_AddGameDirectory (char *dir)
 {
 	int				i;
-	searchpath_t	*search;
 	pack_t			*pak;
 	char			pakfile[MAX_OSPATH];
 
@@ -522,7 +517,7 @@ void FS_AddGameDirectory (char *dir)
 	//
 	// add the directory to the search path
 	//
-	search = Z_Malloc (sizeof(searchpath_t));
+	searchpath_t* search = (searchpath_t*)Z_Malloc (sizeof(searchpath_t));
 	strcpy (search->filename, dir);
 	search->next = fs_searchpaths;
 	fs_searchpaths = search;
@@ -536,7 +531,7 @@ void FS_AddGameDirectory (char *dir)
 		pak = FS_LoadPackFile (pakfile);
 		if (!pak)
 			continue;
-		search = Z_Malloc (sizeof(searchpath_t));
+		search = (searchpath_t*)Z_Malloc (sizeof(searchpath_t));
 		search->pack = pak;
 		search->next = fs_searchpaths;
 		fs_searchpaths = search;		
@@ -673,7 +668,7 @@ void FS_Link_f (void)
 	}
 
 	// create a new link
-	l = Z_Malloc(sizeof(*l));
+	l = (filelink_t*)Z_Malloc(sizeof(*l));
 	l->next = fs_links;
 	fs_links = l;
 	l->from = CopyString(Cmd_Argv(1));
@@ -705,7 +700,7 @@ char **FS_ListFiles( char *findname, int *numfiles, unsigned musthave, unsigned 
 	nfiles++; // add space for a guard
 	*numfiles = nfiles;
 
-	list = malloc( sizeof( char * ) * nfiles );
+	list = (char**)malloc( sizeof( char * ) * nfiles );
 	memset( list, 0, sizeof( char * ) * nfiles );
 
 	s = Sys_FindFirst( findname, musthave, canthave );
@@ -857,12 +852,12 @@ void FS_InitFilesystem (void)
 	//
 	fs_cddir = Cvar_Get ("cddir", "", CVAR_NOSET);
 	if (fs_cddir->string[0])
-		FS_AddGameDirectory (va("%s/"BASEDIRNAME, fs_cddir->string) );
+		FS_AddGameDirectory (va("%s/%s", fs_cddir->string, BASEDIRNAME) );
 
 	//
 	// start up with baseq2 by default
 	//
-	FS_AddGameDirectory (va("%s/"BASEDIRNAME, fs_basedir->string) );
+	FS_AddGameDirectory (va("%s/%s", fs_basedir->string, BASEDIRNAME) );
 
 	// any set gamedirs will be freed up to here
 	fs_base_searchpaths = fs_searchpaths;

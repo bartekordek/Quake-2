@@ -1,5 +1,6 @@
 /* GLOBAL.H - RSAREF types and constants */
 
+#include "qcommon/qcommon.h"
 #include <string.h>
 
 /* POINTER defines a generic pointer type */

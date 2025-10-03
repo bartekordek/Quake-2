@@ -206,9 +206,9 @@ EXTERNC void COM_DefaultExtension(char *path, char *extension);
 EXTERNC char *COM_Parse(char **data_p);
 // data is an in/out parm, returns a parsed out token
 
-void Com_sprintf(char *dest, int size, char *fmt, ...);
+EXTERNC void Com_sprintf(char *dest, int size, char *fmt, ...);
 
-void Com_PageInMemory(byte *buffer, int size);
+EXTERNC void Com_PageInMemory(byte *buffer, int size);
 
 //=============================================
 
@@ -251,7 +251,7 @@ SYSTEM SPECIFIC
 ==============================================================
 */
 
-extern int curtime; // time returned by last Sys_Milliseconds
+EXTERNC extern int curtime; // time returned by last Sys_Milliseconds
 
 EXTERNC int Sys_Milliseconds(void);
 EXTERNC void Sys_Mkdir(char *path);

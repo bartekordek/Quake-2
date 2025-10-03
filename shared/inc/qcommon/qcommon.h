@@ -111,23 +111,23 @@ EXTERNC void MSG_WriteDir (sizebuf_t *sb, vec3_t vector);
 
 EXTERNC void	MSG_BeginReading (sizebuf_t *sb);
 
-int		MSG_ReadChar (sizebuf_t *sb);
-int		MSG_ReadByte (sizebuf_t *sb);
-int		MSG_ReadShort (sizebuf_t *sb);
-int		MSG_ReadLong (sizebuf_t *sb);
-float	MSG_ReadFloat (sizebuf_t *sb);
-char	*MSG_ReadString (sizebuf_t *sb);
-char	*MSG_ReadStringLine (sizebuf_t *sb);
+EXTERNC int		MSG_ReadChar (sizebuf_t *sb);
+EXTERNC int		MSG_ReadByte (sizebuf_t *sb);
+EXTERNC int		MSG_ReadShort (sizebuf_t *sb);
+EXTERNC int		MSG_ReadLong (sizebuf_t *sb);
+EXTERNC float	MSG_ReadFloat (sizebuf_t *sb);
+EXTERNC char	*MSG_ReadString (sizebuf_t *sb);
+EXTERNC char	*MSG_ReadStringLine (sizebuf_t *sb);
 
-float	MSG_ReadCoord (sizebuf_t *sb);
-void	MSG_ReadPos (sizebuf_t *sb, vec3_t pos);
-float	MSG_ReadAngle (sizebuf_t *sb);
-float	MSG_ReadAngle16 (sizebuf_t *sb);
-void	MSG_ReadDeltaUsercmd (sizebuf_t *sb, struct usercmd_s *from, struct usercmd_s *cmd);
+EXTERNC float	MSG_ReadCoord (sizebuf_t *sb);
+EXTERNC void	MSG_ReadPos (sizebuf_t *sb, vec3_t pos);
+EXTERNC float	MSG_ReadAngle (sizebuf_t *sb);
+EXTERNC float	MSG_ReadAngle16 (sizebuf_t *sb);
+EXTERNC void	MSG_ReadDeltaUsercmd (sizebuf_t *sb, struct usercmd_s *from, struct usercmd_s *cmd);
 
-void	MSG_ReadDir (sizebuf_t *sb, vec3_t vector);
+EXTERNC void	MSG_ReadDir (sizebuf_t *sb, vec3_t vector);
 
-void	MSG_ReadData (sizebuf_t *sb, void *buffer, int size);
+EXTERNC void	MSG_ReadData (sizebuf_t *sb, void *buffer, int size);
 
 //============================================================================
 
@@ -461,7 +461,7 @@ Cvars are restricted from having the same names as commands to keep this
 interface from being ambiguous.
 */
 
-extern	cvar_t	*cvar_vars;
+EXTERNC extern	cvar_t	*cvar_vars;
 
 EXTERNC cvar_t *Cvar_Get (char *var_name, char *value, int flags);
 // creates the variable if it doesn't exist, or returns the existing one
@@ -542,20 +542,20 @@ typedef struct
 	unsigned short	port;
 } netadr_t;
 
-void		NET_Init (void);
-void		NET_Shutdown (void);
+EXTERNC void		NET_Init (void);
+EXTERNC void		NET_Shutdown (void);
 
-void		NET_Config (qboolean multiplayer);
+EXTERNC void		NET_Config (qboolean multiplayer);
 
-qboolean	NET_GetPacket (netsrc_t sock, netadr_t *net_from, sizebuf_t *net_message);
-void		NET_SendPacket (netsrc_t sock, int length, void *data, netadr_t to);
+EXTERNC qboolean	NET_GetPacket (netsrc_t sock, netadr_t *net_from, sizebuf_t *net_message);
+EXTERNC void		NET_SendPacket (netsrc_t sock, int length, void *data, netadr_t to);
 
-qboolean	NET_CompareAdr (netadr_t a, netadr_t b);
-qboolean	NET_CompareBaseAdr (netadr_t a, netadr_t b);
-qboolean	NET_IsLocalAddress (netadr_t adr);
-char		*NET_AdrToString (netadr_t a);
-qboolean	NET_StringToAdr (char *s, netadr_t *a);
-void		NET_Sleep(int msec);
+EXTERNC qboolean	NET_CompareAdr (netadr_t a, netadr_t b);
+EXTERNC qboolean	NET_CompareBaseAdr (netadr_t a, netadr_t b);
+EXTERNC qboolean	NET_IsLocalAddress (netadr_t adr);
+EXTERNC char		*NET_AdrToString (netadr_t a);
+EXTERNC qboolean	NET_StringToAdr (char *s, netadr_t *a);
+EXTERNC void		NET_Sleep(int msec);
 
 //============================================================================
 
@@ -597,19 +597,19 @@ typedef struct
 	byte		reliable_buf[MAX_MSGLEN-16];	// unacked reliable message
 } netchan_t;
 
-extern	netadr_t	net_from;
-extern	sizebuf_t	net_message;
-extern	byte		net_message_buffer[MAX_MSGLEN];
+EXTERNC extern	netadr_t	net_from;
+EXTERNC extern	sizebuf_t	net_message;
+EXTERNC extern	byte		net_message_buffer[MAX_MSGLEN];
 
 
-void Netchan_Init (void);
-void Netchan_Setup (netsrc_t sock, netchan_t *chan, netadr_t adr, int qport);
+EXTERNC void Netchan_Init (void);
+EXTERNC void Netchan_Setup (netsrc_t sock, netchan_t *chan, netadr_t adr, int qport);
 
-qboolean Netchan_NeedReliable (netchan_t *chan);
-void Netchan_Transmit (netchan_t *chan, int length, byte *data);
-void Netchan_OutOfBand (int net_socket, netadr_t adr, int length, byte *data);
-void Netchan_OutOfBandPrint (int net_socket, netadr_t adr, char *format, ...);
-qboolean Netchan_Process (netchan_t *chan, sizebuf_t *msg);
+EXTERNC qboolean Netchan_NeedReliable (netchan_t *chan);
+EXTERNC void Netchan_Transmit (netchan_t *chan, int length, byte *data);
+EXTERNC void Netchan_OutOfBand (int net_socket, netadr_t adr, int length, byte *data);
+EXTERNC void Netchan_OutOfBandPrint (int net_socket, netadr_t adr, char *format, ...);
+EXTERNC qboolean Netchan_Process (netchan_t *chan, sizebuf_t *msg);
 
 qboolean Netchan_CanReliable (netchan_t *chan);
 
@@ -735,7 +735,7 @@ MISC
 #define	PRINT_ALL		0
 #define PRINT_DEVELOPER	1	// only print when "developer 1"
 
-EXTERNC void		Com_BeginRedirect (int target, char *buffer, int buffersize, void (*flush));
+EXTERNC void		Com_BeginRedirect (int target, char* buffer, int buffersize, void (*flush)(int target, char* buffer));
 EXTERNC void		Com_EndRedirect (void);
 EXTERNC void 		Com_Printf (char *fmt, ...);
 EXTERNC void 		Com_DPrintf (char *fmt, ...);
@@ -751,18 +751,18 @@ EXTERNC byte		COM_BlockSequenceCRCByte (byte *base, int length, int sequence);
 EXTERNC float	frand(void);	// 0 ti 1
 EXTERNC float	crand(void);	// -1 to 1
 
-extern	cvar_t	*developer;
-extern	cvar_t	*dedicated;
-extern	cvar_t	*host_speeds;
-extern	cvar_t	*log_stats;
+EXTERNC extern	cvar_t	*developer;
+EXTERNC extern	cvar_t	*dedicated;
+EXTERNC extern	cvar_t	*host_speeds;
+EXTERNC extern	cvar_t	*log_stats;
 
-extern	FILE *log_stats_file;
+EXTERNC extern	FILE *log_stats_file;
 
 // host_speeds times
-extern	int		time_before_game;
-extern	int		time_after_game;
-extern	int		time_before_ref;
-extern	int		time_after_ref;
+EXTERNC extern	int		time_before_game;
+EXTERNC extern	int		time_after_game;
+EXTERNC extern	int		time_before_ref;
+EXTERNC extern	int		time_after_ref;
 
 EXTERNC void Z_Free (void *ptr);
 EXTERNC void *Z_Malloc (int size);			// returns 0 filled memory
@@ -774,7 +774,7 @@ EXTERNC void Qcommon_Frame (int msec);
 EXTERNC void Qcommon_Shutdown (void);
 
 #define NUMVERTEXNORMALS	162
-extern	vec3_t	bytedirs[NUMVERTEXNORMALS];
+EXTERNC extern	vec3_t	bytedirs[NUMVERTEXNORMALS];
 
 // this is in the client code, but can be used for debugging from server
 void SCR_DebugGraph (float value, int color);
@@ -788,21 +788,21 @@ NON-PORTABLE SYSTEM SERVICES
 ==============================================================
 */
 
-void	Sys_Init (void);
+EXTERNC void	Sys_Init (void);
 
-void	Sys_AppActivate (void);
+EXTERNC void	Sys_AppActivate (void);
 
-void	Sys_UnloadGame (void);
-void	*Sys_GetGameAPI (void *parms);
+EXTERNC void	Sys_UnloadGame (void);
+EXTERNC void	*Sys_GetGameAPI (void *parms);
 // loads the game dll and calls the api init function
 
-char	*Sys_ConsoleInput (void);
-void	Sys_ConsoleOutput (char *string);
-void	Sys_SendKeyEvents (void);
-void	Sys_Error (char *error, ...);
-void	Sys_Quit (void);
-char	*Sys_GetClipboardData( void );
-void	Sys_CopyProtect (void);
+EXTERNC char	*Sys_ConsoleInput (void);
+EXTERNC void	Sys_ConsoleOutput (char *string);
+EXTERNC void	Sys_SendKeyEvents (void);
+EXTERNC void	Sys_Error (char *error, ...);
+EXTERNC void	Sys_Quit (void);
+EXTERNC char	*Sys_GetClipboardData( void );
+EXTERNC void	Sys_CopyProtect (void);
 
 /*
 ==============================================================
@@ -812,16 +812,16 @@ CLIENT / SERVER SYSTEMS
 ==============================================================
 */
 
-void CL_Init (void);
-void CL_Drop (void);
-void CL_Shutdown (void);
-void CL_Frame (int msec);
-void Con_Print (char *text);
-void SCR_BeginLoadingPlaque (void);
+EXTERNC void CL_Init (void);
+EXTERNC void CL_Drop (void);
+EXTERNC void CL_Shutdown (void);
+EXTERNC void CL_Frame (int msec);
+EXTERNC void Con_Print (char *text);
+EXTERNC void SCR_BeginLoadingPlaque (void);
 
-void SV_Init (void);
-void SV_Shutdown (char *finalmsg, qboolean reconnect);
-void SV_Frame (int msec);
+EXTERNC void SV_Init (void);
+EXTERNC void SV_Shutdown (char *finalmsg, qboolean reconnect);
+EXTERNC void SV_Frame (int msec);
 
 
 

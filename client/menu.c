@@ -17,6 +17,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
+#include "shared/files.h"
 #include <ctype.h>
 #ifdef _WIN32
 #include <io.h>
@@ -1816,8 +1817,6 @@ const char *M_Credits_Key( int key )
 
 }
 
-extern int Developer_searchpath (int who);
-
 void M_Menu_Credits_f( void )
 {
 	int		n;
@@ -3447,8 +3446,6 @@ static qboolean PlayerConfig_ScanDirectories( void )
 	char **dirnames;
 	char *path = NULL;
 	int i;
-
-	extern char **FS_ListFiles( char *, int *, unsigned, unsigned );
 
 	s_numplayermodels = 0;
 

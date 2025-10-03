@@ -20,6 +20,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // common.c -- misc functions used in client and server
 #include "qcommon/qcommon.h"
 #include "shared/cmodel.h"
+#include "../../client/keys.h"
+#include "../../client/cl_scrn.h"
 #include <setjmp.h>
 
 #define	MAXPRINTMSG	4096
@@ -69,7 +71,7 @@ static char	*rd_buffer;
 static int	rd_buffersize;
 static void	(*rd_flush)(int target, char *buffer);
 
-void Com_BeginRedirect (int target, char *buffer, int buffersize, void (*flush))
+void Com_BeginRedirect (int target, char *buffer, int buffersize, void (*flush)(int target, char* buffer))
 {
 	if (!target || !buffer || !buffersize || !flush)
 		return;
@@ -281,49 +283,41 @@ vec3_t	bytedirs[NUMVERTEXNORMALS] =
 
 void MSG_WriteChar (sizebuf_t *sb, int c)
 {
-	byte	*buf;
-
 #ifdef PARANOID
 	if (c < -128 || c > 127)
 		Com_Error (ERR_FATAL, "MSG_WriteChar: range error");
 #endif
 
-	buf = SZ_GetSpace (sb, 1);
+	byte* buf =(byte*) SZ_GetSpace (sb, 1);
 	buf[0] = c;
 }
 
 void MSG_WriteByte (sizebuf_t *sb, int c)
 {
-	byte	*buf;
-
 #ifdef PARANOID
 	if (c < 0 || c > 255)
 		Com_Error (ERR_FATAL, "MSG_WriteByte: range error");
 #endif
 
-	buf = SZ_GetSpace (sb, 1);
+	byte* buf = (byte*)SZ_GetSpace(sb, 1);
 	buf[0] = c;
 }
 
 void MSG_WriteShort (sizebuf_t *sb, int c)
 {
-	byte	*buf;
-
 #ifdef PARANOID
 	if (c < ((short)0x8000) || c > (short)0x7fff)
 		Com_Error (ERR_FATAL, "MSG_WriteShort: range error");
 #endif
 
-	buf = SZ_GetSpace (sb, 2);
+	byte* buf = (byte*)SZ_GetSpace (sb, 2);
 	buf[0] = c&0xff;
 	buf[1] = c>>8;
 }
 
 void MSG_WriteLong (sizebuf_t *sb, int c)
 {
-	byte	*buf;
-
-	buf = SZ_GetSpace (sb, 4);
+	byte* buf = (byte*)SZ_GetSpace (sb, 4);
 	buf[0] = c&0xff;
 	buf[1] = (c>>8)&0xff;
 	buf[2] = (c>>16)&0xff;
@@ -1029,9 +1023,7 @@ int	memsearch (byte *start, int count, int search)
 
 char *CopyString (char *in)
 {
-	char	*out;
-
-	out = Z_Malloc (strlen(in)+1);
+	char* out = (char*)Z_Malloc (strlen(in)+1);
 	strcpy (out, in);
 	return out;
 }
@@ -1163,10 +1155,8 @@ Z_TagMalloc
 */
 void *Z_TagMalloc (int size, int tag)
 {
-	zhead_t	*z;
-
 	size = size + sizeof(zhead_t);
-	z = malloc(size);
+	zhead_t* z = (zhead_t * )malloc(size);
 	if (!z)
 		Com_Error (ERR_FATAL, "Z_Malloc: failed on allocation of %i bytes",size);
 	memset (z, 0, size);
@@ -1373,9 +1363,6 @@ float	crand(void)
 {
 	return (rand()&32767)* (2.0/32767) - 1;
 }
-
-void Key_Init (void);
-void SCR_EndLoadingPlaque (void);
 
 /*
 =============
