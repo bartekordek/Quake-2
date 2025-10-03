@@ -20,8 +20,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // sys_win.h
 
 #include "qcommon/qcommon.h"
-#include "winquake.h"
-#include "resource.h"
+#include "quake2/windows/winquake.h"
+#include "../win32/resource.h"
 #include <errno.h>
 #include <float.h>
 #include <fcntl.h>

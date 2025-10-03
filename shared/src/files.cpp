@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "shared/files.h"
 #include "qcommon/qcommon.h"
-#include "../../quake2/inc/sound/cd_win.h"
+#include "../../quake2/inc/quake2/sound/cd_win.h"
 
 // define this to dissalow any data but the demo pak file
 //#define	NO_ADDONS

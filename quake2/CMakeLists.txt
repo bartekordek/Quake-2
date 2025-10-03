@@ -44,12 +44,7 @@ list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/server/sv_send.c)
 list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/server/sv_user.c)
 list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/server/sv_world.c)
 list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/win32/in_win.c)
-list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/win32/net_wins.c)
 list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/win32/q_shwin.c)
-list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/win32/snd_win.c)
-list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/win32/sys_win.c)
-list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/win32/vid_dll.c)
-list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/win32/vid_menu.c)
 
 set(DEPENDENCIES
 PRIVATE game
