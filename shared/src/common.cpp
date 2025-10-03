@@ -20,8 +20,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // common.c -- misc functions used in client and server
 #include "qcommon/qcommon.h"
 #include "shared/cmodel.h"
-#include "../../client/keys.h"
-#include "../../client/cl_scrn.h"
+#include "../../quake2/inc/quake2/client/keys.h"
+#include "../../quake2/inc/quake2/client/cl_scrn.h"
 #include <setjmp.h>
 
 #define	MAXPRINTMSG	4096
@@ -274,7 +274,7 @@ Handles byte ordering and avoids alignment errors
 
 vec3_t	bytedirs[NUMVERTEXNORMALS] =
 {
-#include "../../client/anorms.h"
+#include "../../quake2/inc/quake2/client/anorms.h"
 };
 
 //

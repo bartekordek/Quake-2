@@ -28,13 +28,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "vid.h"
-#include "screen.h"
-#include "sound.h"
-#include "../quake2/inc/input/input.h"
-#include "keys.h"
-#include "console.h"
-#include "cdaudio.h"
+#include "../client/vid.h"
+#include "../client/screen.h"
+#include "../client/sound.h"
+#include "../quake2/inc/quake2/input/input.h"
+#include "../client/keys.h"
+#include "../client/console.h"
+#include "../client/cdaudio.h"
 
 //=============================================================================
 
