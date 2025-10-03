@@ -55,5 +55,5 @@ else()
     endif()
 endif()
 
-target_include_directories(${PROJECT_NAME} PUBLIC inc)
+target_include_directories(${PROJECT_NAME} PUBLIC inc PRIVATE src)
 target_compile_definitions(${PROJECT_NAME} PRIVATE C_ONLY=1 CPUSTRING="x64" )
