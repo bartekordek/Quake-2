@@ -43,9 +43,7 @@ file( GLOB_RECURSE SOURCES *.h *.c )
 source_group( TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SOURCES} )
 
 list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/game/q_shared.c)
-list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/win32/glw_imp.c)
 list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/win32/q_shwin.c)
-list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/win32/qgl_win.c)
 
 add_library( ${PROJECT_NAME} SHARED ${SOURCES} )
 
