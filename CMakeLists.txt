@@ -41,6 +41,7 @@ list( APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules" )
 # Add sub directories
 add_subdirectory(ctf)
 add_subdirectory(game)
+add_subdirectory(mathlib)
 add_subdirectory(quake2)
 add_subdirectory(ref_gl)
 add_subdirectory(ref_soft)

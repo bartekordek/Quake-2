@@ -18,8 +18,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 // cl_parse.c  -- parse a message received from the server
+#include "quake2/client/client.h"
 
-#include "client.h"
 #include "shared/files.h"
 
 char *svc_strings[256] =

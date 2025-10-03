@@ -18,8 +18,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 // g_ai.c
-
 #include "g_local.h"
+#include "math/euler_angles.h"
 
 qboolean FindTarget (edict_t *self);
 extern cvar_t	*maxclients;

@@ -2,12 +2,13 @@
 cmake_minimum_required(VERSION 3.0.0)
 
 set( CMAKE_C_STANDARD 17 )
+set( CMAKE_CXX_STANDARD 23 )
 
-set( PROJECT_NAME shared )
+set( PROJECT_NAME mathlib )
 
-project(${PROJECT_NAME} LANGUAGES C)
+project(${PROJECT_NAME} LANGUAGES C CXX)
 
-set( CMAKE_ENABLE_EXPORTS e_true )
+set( CMAKE_ENABLE_EXPORTS true )
 
 if( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC" )
     message(STATUS "WARNING: building msvc version.")
@@ -38,7 +39,7 @@ file( GLOB_RECURSE SOURCES *.h *.c *.hpp *.cpp )
 
 source_group( TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SOURCES} )
 add_library( ${PROJECT_NAME} STATIC ${SOURCES} )
-set(DEPENDENCIES PUBLIC mathlib)
+set( DEPENDENCIES)
 set_property( TARGET ${PROJECT_NAME} PROPERTY "LINK_LIBRARY_DEPENDENCIES" e_true )
 
 if (MSVC)

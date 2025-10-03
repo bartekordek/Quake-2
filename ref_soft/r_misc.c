@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // r_misc.c
 
 #include "r_local.h"
+#include "math/constants.h"
 
 #define NUM_MIPS	4
 
@@ -335,7 +336,7 @@ void R_ViewChanged (vrect_t *vr)
 
 	r_refdef.vrect = *vr;
 
-	r_refdef.horizontalFieldOfView = 2*tan((float)r_newrefdef.fov_x/360*M_PI);;
+	r_refdef.horizontalFieldOfView = 2*tan((float)r_newrefdef.fov_x/360.f*M_PI_F);
 	verticalFieldOfView = 2*tan((float)r_newrefdef.fov_y/360*M_PI);
 
 	r_refdef.fvrectx = (float)r_refdef.vrect.x;

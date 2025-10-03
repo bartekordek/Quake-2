@@ -20,6 +20,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // cl_newfx.c -- MORE entity effects parsing and management
 
 #include "quake2/client/client.h"
+#include "math/euler_angles.h"
+#include "math/constants.h"
 
 extern cparticle_t	*active_particles, *free_particles;
 extern cparticle_t	particles[MAX_PARTICLES];

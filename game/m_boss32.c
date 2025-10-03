@@ -27,6 +27,8 @@ Makron -- Final Boss
 
 #include "g_local.h"
 #include "m_boss32.h"
+#include "math/euler_angles.h"
+#include "math/constants.h"
 
 qboolean visible (edict_t *self, edict_t *other);
 

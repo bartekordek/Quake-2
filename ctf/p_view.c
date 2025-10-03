@@ -20,8 +20,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "g_local.h"
 #include "m_player.h"
-
-
+#include "math/constants.h"
+#include "math/euler_angles.h"
 
 static	edict_t		*current_player;
 static	gclient_t	*current_client;

@@ -20,6 +20,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // cl_view.c -- player rendering positioning
 
 #include "quake2/client/client.h"
+#include "math/euler_angles.h"
+#include "math/constants.h"
 
 //=============
 //

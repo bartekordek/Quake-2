@@ -34,7 +34,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <windows.h>
 #include "../ref_gl/gl_local.h"
 #include "glw_win.h"
-#include "winquake.h"
+#include "../quake2/inc/quake2/windows/winquake.h"
 
 static qboolean GLimp_SwitchFullscreen( int width, int height );
 qboolean GLimp_InitGL (void);
