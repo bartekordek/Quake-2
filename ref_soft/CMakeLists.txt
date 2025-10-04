@@ -45,7 +45,6 @@ source_group( TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SOURCES} )
 list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/game/q_shared.c)
 list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/win32/q_shwin.c)
 list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/win32/rw_ddraw.c)
-list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/win32/rw_dib.c)
 list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/win32/rw_imp.c)
 
 add_library( ${PROJECT_NAME} SHARED ${SOURCES} )
