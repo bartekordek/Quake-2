@@ -1,0 +1,1 @@
+void ClipGibVelocity (edict_t *ent) - remove function duplicates
