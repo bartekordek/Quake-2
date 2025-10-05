@@ -9,4 +9,4 @@
 
 #define MAXPRINTMSG 4096
 
-#endif // __shared_config_h__
+#endif	// __shared_config_h__
