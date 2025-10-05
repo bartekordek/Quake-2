@@ -34,6 +34,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #endif
 
 #include "shared/config.h"
+#include "shared/defines.h"
 #include "math/vector.h"
 #include <assert.h>
 #include <math.h>
@@ -56,8 +57,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #else
 #define idaxp 0
 #endif
-
-typedef unsigned char byte;
 
 #ifndef NULL
 #define NULL ((void *)0)
