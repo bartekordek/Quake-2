@@ -1,4 +1,4 @@
-[![CMake on a single platform](https://github.com/bartekordek/Quake-2/actions/workflows/cmake-windows.yml/badge.svg?branch=cmake_with_refactor)](https://github.com/bartekordek/Quake-2/actions/workflows/cmake-windows.yml)
+[![CMake on a single platform](https://github.com/bartekordek/Quake-2/actions/workflows/cmake-windows.yml/badge.svg?branch=master)](https://github.com/bartekordek/Quake-2/actions/workflows/cmake-windows.yml)
 
 This is the complete source code for Quake 2, version 3.19, buildable with
 visual C++ 6.0.  The linux version should be buildable, but we haven't
