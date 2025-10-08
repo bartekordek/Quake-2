@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // gl_mesh.c: triangle model functions
 
 #include "gl_local.h"
+#include "math/constants.h"
 
 /*
 =============================================================
@@ -503,10 +504,10 @@ static qboolean R_CullAliasModel( vec3_t bbox[8], entity_t *e )
 
 		if ( aggregatemask )
 		{
-			return true;
+			return e_true;
 		}
 
-		return false;
+		return e_false;
 	}
 }
 

@@ -52,14 +52,14 @@ qboolean OnSameTeam (edict_t *ent1, edict_t *ent2)
 	char	ent2Team [512];
 
 	if (!((int)(dmflags->value) & (DF_MODELTEAMS | DF_SKINTEAMS)))
-		return false;
+		return e_false;
 
 	strcpy (ent1Team, ClientTeam (ent1));
 	strcpy (ent2Team, ClientTeam (ent2));
 
 	if (strcmp(ent1Team, ent2Team) == 0)
-		return true;
-	return false;
+		return e_true;
+	return e_false;
 }
 
 
@@ -177,9 +177,9 @@ void Cmd_Give_f (edict_t *ent)
 	name = gi.args();
 
 	if (Q_stricmp(name, "all") == 0)
-		give_all = true;
+		give_all = e_true;
 	else
-		give_all = false;
+		give_all = e_false;
 
 	if (give_all || Q_stricmp(gi.argv(1), "health") == 0)
 	{
@@ -487,20 +487,20 @@ void Cmd_Inven_f (edict_t *ent)
 
 	cl = ent->client;
 
-	cl->showscores = false;
-	cl->showhelp = false;
+	cl->showscores = e_false;
+	cl->showhelp = e_false;
 
 //ZOID
 	if (ent->client->menu) {
 		PMenu_Close(ent);
-		ent->client->update_chase = true;
+		ent->client->update_chase = e_true;
 		return;
 	}
 //ZOID
 
 	if (cl->showinventory)
 	{
-		cl->showinventory = false;
+		cl->showinventory = e_false;
 		return;
 	}
 
@@ -511,14 +511,14 @@ void Cmd_Inven_f (edict_t *ent)
 	}
 //ZOID
 
-	cl->showinventory = true;
+	cl->showinventory = e_true;
 
 	gi.WriteByte (svc_inventory);
 	for (i=0 ; i<MAX_ITEMS ; i++)
 	{
 		gi.WriteShort (cl->pers.inventory[i]);
 	}
-	gi.unicast (ent, true);
+	gi.unicast (ent, e_true);
 }
 
 /*
@@ -725,13 +725,13 @@ Cmd_PutAway_f
 */
 void Cmd_PutAway_f (edict_t *ent)
 {
-	ent->client->showscores = false;
-	ent->client->showhelp = false;
-	ent->client->showinventory = false;
+	ent->client->showscores = e_false;
+	ent->client->showhelp = e_false;
+	ent->client->showinventory = e_false;
 //ZOID
 	if (ent->client->menu)
 		PMenu_Close(ent);
-	ent->client->update_chase = true;
+	ent->client->update_chase = e_true;
 //ZOID
 }
 
@@ -858,7 +858,7 @@ qboolean CheckFlood(edict_t *ent)
         if (level.time < cl->flood_locktill) {
 			gi.cprintf(ent, PRINT_HIGH, "You can't talk for %d more seconds\n",
 				(int)(cl->flood_locktill - level.time));
-            return true;
+            return e_true;
         }
         i = cl->flood_whenhead - flood_msgs->value + 1;
         if (i < 0)
@@ -868,13 +868,13 @@ qboolean CheckFlood(edict_t *ent)
 			cl->flood_locktill = level.time + flood_waitdelay->value;
 			gi.cprintf(ent, PRINT_CHAT, "Flood protection:  You can't talk for %d seconds.\n",
 				(int)flood_waitdelay->value);
-            return true;
+            return e_true;
         }
 		cl->flood_whenhead = (cl->flood_whenhead + 1) %
 			(sizeof(cl->flood_when)/sizeof(cl->flood_when[0]));
 		cl->flood_when[cl->flood_whenhead] = level.time;
 	}
-	return false;
+	return e_false;
 }
 
 /*
@@ -893,7 +893,7 @@ void Cmd_Say_f (edict_t *ent, qboolean team, qboolean arg0)
 		return;
 
 	if (!((int)(dmflags->value) & (DF_MODELTEAMS | DF_SKINTEAMS)))
-		team = false;
+		team = e_false;
 
 	if (team)
 		Com_sprintf (text, sizeof(text), "(%s): ", ent->client->pers.netname);
@@ -967,7 +967,7 @@ void ClientCommand (edict_t *ent)
 	}
 	if (Q_stricmp (cmd, "say") == 0)
 	{
-		Cmd_Say_f (ent, false, false);
+		Cmd_Say_f (ent, e_false, e_false);
 		return;
 	}
 	if (Q_stricmp (cmd, "say_team") == 0 || Q_stricmp (cmd, "steam") == 0)
@@ -1062,5 +1062,5 @@ void ClientCommand (edict_t *ent)
 	}
 //ZOID
 	else	// anything that doesn't match a command will be a chat
-		Cmd_Say_f (ent, false, true);
+		Cmd_Say_f (ent, e_false, e_true);
 }

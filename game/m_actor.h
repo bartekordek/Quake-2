@@ -1,3 +1,6 @@
+#ifndef __game_m_actor_h__
+#define __game_m_actor_h__
+
 /*
 Copyright (C) 1997-2001 Id Software, Inc.
 
@@ -504,3 +507,5 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define FRAME_crbl_w07        	480
 
 #define MODEL_SCALE		1.000000
+
+#endif // __game_m_actor_h__

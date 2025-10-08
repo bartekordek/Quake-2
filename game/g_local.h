@@ -19,7 +19,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 // g_local.h -- local definitions for game module
 
-#include "q_shared.h"
+#ifndef __game_g_local_h__
+#define __game_g_local_h__
+
+#include "shared/shared.h"
 
 // define GAME_INCLUDE so that game.h does not define the
 // short, server-visible gclient_t and edict_t structures,
@@ -511,7 +514,7 @@ extern	edict_t			*g_edicts;
 #define	CLOFS(x) (int)&(((gclient_t *)0)->x)
 
 #define random()	((rand () & 0x7fff) / ((float)0x7fff))
-#define crandom()	(2.0 * (random() - 0.5))
+#define crandom()	(2.0f * (random() - 0.5f))
 
 extern	cvar_t	*maxentities;
 extern	cvar_t	*deathmatch;
@@ -1111,3 +1114,4 @@ struct edict_s
 	monsterinfo_t	monsterinfo;
 };
 
+#endif // __game_g_local_h__

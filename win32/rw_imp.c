@@ -29,9 +29,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ** SWimp_SetPalette
 ** SWimp_Shutdown
 */
-#include "..\ref_soft\r_local.h"
+#include "../ref_soft/r_local.h"
 #include "rw_win.h"
-#include "winquake.h"
+#include "../quake2/inc/quake2/windows/winquake.h"
 
 // Console variables that we need to access from this module
 
@@ -120,7 +120,7 @@ int SWimp_Init( void *hInstance, void *wndProc )
 	sww_state.hInstance = ( HINSTANCE ) hInstance;
 	sww_state.wndproc = wndProc;
 
-	return true;
+	return e_true;
 }
 
 /*
@@ -149,7 +149,7 @@ static qboolean SWimp_InitGraphics( qboolean fullscreen )
 			vid.buffer = 0;
 			vid.rowbytes = 0;
 
-			return false;
+			return e_false;
 		}
 	}
 	else
@@ -159,11 +159,11 @@ static qboolean SWimp_InitGraphics( qboolean fullscreen )
 			vid.buffer = 0;
 			vid.rowbytes = 0;
 
-			return false;
+			return e_false;
 		}
 	}
 
-	return true;
+	return e_true;
 }
 
 /*
@@ -278,7 +278,7 @@ rserr_t SWimp_SetMode( int *pwidth, int *pheight, int mode, qboolean fullscreen 
 
 	ri.Con_Printf( PRINT_ALL, " %d %d %s\n", *pwidth, *pheight, win_fs[fullscreen] );
 
-	sww_state.initializing = true;
+	sww_state.initializing = e_true;
 	if ( fullscreen )
 	{
 		if ( !SWimp_InitGraphics( 1 ) )
@@ -301,7 +301,7 @@ rserr_t SWimp_SetMode( int *pwidth, int *pheight, int mode, qboolean fullscreen 
 		// failure to set a valid mode in windowed mode
 		if ( !SWimp_InitGraphics( fullscreen ) )
 		{
-			sww_state.initializing = true;
+			sww_state.initializing = e_true;
 			return rserr_unknown;
 		}
 	}
@@ -318,7 +318,7 @@ rserr_t SWimp_SetMode( int *pwidth, int *pheight, int mode, qboolean fullscreen 
 	}
 #endif
 	R_GammaCorrectAndSetPalette( ( const unsigned char * ) d_8to24table );
-	sww_state.initializing = true;
+	sww_state.initializing = e_true;
 
 	return retval;
 }

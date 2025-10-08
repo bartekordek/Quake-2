@@ -1,0 +1,5 @@
++ Move sizebuf_s into separate file.
+- Move cplane_s to separate file.
+- Move entity_state_t/entity_state_s to separate file.
+- Move struct edict_s to separate file.
+- void ClipGibVelocity (edict_t *ent) - remove function duplicates

@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // gl_warp.c -- sky and water polygons
 
 #include "gl_local.h"
+#include "math/constants.h"
 
 extern	model_t	*loadmodel;
 
@@ -406,19 +407,19 @@ void ClipSkyPolygon (int nump, vec3_t vecs, int stage)
 		return;
 	}
 
-	front = back = false;
+	front = back = e_false;
 	norm = skyclip[stage];
 	for (i=0, v = vecs ; i<nump ; i++, v+=3)
 	{
 		d = DotProduct (v, norm);
 		if (d > ON_EPSILON)
 		{
-			front = true;
+			front = e_true;
 			sides[i] = SIDE_FRONT;
 		}
 		else if (d < -ON_EPSILON)
 		{
-			back = true;
+			back = e_true;
 			sides[i] = SIDE_BACK;
 		}
 		else

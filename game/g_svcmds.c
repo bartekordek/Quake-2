@@ -91,7 +91,7 @@ static qboolean StringToFilter (char *s, ipfilter_t *f)
 		if (*s < '0' || *s > '9')
 		{
 			gi.cprintf(NULL, PRINT_HIGH, "Bad filter address: %s\n", s);
-			return false;
+			return e_false;
 		}
 		
 		j = 0;
@@ -112,7 +112,7 @@ static qboolean StringToFilter (char *s, ipfilter_t *f)
 	f->mask = *(unsigned *)m;
 	f->compare = *(unsigned *)b;
 	
-	return true;
+	return e_true;
 }
 
 /*
@@ -241,14 +241,14 @@ void SVCmd_WriteIP_f (void)
 	char	name[MAX_OSPATH];
 	byte	b[4];
 	int		i;
-	cvar_t	*game;
+	cvar_t	*gameCVar;
 
-	game = gi.cvar("game", "", 0);
+	gameCVar = gi.cvar("game", "", 0);
 
-	if (!*game->string)
+	if (!*gameCVar->string)
 		sprintf (name, "%s/listip.cfg", GAMEVERSION);
 	else
-		sprintf (name, "%s/listip.cfg", game->string);
+		sprintf (name, "%s/listip.cfg", gameCVar->string);
 
 	gi.cprintf (NULL, PRINT_HIGH, "Writing %s.\n", name);
 

@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // r_misc.c
 
 #include "r_local.h"
+#include "math/constants.h"
 
 #define NUM_MIPS	4
 
@@ -51,7 +52,7 @@ void D_Patch (void)
 {
 #if id386
 	extern void D_Aff8Patch( void );
-	static qboolean protectset8 = false;
+	static qboolean protectset8 = e_false;
 	extern void D_PolysetAff8Start( void );
 
 	if (!protectset8)
@@ -60,7 +61,7 @@ void D_Patch (void)
 						     (int)D_Aff8Patch - (int)D_PolysetAff8Start);
 		Sys_MakeCodeWriteable ((long)R_Surf8Start,
 						 (long)R_Surf8End - (long)R_Surf8Start);
-		protectset8 = true;
+		protectset8 = e_true;
 	}
 	colormap = vid.colormap;
 
@@ -335,7 +336,7 @@ void R_ViewChanged (vrect_t *vr)
 
 	r_refdef.vrect = *vr;
 
-	r_refdef.horizontalFieldOfView = 2*tan((float)r_newrefdef.fov_x/360*M_PI);;
+	r_refdef.horizontalFieldOfView = 2*tan((float)r_newrefdef.fov_x/360.f*M_PI_F);
 	verticalFieldOfView = 2*tan((float)r_newrefdef.fov_y/360*M_PI);
 
 	r_refdef.fvrectx = (float)r_refdef.vrect.x;
@@ -431,7 +432,7 @@ void R_SetupFrame (void)
 
 	if (r_fullbright->modified)
 	{
-		r_fullbright->modified = false;
+		r_fullbright->modified = e_false;
 		D_FlushCaches ();	// so all lighting changes
 	}
 	
@@ -452,9 +453,9 @@ void R_SetupFrame (void)
 	}
 
 	if (sw_waterwarp->value && (r_newrefdef.rdflags & RDF_UNDERWATER) )
-		r_dowarp = true;
+		r_dowarp = e_true;
 	else
-		r_dowarp = false;
+		r_dowarp = e_false;
 
 	if (r_dowarp)
 	{	// warp into off screen buffer
@@ -499,7 +500,7 @@ void R_SetupFrame (void)
 	r_outofedges = 0;
 
 // d_setup
-	d_roverwrapped = false;
+	d_roverwrapped = e_false;
 	d_initial_rover = sc_rover;
 
 	d_minmip = sw_mipcap->value;

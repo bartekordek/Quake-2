@@ -19,7 +19,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 // g_local.h -- local definitions for game module
 
-#include "q_shared.h"
+#ifndef _ctf_g_local_h
+#define _ctf_g_local_h
+
+#include "shared/shared.h"
 
 // define GAME_INCLUDE so that game.h does not define the
 // short, server-visible gclient_t and edict_t structures,
@@ -977,7 +980,7 @@ struct gclient_s
 
 //ZOID
 	void		*ctf_grapple;		// entity of grapple
-	int			ctf_grapplestate;		// true if pulling
+	int			ctf_grapplestate;		// e_true if pulling
 	float		ctf_grapplereleasetime;	// time of grapple release
 	float		ctf_regentime;		// regen tech
 	float		ctf_techsndtime;
@@ -1143,3 +1146,4 @@ struct edict_s
 #include "g_ctf.h"
 //ZOID
 
+#endif // _ctf_g_local_h

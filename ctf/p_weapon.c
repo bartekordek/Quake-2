@@ -21,7 +21,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "g_local.h"
 #include "m_player.h"
-
+#include "math/constants.h"
+#include "math/euler_angles.h"
 
 static qboolean	is_quad;
 static byte		is_silenced;
@@ -126,7 +127,7 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 		&& other->client->pers.inventory[index])
 	{
 		if (!(ent->spawnflags & (DROPPED_ITEM | DROPPED_PLAYER_ITEM) ) )
-			return false;	// leave the weapon for others to pickup
+			return e_false;	// leave the weapon for others to pickup
 	}
 
 	other->client->pers.inventory[index]++;
@@ -159,7 +160,7 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 		( !deathmatch->value || other->client->pers.weapon == FindItem("blaster") ) )
 		other->client->newweapon = ent->item;
 
-	return true;
+	return e_true;
 }
 
 
@@ -179,7 +180,7 @@ void ChangeWeapon (edict_t *ent)
 	{
 		ent->client->grenade_time = level.time;
 		ent->client->weapon_sound = 0;
-		weapon_grenade_fire (ent, false);
+		weapon_grenade_fire (ent, e_false);
 		ent->client->grenade_time = 0;
 	}
 
@@ -693,8 +694,8 @@ void Weapon_Grenade (edict_t *ent)
 			if (!ent->client->grenade_blew_up && level.time >= ent->client->grenade_time)
 			{
 				ent->client->weapon_sound = 0;
-				weapon_grenade_fire (ent, true);
-				ent->client->grenade_blew_up = true;
+				weapon_grenade_fire (ent, e_true);
+				ent->client->grenade_blew_up = e_true;
 			}
 
 			if (ent->client->buttons & BUTTON_ATTACK)
@@ -705,7 +706,7 @@ void Weapon_Grenade (edict_t *ent)
 				if (level.time >= ent->client->grenade_time)
 				{
 					ent->client->ps.gunframe = 15;
-					ent->client->grenade_blew_up = false;
+					ent->client->grenade_blew_up = e_false;
 				}
 				else
 				{
@@ -717,7 +718,7 @@ void Weapon_Grenade (edict_t *ent)
 		if (ent->client->ps.gunframe == 12)
 		{
 			ent->client->weapon_sound = 0;
-			weapon_grenade_fire (ent, false);
+			weapon_grenade_fire (ent, e_false);
 		}
 
 		if ((ent->client->ps.gunframe == 15) && (level.time < ent->client->grenade_time))
@@ -887,7 +888,7 @@ void Weapon_Blaster_Fire (edict_t *ent)
 		damage = 15;
 	else
 		damage = 10;
-	Blaster_Fire (ent, vec3_origin, damage, false, EF_BLASTER);
+	Blaster_Fire (ent, vec3_origin, damage, e_false, EF_BLASTER);
 	ent->client->ps.gunframe++;
 }
 
@@ -939,7 +940,7 @@ void Weapon_HyperBlaster_Fire (edict_t *ent)
 				damage = 15;
 			else
 				damage = 20;
-			Blaster_Fire (ent, offset, damage, true, effect);
+			Blaster_Fire (ent, offset, damage, e_true, effect);
 			if (! ( (int)dmflags->value & DF_INFINITE_AMMO ) )
 				ent->client->pers.inventory[ent->client->ammo_index]--;
 

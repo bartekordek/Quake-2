@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <math.h>
 #include <stdarg.h>
 
-#include "../client/ref.h"
+#include "shared/ref.h"
 
 #define REF_VERSION     "SOFT 0.01"
 
@@ -65,7 +65,7 @@ typedef struct image_s
 	char    name[MAX_QPATH];        // game path, including extension
 	imagetype_t     type;
 	int             width, height;
-	qboolean        transparent;    // true if any 255 pixels in image
+	qboolean        transparent;    // e_true if any 255 pixels in image
 	int             registration_sequence;  // 0 = free
 	byte		*pixels[4];				// mip levels
 } image_t;

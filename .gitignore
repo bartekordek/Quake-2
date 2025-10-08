@@ -1,0 +1,8 @@
+.dccache
+.vs
+*.dll
+*.suo
+Build-Linux
+Build-Windows
+quake_data
+runDir

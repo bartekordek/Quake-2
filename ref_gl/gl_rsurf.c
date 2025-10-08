@@ -419,7 +419,7 @@ void R_BlendLightmaps (void)
 				msurface_t *drawsurf;
 
 				// upload what we have so far
-				LM_UploadBlock( true );
+				LM_UploadBlock( e_true );
 
 				// draw all surfaces that use this lightmap
 				for ( drawsurf = newdrawsurf; drawsurf != surf; drawsurf = drawsurf->lightmapchain )
@@ -452,7 +452,7 @@ void R_BlendLightmaps (void)
 		** draw remainder of dynamic lightmaps that haven't been uploaded yet
 		*/
 		if ( newdrawsurf )
-			LM_UploadBlock( true );
+			LM_UploadBlock( e_true );
 
 		for ( surf = newdrawsurf; surf != 0; surf = surf->lightmapchain )
 		{
@@ -478,7 +478,7 @@ void R_RenderBrushPoly (msurface_t *fa)
 {
 	int			maps;
 	image_t		*image;
-	qboolean is_dynamic = false;
+	qboolean is_dynamic = e_false;
 
 	c_brush_polys++;
 
@@ -532,7 +532,7 @@ dynamic:
 		{
 			if (!( fa->texinfo->flags & (SURF_SKY|SURF_TRANS33|SURF_TRANS66|SURF_WARP ) ) )
 			{
-				is_dynamic = true;
+				is_dynamic = e_true;
 			}
 		}
 	}
@@ -673,7 +673,7 @@ void DrawTextureChains (void)
 			}
 		}
 
-		GL_EnableMultitexture( false );
+		GL_EnableMultitexture( e_false );
 		for ( i = 0, image=gltextures ; i<numgltextures ; i++,image++)
 		{
 			if (!image->registration_sequence)
@@ -690,7 +690,7 @@ void DrawTextureChains (void)
 
 			image->texturechain = NULL;
 		}
-//		GL_EnableMultitexture( true );
+//		GL_EnableMultitexture( e_true );
 	}
 
 	GL_TexEnv( GL_REPLACE );
@@ -703,7 +703,7 @@ static void GL_RenderLightmappedPoly( msurface_t *surf )
 	int		map;
 	float	*v;
 	image_t *image = R_TextureAnimation( surf->texinfo );
-	qboolean is_dynamic = false;
+	qboolean is_dynamic = e_false;
 	unsigned lmtex = surf->lightmaptexturenum;
 	glpoly_t *p;
 
@@ -721,7 +721,7 @@ dynamic:
 		{
 			if ( !(surf->texinfo->flags & (SURF_SKY|SURF_TRANS33|SURF_TRANS66|SURF_WARP ) ) )
 			{
-				is_dynamic = true;
+				is_dynamic = e_true;
 			}
 		}
 	}
@@ -926,9 +926,9 @@ void R_DrawInlineBModel (void)
 			}
 			else
 			{
-				GL_EnableMultitexture( false );
+				GL_EnableMultitexture( e_false );
 				R_RenderBrushPoly( psurf );
-				GL_EnableMultitexture( true );
+				GL_EnableMultitexture( e_true );
 			}
 		}
 	}
@@ -965,7 +965,7 @@ void R_DrawBrushModel (entity_t *e)
 
 	if (e->angles[0] || e->angles[1] || e->angles[2])
 	{
-		rotated = true;
+		rotated = e_true;
 		for (i=0 ; i<3 ; i++)
 		{
 			mins[i] = e->origin[i] - currentmodel->radius;
@@ -974,7 +974,7 @@ void R_DrawBrushModel (entity_t *e)
 	}
 	else
 	{
-		rotated = false;
+		rotated = e_false;
 		VectorAdd (e->origin, currentmodel->mins, mins);
 		VectorAdd (e->origin, currentmodel->maxs, maxs);
 	}
@@ -1005,14 +1005,14 @@ e->angles[2] = -e->angles[2];	// stupid quake bug
 e->angles[0] = -e->angles[0];	// stupid quake bug
 e->angles[2] = -e->angles[2];	// stupid quake bug
 
-	GL_EnableMultitexture( true );
+	GL_EnableMultitexture( e_true );
 	GL_SelectTexture( GL_TEXTURE0_SGIS );
 	GL_TexEnv( GL_REPLACE );
 	GL_SelectTexture( GL_TEXTURE1_SGIS );
 	GL_TexEnv( GL_MODULATE );
 
 	R_DrawInlineBModel ();
-	GL_EnableMultitexture( false );
+	GL_EnableMultitexture( e_false );
 
 	qglPopMatrix ();
 }
@@ -1218,7 +1218,7 @@ void R_DrawWorld (void)
 
 	if ( qglMTexCoord2fSGIS )
 	{
-		GL_EnableMultitexture( true );
+		GL_EnableMultitexture( e_true );
 
 		GL_SelectTexture( GL_TEXTURE0_SGIS );
 		GL_TexEnv( GL_REPLACE );
@@ -1231,7 +1231,7 @@ void R_DrawWorld (void)
 
 		R_RecursiveWorldNode (r_worldmodel->nodes);
 
-		GL_EnableMultitexture( false );
+		GL_EnableMultitexture( e_false );
 	}
 	else
 	{
@@ -1431,12 +1431,12 @@ static qboolean LM_AllocBlock (int w, int h, int *x, int *y)
 	}
 
 	if (best + h > BLOCK_HEIGHT)
-		return false;
+		return e_false;
 
 	for (i=0 ; i<w ; i++)
 		gl_lms.allocated[*x + i] = best + h;
 
-	return true;
+	return e_true;
 }
 
 /*
@@ -1535,7 +1535,7 @@ void GL_CreateSurfaceLightmap (msurface_t *surf)
 
 	if ( !LM_AllocBlock( smax, tmax, &surf->light_s, &surf->light_t ) )
 	{
-		LM_UploadBlock( false );
+		LM_UploadBlock( e_false );
 		LM_InitBlock();
 		if ( !LM_AllocBlock( smax, tmax, &surf->light_s, &surf->light_t ) )
 		{
@@ -1569,7 +1569,7 @@ void GL_BeginBuildingLightmaps (model_t *m)
 
 	r_framecount = 1;		// no dlightcache
 
-	GL_EnableMultitexture( true );
+	GL_EnableMultitexture( e_true );
 	GL_SelectTexture( GL_TEXTURE1_SGIS );
 
 	/*
@@ -1654,7 +1654,7 @@ GL_EndBuildingLightmaps
 */
 void GL_EndBuildingLightmaps (void)
 {
-	LM_UploadBlock( false );
-	GL_EnableMultitexture( false );
+	LM_UploadBlock( e_false );
+	GL_EnableMultitexture( e_false );
 }
 

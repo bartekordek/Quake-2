@@ -1,3 +1,6 @@
+#ifndef __game_game_h__
+#define __game_game_h__
+
 /*
 Copyright (C) 1997-2001 Id Software, Inc.
 
@@ -38,6 +41,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 // game.h -- game dll information visible to server
+
+#include "shared/cvar.h"
 
 #define	GAME_API_VERSION	3
 
@@ -252,3 +257,5 @@ typedef struct
 } game_export_t;
 
 game_export_t *GetGameApi (game_import_t *import);
+
+#endif // __game_game_h__

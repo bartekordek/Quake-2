@@ -61,12 +61,12 @@ pmenuhnd_t *PMenu_Open(edict_t *ent, pmenu_t *entries, int cur, int num, void *a
 	else
 		hnd->cur = i;
 
-	ent->client->showscores = true;
-	ent->client->inmenu = true;
+	ent->client->showscores = e_true;
+	ent->client->inmenu = e_true;
 	ent->client->menu = hnd;
 
 	PMenu_Do_Update(ent);
-	gi.unicast (ent, true);
+	gi.unicast (ent, e_true);
 
 	return hnd;
 }
@@ -88,7 +88,7 @@ void PMenu_Close(edict_t *ent)
 		free(hnd->arg);
 	free(hnd);
 	ent->client->menu = NULL;
-	ent->client->showscores = false;
+	ent->client->showscores = e_false;
 }
 
 // only use on pmenu's that have been called with PMenu_Open
@@ -109,7 +109,7 @@ void PMenu_Do_Update(edict_t *ent)
 	int x;
 	pmenuhnd_t *hnd;
 	char *t;
-	qboolean alt = false;
+	qboolean alt = e_false;
 
 	if (!ent->client->menu) {
 		gi.dprintf("warning:  ent has no menu\n");
@@ -125,7 +125,7 @@ void PMenu_Do_Update(edict_t *ent)
 			continue; // blank line
 		t = p->text;
 		if (*t == '*') {
-			alt = true;
+			alt = e_true;
 			t++;
 		}
 		sprintf(string + strlen(string), "yv %d ", 32 + i * 8);
@@ -145,7 +145,7 @@ void PMenu_Do_Update(edict_t *ent)
 			sprintf(string + strlen(string), "string2 \"%s\" ", t);
 		else
 			sprintf(string + strlen(string), "string \"%s\" ", t);
-		alt = false;
+		alt = e_false;
 	}
 
 	gi.WriteByte (svc_layout);
@@ -162,12 +162,12 @@ void PMenu_Update(edict_t *ent)
 	if (level.time - ent->client->menutime >= 1.0) {
 		// been a second or more since last update, update now
 		PMenu_Do_Update(ent);
-		gi.unicast (ent, true);
+		gi.unicast (ent, e_true);
 		ent->client->menutime = level.time;
-		ent->client->menudirty = false;
+		ent->client->menudirty = e_false;
 	}
 	ent->client->menutime = level.time + 0.2;
-	ent->client->menudirty = true;
+	ent->client->menudirty = e_true;
 }
 
 void PMenu_Next(edict_t *ent)

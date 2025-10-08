@@ -1,0 +1,11 @@
+[Engine]
+MinBlockSize=10
+MinLineLength=1
+
+[Input]
+Recursive=true
+Filters=*.c *.cpp *.hpp *.cxx *.hxx *.h
+IgnoreFilters=*deps* *--force* Build-Windows/*
+
+[ProjectManager]
+SubDirectories=@Invalid()

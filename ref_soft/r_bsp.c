@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // r_bsp.c
 
 #include "r_local.h"
+#include "math/constants.h"
 
 //
 // current entity info
@@ -82,8 +83,8 @@ void R_RotateBmodel (void)
 // TODO: share work with R_SetUpAliasTransform
 
 // yaw
-	angle = currententity->angles[YAW];		
-	angle = angle * M_PI*2 / 360;
+	angle		= currententity->angles[YAW];	
+	angle		= angle * M_PI_F * 2.f / 360.f;
 	s = sin(angle);
 	c = cos(angle);
 
@@ -165,7 +166,7 @@ void R_RecursiveClipBPoly (bedge_t *pedges, mnode_t *pnode, msurface_t *psurf)
 
 	psideedges[0] = psideedges[1] = NULL;
 
-	makeclippededge = false;
+	makeclippededge = e_false;
 
 // transform the BSP plane into model space
 // FIXME: cache these?
@@ -247,12 +248,12 @@ void R_RecursiveClipBPoly (bedge_t *pedges, mnode_t *pnode, msurface_t *psurf)
 			{
 			// entering for front, exiting for back
 				pfrontenter = ptvert;
-				makeclippededge = true;
+				makeclippededge = e_true;
 			}
 			else
 			{
 				pfrontexit = ptvert;
-				makeclippededge = true;
+				makeclippededge = e_true;
 			}
 		}
 		else

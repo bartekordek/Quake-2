@@ -19,6 +19,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 #include "g_local.h"
 #include "m_player.h"
+#include "math/euler_angles.h"
+#include "math/constants.h"
 
 void ClientUserinfoChanged (edict_t *ent, char *userinfo);
 
@@ -187,12 +189,12 @@ qboolean IsFemale (edict_t *ent)
 	char		*info;
 
 	if (!ent->client)
-		return false;
+		return e_false;
 
 	info = Info_ValueForKey (ent->client->pers.userinfo, "gender");
 	if (info[0] == 'f' || info[0] == 'F')
-		return true;
-	return false;
+		return e_true;
+	return e_false;
 }
 
 qboolean IsNeutral (edict_t *ent)
@@ -200,12 +202,12 @@ qboolean IsNeutral (edict_t *ent)
 	char		*info;
 
 	if (!ent->client)
-		return false;
+		return e_false;
 
 	info = Info_ValueForKey (ent->client->pers.userinfo, "gender");
 	if (info[0] != 'f' && info[0] != 'F' && info[0] != 'm' && info[0] != 'M')
-		return true;
-	return false;
+		return e_true;
+	return e_false;
 }
 
 void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
@@ -424,7 +426,7 @@ void TossClientWeapon (edict_t *self)
 		item = NULL;
 
 	if (!((int)(dmflags->value) & DF_QUAD_DROP))
-		quad = false;
+		quad = e_false;
 	else
 		quad = (self->client->quad_framenum > (level.framenum + 10));
 
@@ -626,7 +628,7 @@ void InitClientPersistant (gclient_t *client)
 	client->pers.max_cells		= 200;
 	client->pers.max_slugs		= 50;
 
-	client->pers.connected = true;
+	client->pers.connected = e_true;
 }
 
 
@@ -1020,10 +1022,10 @@ void spectator_respawn (edict_t *ent)
 			strcmp(spectator_password->string, "none") && 
 			strcmp(spectator_password->string, value)) {
 			gi.cprintf(ent, PRINT_HIGH, "Spectator password incorrect.\n");
-			ent->client->pers.spectator = false;
+			ent->client->pers.spectator = e_false;
 			gi.WriteByte (svc_stufftext);
 			gi.WriteString ("spectator 0\n");
-			gi.unicast(ent, true);
+			gi.unicast(ent, e_true);
 			return;
 		}
 
@@ -1034,11 +1036,11 @@ void spectator_respawn (edict_t *ent)
 
 		if (numspec >= maxspectators->value) {
 			gi.cprintf(ent, PRINT_HIGH, "Server spectator limit is full.");
-			ent->client->pers.spectator = false;
+			ent->client->pers.spectator = e_false;
 			// reset his spectator var
 			gi.WriteByte (svc_stufftext);
 			gi.WriteString ("spectator 0\n");
-			gi.unicast(ent, true);
+			gi.unicast(ent, e_true);
 			return;
 		}
 	} else {
@@ -1048,10 +1050,10 @@ void spectator_respawn (edict_t *ent)
 		if (*password->string && strcmp(password->string, "none") && 
 			strcmp(password->string, value)) {
 			gi.cprintf(ent, PRINT_HIGH, "Password incorrect.\n");
-			ent->client->pers.spectator = true;
+			ent->client->pers.spectator = e_true;
 			gi.WriteByte (svc_stufftext);
 			gi.WriteString ("spectator 1\n");
-			gi.unicast(ent, true);
+			gi.unicast(ent, e_true);
 			return;
 		}
 	}
@@ -1165,7 +1167,7 @@ void PutClientInServer (edict_t *ent)
 	ent->takedamage = DAMAGE_AIM;
 	ent->movetype = MOVETYPE_WALK;
 	ent->viewheight = 22;
-	ent->inuse = true;
+	ent->inuse = e_true;
 	ent->classname = "player";
 	ent->mass = 200;
 	ent->solid = SOLID_BBOX;
@@ -1233,7 +1235,7 @@ void PutClientInServer (edict_t *ent)
 	if (client->pers.spectator) {
 		client->chase_target = NULL;
 
-		client->resp.spectator = true;
+		client->resp.spectator = e_true;
 
 		ent->movetype = MOVETYPE_NOCLIP;
 		ent->solid = SOLID_NOT;
@@ -1242,7 +1244,7 @@ void PutClientInServer (edict_t *ent)
 		gi.linkentity (ent);
 		return;
 	} else
-		client->resp.spectator = false;
+		client->resp.spectator = e_false;
 
 	if (!KillBox (ent))
 	{	// could't spawn in?
@@ -1307,7 +1309,7 @@ void ClientBegin (edict_t *ent)
 
 	// if there is already a body waiting for us (a loadgame), just
 	// take it, otherwise spawn one from scratch
-	if (ent->inuse == true)
+	if (ent->inuse == e_true)
 	{
 		// the client has cleared the client side viewangles upon
 		// connecting to the server, which is different than the
@@ -1378,9 +1380,9 @@ void ClientUserinfoChanged (edict_t *ent, char *userinfo)
 	s = Info_ValueForKey (userinfo, "spectator");
 	// spectators are only supported in deathmatch
 	if (deathmatch->value && *s && strcmp(s, "0"))
-		ent->client->pers.spectator = true;
+		ent->client->pers.spectator = e_true;
 	else
-		ent->client->pers.spectator = false;
+		ent->client->pers.spectator = e_false;
 
 	// set skin
 	s = Info_ValueForKey (userinfo, "skin");
@@ -1421,7 +1423,7 @@ void ClientUserinfoChanged (edict_t *ent, char *userinfo)
 ClientConnect
 
 Called when a player begins connecting to the server.
-The game can refuse entrance to a client by returning false.
+The game can refuse entrance to a client by returning e_false.
 If the client is allowed, the connection process will continue
 and eventually get to ClientBegin()
 Changing levels will NOT cause this to be called again, but
@@ -1436,7 +1438,7 @@ qboolean ClientConnect (edict_t *ent, char *userinfo)
 	value = Info_ValueForKey (userinfo, "ip");
 	if (SV_FilterPacket(value)) {
 		Info_SetValueForKey(userinfo, "rejmsg", "Banned.");
-		return false;
+		return e_false;
 	}
 
 	// check for a spectator
@@ -1448,7 +1450,7 @@ qboolean ClientConnect (edict_t *ent, char *userinfo)
 			strcmp(spectator_password->string, "none") && 
 			strcmp(spectator_password->string, value)) {
 			Info_SetValueForKey(userinfo, "rejmsg", "Spectator password required or incorrect.");
-			return false;
+			return e_false;
 		}
 
 		// count spectators
@@ -1458,7 +1460,7 @@ qboolean ClientConnect (edict_t *ent, char *userinfo)
 
 		if (numspec >= maxspectators->value) {
 			Info_SetValueForKey(userinfo, "rejmsg", "Server spectator limit is full.");
-			return false;
+			return e_false;
 		}
 	} else {
 		// check for a password
@@ -1466,7 +1468,7 @@ qboolean ClientConnect (edict_t *ent, char *userinfo)
 		if (*password->string && strcmp(password->string, "none") && 
 			strcmp(password->string, value)) {
 			Info_SetValueForKey(userinfo, "rejmsg", "Password required or incorrect.");
-			return false;
+			return e_false;
 		}
 	}
 
@@ -1476,7 +1478,7 @@ qboolean ClientConnect (edict_t *ent, char *userinfo)
 
 	// if there is already a body waiting for us (a loadgame), just
 	// take it, otherwise spawn one from scratch
-	if (ent->inuse == false)
+	if (ent->inuse == e_false)
 	{
 		// clear the respawning variables
 		InitClientResp (ent->client);
@@ -1489,8 +1491,8 @@ qboolean ClientConnect (edict_t *ent, char *userinfo)
 	if (game.maxclients > 1)
 		gi.dprintf ("%s connected\n", ent->client->pers.netname);
 
-	ent->client->pers.connected = true;
-	return true;
+	ent->client->pers.connected = e_true;
+	return e_true;
 }
 
 /*
@@ -1519,9 +1521,9 @@ void ClientDisconnect (edict_t *ent)
 	gi.unlinkentity (ent);
 	ent->s.modelindex = 0;
 	ent->solid = SOLID_NOT;
-	ent->inuse = false;
+	ent->inuse = e_false;
 	ent->classname = "disconnected";
-	ent->client->pers.connected = false;
+	ent->client->pers.connected = e_false;
 
 	playernum = ent-g_edicts-1;
 	gi.configstring (CS_PLAYERSKINS+playernum, "");
@@ -1583,7 +1585,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		// can exit intermission after five seconds
 		if (level.time > level.intermissiontime + 5.0 
 			&& (ucmd->buttons & BUTTON_ANY) )
-			level.exitintermission = true;
+			level.exitintermission = e_true;
 		return;
 	}
 
@@ -1620,7 +1622,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 
 		if (memcmp(&client->old_pmove, &pm.s, sizeof(pm.s)))
 		{
-			pm.snapinitial = true;
+			pm.snapinitial = e_true;
 	//		gi.dprintf ("pmove changed!\n");
 		}
 
@@ -1717,7 +1719,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 				GetChaseTarget(ent);
 
 		} else if (!client->weapon_thunk) {
-			client->weapon_thunk = true;
+			client->weapon_thunk = e_true;
 			Think_Weapon (ent);
 		}
 	}
@@ -1773,7 +1775,7 @@ void ClientBeginServerFrame (edict_t *ent)
 	if (!client->weapon_thunk && !client->resp.spectator)
 		Think_Weapon (ent);
 	else
-		client->weapon_thunk = false;
+		client->weapon_thunk = e_false;
 
 	if (ent->deadflag)
 	{

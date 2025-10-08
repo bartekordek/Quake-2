@@ -20,8 +20,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "g_local.h"
 #include "m_player.h"
-
-
+#include "math/constants.h"
+#include "math/euler_angles.h"
 
 static	edict_t		*current_player;
 static	gclient_t	*current_client;
@@ -883,13 +883,13 @@ void G_SetClientFrame (edict_t *ent)
 	client = ent->client;
 
 	if (client->ps.pmove.pm_flags & PMF_DUCKED)
-		duck = true;
+		duck = e_true;
 	else
-		duck = false;
+		duck = e_false;
 	if (xyspeed)
-		run = true;
+		run = e_true;
 	else
-		run = false;
+		run = e_false;
 
 	// check for stand/duck and stop/go transitions
 	if (duck != client->anim_duck && client->anim_priority < ANIM_DEATH)
@@ -1124,12 +1124,12 @@ void ClientEndServerFrame (edict_t *ent)
 //ZOID
 		if (ent->client->menu) {
 			PMenu_Do_Update(ent);
-			ent->client->menudirty = false;
+			ent->client->menudirty = e_false;
 			ent->client->menutime = level.time;
 		} else
 //ZOID
 			DeathmatchScoreboardMessage (ent, ent->enemy);
-		gi.unicast (ent, false);
+		gi.unicast (ent, e_false);
 	}
 }
 

@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"*.script": "lua",
+			"*.config": "xml",
+			"*.vert": "glsl",
+			"*.frag": "glsl",
+			"assert.h": "c",
+			"snd_loc.h": "c"
+		}
+	}
+}

@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // g_misc.c
 
 #include "g_local.h"
-
+#include "math/euler_angles.h"
 
 /*QUAKED func_group (0 0 0) ?
 Used to group brushes together just for editor convenience.
@@ -217,7 +217,7 @@ void ThrowHead (edict_t *self, char *gibname, int damage, int type)
 	VectorMA (self->velocity, vscale, vd, self->velocity);
 	ClipGibVelocity (self);
 
-	self->avelocity[YAW] = crandom()*600;
+	self->avelocity[YAW] = crandom()*600.f;
 
 	self->think = G_FreeEdict;
 	self->nextthink = level.time + 10 + random()*10;
