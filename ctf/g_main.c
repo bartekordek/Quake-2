@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -151,7 +151,7 @@ void Sys_Error (char *error, ...)
 	gi.error (ERR_FATAL, "%s", text);
 }
 
-void Com_Printf (char *msg, ...)
+void Com_Printf (const char *msg, ...)
 {
 	va_list		argptr;
 	char		text[1024];

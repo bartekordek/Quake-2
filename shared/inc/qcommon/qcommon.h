@@ -104,7 +104,7 @@ EXTERNC void COM_AddParm (char *parm);
 EXTERNC void COM_Init (void);
 EXTERNC void COM_InitArgv (int argc, char **argv);
 
-EXTERNC char *CopyString (char *in);
+EXTERNC char *CopyString (const char *in);
 
 //============================================================================
 
@@ -378,7 +378,7 @@ EXTERNC char	*Cmd_Args (void);
 // functions. Cmd_Argv () will return an empty string, not a NULL
 // if arg > argc, so string operations are always safe.
 
-EXTERNC void	Cmd_TokenizeString (char *text, qboolean macroExpand);
+EXTERNC void	Cmd_TokenizeString (const char *text, qboolean macroExpand);
 // Takes a null terminated string.  Does not need to be /n terminated.
 // breaks the string up into arg tokens.
 
@@ -415,7 +415,7 @@ interface from being ambiguous.
 
 EXTERNC extern	cvar_t	*cvar_vars;
 
-EXTERNC cvar_t *Cvar_Get (char *var_name, char *value, int flags);
+EXTERNC cvar_t *Cvar_Get (const char *var_name, const char *value, int flags);
 // creates the variable if it doesn't exist, or returns the existing one
 // if it exists, the value will not be changed, but flags will be ORed in
 // that allows variables to be unarchived without needing bitflags
@@ -431,10 +431,10 @@ EXTERNC cvar_t 	*Cvar_FullSet (char *var_name, char *value, int flags);
 EXTERNC void	Cvar_SetValue (char *var_name, float value);
 // expands value to a string and calls Cvar_Set
 
-EXTERNC float	Cvar_VariableValue (char *var_name);
+EXTERNC float Cvar_VariableValue (const char *var_name);
 // returns 0 if not defined or non numeric
 
-EXTERNC char	*Cvar_VariableString (char *var_name);
+EXTERNC const char *Cvar_VariableString (const char *var_name);
 // returns an empty string if not defined
 
 EXTERNC char 	*Cvar_CompleteVariable (char *partial);
@@ -689,9 +689,9 @@ MISC
 
 EXTERNC void		Com_BeginRedirect (int target, char* buffer, int buffersize, void (*flush)(int target, char* buffer));
 EXTERNC void		Com_EndRedirect (void);
-EXTERNC void 		Com_Printf (char *fmt, ...);
+EXTERNC void 		Com_Printf (const char *fmt, ...);
 EXTERNC void 		Com_DPrintf (char *fmt, ...);
-EXTERNC void 		Com_Error (int code, char *fmt, ...);
+EXTERNC void 		Com_Error (int code, const char *fmt, ...);
 EXTERNC void 		Com_Quit (void);
 
 EXTERNC int			Com_ServerState (void);		// this should have just been a cvar...

@@ -20,8 +20,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // in_win.c -- windows 95 mouse and joystick code
 // 02/21/97 JCB Added extended DirectInput code to support external controllers.
 
-#include "../client/client.h"
-#include "../quake2/inc/quake2/windows/winquake.h"
+#include "quake2/client/client.h"
+#include "quake2/windows/winquake.h"
+#include "math/euler_angles.h"
 
 extern	unsigned	sys_msg_time;
 

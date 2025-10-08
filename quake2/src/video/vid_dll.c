@@ -23,8 +23,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <assert.h>
 #include <float.h>
 
-#include "..\client\client.h"
-#include "../quake2/inc/quake2/windows/winquake.h"
+#include "quake2/client/client.h"
+#include "quake2/windows/winquake.h"
 //#include "zmouse.h"
 
 // Structure containing functions exported from refresh DLL

@@ -163,7 +163,7 @@ EXTERNC void COM_FileBase(char *in, char *out);
 EXTERNC void COM_FilePath(char *in, char *out);
 EXTERNC void COM_DefaultExtension(char *path, char *extension);
 
-EXTERNC char *COM_Parse(char **data_p);
+EXTERNC const char *COM_Parse (const char **data_p);
 // data is an in/out parm, returns a parsed out token
 
 EXTERNC void Com_sprintf(char *dest, int size, char *fmt, ...);
@@ -238,7 +238,7 @@ EXTERNC void Sys_FindClose(void);
 
 // this is only here so the functions in q_shared.c and q_shwin.c can link
 EXTERNC void Sys_Error(char *error, ...);
-EXTERNC void Com_Printf(char *msg, ...);
+EXTERNC void Com_Printf (const char *msg, ...);
 
 
 

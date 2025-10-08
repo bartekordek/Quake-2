@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -28,7 +28,7 @@ cvar_t	*cvar_vars;
 Cvar_InfoValidate
 ============
 */
-static qboolean Cvar_InfoValidate (char *s)
+static qboolean Cvar_InfoValidate (const char *s)
 {
 	if (strstr (s, "\\"))
 		return e_false;
@@ -44,10 +44,10 @@ static qboolean Cvar_InfoValidate (char *s)
 Cvar_FindVar
 ============
 */
-static cvar_t *Cvar_FindVar (char *var_name)
+static cvar_t *Cvar_FindVar (const char *var_name)
 {
 	cvar_t	*var;
-	
+
 	for (var=cvar_vars ; var ; var=var->next)
 		if (!strcmp (var_name, var->name))
 			return var;
@@ -60,10 +60,10 @@ static cvar_t *Cvar_FindVar (char *var_name)
 Cvar_VariableValue
 ============
 */
-float Cvar_VariableValue (char *var_name)
+float Cvar_VariableValue (const char *var_name)
 {
 	cvar_t	*var;
-	
+
 	var = Cvar_FindVar (var_name);
 	if (!var)
 		return 0;
@@ -76,10 +76,10 @@ float Cvar_VariableValue (char *var_name)
 Cvar_VariableString
 ============
 */
-char *Cvar_VariableString (char *var_name)
+const char *Cvar_VariableString (const char *var_name)
 {
 	cvar_t *var;
-	
+
 	var = Cvar_FindVar (var_name);
 	if (!var)
 		return "";
@@ -96,12 +96,12 @@ char *Cvar_CompleteVariable (char *partial)
 {
 	cvar_t		*cvar;
 	int			len;
-	
+
 	len = strlen(partial);
-	
+
 	if (!len)
 		return NULL;
-		
+
 	// check exact match
 	for (cvar=cvar_vars ; cvar ; cvar=cvar->next)
 		if (!strcmp (partial,cvar->name))
@@ -124,10 +124,10 @@ If the variable already exists, the value will not be set
 The flags will be or'ed in if the variable exists.
 ============
 */
-cvar_t *Cvar_Get (char *var_name, char *var_value, int flags)
+cvar_t *Cvar_Get (const char *var_name, const char *var_value, int flags)
 {
 	cvar_t	*var;
-	
+
 	if (flags & (CVAR_USERINFO | CVAR_SERVERINFO))
 	{
 		if (!Cvar_InfoValidate (var_name))
@@ -251,9 +251,9 @@ cvar_t *Cvar_Set2 (char *var_name, char *value, qboolean force)
 
 	if (var->flags & CVAR_USERINFO)
 		userinfo_modified = e_true;	// transmit at next oportunity
-	
+
 	Z_Free (var->string);	// free the old value string
-	
+
 	var->string = CopyString(value);
 	var->value = atof (var->string);
 
@@ -288,7 +288,7 @@ Cvar_FullSet
 cvar_t *Cvar_FullSet (char *var_name, char *value, int flags)
 {
 	cvar_t	*var;
-	
+
 	var = Cvar_FindVar (var_name);
 	if (!var)
 	{	// create it
@@ -299,9 +299,9 @@ cvar_t *Cvar_FullSet (char *var_name, char *value, int flags)
 
 	if (var->flags & CVAR_USERINFO)
 		userinfo_modified = e_true;	// transmit at next oportunity
-	
+
 	Z_Free (var->string);	// free the old value string
-	
+
 	var->string = CopyString(value);
 	var->value = atof (var->string);
 	var->flags = flags;
@@ -368,7 +368,7 @@ qboolean Cvar_Command (void)
 	v = Cvar_FindVar (Cmd_Argv(0));
 	if (!v)
 		return e_false;
-		
+
 // perform a variable print or set
 	if (Cmd_Argc() == 1)
 	{

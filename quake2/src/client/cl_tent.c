@@ -19,7 +19,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 // cl_tent.c -- client side temporary entities
 
-#include "client.h"
+#include "quake2/client/client.h"
+#include "math/constants.h"
 
 typedef enum
 {

@@ -101,7 +101,7 @@ Both client and server can use this, and it will output
 to the apropriate place.
 =============
 */
-void Com_Printf (char *fmt, ...)
+void Com_Printf (const char *fmt, ...)
 {
 	va_list		argptr;
 	char		msg[MAXPRINTMSG];
@@ -175,7 +175,7 @@ Both client and server can use this, and it will
 do the apropriate things.
 =============
 */
-void Com_Error (int code, char *fmt, ...)
+void Com_Error (int code, const char *fmt, ...)
 {
 	va_list		argptr;
 	static char		msg[MAXPRINTMSG];
@@ -367,8 +367,7 @@ int	memsearch (byte *start, int count, int search)
 	return -1;
 }
 
-
-char *CopyString (char *in)
+char *CopyString (const char *in)
 {
 	char* out = (char*)Z_Malloc (strlen(in)+1);
 	strcpy (out, in);

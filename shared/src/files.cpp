@@ -559,10 +559,9 @@ FS_ExecAutoexec
 */
 void FS_ExecAutoexec (void)
 {
-	char *dir;
 	char name [MAX_QPATH];
 
-	dir = Cvar_VariableString("gamedir");
+	const char *dir = Cvar_VariableString ("gamedir");
 	if (*dir)
 		Com_sprintf(name, sizeof(name), "%s/%s/autoexec.cfg", fs_basedir->string, dir);
 	else

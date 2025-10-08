@@ -539,14 +539,14 @@ char		*Cmd_Args (void)
 Cmd_MacroExpandString
 ======================
 */
-char *Cmd_MacroExpandString (char *text)
+const char *Cmd_MacroExpandString (const char *text)
 {
 	int		i, j, count, len;
 	qboolean	inquote;
-	char	*scan;
+	const char	*scan;
 	static	char	expanded[MAX_STRING_CHARS];
 	char	temporary[MAX_STRING_CHARS];
-	char	*token, *start;
+	const char	*token, *start;
 
 	inquote = e_false;
 	scan = text;
@@ -622,10 +622,10 @@ Parses the given string into command line tokens.
 $Cvars will be expanded unless they are in a quoted token
 ============
 */
-void Cmd_TokenizeString (char *text, qboolean macroExpand)
+void Cmd_TokenizeString (const char *text, qboolean macroExpand)
 {
 	int		i;
-	char	*com_token;
+	const char	*com_token;
 
 // clear the args from the last string
 	for (i=0 ; i<cmd_argc ; i++)
