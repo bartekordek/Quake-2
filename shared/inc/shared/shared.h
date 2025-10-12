@@ -34,8 +34,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #endif
 
 #include "shared/config.h"
-#include "shared/defines.h"
-#include "math/vector.h"
+#include "shared/cplane.h"
 #include <assert.h>
 #include <math.h>
 #include <stdio.h>
@@ -310,16 +309,7 @@ COLLISION DETECTION
 #define AREA_SOLID 1
 #define AREA_TRIGGERS 2
 
-// plane_t structure
-// !!! if this is changed, it must be changed in asm code too !!!
-typedef struct cplane_s
-{
-	vec3_t normal;
-	float dist;
-	byte type;	   // for fast side tests
-	byte signbits; // signx + (signy<<1) + (signz<<1)
-	byte pad[2];
-} cplane_t;
+
 
 // structure offset for asm code
 #define CPLANE_NORMAL_X 0
