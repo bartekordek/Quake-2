@@ -2,6 +2,7 @@
 #include "math/angle_conversion.h"
 #include "math/euler_angles.h"
 #include <cmath>
+#include <cstring>
 
 void RotatePointAroundVector( vec3_t dst, const vec3_t dir, const vec3_t point, float degrees )
 {

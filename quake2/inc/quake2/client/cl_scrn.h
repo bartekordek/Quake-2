@@ -3,6 +3,6 @@
 
 #include "shared/config.h"
 
-EXTERNC extern void SCR_EndLoadingPlaque(void);
+EXTERNC void SCR_EndLoadingPlaque(void);
 
 #endif // __cl_scrn_h__
