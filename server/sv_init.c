@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "server.h"
+#include "shared/common.h"
 
 server_static_t	svs;				// persistant server info
 server_t		sv;					// local server
@@ -166,6 +167,7 @@ clients along with it.
 
 ================
 */
+
 void SV_SpawnServer (char *server, char *spawnpoint, server_state_t serverstate, qboolean attractloop, qboolean loadgame)
 {
 	int			i;

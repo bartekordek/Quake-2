@@ -2,7 +2,7 @@
 #define __game_shared_config_h__
 
 #ifdef __cplusplus
-#define EXTERNC extern "C"
+#define EXTERNC "C"
 #else
 #define EXTERNC
 #endif

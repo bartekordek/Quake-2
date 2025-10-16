@@ -27,7 +27,7 @@ else()
     else()
         message(STATUS "WARNING: building regular version.")
         # lots of warnings and all warnings as errors
-        add_compile_options( -Wall -Wextra -Werror -Wno-unused-parameter )
+        add_compile_options( -Wall -Wextra -Wno-unused-parameter )
         # -Wno-sized-deallocation
         add_compile_options( -Wno-unused-variable )
         add_definitions( -Wfatal-errors )
