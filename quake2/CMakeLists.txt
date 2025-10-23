@@ -34,6 +34,7 @@ PRIVATE game
 PRIVATE ref_gl
 PRIVATE ref_soft
 PRIVATE shared
+PRIVATE SDL2-static
 )
 
 if (MSVC)
