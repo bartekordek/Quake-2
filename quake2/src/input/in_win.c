@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "quake2/client/client.h"
 #include "quake2/windows/winquake.h"
+#include "quake2/input/event_handler.h"
 #include "math/euler_angles.h"
 
 extern	unsigned	sys_msg_time;
@@ -118,8 +119,8 @@ if (!freelook->value && lookspring->value)
 
 int			mouse_buttons;
 int			mouse_oldbuttonstate;
-POINT		current_pos;
 int			mouse_x, mouse_y, old_mouse_x, old_mouse_y, mx_accum, my_accum;
+int			cursor_x, cursor_y;
 
 int			old_x, old_y;
 
@@ -157,34 +158,11 @@ void IN_ActivateMouse (void)
 
 	mouseactive = e_true;
 
-	if (mouseparmsvalid)
-		restore_spi = SystemParametersInfo (SPI_SETMOUSE, 0, newmouseparms, 0);
+	int x, y;
+	Get_mouse_pos (&x, &y);
 
-	width = GetSystemMetrics (SM_CXSCREEN);
-	height = GetSystemMetrics (SM_CYSCREEN);
-
-	GetWindowRect ( cl_hwnd, &window_rect);
-	if (window_rect.left < 0)
-		window_rect.left = 0;
-	if (window_rect.top < 0)
-		window_rect.top = 0;
-	if (window_rect.right >= width)
-		window_rect.right = width-1;
-	if (window_rect.bottom >= height-1)
-		window_rect.bottom = height-1;
-
-	window_center_x = (window_rect.right + window_rect.left)/2;
-	window_center_y = (window_rect.top + window_rect.bottom)/2;
-
-	SetCursorPos (window_center_x, window_center_y);
-
-	old_x = window_center_x;
-	old_y = window_center_y;
-
-	SetCapture ( cl_hwnd );
-	ClipCursor (&window_rect);
-	while (ShowCursor (FALSE) >= 0)
-		;
+	old_x = x;
+	old_y = y;
 }
 
 
@@ -231,6 +209,9 @@ void IN_StartupMouse (void)
 	mouseinitialized = e_true;
 	mouseparmsvalid = SystemParametersInfo (SPI_GETMOUSE, 0, originalmouseparms, 0);
 	mouse_buttons = 3;
+
+	cursor_x		 = 0;
+	cursor_y		 = 0;
 }
 
 /*
@@ -272,58 +253,42 @@ IN_MouseMove
 */
 void IN_MouseMove (usercmd_t *cmd)
 {
-	int		mx, my;
-
 	if (!mouseactive)
 		return;
 
 	// find mouse movement
-	if (!GetCursorPos (&current_pos))
-		return;
+	Get_mouse_pos (&mouse_x, &mouse_y);
 
-	mx = current_pos.x - window_center_x;
-	my = current_pos.y - window_center_y;
+	int dx = mouse_x - old_mouse_x;
+	int dy = mouse_y - old_mouse_y;
 
-#if 0
-	if (!mx && !my)
-		return;
-#endif
+	dx *= sensitivity->value;
+	dy *= sensitivity->value;
 
-	if (m_filter->value)
-	{
-		mouse_x = (mx + old_mouse_x) * 0.5;
-		mouse_y = (my + old_mouse_y) * 0.5;
-	}
-	else
-	{
-		mouse_x = mx;
-		mouse_y = my;
-	}
+	dx *= 2.f;
+	dy *= 2.f;
 
-	old_mouse_x = mx;
-	old_mouse_y = my;
-
-	mouse_x *= sensitivity->value;
-	mouse_y *= sensitivity->value;
+	old_mouse_x = mouse_x;
+	old_mouse_y = mouse_y;
 
 // add mouse X/Y movement to cmd
 	if ( (in_strafe.state & 1) || (lookstrafe->value && mlooking ))
-		cmd->sidemove += m_side->value * mouse_x;
+		cmd->sidemove += m_side->value * dx;
 	else
-		cl.viewangles[YAW] -= m_yaw->value * mouse_x;
+		cl.viewangles[YAW] -= m_yaw->value * dx;
 
 	if ( (mlooking || freelook->value) && !(in_strafe.state & 1))
 	{
-		cl.viewangles[PITCH] += m_pitch->value * mouse_y;
+		cl.viewangles[PITCH] += m_pitch->value * dy;
 	}
 	else
 	{
-		cmd->forwardmove -= m_forward->value * mouse_y;
+		cmd->forwardmove -= m_forward->value * dy;
 	}
 
 	// force the mouse to the center, so there's room to move
-	if (mx || my)
-		SetCursorPos (window_center_x, window_center_y);
+	//if (mx || my)
+	//	SetCursorPos (window_center_x, window_center_y);
 }
 
 

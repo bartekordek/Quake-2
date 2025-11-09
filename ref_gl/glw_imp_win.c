@@ -36,10 +36,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <windows.h>
 #include "../ref_gl/gl_local.h"
 #include "glw_win.h"
+#include "glw.h"
 #include "../quake2/inc/quake2/windows/winquake.h"
 
 static qboolean GLimp_SwitchFullscreen (int width, int height);
-qboolean		GLimp_InitGL (void);
 
 glwstate_t glw_state;
 
@@ -58,92 +58,7 @@ static qboolean VerifyDriver (void)
 	return e_true;
 }
 
-/*
-** VID_CreateWindow
-*/
 #define WINDOW_CLASS_NAME "Quake 2"
-
-qboolean VID_CreateWindow (int width, int height, qboolean fullscreen)
-{
-	WNDCLASS wc;
-	RECT	 r;
-	cvar_t	*vid_xpos, *vid_ypos;
-	int		 stylebits;
-	int		 x, y, w, h;
-	int		 exstyle;
-
-	/* Register the frame class */
-	wc.style		 = 0;
-	wc.lpfnWndProc	 = (WNDPROC) glw_state.wndproc;
-	wc.cbClsExtra	 = 0;
-	wc.cbWndExtra	 = 0;
-	wc.hInstance	 = glw_state.hInstance;
-	wc.hIcon		 = 0;
-	wc.hCursor		 = LoadCursor (NULL, IDC_ARROW);
-	wc.hbrBackground = (void *) COLOR_GRAYTEXT;
-	wc.lpszMenuName	 = 0;
-	wc.lpszClassName = WINDOW_CLASS_NAME;
-
-	if (!RegisterClass (&wc))
-		ri.Sys_Error (ERR_FATAL, "Couldn't register window class");
-
-	if (fullscreen)
-	{
-		exstyle	  = WS_EX_TOPMOST;
-		stylebits = WS_POPUP | WS_VISIBLE;
-	}
-	else
-	{
-		exstyle	  = 0;
-		stylebits = WINDOW_STYLE;
-	}
-
-	r.left	 = 0;
-	r.top	 = 0;
-	r.right	 = width;
-	r.bottom = height;
-
-	AdjustWindowRect (&r, stylebits, FALSE);
-
-	w = r.right - r.left;
-	h = r.bottom - r.top;
-
-	if (fullscreen)
-	{
-		x = 0;
-		y = 0;
-	}
-	else
-	{
-		vid_xpos = ri.Cvar_Get ("vid_xpos", "0", 0);
-		vid_ypos = ri.Cvar_Get ("vid_ypos", "0", 0);
-		x		 = vid_xpos->value;
-		y		 = vid_ypos->value;
-	}
-
-	glw_state.hWnd = CreateWindowEx (exstyle, WINDOW_CLASS_NAME, "Quake 2", stylebits, x, y, w, h, NULL, NULL, glw_state.hInstance, NULL);
-
-	if (!glw_state.hWnd)
-		ri.Sys_Error (ERR_FATAL, "Couldn't create window");
-
-	ShowWindow (glw_state.hWnd, SW_SHOW);
-	UpdateWindow (glw_state.hWnd);
-
-	// init all the gl stuff for the window
-	if (!GLimp_InitGL ())
-	{
-		ri.Con_Printf (PRINT_ALL, "VID_CreateWindow() - GLimp_InitGL failed\n");
-		return e_false;
-	}
-
-	SetForegroundWindow (glw_state.hWnd);
-	SetFocus (glw_state.hWnd);
-
-	// let the sound and input subsystems know about the new window
-	ri.Vid_NewWindow (width, height);
-
-	return e_true;
-}
 
 /*
 ** GLimp_SetMode
@@ -212,8 +127,10 @@ rserr_t GLimp_SetMode (int *pwidth, int *pheight, int mode, qboolean fullscreen)
 
 			ri.Con_Printf (PRINT_ALL, "ok\n");
 
-			if (!VID_CreateWindow (width, height, e_true))
+			if (!ri.create_window(0, 0, width, height, e_true))
+			{
 				return rserr_invalid_mode;
+			}
 
 			return rserr_ok;
 		}
@@ -251,14 +168,15 @@ rserr_t GLimp_SetMode (int *pwidth, int *pheight, int mode, qboolean fullscreen)
 				*pwidth				= width;
 				*pheight			= height;
 				gl_state.fullscreen = e_false;
-				if (!VID_CreateWindow (width, height, e_false))
+
+				if (!ri.create_window (0, 0, width, height, e_false))
 					return rserr_invalid_mode;
 				return rserr_invalid_fullscreen;
 			}
 			else
 			{
 				ri.Con_Printf (PRINT_ALL, " ok\n");
-				if (!VID_CreateWindow (width, height, e_true))
+				if (!ri.create_window (0, 0, width, height, e_true))
 					return rserr_invalid_mode;
 
 				gl_state.fullscreen = e_true;
@@ -270,13 +188,23 @@ rserr_t GLimp_SetMode (int *pwidth, int *pheight, int mode, qboolean fullscreen)
 	{
 		ri.Con_Printf (PRINT_ALL, "...setting windowed mode\n");
 
-		ChangeDisplaySettings (0, 0);
+		//ChangeDisplaySettings (0, 0);
 
 		*pwidth				= width;
 		*pheight			= height;
 		gl_state.fullscreen = e_false;
-		if (!VID_CreateWindow (width, height, e_false))
+		if (ri.create_window(0, 0, width, height, e_false))
+		{
+			if (GLimp_InitGL() == e_false)
+			{
+				return rserr_invalid_mode;
+			}
+			ri.Vid_NewWindow (width, height);
+		}
+		else
+		{
 			return rserr_invalid_mode;
+		}
 	}
 
 	return rserr_ok;
@@ -440,8 +368,6 @@ qboolean GLimp_InitGL (void)
 	/*
 	** Get a DC for the specified window
 	*/
-	if (glw_state.hDC != NULL)
-		ri.Con_Printf (PRINT_ALL, "GLimp_Init() - non-NULL DC exists\n");
 
 	if ((glw_state.hDC = GetDC (glw_state.hWnd)) == NULL)
 	{
@@ -465,17 +391,17 @@ qboolean GLimp_InitGL (void)
 	}
 	else
 	{
-		if ((pixelformat = ChoosePixelFormat (glw_state.hDC, &pfd)) == 0)
-		{
-			ri.Con_Printf (PRINT_ALL, "GLimp_Init() - ChoosePixelFormat failed\n");
-			return e_false;
-		}
-		if (SetPixelFormat (glw_state.hDC, pixelformat, &pfd) == FALSE)
-		{
-			ri.Con_Printf (PRINT_ALL, "GLimp_Init() - SetPixelFormat failed\n");
-			return e_false;
-		}
-		DescribePixelFormat (glw_state.hDC, pixelformat, sizeof (pfd), &pfd);
+		//if ((pixelformat = ChoosePixelFormat (glw_state.hDC, &pfd)) == 0)
+		//{
+		//	ri.Con_Printf (PRINT_ALL, "GLimp_Init() - ChoosePixelFormat failed\n");
+		//	return e_false;
+		//}
+		//if (SetPixelFormat (glw_state.hDC, pixelformat, &pfd) == FALSE)
+		//{
+		//	ri.Con_Printf (PRINT_ALL, "GLimp_Init() - SetPixelFormat failed\n");
+		//	return e_false;
+		//}
+		//DescribePixelFormat (glw_state.hDC, pixelformat, sizeof (pfd), &pfd);
 
 		if (!(pfd.dwFlags & PFD_GENERIC_ACCELERATED))
 		{
@@ -506,19 +432,19 @@ qboolean GLimp_InitGL (void)
 	** startup the OpenGL subsystem by creating a context and making
 	** it current
 	*/
-	if ((glw_state.hGLRC = qwglCreateContext (glw_state.hDC)) == 0)
-	{
-		ri.Con_Printf (PRINT_ALL, "GLimp_Init() - qwglCreateContext failed\n");
+	//if ((glw_state.hGLRC = qwglCreateContext (glw_state.hDC)) == 0)
+	//{
+	//	ri.Con_Printf (PRINT_ALL, "GLimp_Init() - qwglCreateContext failed\n");
 
-		goto fail;
-	}
+	//	goto fail;
+	//}
 
-	if (!qwglMakeCurrent (glw_state.hDC, glw_state.hGLRC))
-	{
-		ri.Con_Printf (PRINT_ALL, "GLimp_Init() - qwglMakeCurrent failed\n");
+	//if (!qwglMakeCurrent (glw_state.hDC, glw_state.hGLRC))
+	//{
+	//	ri.Con_Printf (PRINT_ALL, "GLimp_Init() - qwglMakeCurrent failed\n");
 
-		goto fail;
-	}
+	//	goto fail;
+	//}
 
 	if (!VerifyDriver ())
 	{
@@ -586,6 +512,7 @@ void GLimp_BeginFrame (float camera_separation)
 */
 void GLimp_EndFrame (void)
 {
+	
 	int err;
 
 	err = qglGetError ();
@@ -593,10 +520,13 @@ void GLimp_EndFrame (void)
 
 	if (stricmp (gl_drawbuffer->string, "GL_BACK") == 0)
 	{
-		if (!qwglSwapBuffers (glw_state.hDC))
-			ri.Sys_Error (ERR_FATAL, "GLimp_EndFrame() - SwapBuffers() failed!\n");
+		ri.Swap_buffers ();
+		//if (!qwglSwapBuffers (glw_state.hDC))
+		//	ri.Sys_Error (ERR_FATAL, "GLimp_EndFrame() - SwapBuffers() failed!\n");
 	}
+	//ri.Swap_buffers ();
 }
+
 
 /*
 ** GLimp_AppActivate

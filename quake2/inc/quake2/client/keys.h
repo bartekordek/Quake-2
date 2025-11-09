@@ -151,5 +151,6 @@ EXTERNC void Key_WriteBindings (FILE *f);
 EXTERNC void Key_SetBinding (int keynum, char *binding);
 EXTERNC void Key_ClearStates (void);
 EXTERNC int Key_GetKey (void);
+EXTERNC int	 MapKey (int key);
 
 #endif // __keys_h__

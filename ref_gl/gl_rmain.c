@@ -1452,7 +1452,9 @@ void R_BeginFrame( float camera_separation )
 			if ( Q_stricmp( gl_drawbuffer->string, "GL_FRONT" ) == 0 )
 				qglDrawBuffer( GL_FRONT );
 			else
+			{
 				qglDrawBuffer( GL_BACK );
+			}
 		}
 	}
 
@@ -1657,6 +1659,9 @@ __declspec(dllexport) refexport_t GetRefAPI (refimport_t rimp )
 	re.EndFrame = GLimp_EndFrame;
 
 	re.AppActivate = GLimp_AppActivate;
+
+	re.create_window	   = ri.create_window;
+	re.Swap_buffers		   = ri.Swap_buffers;
 
 	Swap_Init ();
 

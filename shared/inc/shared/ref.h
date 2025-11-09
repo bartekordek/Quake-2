@@ -183,7 +183,8 @@ typedef struct
 	void	(*EndFrame) (void);
 
 	void	(*AppActivate)( qboolean activate );
-
+	qboolean (*create_window) (int x, int y, int w, int h, qboolean);
+	void (*Swap_buffers) ();
 } refexport_t;
 
 //
@@ -213,13 +214,15 @@ typedef struct
 	// files should be stored to, ie: "f:\quake\id1"
 	char	*(*FS_Gamedir) (void);
 
-	cvar_t	*(*Cvar_Get) (char *name, char *value, int flags);
-	cvar_t	*(*Cvar_Set)( char *name, char *value );
-	void	 (*Cvar_SetValue)( char *name, float value );
+	cvar_t	*(*Cvar_Get) (const char *name, const char *value, int flags);
+	cvar_t	*(*Cvar_Set)( const char *name, const char *value );
+	void	 (*Cvar_SetValue)( const char *name, float value );
 
 	qboolean	(*Vid_GetModeInfo)( int *width, int *height, int mode );
 	void		(*Vid_MenuInit)( void );
 	void		(*Vid_NewWindow)( int width, int height );
+	qboolean (*create_window) (int x, int y, int w, int h, qboolean);
+	void (*Swap_buffers) ();
 } refimport_t;
 
 
