@@ -4,6 +4,17 @@
 
 SDL_Window *g_window{nullptr};
 
+struct WindowsData
+{
+	int x{0};
+	int y{0};
+	int w{0};
+	int h{0};
+	qboolean fullscreen{e_false};
+};
+
+WindowsData g_windowdata;
+
 void APIENTRY glDebugOutput (GLenum source, GLenum type, unsigned int id, GLenum severity, GLsizei length,
 							 const char *  // message
 							 ,
@@ -131,7 +142,13 @@ qboolean create_window (int x, int y, int w, int h, qboolean fullscreen)
 	SDL_GLContext context = SDL_GL_CreateContext (g_window);
 	SDL_assert (context);
 
-	//SDL_SetWindowGrab (g_window, SDL_TRUE);
+	g_windowdata.x			= x;
+	g_windowdata.y			= y;
+	g_windowdata.w			= w;
+	g_windowdata.h			= h;
+	g_windowdata.fullscreen = fullscreen;
+
+	// SDL_SetWindowGrab (g_window, SDL_TRUE);
 
 	return e_true;
 }
@@ -139,4 +156,13 @@ qboolean create_window (int x, int y, int w, int h, qboolean fullscreen)
 void update_buffer()
 {
 	SDL_GL_SwapWindow (g_window);
+}
+
+void Get_window_attributes (int *inOut_x, int *inOut_y, int *inOut_w, int *inOut_h, qboolean *inOut_fullscreen)
+{
+	*inOut_x		  = g_windowdata.x;
+	*inOut_y		  = g_windowdata.y;
+	*inOut_w		  = g_windowdata.w;
+	*inOut_h		  = g_windowdata.h;
+	*inOut_fullscreen = g_windowdata.fullscreen;
 }
