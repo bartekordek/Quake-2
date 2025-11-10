@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "quake2/input/in_win.h"
 #include "quake2/windows/window_util.h"
 #include "math/euler_angles.h"
+#include "shared/logger.h"
 
 EXTERNC	unsigned	sys_msg_time;
 
@@ -149,7 +150,11 @@ void IN_ActivateMouse (void)
 	int width, height;
 
 	if (!mouseinitialized)
+	{
 		return;
+	}
+	log_str ("IN_ActivateMouse");
+
 	if (!in_mouse->value)
 	{
 		mouseactive = e_false;
@@ -188,7 +193,6 @@ void IN_ActivateMouse (void)
 	outRect.top = window_rect.top;
 	outRect.bottom = window_rect.bottom;
 
-	ClipCursor (&outRect);
 	while (ShowCursor (FALSE) >= 0);
 }
 
@@ -202,12 +206,14 @@ Called when the window loses focus
 void IN_DeactivateMouse (void)
 {
 	if (!mouseinitialized)
+	{
 		return;
+	}
+
+	log_str ("IN_DeactivateMouse");
+
 	if (!mouseactive)
 		return;
-
-	if (restore_spi)
-		SystemParametersInfo (SPI_SETMOUSE, 0, originalmouseparms, 0);
 
 	mouseactive = e_false;
 
@@ -323,8 +329,10 @@ void IN_MouseMove (usercmd_t *cmd)
 	}
 
 	// force the mouse to the center, so there's room to move
+	
 	if (mx || my)
 	{
+		log_str ("SetCursorPos");
 		SetCursorPos (window_center_x, window_center_y);
 		//Q2_SetMousePos (window_center_x, window_center_y);
 	}
@@ -445,7 +453,30 @@ void IN_Frame (void)
 		}
 	}
 
-	IN_ActivateMouse ();
+	static bool actiavated{false};
+
+	if (Get_Is_InForeground())
+	{
+		if (actiavated == true)
+		{
+		}
+		else
+		{
+			IN_ActivateMouse ();
+			actiavated = true;
+		}
+	}
+	else
+	{
+		if (actiavated == false)
+		{
+		}
+		else
+		{
+			IN_DeactivateMouse ();
+			actiavated = false;
+		}
+	}
 }
 
 /*

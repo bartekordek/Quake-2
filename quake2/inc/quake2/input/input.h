@@ -23,6 +23,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // input.h -- external (non-keyboard) input devices
 
 #include "shared/boolean.h"
+#include "shared/config.h"
+#include "shared/usercmd.h"
 
 EXTERNC void IN_Init (void);
 

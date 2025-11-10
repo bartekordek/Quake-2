@@ -1,6 +1,8 @@
 #include "quake2/windows/window_util.h"
 #include "quake2/windows/import_sdl.h"
 #include "quake2/input/event_handler.h"
+#include "quake2/input/input.h"
+#include "quake2/input/in_win.h"
 #include "quake2/client/keys.h"
 #include "quake2/video/vid_dll.h"
 #include "shared/logger.h"
@@ -10,6 +12,7 @@
 std::int32_t SDL_Key_to_Quake_Key (std::int32_t inKey);	
 
 SDL_Window *g_window{nullptr};
+qboolean	g_foreGround{e_true};
 
 struct WindowsData
 {
@@ -224,6 +227,11 @@ void Q2_SetMousePos (int x, int y)
 	SDL_WarpMouseInWindow (g_window, x, y);
 }
 
+qboolean Get_Is_InForeground ()
+{
+	return g_foreGround;
+}
+
 std::array<std::int32_t, 128> sdlKeyToQuakeKey = {0,  1,  2,  3,  4,  5,  6,  7,  8,  9,  10, 11, 12, 13, 14,
 												  15, 16, 17, 18, 19, 20, 21, 22, 13, 14, 15, 16, 17, 18, 19};
 
@@ -367,29 +375,29 @@ void HandleWindowEvent (SDL_WindowEvent &event)
 		case SDL_WINDOWEVENT_ENTER:
 		{
 			log_str ("SDL_WINDOWEVENT_ENTER");
+			SDL_ShowCursor (SDL_TRUE);
+			
 			break;
 		}
 		case SDL_WINDOWEVENT_LEAVE:
 		{
 			log_str ("SDL_WINDOWEVENT_LEAVE");
+			SDL_ShowCursor (SDL_FALSE);
+			
 			break;
 		}
 		case SDL_WINDOWEVENT_FOCUS_GAINED:
 		{
 			log_str ("SDL_WINDOWEVENT_FOCUS_GAINED");
-			//SDL_SetWindowGrab (g_window, SDL_TRUE);
-			// SDL_ShowCursor (SDL_FALSE);
-			// SDL_CaptureMouse (SDL_TRUE);
-			// SDL_SetRelativeMouseMode (SDL_TRUE);
+			g_foreGround = e_true;
+			SDL_ShowCursor (SDL_FALSE);
 			break;
 		}
 		case SDL_WINDOWEVENT_FOCUS_LOST:
 		{
 			log_str ("SDL_WINDOWEVENT_FOCUS_LOST");
-			//SDL_SetWindowGrab (g_window, SDL_FALSE);
-			// SDL_ShowCursor (SDL_TRUE);
-			// SDL_CaptureMouse (SDL_FALSE);
-			// SDL_SetRelativeMouseMode (SDL_FALSE);
+			g_foreGround = e_false;
+			SDL_ShowCursor (SDL_TRUE);
 			break;
 		}
 		case SDL_WINDOWEVENT_TAKE_FOCUS:

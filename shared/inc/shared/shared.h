@@ -35,6 +35,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "shared/config.h"
 #include "shared/defines.h"
+#include "shared/usercmd.h"
 #include "math/vector.h"
 #include <assert.h>
 #include <math.h>
@@ -406,16 +407,7 @@ typedef struct
 #define BUTTON_USE	  2
 #define BUTTON_ANY	  128  // any key whatsoever
 
-// usercmd_t is sent to the server each client frame
-typedef struct usercmd_s
-{
-	byte  msec;
-	byte  buttons;
-	short angles[3];
-	short forwardmove, sidemove, upmove;
-	byte  impulse;	   // remove?
-	byte  lightlevel;  // light level the player is standing on
-} usercmd_t;
+
 
 #define MAXTOUCH 32
 typedef struct

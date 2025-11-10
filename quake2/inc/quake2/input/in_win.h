@@ -5,5 +5,7 @@
 #include "shared/cvar.h"
 
 EXTERNC cvar_t *in_joystick;
+EXTERNC void	IN_ActivateMouse ();
+EXTERNC void	IN_DeactivateMouse ();
 
 #endif	// __in_win_h__
