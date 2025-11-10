@@ -2,6 +2,7 @@
 #include "quake2/client/keys.h"
 #include "quake2/video/vid_dll.h"
 #include "quake2/windows/import_sdl.h"
+#include "shared/logger.h"
 #include <array>
 #include <cstdint>
 
@@ -13,23 +14,6 @@ namespace Quake2
 std::int32_t mouse_x{0};
 std::int32_t mouse_y{0};
 }
-
-
-void log_str (const char *msg...)
-{
-	va_list args;
-	va_start (args, msg);
-	constexpr std::size_t bufferSize{1024};
-	char				  buffer[bufferSize];
-	snprintf (buffer, bufferSize, msg, args);
-	va_end (args);
-
-	char				  bufferOut[bufferSize];
-	snprintf (bufferOut, bufferSize, "%s\n", buffer);
-
-	OutputDebugString (bufferOut);
-}
-
 
 std::int32_t SDL_Key_to_Quake_Key(std::int32_t inKey)
 {
@@ -68,13 +52,14 @@ std::int32_t SDL_Key_to_Quake_Key(std::int32_t inKey)
 
 void HandleWindowEvent (SDL_WindowEvent &event);
 void HandleMousEvent (SDL_MouseMotionEvent &inEvent);
+void HandleMouseClick (SDL_MouseButtonEvent &inEvent, std::uint64_t in_sys_msg_time);
 
 void fetch_events ()
 {
 	// SDL_PEEK
 	static SDL_Event event;
 	std::uint64_t	 sys_msg_time = SDL_GetTicks64 ();
-	if (SDL_PollEvent (&event) > 0)
+	while (SDL_PollEvent (&event) > 0)
 	{
 		switch (event.type)
 		{
@@ -113,6 +98,16 @@ void fetch_events ()
 			case SDL_MOUSEMOTION:
 			{
 				HandleMousEvent (event.motion);
+				break;
+			}
+			case SDL_MOUSEBUTTONDOWN:
+			{
+				HandleMouseClick (event.button, sys_msg_time);
+				break;
+			}
+			case SDL_MOUSEBUTTONUP:
+			{
+				HandleMouseClick (event.button, sys_msg_time);
 				break;
 			}
 			default:
@@ -165,15 +160,15 @@ void HandleWindowEvent (SDL_WindowEvent &event)
 		case SDL_WINDOWEVENT_FOCUS_GAINED:
 		{
 			log_str ("SDL_WINDOWEVENT_FOCUS_GAINED");
-			SDL_ShowCursor (SDL_FALSE);
-//			SDL_CaptureMouse (SDL_TRUE);
+			//SDL_ShowCursor (SDL_FALSE);
+			//SDL_CaptureMouse (SDL_TRUE);
 			//SDL_SetRelativeMouseMode (SDL_TRUE);
 			break;
 		}
 		case SDL_WINDOWEVENT_FOCUS_LOST:
 		{
 			log_str ("SDL_WINDOWEVENT_FOCUS_LOST");
-			SDL_ShowCursor (SDL_TRUE);
+			//SDL_ShowCursor (SDL_TRUE);
 			//SDL_CaptureMouse (SDL_FALSE);
 			//SDL_SetRelativeMouseMode (SDL_FALSE);
 			break;
@@ -186,6 +181,12 @@ void HandleWindowEvent (SDL_WindowEvent &event)
 		default:
 			break;
 	}
+}
+
+void HandleMouseClick (SDL_MouseButtonEvent &inEvent, std::uint64_t in_sys_msg_time)
+{
+	const qboolean state = (inEvent.state == SDL_PRESSED) ? (e_true) : (e_false);
+	Key_Event (K_MOUSE1 + inEvent.button - 1, state, in_sys_msg_time);
 }
 
 void HandleMousEvent (SDL_MouseMotionEvent &inEvent)

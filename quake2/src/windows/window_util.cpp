@@ -6,11 +6,16 @@ SDL_Window *g_window{nullptr};
 
 struct WindowsData
 {
-	int x{0};
-	int y{0};
-	int w{0};
-	int h{0};
+	int win_x{0};
+	int win_y{0};
+	int win_w{0};
+	int win_h{0};
+	int screen_w{0};
+	int screen_h{0};
+
 	qboolean fullscreen{e_false};
+
+	WinRect rect;
 };
 
 WindowsData g_windowdata;
@@ -137,18 +142,28 @@ qboolean create_window (int x, int y, int w, int h, qboolean fullscreen)
 	SDL_GL_SetAttribute (SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
 	SDL_GL_SetAttribute (SDL_GL_DOUBLEBUFFER, 1);
 
-	g_window = SDL_CreateWindow ("Quake 2", x + 200, y + 200, w, h, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_ALLOW_HIGHDPI);
+	g_window = SDL_CreateWindow ("Quake 2", x, y, w, h, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_ALLOW_HIGHDPI);
 	SDL_assert (g_window);
 	SDL_GLContext context = SDL_GL_CreateContext (g_window);
 	SDL_assert (context);
 
-	g_windowdata.x			= x;
-	g_windowdata.y			= y;
-	g_windowdata.w			= w;
-	g_windowdata.h			= h;
+	g_windowdata.win_x		= x;
+	g_windowdata.win_y		= y;
+	g_windowdata.win_w		= w;
+	g_windowdata.win_h		= h;
 	g_windowdata.fullscreen = fullscreen;
 
-	// SDL_SetWindowGrab (g_window, SDL_TRUE);
+	const int displayIndex	= SDL_GetWindowDisplayIndex (g_window);
+
+	SDL_DisplayMode dm;
+	SDL_GetCurrentDisplayMode (displayIndex, &dm);
+	g_windowdata.screen_w = dm.w;
+	g_windowdata.screen_h	 = dm.h;
+
+	g_windowdata.rect.left	 = x;
+	g_windowdata.rect.bottom = y + h;
+	g_windowdata.rect.right	 = x + h;
+	g_windowdata.rect.top	 = y;
 
 	return e_true;
 }
@@ -160,9 +175,44 @@ void update_buffer()
 
 void Get_window_attributes (int *inOut_x, int *inOut_y, int *inOut_w, int *inOut_h, qboolean *inOut_fullscreen)
 {
-	*inOut_x		  = g_windowdata.x;
-	*inOut_y		  = g_windowdata.y;
-	*inOut_w		  = g_windowdata.w;
-	*inOut_h		  = g_windowdata.h;
-	*inOut_fullscreen = g_windowdata.fullscreen;
+	if (inOut_x)
+	{
+		*inOut_x = g_windowdata.win_x;
+	}
+
+	if (inOut_y)
+	{
+		*inOut_y = g_windowdata.win_y;
+	}
+
+	if (inOut_w)
+	{
+		*inOut_w = g_windowdata.win_w;
+	}
+
+	if (inOut_h)
+	{
+		*inOut_h = g_windowdata.win_h;
+	}
+
+	if (inOut_fullscreen)
+	{
+		*inOut_fullscreen = g_windowdata.fullscreen;
+	}
+}
+
+void Get_window_rect (WinRect *inOutRect)
+{
+	*inOutRect = g_windowdata.rect;
+}
+
+void Get_screen_attributes (int *inOut_w, int *inOut_h)
+{
+	*inOut_w = g_windowdata.screen_w;
+	*inOut_h = g_windowdata.screen_h;
+}
+
+void Q2_SetMousePos (int x, int y)
+{
+	SDL_WarpMouseInWindow (g_window, x, y);
 }

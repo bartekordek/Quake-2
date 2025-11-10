@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "quake2/windows/winquake.h"
 #include "quake2/input/event_handler.h"
 #include "quake2/input/in_win.h"
+#include "quake2/windows/window_util.h"
 #include "math/euler_angles.h"
 
 EXTERNC	unsigned	sys_msg_time;
@@ -122,7 +123,7 @@ int			mouse_buttons;
 int			mouse_oldbuttonstate;
 int			mouse_x, mouse_y, old_mouse_x, old_mouse_y, mx_accum, my_accum;
 int			cursor_x, cursor_y;
-
+POINT		current_pos;
 int			old_x, old_y;
 
 qboolean	mouseactive;	// e_false when not focus app
@@ -133,7 +134,7 @@ int		originalmouseparms[3], newmouseparms[3] = {0, 0, 1};
 qboolean	mouseparmsvalid;
 
 int			window_center_x, window_center_y;
-RECT		window_rect;
+WinRect		window_rect;
 
 
 /*
@@ -145,7 +146,7 @@ Called when the window gains focus or changes in some way
 */
 void IN_ActivateMouse (void)
 {
-	int		width, height;
+	int width, height;
 
 	if (!mouseinitialized)
 		return;
@@ -159,13 +160,37 @@ void IN_ActivateMouse (void)
 
 	mouseactive = e_true;
 
-	int x, y;
-	Get_mouse_pos (&x, &y);
+	Get_screen_attributes (&width, &height);
 
-	old_x = x;
-	old_y = y;
+	Get_window_rect (&window_rect);
+	if (window_rect.left < 0)
+		window_rect.left = 0;
+	if (window_rect.top < 0)
+		window_rect.top = 0;
+	if (window_rect.right >= width)
+		window_rect.right = width - 1;
+	if (window_rect.bottom >= height - 1)
+		window_rect.bottom = height - 1;
+
+	window_center_x = (window_rect.right + window_rect.left) / 2;
+	window_center_y = (window_rect.top + window_rect.bottom) / 2;
+
+	SetCursorPos (window_center_x, window_center_y);
+
+	old_x = window_center_x;
+	old_y = window_center_y;
+
+	SetCapture (cl_hwnd);
+
+	RECT outRect;
+	outRect.left = window_rect.left;
+	outRect.right = window_rect.right;
+	outRect.top = window_rect.top;
+	outRect.bottom = window_rect.bottom;
+
+	ClipCursor (&outRect);
+	while (ShowCursor (FALSE) >= 0);
 }
-
 
 /*
 ===========
@@ -253,44 +278,59 @@ IN_MouseMove
 */
 void IN_MouseMove (usercmd_t *cmd)
 {
+	int mx, my;
+
 	if (!mouseactive)
 		return;
 
 	// find mouse movement
-	Get_mouse_pos (&mouse_x, &mouse_y);
+	if (!GetCursorPos (&current_pos))
+		return;
 
-	int dx = mouse_x - old_mouse_x;
-	int dy = mouse_y - old_mouse_y;
+	mx = current_pos.x - window_center_x;
+	my = current_pos.y - window_center_y;
 
-	dx *= sensitivity->value;
-	dy *= sensitivity->value;
+#if 0
+	if (!mx && !my)
+		return;
+#endif
 
-	dx *= 2.f;
-	dy *= 2.f;
-
-	old_mouse_x = mouse_x;
-	old_mouse_y = mouse_y;
-
-// add mouse X/Y movement to cmd
-	if ( (in_strafe.state & 1) || (lookstrafe->value && mlooking ))
-		cmd->sidemove += m_side->value * dx;
-	else
-		cl.viewangles[YAW] -= m_yaw->value * dx;
-
-	if ( (mlooking || freelook->value) && !(in_strafe.state & 1))
+	if (m_filter->value)
 	{
-		cl.viewangles[PITCH] += m_pitch->value * dy;
+		mouse_x = (mx + old_mouse_x) * 0.5;
+		mouse_y = (my + old_mouse_y) * 0.5;
 	}
 	else
 	{
-		cmd->forwardmove -= m_forward->value * dy;
+		mouse_x = mx;
+		mouse_y = my;
+	}
+
+	old_mouse_x = mx;
+	old_mouse_y = my;
+
+	mouse_x *= sensitivity->value;
+	mouse_y *= sensitivity->value;
+
+	// add mouse X/Y movement to cmd
+	if ((in_strafe.state & 1) || (lookstrafe->value && mlooking))
+		cmd->sidemove += m_side->value * mouse_x;
+	else
+		cl.viewangles[YAW] -= m_yaw->value * mouse_x;
+
+	if ((mlooking || freelook->value) && !(in_strafe.state & 1))
+	{
+		cl.viewangles[PITCH] += m_pitch->value * mouse_y;
+	}
+	else
+	{
+		cmd->forwardmove -= m_forward->value * mouse_y;
 	}
 
 	// force the mouse to the center, so there's room to move
-	//if (mx || my)
-	//	SetCursorPos (window_center_x, window_center_y);
+	if (mx || my)
+		SetCursorPos (window_center_x, window_center_y);
 }
-
 
 /*
 =========================================================================
