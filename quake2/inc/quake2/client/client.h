@@ -77,8 +77,8 @@ typedef struct
 	struct model_s	*weaponmodel[MAX_CLIENTWEAPONMODELS];
 } clientinfo_t;
 
-extern char cl_weaponmodels[MAX_CLIENTWEAPONMODELS][MAX_QPATH];
-extern int num_cl_weaponmodels;
+EXTERNC char cl_weaponmodels[MAX_CLIENTWEAPONMODELS][MAX_QPATH];
+EXTERNC int num_cl_weaponmodels;
 
 #define	CMD_BACKUP		64	// allow a lot of command backups for very fast systems
 
@@ -168,7 +168,7 @@ typedef struct
 	clientinfo_t	baseclientinfo;
 } client_state_t;
 
-extern	client_state_t	cl;
+EXTERNC	client_state_t	cl;
 
 /*
 ==================================================================
@@ -237,58 +237,58 @@ typedef struct
 	FILE		*demofile;
 } client_static_t;
 
-extern client_static_t	cls;
+EXTERNC client_static_t	cls;
 
 //=============================================================================
 
 //
 // cvars
 //
-extern	cvar_t	*cl_stereo_separation;
-extern	cvar_t	*cl_stereo;
+EXTERNC	cvar_t	*cl_stereo_separation;
+EXTERNC	cvar_t	*cl_stereo;
 
-extern	cvar_t	*cl_gun;
-extern	cvar_t	*cl_add_blend;
-extern	cvar_t	*cl_add_lights;
-extern	cvar_t	*cl_add_particles;
-extern	cvar_t	*cl_add_entities;
-extern	cvar_t	*cl_predict;
-extern	cvar_t	*cl_footsteps;
-extern	cvar_t	*cl_noskins;
-extern	cvar_t	*cl_autoskins;
+EXTERNC	cvar_t	*cl_gun;
+EXTERNC	cvar_t	*cl_add_blend;
+EXTERNC	cvar_t	*cl_add_lights;
+EXTERNC	cvar_t	*cl_add_particles;
+EXTERNC	cvar_t	*cl_add_entities;
+EXTERNC	cvar_t	*cl_predict;
+EXTERNC	cvar_t	*cl_footsteps;
+EXTERNC	cvar_t	*cl_noskins;
+EXTERNC	cvar_t	*cl_autoskins;
 
-extern	cvar_t	*cl_upspeed;
-extern	cvar_t	*cl_forwardspeed;
-extern	cvar_t	*cl_sidespeed;
+EXTERNC	cvar_t	*cl_upspeed;
+EXTERNC	cvar_t	*cl_forwardspeed;
+EXTERNC	cvar_t	*cl_sidespeed;
 
-extern	cvar_t	*cl_yawspeed;
-extern	cvar_t	*cl_pitchspeed;
+EXTERNC	cvar_t	*cl_yawspeed;
+EXTERNC	cvar_t	*cl_pitchspeed;
 
-extern	cvar_t	*cl_run;
+EXTERNC	cvar_t	*cl_run;
 
-extern	cvar_t	*cl_anglespeedkey;
+EXTERNC	cvar_t	*cl_anglespeedkey;
 
-extern	cvar_t	*cl_shownet;
-extern	cvar_t	*cl_showmiss;
-extern	cvar_t	*cl_showclamp;
+EXTERNC	cvar_t	*cl_shownet;
+EXTERNC	cvar_t	*cl_showmiss;
+EXTERNC	cvar_t	*cl_showclamp;
 
-extern	cvar_t	*lookspring;
-extern	cvar_t	*lookstrafe;
-extern	cvar_t	*sensitivity;
+EXTERNC	cvar_t	*lookspring;
+EXTERNC	cvar_t	*lookstrafe;
+EXTERNC	cvar_t	*sensitivity;
 
-extern	cvar_t	*m_pitch;
-extern	cvar_t	*m_yaw;
-extern	cvar_t	*m_forward;
-extern	cvar_t	*m_side;
+EXTERNC	cvar_t	*m_pitch;
+EXTERNC	cvar_t	*m_yaw;
+EXTERNC	cvar_t	*m_forward;
+EXTERNC	cvar_t	*m_side;
 
-extern	cvar_t	*freelook;
+EXTERNC	cvar_t	*freelook;
 
-extern	cvar_t	*cl_lightlevel;	// FIXME HACK
+EXTERNC	cvar_t	*cl_lightlevel;	// FIXME HACK
 
-extern	cvar_t	*cl_paused;
-extern	cvar_t	*cl_timedemo;
+EXTERNC	cvar_t	*cl_paused;
+EXTERNC	cvar_t	*cl_timedemo;
 
-extern	cvar_t	*cl_vwep;
+EXTERNC	cvar_t	*cl_vwep;
 
 typedef struct
 {
@@ -301,19 +301,19 @@ typedef struct
 	float	minlight;			// don't add when contributing less
 } cdlight_t;
 
-extern	centity_t	cl_entities[MAX_EDICTS];
-extern	cdlight_t	cl_dlights[MAX_DLIGHTS];
+EXTERNC	centity_t	cl_entities[MAX_EDICTS];
+EXTERNC	cdlight_t	cl_dlights[MAX_DLIGHTS];
 
 // the cl_parse_entities must be large enough to hold UPDATE_BACKUP frames of
 // entities, so that when a delta compressed message arives from the server
 // it can be un-deltad from the original 
 #define	MAX_PARSE_ENTITIES	1024
-extern	entity_state_t	cl_parse_entities[MAX_PARSE_ENTITIES];
+EXTERNC	entity_state_t	cl_parse_entities[MAX_PARSE_ENTITIES];
 
 //=============================================================================
 
-extern	netadr_t	net_from;
-extern	sizebuf_t	net_message;
+EXTERNC	netadr_t	net_from;
+EXTERNC	sizebuf_t	net_message;
 
 void DrawString (int x, int y, char *s);
 void DrawAltString (int x, int y, char *s);	// toggle high bit
@@ -449,7 +449,7 @@ void CL_ParseLayout (void);
 //
 // cl_main
 //
-extern	refexport_t	re;		// interface to refresh .dll
+EXTERNC	refexport_t	re;		// interface to refresh .dll
 
 void CL_Init (void);
 
@@ -472,9 +472,9 @@ typedef struct
 	int			state;
 } kbutton_t;
 
-extern	kbutton_t	in_mlook, in_klook;
-extern 	kbutton_t 	in_strafe;
-extern 	kbutton_t 	in_speed;
+EXTERNC	kbutton_t	in_mlook, in_klook;
+EXTERNC 	kbutton_t 	in_strafe;
+EXTERNC 	kbutton_t 	in_speed;
 
 void CL_InitInput (void);
 void CL_SendCmd (void);
@@ -488,7 +488,7 @@ int  CL_ReadFromServer (void);
 void CL_WriteToServer (usercmd_t *cmd);
 void CL_BaseMove (usercmd_t *cmd);
 
-void IN_CenterView (void);
+EXTERNC void IN_CenterView (void);
 
 float CL_KeyState (kbutton_t *key);
 char *Key_KeynumToString (int keynum);
@@ -503,7 +503,7 @@ void CL_Record_f (void);
 //
 // cl_parse.c
 //
-extern	char *svc_strings[256];
+EXTERNC	char *svc_strings[256];
 
 void CL_ParseServerMessage (void);
 void CL_LoadClientinfo (clientinfo_t *ci, char *s);
@@ -514,8 +514,8 @@ void CL_Download_f (void);
 //
 // cl_view.c
 //
-extern	int			gun_frame;
-extern	struct model_s	*gun_model;
+EXTERNC	int			gun_frame;
+EXTERNC	struct model_s	*gun_model;
 
 void V_Init (void);
 void V_RenderView( float stereo_separation );

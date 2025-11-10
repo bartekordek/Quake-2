@@ -23,9 +23,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "quake2/client/client.h"
 #include "quake2/windows/winquake.h"
 #include "quake2/input/event_handler.h"
+#include "quake2/input/in_win.h"
 #include "math/euler_angles.h"
 
-extern	unsigned	sys_msg_time;
+EXTERNC	unsigned	sys_msg_time;
 
 // joystick defines and variables
 // where should defines be moved?
@@ -207,7 +208,6 @@ void IN_StartupMouse (void)
 		return; 
 
 	mouseinitialized = e_true;
-	mouseparmsvalid = SystemParametersInfo (SPI_GETMOUSE, 0, originalmouseparms, 0);
 	mouse_buttons = 3;
 
 	cursor_x		 = 0;
@@ -372,7 +372,7 @@ between a deactivate and an activate.
 void IN_Activate (qboolean active)
 {
 	in_appactive = active;
-	mouseactive = !active;		// force a new window check or turn off
+	mouseactive =  active ? e_false : e_true;		// force a new window check or turn off
 }
 
 
@@ -499,8 +499,9 @@ void IN_StartupJoystick (void)
 	}
 
 	// save the joystick's number of buttons and POV status
-	joy_numbuttons = jc.wNumButtons;
-	joy_haspov = jc.wCaps & JOYCAPS_HASPOV;
+	//TODO: JOY?
+	/*joy_numbuttons = jc.wNumButtons;
+	joy_haspov = jc.wCaps & JOYCAPS_HASPOV;*/
 
 	// old button and POV states default to no buttons pressed
 	joy_oldbuttonstate = joy_oldpovstate = 0;

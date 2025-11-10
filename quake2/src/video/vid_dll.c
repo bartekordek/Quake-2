@@ -59,7 +59,7 @@ LONG WINAPI MainWndProc (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 static qboolean s_alttab_disabled;
 
-extern unsigned sys_msg_time;
+EXTERNC unsigned sys_msg_time;
 
 /*
 ** WIN32 helper functions
@@ -405,7 +405,7 @@ LONG WINAPI MainWndProc (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			if (wParam & MK_MBUTTON)
 				temp |= 4;
 
-			IN_MouseEvent (temp);
+			//IN_MouseEvent (temp);
 		}
 		break;
 

@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <io.h>
 #endif
 #include "quake2/client/client.h"
+#include "quake2/input/in_win.h"
 #include "quake2/ui/qmenu.h"
 
 static int	m_main_cursor;
@@ -1014,7 +1015,6 @@ CONTROLS MENU
 =======================================================================
 */
 static cvar_t *win_noalttab;
-extern cvar_t *in_joystick;
 
 static menuframework_s	s_options_menu;
 static menuaction_s		s_options_defaults_action;

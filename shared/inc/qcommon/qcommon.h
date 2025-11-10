@@ -345,7 +345,7 @@ typedef void (*xcommand_t)(void);
 
 EXTERNC void Cmd_Init(void);
 
-EXTERNC void Cmd_AddCommand(char *cmd_name, xcommand_t function);
+EXTERNC void Cmd_AddCommand(const char *cmd_name, xcommand_t function);
 // called by the init functions of other parts of the program to
 // register commands and functions to call for them.
 // The cmd_name is referenced later, so it should not be in temp memory
@@ -356,7 +356,7 @@ EXTERNC void Cmd_RemoveCommand(char *cmd_name);
 EXTERNC qboolean Cmd_Exists(char *cmd_name);
 // used by the cvar code to check for cvar / command name overlap
 
-EXTERNC char *Cmd_CompleteCommand(char *partial);
+EXTERNC const char *Cmd_CompleteCommand (char *partial);
 // attempts to match a partial command for automatic command line completion
 // returns NULL if nothing fits
 

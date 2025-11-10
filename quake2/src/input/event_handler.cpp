@@ -8,8 +8,11 @@
 std::array<std::int32_t, 128> sdlKeyToQuakeKey = {0,  1,  2,  3,  4,  5,  6,  7,  8,  9,  10, 11, 12, 13, 14,
 												  15, 16, 17, 18, 19, 20, 21, 22, 13, 14, 15, 16, 17, 18, 19};
 
+namespace Quake2
+{
 std::int32_t mouse_x{0};
 std::int32_t mouse_y{0};
+}
 
 
 void log_str (const char *msg...)
@@ -185,14 +188,14 @@ void HandleWindowEvent (SDL_WindowEvent &event)
 	}
 }
 
-void HandleMousEvent(SDL_MouseMotionEvent& inEvent)
+void HandleMousEvent (SDL_MouseMotionEvent &inEvent)
 {
-	mouse_x	  = inEvent.x;
-	mouse_y	  = inEvent.y;
+	Quake2::mouse_x = inEvent.x;
+	Quake2::mouse_y = inEvent.y;
 }
 
-void Get_mouse_pos(int* x, int* y)
+void Get_mouse_pos (int *x, int *y)
 {
-	*x = mouse_x;
-	*y = mouse_y;
+	*x = Quake2::mouse_x;
+	*y = Quake2::mouse_y;
 }
