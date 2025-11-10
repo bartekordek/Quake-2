@@ -8,11 +8,17 @@
 #endif
 
 #ifdef _WIN32
-#define Q2_EXPORT __declspec(dllexport)
+#define Q2_EXPORT __declspec (dllexport)
 #else
 #define Q2_EXPORT
 #endif
 
 #define MAXPRINTMSG 4096
+
+#ifdef _MSC_VER
+#define Q2_WINDOWS 1
+#else
+#define Q2_WINDOWS 0
+#endif
 
 #endif	// __shared_config_h__
