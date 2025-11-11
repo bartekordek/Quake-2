@@ -424,6 +424,6 @@ void HandleMousEvent (SDL_MouseMotionEvent &inEvent)
 
 void Get_mouse_pos (int *x, int *y)
 {
-	*x = Quake2::mouse_x;
-	*y = Quake2::mouse_y;
+	*x = Quake2::mouse_x + g_windowdata.rect.left;
+	*y = Quake2::mouse_y + g_windowdata.rect.top;
 }
