@@ -124,7 +124,8 @@ int			mouse_buttons;
 int			mouse_oldbuttonstate;
 int			mouse_x, mouse_y, old_mouse_x, old_mouse_y, mx_accum, my_accum;
 int			cursor_x, cursor_y;
-POINT		current_pos;
+MousePos	current_pos;
+MousePos	current_pos_temp;
 int			old_x, old_y;
 
 qboolean	mouseactive;	// e_false when not focus app
@@ -290,8 +291,7 @@ void IN_MouseMove (usercmd_t *cmd)
 		return;
 
 	// find mouse movement
-	if (!GetCursorPos (&current_pos))
-		return;
+	Get_mouse_pos (&current_pos.x, &current_pos.y);
 
 	mx = current_pos.x - window_center_x;
 	my = current_pos.y - window_center_y;
@@ -313,6 +313,8 @@ void IN_MouseMove (usercmd_t *cmd)
 	mouse_x *= sensitivity->value;
 	mouse_y *= sensitivity->value;
 
+	log_str ("IN_MouseMove: %d, %d", mouse_x, mouse_y);
+
 	// add mouse X/Y movement to cmd
 	if ((in_strafe.state & 1) || (lookstrafe->value && mlooking))
 		cmd->sidemove += m_side->value * mouse_x;
@@ -332,7 +334,6 @@ void IN_MouseMove (usercmd_t *cmd)
 	
 	if (mx || my)
 	{
-		log_str ("SetCursorPos");
 		SetCursorPos (window_center_x, window_center_y);
 		//Q2_SetMousePos (window_center_x, window_center_y);
 	}
