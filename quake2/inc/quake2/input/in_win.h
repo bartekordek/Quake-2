@@ -4,6 +4,12 @@
 #include "shared/config.h"
 #include "shared/cvar.h"
 
+typedef struct
+{
+	int x;
+	int y;
+} MousePos;
+
 EXTERNC cvar_t *in_joystick;
 EXTERNC void	IN_ActivateMouse ();
 EXTERNC void	IN_DeactivateMouse ();
