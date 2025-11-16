@@ -27,30 +27,29 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ** GLimp_EndFrame
 ** GLimp_Init
 ** GLimp_Shutdown
-** GLimp_SwitchFullscreen
 **
 */
+#include "../ref_gl/gl_local.h"
 
 #ifdef _WIN32
 #include <assert.h>
 #include <windows.h>
-#include "../ref_gl/gl_local.h"
+
 #include "glw_win.h"
 #include "glw.h"
 #include "../quake2/inc/quake2/windows/winquake.h"
-
-static qboolean GLimp_SwitchFullscreen (int width, int height);
 
 glwstate_t glw_state;
 
 extern cvar_t *vid_fullscreen;
 extern cvar_t *vid_ref;
+EXTERNC cvar_t *gl_allow_software;
 
 static qboolean VerifyDriver (void)
 {
 	char buffer[1024];
 
-	strcpy (buffer, qglGetString (GL_RENDERER));
+	strcpy (buffer, reinterpret_cast<const char*>(qglGetString (GL_RENDERER)));
 	strlwr (buffer);
 	if (strcmp (buffer, "gdi generic") == 0)
 		if (!glw_state.mcd_accelerated)
@@ -405,7 +404,7 @@ qboolean GLimp_InitGL (void)
 
 		if (!(pfd.dwFlags & PFD_GENERIC_ACCELERATED))
 		{
-			extern cvar_t *gl_allow_software;
+			
 
 			if (gl_allow_software->value)
 				glw_state.mcd_accelerated = e_true;
@@ -477,7 +476,7 @@ fail:
 /*
 ** GLimp_BeginFrame
 */
-void GLimp_BeginFrame (float camera_separation)
+EXTERNC void GLimp_BeginFrame (float camera_separation)
 {
 	if (gl_bitdepth->modified)
 	{
