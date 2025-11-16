@@ -1,3 +1,6 @@
+#ifndef __ref_gl_gl_local_h__
+#define __ref_gl_gl_local_h__
+
 /*
 Copyright (C) 1997-2001 Id Software, Inc.
 
@@ -24,6 +27,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #pragma warning(disable : 4136)     // X86
 #pragma warning(disable : 4051)     // ALPHA
 #endif
+
+#include "shared/config.h"
 
 #ifdef _WIN32
 #  include <windows.h>
@@ -60,7 +65,7 @@ typedef struct
 	unsigned		width, height;			// coordinates from main game
 } viddef_t;
 
-extern	viddef_t	vid;
+EXTERNC	viddef_t	vid;
 
 
 /*
@@ -127,7 +132,7 @@ void GL_EndRendering (void);
 void GL_SetDefaultState( void );
 void GL_UpdateSwapInterval( void );
 
-extern	float	gldepthmin, gldepthmax;
+EXTERNC	float	gldepthmin, gldepthmax;
 
 typedef struct
 {
@@ -144,112 +149,112 @@ typedef struct
 
 //====================================================
 
-extern	image_t		gltextures[MAX_GLTEXTURES];
-extern	int			numgltextures;
+EXTERNC	image_t		gltextures[MAX_GLTEXTURES];
+EXTERNC	int			numgltextures;
 
 
-extern	image_t		*r_notexture;
-extern	image_t		*r_particletexture;
-extern	entity_t	*currententity;
-extern	model_t		*currentmodel;
-extern	int			r_visframecount;
-extern	int			r_framecount;
-extern	cplane_t	frustum[4];
-extern	int			c_brush_polys, c_alias_polys;
+EXTERNC	image_t		*r_notexture;
+EXTERNC	image_t		*r_particletexture;
+EXTERNC	entity_t	*currententity;
+EXTERNC	model_t		*currentmodel;
+EXTERNC	int			r_visframecount;
+EXTERNC	int			r_framecount;
+EXTERNC	cplane_t	frustum[4];
+EXTERNC	int			c_brush_polys, c_alias_polys;
 
 
-extern	int			gl_filter_min, gl_filter_max;
+EXTERNC	int			gl_filter_min, gl_filter_max;
 
 //
 // view origin
 //
-extern	vec3_t	vup;
-extern	vec3_t	vpn;
-extern	vec3_t	vright;
-extern	vec3_t	r_origin;
+EXTERNC	vec3_t	vup;
+EXTERNC	vec3_t	vpn;
+EXTERNC	vec3_t	vright;
+EXTERNC	vec3_t	r_origin;
 
 //
 // screen size info
 //
-extern	refdef_t	r_newrefdef;
-extern	int		r_viewcluster, r_viewcluster2, r_oldviewcluster, r_oldviewcluster2;
+EXTERNC	refdef_t	r_newrefdef;
+EXTERNC	int		r_viewcluster, r_viewcluster2, r_oldviewcluster, r_oldviewcluster2;
 
-extern	cvar_t	*r_norefresh;
-extern	cvar_t	*r_lefthand;
-extern	cvar_t	*r_drawentities;
-extern	cvar_t	*r_drawworld;
-extern	cvar_t	*r_speeds;
-extern	cvar_t	*r_fullbright;
-extern	cvar_t	*r_novis;
-extern	cvar_t	*r_nocull;
-extern	cvar_t	*r_lerpmodels;
+EXTERNC	cvar_t	*r_norefresh;
+EXTERNC	cvar_t	*r_lefthand;
+EXTERNC	cvar_t	*r_drawentities;
+EXTERNC	cvar_t	*r_drawworld;
+EXTERNC	cvar_t	*r_speeds;
+EXTERNC	cvar_t	*r_fullbright;
+EXTERNC	cvar_t	*r_novis;
+EXTERNC	cvar_t	*r_nocull;
+EXTERNC	cvar_t	*r_lerpmodels;
 
-extern	cvar_t	*r_lightlevel;	// FIXME: This is a HACK to get the client's light level
+EXTERNC	cvar_t	*r_lightlevel;	// FIXME: This is a HACK to get the client's light level
 
-extern cvar_t	*gl_vertex_arrays;
+EXTERNC cvar_t	*gl_vertex_arrays;
 
-extern cvar_t	*gl_ext_swapinterval;
-extern cvar_t	*gl_ext_palettedtexture;
-extern cvar_t	*gl_ext_multitexture;
-extern cvar_t	*gl_ext_pointparameters;
-extern cvar_t	*gl_ext_compiled_vertex_array;
+EXTERNC cvar_t	*gl_ext_swapinterval;
+EXTERNC cvar_t	*gl_ext_palettedtexture;
+EXTERNC cvar_t	*gl_ext_multitexture;
+EXTERNC cvar_t	*gl_ext_pointparameters;
+EXTERNC cvar_t	*gl_ext_compiled_vertex_array;
 
-extern cvar_t	*gl_particle_min_size;
-extern cvar_t	*gl_particle_max_size;
-extern cvar_t	*gl_particle_size;
-extern cvar_t	*gl_particle_att_a;
-extern cvar_t	*gl_particle_att_b;
-extern cvar_t	*gl_particle_att_c;
+EXTERNC cvar_t	*gl_particle_min_size;
+EXTERNC cvar_t	*gl_particle_max_size;
+EXTERNC cvar_t	*gl_particle_size;
+EXTERNC cvar_t	*gl_particle_att_a;
+EXTERNC cvar_t	*gl_particle_att_b;
+EXTERNC cvar_t	*gl_particle_att_c;
 
-extern	cvar_t	*gl_nosubimage;
-extern	cvar_t	*gl_bitdepth;
-extern	cvar_t	*gl_mode;
-extern	cvar_t	*gl_log;
-extern	cvar_t	*gl_lightmap;
-extern	cvar_t	*gl_shadows;
-extern	cvar_t	*gl_dynamic;
-extern  cvar_t  *gl_monolightmap;
-extern	cvar_t	*gl_nobind;
-extern	cvar_t	*gl_round_down;
-extern	cvar_t	*gl_picmip;
-extern	cvar_t	*gl_skymip;
-extern	cvar_t	*gl_showtris;
-extern	cvar_t	*gl_finish;
-extern	cvar_t	*gl_ztrick;
-extern	cvar_t	*gl_clear;
-extern	cvar_t	*gl_cull;
-extern	cvar_t	*gl_poly;
-extern	cvar_t	*gl_texsort;
-extern	cvar_t	*gl_polyblend;
-extern	cvar_t	*gl_flashblend;
-extern	cvar_t	*gl_lightmaptype;
-extern	cvar_t	*gl_modulate;
-extern	cvar_t	*gl_playermip;
-extern	cvar_t	*gl_drawbuffer;
-extern	cvar_t	*gl_3dlabs_broken;
-extern  cvar_t  *gl_driver;
-extern	cvar_t	*gl_swapinterval;
-extern	cvar_t	*gl_texturemode;
-extern	cvar_t	*gl_texturealphamode;
-extern	cvar_t	*gl_texturesolidmode;
-extern  cvar_t  *gl_saturatelighting;
-extern  cvar_t  *gl_lockpvs;
+EXTERNC	cvar_t	*gl_nosubimage;
+EXTERNC	cvar_t	*gl_bitdepth;
+EXTERNC	cvar_t	*gl_mode;
+EXTERNC	cvar_t	*gl_log;
+EXTERNC	cvar_t	*gl_lightmap;
+EXTERNC	cvar_t	*gl_shadows;
+EXTERNC	cvar_t	*gl_dynamic;
+EXTERNC  cvar_t  *gl_monolightmap;
+EXTERNC	cvar_t	*gl_nobind;
+EXTERNC	cvar_t	*gl_round_down;
+EXTERNC	cvar_t	*gl_picmip;
+EXTERNC	cvar_t	*gl_skymip;
+EXTERNC	cvar_t	*gl_showtris;
+EXTERNC	cvar_t	*gl_finish;
+EXTERNC	cvar_t	*gl_ztrick;
+EXTERNC	cvar_t	*gl_clear;
+EXTERNC	cvar_t	*gl_cull;
+EXTERNC	cvar_t	*gl_poly;
+EXTERNC	cvar_t	*gl_texsort;
+EXTERNC	cvar_t	*gl_polyblend;
+EXTERNC	cvar_t	*gl_flashblend;
+EXTERNC	cvar_t	*gl_lightmaptype;
+EXTERNC	cvar_t	*gl_modulate;
+EXTERNC	cvar_t	*gl_playermip;
+EXTERNC	cvar_t	*gl_drawbuffer;
+EXTERNC	cvar_t	*gl_3dlabs_broken;
+EXTERNC  cvar_t  *gl_driver;
+EXTERNC	cvar_t	*gl_swapinterval;
+EXTERNC	cvar_t	*gl_texturemode;
+EXTERNC	cvar_t	*gl_texturealphamode;
+EXTERNC	cvar_t	*gl_texturesolidmode;
+EXTERNC  cvar_t  *gl_saturatelighting;
+EXTERNC  cvar_t  *gl_lockpvs;
 
-extern	cvar_t	*vid_fullscreen;
-extern	cvar_t	*vid_gamma;
+EXTERNC	cvar_t	*vid_fullscreen;
+EXTERNC	cvar_t	*vid_gamma;
 
-extern	cvar_t		*intensity;
+EXTERNC	cvar_t		*intensity;
 
-extern	int		gl_lightmap_format;
-extern	int		gl_solid_format;
-extern	int		gl_alpha_format;
-extern	int		gl_tex_solid_format;
-extern	int		gl_tex_alpha_format;
+EXTERNC	int		gl_lightmap_format;
+EXTERNC	int		gl_solid_format;
+EXTERNC	int		gl_alpha_format;
+EXTERNC	int		gl_tex_solid_format;
+EXTERNC	int		gl_tex_alpha_format;
 
-extern	int		c_visible_lightmaps;
-extern	int		c_visible_textures;
+EXTERNC	int		c_visible_lightmaps;
+EXTERNC	int		c_visible_textures;
 
-extern	float	r_world_matrix[16];
+EXTERNC	float	r_world_matrix[16];
 
 void R_TranslatePlayerSkin (int playernum);
 void GL_Bind (int texnum);
@@ -263,11 +268,11 @@ void R_PushDlights (void);
 
 //====================================================================
 
-extern	model_t	*r_worldmodel;
+EXTERNC	model_t	*r_worldmodel;
 
-extern	unsigned	d_8to24table[256];
+EXTERNC	unsigned	d_8to24table[256];
 
-extern	int		registration_sequence;
+EXTERNC	int		registration_sequence;
 
 
 void V_AddBlend (float r, float g, float b, float a, float *v_blend);
@@ -427,8 +432,8 @@ typedef struct
 	unsigned char originalBlueGammaTable[256];
 } glstate_t;
 
-extern glconfig_t  gl_config;
-extern glstate_t   gl_state;
+EXTERNC glconfig_t  gl_config;
+EXTERNC glstate_t   gl_state;
 
 /*
 ====================================================================
@@ -438,7 +443,7 @@ IMPORTED FUNCTIONS
 ====================================================================
 */
 
-extern	refimport_t	ri;
+EXTERNC	refimport_t	ri;
 
 
 /*
@@ -449,12 +454,14 @@ IMPLEMENTATION SPECIFIC FUNCTIONS
 ====================================================================
 */
 
-void		GLimp_BeginFrame( float camera_separation );
-void		GLimp_EndFrame( void );
-int 		GLimp_Init( void *hinstance, void *hWnd );
-void		GLimp_Shutdown( void );
-int     	GLimp_SetMode( int *pwidth, int *pheight, int mode, qboolean fullscreen );
-void		GLimp_AppActivate( qboolean active );
-void		GLimp_EnableLogging( qboolean enable );
-void		GLimp_LogNewFrame( void );
+EXTERNC void		GLimp_BeginFrame (float camera_separation);
+EXTERNC void		GLimp_EndFrame (void);
+EXTERNC qboolean	GLimp_Init (void *hinstance, void *hWnd);
+EXTERNC void		GLimp_Shutdown (void);
+EXTERNC rserr_t		GLimp_SetMode (int *pwidth, int *pheight, int mode, qboolean fullscreen);
+EXTERNC void		GLimp_AppActivate (qboolean active);
+EXTERNC void		GLimp_EnableLogging (qboolean enable);
+EXTERNC void		GLimp_LogNewFrame (void);
 
+
+#endif	// __ref_gl_gl_local_h__
