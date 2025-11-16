@@ -313,8 +313,6 @@ void IN_MouseMove (usercmd_t *cmd)
 	mouse_x *= sensitivity->value;
 	mouse_y *= sensitivity->value;
 
-	log_str ("IN_MouseMove: %d, %d", mouse_x, mouse_y);
-
 	// add mouse X/Y movement to cmd
 	if ((in_strafe.state & 1) || (lookstrafe->value && mlooking))
 		cmd->sidemove += m_side->value * mouse_x;
@@ -334,8 +332,7 @@ void IN_MouseMove (usercmd_t *cmd)
 	
 	if (mx || my)
 	{
-		SetCursorPos (window_center_x, window_center_y);
-		//Q2_SetMousePos (window_center_x, window_center_y);
+		Q2_SetMousePos (window_center_x, window_center_y);
 	}
 	
 }

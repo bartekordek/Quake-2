@@ -224,7 +224,7 @@ void Get_screen_attributes (int *inOut_w, int *inOut_h)
 
 void Q2_SetMousePos (int x, int y)
 {
-	SDL_WarpMouseInWindow (g_window, x, y);
+	SDL_WarpMouseGlobal (x, y);
 }
 
 qboolean Get_Is_InForeground ()
