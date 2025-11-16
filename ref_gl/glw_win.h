@@ -1,3 +1,6 @@
+#ifndef __REF_GL_GLW_WIN_H__
+#define __REF_GL_GLW_WIN_H__
+
 /*
 Copyright (C) 1997-2001 Id Software, Inc.
 
@@ -21,8 +24,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #  error You should not be including this file on this platform
 #endif
 
-#ifndef __GLW_WIN_H__
-#define __GLW_WIN_H__
+#include "shared/config.h"
 
 typedef struct
 {
@@ -42,6 +44,7 @@ typedef struct
 	FILE *log_fp;
 } glwstate_t;
 
-extern glwstate_t glw_state;
+EXTERNC glwstate_t glw_state;
 
-#endif
+
+#endif	// __REF_GL_GLW_WIN_H__
