@@ -5,7 +5,7 @@ set( CMAKE_C_STANDARD 90 )
 
 set( PROJECT_NAME ref_gl )
 
-project(${PROJECT_NAME} LANGUAGES C)
+project(${PROJECT_NAME} LANGUAGES C CXX)
 
 set( CMAKE_ENABLE_EXPORTS e_true )
 
@@ -33,7 +33,7 @@ else()
 endif()
 
 
-file( GLOB_RECURSE SOURCES *.h *.c )
+file( GLOB_RECURSE SOURCES *.h *.c *.hpp *.cpp )
 
 source_group( TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SOURCES} )
 
