@@ -2640,14 +2640,6 @@ static void APIENTRY logViewport(GLint x, GLint y, GLsizei width, GLsizei height
 */
 void QGL_Shutdown( void )
 {
-	if ( glw_state.hinstOpenGL )
-	{
-		FreeLibrary( glw_state.hinstOpenGL );
-		glw_state.hinstOpenGL = NULL;
-	}
-
-	glw_state.hinstOpenGL = NULL;
-
 	qglAccum                     = NULL;
 	qglAlphaFunc                 = NULL;
 	qglAreTexturesResident       = NULL;

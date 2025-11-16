@@ -47,13 +47,6 @@ EXTERNC cvar_t *gl_allow_software;
 
 static qboolean VerifyDriver (void)
 {
-	char buffer[1024];
-
-	strcpy (buffer, reinterpret_cast<const char*>(qglGetString (GL_RENDERER)));
-	strlwr (buffer);
-	if (strcmp (buffer, "gdi generic") == 0)
-		if (!glw_state.mcd_accelerated)
-			return e_false;
 	return e_true;
 }
 
@@ -78,12 +71,6 @@ rserr_t GLimp_SetMode (int *pwidth, int *pheight, int mode, qboolean fullscreen)
 	}
 
 	ri.Con_Printf (PRINT_ALL, " %d %d %s\n", width, height, win_fs[fullscreen]);
-
-	// destroy the existing window
-	if (glw_state.hWnd)
-	{
-		GLimp_Shutdown ();
-	}
 
 	// do a CDS if needed
 	if (fullscreen)
@@ -222,36 +209,11 @@ void GLimp_Shutdown (void)
 {
 	if (qwglMakeCurrent && !qwglMakeCurrent (NULL, NULL))
 		ri.Con_Printf (PRINT_ALL, "ref_gl::R_Shutdown() - wglMakeCurrent failed\n");
-	if (glw_state.hGLRC)
-	{
-		if (qwglDeleteContext && !qwglDeleteContext (glw_state.hGLRC))
-			ri.Con_Printf (PRINT_ALL, "ref_gl::R_Shutdown() - wglDeleteContext failed\n");
-		glw_state.hGLRC = NULL;
-	}
-	if (glw_state.hDC)
-	{
-		if (!ReleaseDC (glw_state.hWnd, glw_state.hDC))
-			ri.Con_Printf (PRINT_ALL, "ref_gl::R_Shutdown() - ReleaseDC failed\n");
-		glw_state.hDC = NULL;
-	}
-	if (glw_state.hWnd)
-	{
-		DestroyWindow (glw_state.hWnd);
-		glw_state.hWnd = NULL;
-	}
 
 	if (glw_state.log_fp)
 	{
 		fclose (glw_state.log_fp);
 		glw_state.log_fp = 0;
-	}
-
-	UnregisterClass (WINDOW_CLASS_NAME, glw_state.hInstance);
-
-	if (gl_state.fullscreen)
-	{
-		ChangeDisplaySettings (0, 0);
-		gl_state.fullscreen = e_false;
 	}
 }
 
@@ -265,43 +227,6 @@ void GLimp_Shutdown (void)
 qboolean GLimp_Init (void *hinstance, void *wndproc)
 {
 #define OSR2_BUILD_NUMBER 1111
-
-	OSVERSIONINFO vinfo;
-
-	vinfo.dwOSVersionInfoSize		  = sizeof (vinfo);
-
-	glw_state.allowdisplaydepthchange = e_false;
-
-	if (GetVersionEx (&vinfo))
-	{
-		if (vinfo.dwMajorVersion > 4)
-		{
-			glw_state.allowdisplaydepthchange = e_true;
-		}
-		else if (vinfo.dwMajorVersion == 4)
-		{
-			if (vinfo.dwPlatformId == VER_PLATFORM_WIN32_NT)
-			{
-				glw_state.allowdisplaydepthchange = e_true;
-			}
-			else if (vinfo.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS)
-			{
-				if (LOWORD (vinfo.dwBuildNumber) >= OSR2_BUILD_NUMBER)
-				{
-					glw_state.allowdisplaydepthchange = e_true;
-				}
-			}
-		}
-	}
-	else
-	{
-		ri.Con_Printf (PRINT_ALL, "GLimp_Init() - GetVersionEx failed\n");
-		return e_false;
-	}
-
-	glw_state.hInstance = (HINSTANCE) hinstance;
-	glw_state.wndproc	= wndproc;
-
 	return e_true;
 }
 
@@ -356,66 +281,6 @@ qboolean GLimp_InitGL (void)
 		gl_state.stereo_enabled = e_false;
 	}
 
-	/*
-	** figure out if we're running on a minidriver or not
-	*/
-	if (strstr (gl_driver->string, "opengl32") != 0)
-		glw_state.minidriver = e_false;
-	else
-		glw_state.minidriver = e_true;
-
-	/*
-	** Get a DC for the specified window
-	*/
-
-	if ((glw_state.hDC = GetDC (glw_state.hWnd)) == NULL)
-	{
-		ri.Con_Printf (PRINT_ALL, "GLimp_Init() - GetDC failed\n");
-		return e_false;
-	}
-
-	if (glw_state.minidriver)
-	{
-		if ((pixelformat = qwglChoosePixelFormat (glw_state.hDC, &pfd)) == 0)
-		{
-			ri.Con_Printf (PRINT_ALL, "GLimp_Init() - qwglChoosePixelFormat failed\n");
-			return e_false;
-		}
-		if (qwglSetPixelFormat (glw_state.hDC, pixelformat, &pfd) == FALSE)
-		{
-			ri.Con_Printf (PRINT_ALL, "GLimp_Init() - qwglSetPixelFormat failed\n");
-			return e_false;
-		}
-		qwglDescribePixelFormat (glw_state.hDC, pixelformat, sizeof (pfd), &pfd);
-	}
-	else
-	{
-		//if ((pixelformat = ChoosePixelFormat (glw_state.hDC, &pfd)) == 0)
-		//{
-		//	ri.Con_Printf (PRINT_ALL, "GLimp_Init() - ChoosePixelFormat failed\n");
-		//	return e_false;
-		//}
-		//if (SetPixelFormat (glw_state.hDC, pixelformat, &pfd) == FALSE)
-		//{
-		//	ri.Con_Printf (PRINT_ALL, "GLimp_Init() - SetPixelFormat failed\n");
-		//	return e_false;
-		//}
-		//DescribePixelFormat (glw_state.hDC, pixelformat, sizeof (pfd), &pfd);
-
-		if (!(pfd.dwFlags & PFD_GENERIC_ACCELERATED))
-		{
-			
-
-			if (gl_allow_software->value)
-				glw_state.mcd_accelerated = e_true;
-			else
-				glw_state.mcd_accelerated = e_false;
-		}
-		else
-		{
-			glw_state.mcd_accelerated = e_true;
-		}
-	}
 
 	/*
 	** report if stereo is desired but unavailable
@@ -459,17 +324,6 @@ qboolean GLimp_InitGL (void)
 	return e_true;
 
 fail:
-	if (glw_state.hGLRC)
-	{
-		qwglDeleteContext (glw_state.hGLRC);
-		glw_state.hGLRC = NULL;
-	}
-
-	if (glw_state.hDC)
-	{
-		ReleaseDC (glw_state.hWnd, glw_state.hDC);
-		glw_state.hDC = NULL;
-	}
 	return e_false;
 }
 
@@ -478,16 +332,6 @@ fail:
 */
 EXTERNC void GLimp_BeginFrame (float camera_separation)
 {
-	if (gl_bitdepth->modified)
-	{
-		if (gl_bitdepth->value != 0 && !glw_state.allowdisplaydepthchange)
-		{
-			ri.Cvar_SetValue ("gl_bitdepth", 0);
-			ri.Con_Printf (PRINT_ALL, "gl_bitdepth requires Win95 OSR2.x or WinNT 4.x\n");
-		}
-		gl_bitdepth->modified = e_false;
-	}
-
 	if (camera_separation < 0 && gl_state.stereo_enabled)
 	{
 		qglDrawBuffer (GL_BACK_LEFT);
@@ -532,16 +376,6 @@ void GLimp_EndFrame (void)
 */
 void GLimp_AppActivate (qboolean active)
 {
-	if (active)
-	{
-		SetForegroundWindow (glw_state.hWnd);
-		ShowWindow (glw_state.hWnd, SW_RESTORE);
-	}
-	else
-	{
-		if (vid_fullscreen->value)
-			ShowWindow (glw_state.hWnd, SW_MINIMIZE);
-	}
 }
 
 #endif	// _WIN32
