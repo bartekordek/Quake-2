@@ -161,7 +161,7 @@ EXTERNC void  COM_DefaultExtension(char *path, char *extension);
 EXTERNC const char *COM_Parse (const char **data_p);
 // data is an in/out parm, returns a parsed out token
 
-EXTERNC void Com_sprintf(char *dest, int size, char *fmt, ...);
+EXTERNC void Com_sprintf(char *dest, int size, const char *fmt, ...);
 
 EXTERNC void Com_PageInMemory(byte *buffer, int size);
 
@@ -182,7 +182,7 @@ EXTERNC float BigFloat(float l);
 EXTERNC float LittleFloat(float l);
 
 EXTERNC void  Swap_Init(void);
-EXTERNC char *va(char *format, ...);
+EXTERNC const char *va(const char *format, ...);
 
 //=============================================
 
@@ -232,7 +232,7 @@ EXTERNC char *Sys_FindNext(unsigned musthave, unsigned canthave);
 EXTERNC void  Sys_FindClose(void);
 
 // this is only here so the functions in q_shared.c and q_shwin.c can link
-EXTERNC void Sys_Error(char *error, ...);
+EXTERNC void Sys_Error(const char *error, ...);
 EXTERNC void Com_Printf (const char *msg, ...);
 
 

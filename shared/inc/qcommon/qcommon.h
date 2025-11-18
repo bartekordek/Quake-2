@@ -87,7 +87,7 @@ extern float LittleFloat(float l);
 //============================================================================
 
 EXTERNC int	  COM_Argc(void);
-EXTERNC char *COM_Argv(int arg);  // range and null checked
+EXTERNC const char *COM_Argv (int arg);	 // range and null checked
 EXTERNC void  COM_ClearArgv(int arg);
 EXTERNC int	  COM_CheckParm(char *parm);
 EXTERNC void  COM_AddParm(char *parm);
@@ -361,7 +361,7 @@ EXTERNC const char *Cmd_CompleteCommand (char *partial);
 // returns NULL if nothing fits
 
 EXTERNC int	  Cmd_Argc(void);
-EXTERNC char *Cmd_Argv(int arg);
+EXTERNC const char *Cmd_Argv (int arg);
 EXTERNC char *Cmd_Args(void);
 // The functions that execute commands get their parameters with these
 // functions. Cmd_Argv () will return an empty string, not a NULL
@@ -371,7 +371,7 @@ EXTERNC void	Cmd_TokenizeString (const char *text, qboolean macroExpand);
 // Takes a null terminated string.  Does not need to be /n terminated.
 // breaks the string up into arg tokens.
 
-EXTERNC void Cmd_ExecuteString(char *text);
+EXTERNC void Cmd_ExecuteString (const char *text);
 // Parses a single line of text into arguments and tries to execute it
 // as if it was typed at the console
 
@@ -408,13 +408,13 @@ EXTERNC cvar_t *Cvar_Get (const char *var_name, const char *value, int flags);
 // if it exists, the value will not be changed, but flags will be ORed in
 // that allows variables to be unarchived without needing bitflags
 
-EXTERNC cvar_t *Cvar_Set(char *var_name, char *value);
+EXTERNC cvar_t *Cvar_Set(const char *var_name, const char *value);
 // will create the variable if it doesn't exist
 
 EXTERNC cvar_t *Cvar_ForceSet(char *var_name, char *value);
 // will set the variable even if NOSET or LATCH
 
-EXTERNC cvar_t *Cvar_FullSet(char *var_name, char *value, int flags);
+EXTERNC cvar_t *Cvar_FullSet(const char *var_name, const char *value, int flags);
 
 EXTERNC void Cvar_SetValue(char *var_name, float value);
 // expands value to a string and calls Cvar_Set
@@ -641,11 +641,11 @@ EXTERNC char *FS_Gamedir(void);
 EXTERNC char *FS_NextPath(char *prevpath);
 EXTERNC void  FS_ExecAutoexec(void);
 
-EXTERNC int	 FS_FOpenFile(char *filename, FILE **file);
+EXTERNC int	 FS_FOpenFile (const char *filename, FILE **file);
 EXTERNC void FS_FCloseFile(FILE *f);
 // note: this can't be called from another DLL, due to MS libc issues
 
-EXTERNC int FS_LoadFile(char *path, void **buffer);
+EXTERNC int FS_LoadFile (const char *path, void **buffer);
 // a null buffer will just return the file length without loading
 // a -1 length is not present
 
@@ -675,17 +675,19 @@ MISC
 #define PRINT_ALL		0
 #define PRINT_DEVELOPER 1  // only print when "developer 1"
 
+
+// TODO: Those declarations are duplicated?
 EXTERNC void Com_BeginRedirect (int target, char *buffer, int buffersize, void (*flush) (int target, char *buffer));
 EXTERNC void Com_EndRedirect (void);
 EXTERNC void Com_Printf (const char *fmt, ...);
-EXTERNC void Com_DPrintf (char *fmt, ...);
+EXTERNC void Com_DPrintf (const char *fmt, ...);
 EXTERNC void Com_Error (int code, const char *fmt, ...);
 EXTERNC void Com_Quit (void);
 
 EXTERNC void		Com_BeginRedirect (int target, char* buffer, int buffersize, void (*flush)(int target, char* buffer));
 EXTERNC void		Com_EndRedirect (void);
 EXTERNC void 		Com_Printf (const char *fmt, ...);
-EXTERNC void 		Com_DPrintf (char *fmt, ...);
+EXTERNC void		Com_DPrintf (const char *fmt, ...);
 EXTERNC void 		Com_Error (int code, const char *fmt, ...);
 EXTERNC void 		Com_Quit (void);
 
@@ -742,7 +744,7 @@ EXTERNC void *Sys_GetGameAPI(void *parms);
 EXTERNC char *Sys_ConsoleInput(void);
 EXTERNC void  Sys_ConsoleOutput(char *string);
 EXTERNC void  Sys_SendKeyEvents(void);
-EXTERNC void  Sys_Error(char *error, ...);
+EXTERNC void  Sys_Error(const char *error, ...);
 EXTERNC void  Sys_Quit(void);
 EXTERNC char *Sys_GetClipboardData(void);
 EXTERNC void  Sys_CopyProtect(void);
@@ -763,5 +765,5 @@ EXTERNC void Con_Print(char *text);
 EXTERNC void SCR_BeginLoadingPlaque(void);
 
 EXTERNC void SV_Init(void);
-EXTERNC void SV_Shutdown(char *finalmsg, qboolean reconnect);
+EXTERNC void SV_Shutdown (const char *finalmsg, qboolean reconnect);
 EXTERNC void SV_Frame(int msec);

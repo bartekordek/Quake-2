@@ -24,6 +24,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "../../quake2/inc/quake2/client/keys.h"
 #include "../../quake2/inc/quake2/client/cl_scrn.h"
 #include <setjmp.h>
+#include <string>
+#include <array>
 
 #define	MAXPRINTMSG	4096
 
@@ -31,7 +33,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 
 int		com_argc;
-char	*com_argv[MAX_NUM_ARGVS+1];
+std::array<std::string, MAX_NUM_ARGVS + 1> com_argv;
 
 int		realtime;
 
@@ -152,7 +154,7 @@ Com_DPrintf
 A Com_Printf that only shows up if the "developer" cvar is set
 ================
 */
-void Com_DPrintf (char *fmt, ...)
+void Com_DPrintf (const char *fmt, ...)
 {
 	va_list		argptr;
 	char		msg[MAXPRINTMSG];
@@ -292,7 +294,7 @@ int COM_CheckParm (char *parm)
 
 	for (i=1 ; i<com_argc ; i++)
 	{
-		if (!strcmp (parm,com_argv[i]))
+		if (!strcmp (parm,com_argv[i].c_str()))
 			return i;
 	}
 
@@ -304,16 +306,16 @@ int COM_Argc (void)
 	return com_argc;
 }
 
-char *COM_Argv (int arg)
+const char *COM_Argv (int arg)
 {
-	if (arg < 0 || arg >= com_argc || !com_argv[arg])
+	if (arg < 0 || arg >= com_argc || com_argv[arg].empty())
 		return "";
-	return com_argv[arg];
+	return com_argv[arg].c_str();
 }
 
 void COM_ClearArgv (int arg)
 {
-	if (arg < 0 || arg >= com_argc || !com_argv[arg])
+	if (arg < 0 || arg >= com_argc || com_argv[arg].empty())
 		return;
 	com_argv[arg] = "";
 }
@@ -732,8 +734,6 @@ Qcommon_Init
 */
 void Qcommon_Init (int argc, char **argv)
 {
-	char	*s;
-
 	if (setjmp (abortframe) )
 		Sys_Error ("Error during initialization");
 
@@ -785,7 +785,7 @@ void Qcommon_Init (int argc, char **argv)
 	dedicated = Cvar_Get ("dedicated", "0", CVAR_NOSET);
 #endif
 
-	s = va("%4.2f %s %s %s", VERSION, CPUSTRING, __DATE__, BUILDSTRING);
+	const char* s = va("%4.2f %s %s %s", VERSION, CPUSTRING, __DATE__, BUILDSTRING);
 	Cvar_Get ("version", s, CVAR_SERVERINFO|CVAR_NOSET);
 
 

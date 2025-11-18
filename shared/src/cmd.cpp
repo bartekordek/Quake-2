@@ -262,22 +262,22 @@ Other commands are added late, after all initialization is complete.
 */
 void Cbuf_AddEarlyCommands (qboolean clear)
 {
-	int		i;
-	char	*s;
+	int			i;
+	const char *s{nullptr};
 
-	for (i=0 ; i<COM_Argc() ; i++)
+	for (i = 0; i < COM_Argc (); i++)
 	{
-		s = COM_Argv(i);
+		s = COM_Argv (i);
 		if (strcmp (s, "+set"))
 			continue;
-		Cbuf_AddText (va("set %s %s\n", COM_Argv(i+1), COM_Argv(i+2)));
+		Cbuf_AddText (va ("set %s %s\n", COM_Argv (i + 1), COM_Argv (i + 2)));
 		if (clear)
 		{
-			COM_ClearArgv(i);
-			COM_ClearArgv(i+1);
-			COM_ClearArgv(i+2);
+			COM_ClearArgv (i);
+			COM_ClearArgv (i + 1);
+			COM_ClearArgv (i + 2);
 		}
-		i+=2;
+		i += 2;
 	}
 }
 
@@ -427,7 +427,6 @@ void Cmd_Alias_f (void)
 	cmdalias_t	*a;
 	char		cmd[1024];
 	int			i, c;
-	char		*s;
 
 	if (Cmd_Argc() == 1)
 	{
@@ -437,7 +436,7 @@ void Cmd_Alias_f (void)
 		return;
 	}
 
-	s = Cmd_Argv(1);
+	const char *s = Cmd_Argv (1);
 	if (strlen(s) >= MAX_ALIAS_NAME)
 	{
 		Com_Printf ("Alias name is too long\n");
@@ -492,10 +491,10 @@ typedef struct cmd_function_s
 } cmd_function_t;
 
 
-static	int			cmd_argc;
-static	char		*cmd_argv[MAX_STRING_TOKENS];
-static	char		*cmd_null_string = "";
-static	char		cmd_args[MAX_STRING_CHARS];
+static int			 cmd_argc;
+static char			*cmd_argv[MAX_STRING_TOKENS];
+static const char  *cmd_null_string = "";
+static char			 cmd_args[MAX_STRING_CHARS];
 
 static	cmd_function_t	*cmd_functions;		// possible commands to execute
 
@@ -514,11 +513,11 @@ int		Cmd_Argc (void)
 Cmd_Argv
 ============
 */
-char	*Cmd_Argv (int arg)
+const char *Cmd_Argv (int arg)
 {
-	if ( (unsigned)arg >= cmd_argc )
+	if ((unsigned) arg >= cmd_argc)
 		return cmd_null_string;
-	return cmd_argv[arg];	
+	return cmd_argv[arg];
 }
 
 /*
@@ -813,7 +812,7 @@ A complete command line has been parsed, so try to execute it
 FIXME: lookupnoadd the token to speed search?
 ============
 */
-void	Cmd_ExecuteString (char *text)
+void	Cmd_ExecuteString (const char *text)
 {	
 	cmd_function_t	*cmd;
 	cmdalias_t		*a;

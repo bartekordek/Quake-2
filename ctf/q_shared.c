@@ -873,16 +873,16 @@ varargs versions of all text functions.
 FIXME: make this buffer size safe someday
 ============
 */
-char	*va(char *format, ...)
+const char *va (const char *format, ...)
 {
 	va_list		argptr;
-	static char		string[1024];
-	
+	static char string[1024];
+
 	va_start (argptr, format);
-	vsprintf (string, format,argptr);
+	vsprintf (string, format, argptr);
 	va_end (argptr);
 
-	return string;	
+	return string;
 }
 
 

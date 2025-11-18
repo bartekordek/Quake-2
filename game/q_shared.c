@@ -872,7 +872,7 @@ varargs versions of all text functions.
 FIXME: make this buffer size safe someday
 ============
 */
-char	*va(char *format, ...)
+const char	*va(const char *format, ...)
 {
 	va_list		argptr;
 	static char		string[1024];
@@ -1043,7 +1043,7 @@ int Q_strcasecmp (const char *s1, const char *s2)
 	return Q_strncasecmp (s1, s2, 99999);
 }
 
-void Com_sprintf (char *dest, int size, char *fmt, ...)
+void Com_sprintf (char *dest, int size, const char *fmt, ...)
 {
 	int		len;
 	va_list		argptr;
