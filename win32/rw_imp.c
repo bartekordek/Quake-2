@@ -139,7 +139,7 @@ static qboolean SWimp_InitGraphics( qboolean fullscreen )
 	SWimp_Shutdown ();
 
 	// create a new window
-	VID_CreateWindow (vid.width, vid.height, WINDOW_STYLE);
+	VID_CreateWindow (vid.width, vid.height, 0);
 
 	// initialize the appropriate subsystem
 	if ( !fullscreen )

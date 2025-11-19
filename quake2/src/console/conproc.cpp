@@ -18,10 +18,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 // conproc.c -- support for qhost
+#include "quake2/console/conproc.h"
+#include "shared/config.h"
 #include <stdio.h>
 #include <process.h>
+
+#if Q2_WINDOWS
 #include <windows.h>
-#include "conproc.h"
 
 #define CCOM_WRITE_TEXT		0x2
 // Param1 : Text
@@ -65,7 +68,7 @@ Returns the position (1 to argc-1) in the program's argument list
 where the given parameter apears, or 0 if not present
 ================
 */
-int CCheckParm (char *parm)
+int CCheckParm (const char *parm)
 {
 	int             i;
 	
@@ -429,3 +432,4 @@ BOOL SetConsoleCXCY(HANDLE hStdout, int cx, int cy)
 	return TRUE;
 }
      
+#endif	// Q2_WINDOWS

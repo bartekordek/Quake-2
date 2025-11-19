@@ -277,8 +277,8 @@ EXTERNC	int		registration_sequence;
 
 void V_AddBlend (float r, float g, float b, float a, float *v_blend);
 
-int 	R_Init( void *hinstance, void *hWnd );
-void	R_Shutdown( void );
+int	 R_Init ();
+void R_Shutdown (void);
 
 void R_RenderView (refdef_t *fd);
 void GL_ScreenShot_f (void);
@@ -456,7 +456,7 @@ IMPLEMENTATION SPECIFIC FUNCTIONS
 
 EXTERNC void		GLimp_BeginFrame (float camera_separation);
 EXTERNC void		GLimp_EndFrame (void);
-EXTERNC qboolean	GLimp_Init (void *hinstance, void *hWnd);
+EXTERNC qboolean	GLimp_Init (void);
 EXTERNC void		GLimp_Shutdown (void);
 EXTERNC rserr_t		GLimp_SetMode (int *pwidth, int *pheight, int mode, qboolean fullscreen);
 EXTERNC void		GLimp_AppActivate (qboolean active);

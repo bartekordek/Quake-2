@@ -137,10 +137,10 @@ typedef struct
 	int		api_version;
 
 	// called when the library is loaded
-	qboolean	(*Init) ( void *hinstance, void *wndproc );
+	qboolean (*Init) (void);
 
 	// called before the library is unloaded
-	void	(*Shutdown) (void);
+	void (*Shutdown) (void);
 
 	// All data that will be used in a level should be
 	// registered before rendering any frames to prevent disk hits,

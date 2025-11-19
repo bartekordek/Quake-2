@@ -211,8 +211,6 @@ void IN_DeactivateMouse (void)
 		return;
 	}
 
-	log_str ("IN_DeactivateMouse");
-
 	if (!mouseactive)
 		return;
 

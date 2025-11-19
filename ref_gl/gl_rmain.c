@@ -1129,7 +1129,7 @@ int R_Init( void *hinstance, void *hWnd )
 	}
 
 	// initialize OS-specific parts of OpenGL
-	if ( !GLimp_Init( hinstance, hWnd ) )
+	if ( !GLimp_Init() )
 	{
 		QGL_Shutdown();
 		return -1;

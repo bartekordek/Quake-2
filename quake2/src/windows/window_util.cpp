@@ -144,7 +144,7 @@ qboolean create_window (int x, int y, int w, int h, qboolean fullscreen)
 		flags |= SDL_WINDOW_MOUSE_CAPTURE;
 	}
 
-	SDL_Init (SDL_INIT_VIDEO | SDL_INIT_EVENTS);
+	SDL_Init (SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_EVENTS);
 
 	SDL_GL_SetAttribute (SDL_GL_CONTEXT_MAJOR_VERSION, 4);
 	SDL_GL_SetAttribute (SDL_GL_CONTEXT_MINOR_VERSION, 3);

@@ -1,3 +1,6 @@
+#ifndef __q2_conproc_h__
+#define __q2_conproc_h__
+
 /*
 Copyright (C) 1997-2001 Id Software, Inc.
 
@@ -19,6 +22,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 // conproc.h -- support for qhost
 
-void InitConProc (int argc, char **argv);
-void DeinitConProc (void);
+#include "shared/config.h"
 
+EXTERNC void InitConProc (int argc, char **argv);
+EXTERNC void DeinitConProc (void);
+
+#endif	// __q2_conproc_h__
