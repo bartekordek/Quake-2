@@ -3,6 +3,7 @@
 
 #include "shared/config.h"
 #include "shared/boolean.h"
+#include "quake2/video/VideoSettings.h"
 
 typedef struct 
 {
@@ -19,5 +20,6 @@ EXTERNC void	 Get_screen_attributes (int *inOut_w, int *inOut_h);
 EXTERNC void	 Get_window_rect (WinRect* inOutRect);
 EXTERNC void	 Q2_SetMousePos (int x, int y);
 EXTERNC qboolean Get_Is_InForeground ();
+EXTERNC void	 SetVideoMode (VideoSettings* inVideoSettings);
 
 #endif	// __window_util_h__

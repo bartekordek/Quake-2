@@ -29,15 +29,18 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ** GLimp_Shutdown
 **
 */
-#include "../ref_gl/gl_local.h"
+#include "ref_gl/gl_local.h"
+#include "shared/assert.h"
 
 #ifdef _WIN32
 #include <assert.h>
 #include <windows.h>
 
-#include "glw_win.h"
-#include "glw.h"
-#include "../quake2/inc/quake2/windows/winquake.h"
+#include "ref_gl/glw_win.h"
+#include "ref_gl/glw.h"
+//ToDo: do we really need to have this here?
+#include "../../quake2/inc/quake2/windows/winquake.h"
+#include "../../quake2/inc/quake2/video/VideoSettings.h"
 
 glwstate_t glw_state;
 
@@ -49,8 +52,6 @@ static qboolean VerifyDriver (void)
 {
 	return e_true;
 }
-
-#define WINDOW_CLASS_NAME "Quake 2"
 
 /*
 ** GLimp_SetMode
@@ -75,22 +76,19 @@ rserr_t GLimp_SetMode (int *pwidth, int *pheight, int mode, qboolean fullscreen)
 	// do a CDS if needed
 	if (fullscreen)
 	{
-		DEVMODE dm;
+
+		VideoSettings vs;
 
 		ri.Con_Printf (PRINT_ALL, "...attempting fullscreen\n");
 
-		memset (&dm, 0, sizeof (dm));
-
-		dm.dmSize		= sizeof (dm);
-
-		dm.dmPelsWidth	= width;
-		dm.dmPelsHeight = height;
-		dm.dmFields		= DM_PELSWIDTH | DM_PELSHEIGHT;
+		vs.dmPelsWidth	= width;
+		vs.dmPelsHeight = height;
+		vs.dmFields		= DM_PELSWIDTH | DM_PELSHEIGHT;
 
 		if (gl_bitdepth->value != 0)
 		{
-			dm.dmBitsPerPel = gl_bitdepth->value;
-			dm.dmFields |= DM_BITSPERPEL;
+			vs.dmBitsPerPel = gl_bitdepth->value;
+			vs.dmFields |= DM_BITSPERPEL;
 			ri.Con_Printf (PRINT_ALL, "...using gl_bitdepth of %d\n", (int) gl_bitdepth->value);
 		}
 		else
@@ -103,8 +101,10 @@ rserr_t GLimp_SetMode (int *pwidth, int *pheight, int mode, qboolean fullscreen)
 			ReleaseDC (0, hdc);
 		}
 
+		q2_assert (false, "TODO: implement");
+
 		ri.Con_Printf (PRINT_ALL, "...calling CDS: ");
-		if (ChangeDisplaySettings (&dm, CDS_FULLSCREEN) == DISP_CHANGE_SUCCESSFUL)
+		//if (ChangeDisplaySettings (&dm, CDS_FULLSCREEN) == DISP_CHANGE_SUCCESSFUL)
 		{
 			*pwidth				= width;
 			*pheight			= height;
@@ -120,7 +120,7 @@ rserr_t GLimp_SetMode (int *pwidth, int *pheight, int mode, qboolean fullscreen)
 
 			return rserr_ok;
 		}
-		else
+		//else
 		{
 			*pwidth	 = width;
 			*pheight = height;
@@ -129,21 +129,21 @@ rserr_t GLimp_SetMode (int *pwidth, int *pheight, int mode, qboolean fullscreen)
 
 			ri.Con_Printf (PRINT_ALL, "...calling CDS assuming dual monitors:");
 
-			dm.dmPelsWidth	= width * 2;
-			dm.dmPelsHeight = height;
-			dm.dmFields		= DM_PELSWIDTH | DM_PELSHEIGHT;
+			//dm.dmPelsWidth	= width * 2;
+			//dm.dmPelsHeight = height;
+			//dm.dmFields		= DM_PELSWIDTH | DM_PELSHEIGHT;
 
 			if (gl_bitdepth->value != 0)
 			{
-				dm.dmBitsPerPel = gl_bitdepth->value;
-				dm.dmFields |= DM_BITSPERPEL;
+				//dm.dmBitsPerPel = gl_bitdepth->value;
+				//dm.dmFields |= DM_BITSPERPEL;
 			}
 
 			/*
 			** our first CDS failed, so maybe we're running on some weird dual monitor
 			** system
 			*/
-			if (ChangeDisplaySettings (&dm, CDS_FULLSCREEN) != DISP_CHANGE_SUCCESSFUL)
+			//if (ChangeDisplaySettings (&dm, CDS_FULLSCREEN) != DISP_CHANGE_SUCCESSFUL)
 			{
 				ri.Con_Printf (PRINT_ALL, " failed\n");
 
@@ -159,7 +159,7 @@ rserr_t GLimp_SetMode (int *pwidth, int *pheight, int mode, qboolean fullscreen)
 					return rserr_invalid_mode;
 				return rserr_invalid_fullscreen;
 			}
-			else
+			//else
 			{
 				ri.Con_Printf (PRINT_ALL, " ok\n");
 				if (!ri.create_window (0, 0, width, height, e_true))

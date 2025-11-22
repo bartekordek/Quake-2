@@ -6,13 +6,16 @@
 #include "quake2/client/keys.h"
 #include "quake2/video/vid_dll.h"
 #include "shared/logger.h"
+#include "shared/ref.h"
 #include <string>
 #include <array>
 
-std::int32_t SDL_Key_to_Quake_Key (std::int32_t inKey);	
+std::int32_t SDL_Key_to_Quake_Key (std::int32_t inKey);
 
-SDL_Window *g_window{nullptr};
-qboolean	g_foreGround{e_true};
+SDL_Window		   *g_window{nullptr};
+qboolean			g_foreGround{e_true};
+EXTERNC qboolean	reflib_active;
+EXTERNC refexport_t re;
 
 struct WindowsData
 {
@@ -167,7 +170,7 @@ qboolean create_window (int x, int y, int w, int h, qboolean fullscreen)
 
 	SDL_DisplayMode dm;
 	SDL_GetCurrentDisplayMode (displayIndex, &dm);
-	g_windowdata.screen_w = dm.w;
+	g_windowdata.screen_w	 = dm.w;
 	g_windowdata.screen_h	 = dm.h;
 
 	g_windowdata.rect.left	 = x;
@@ -176,6 +179,14 @@ qboolean create_window (int x, int y, int w, int h, qboolean fullscreen)
 	g_windowdata.rect.top	 = y;
 
 	return e_true;
+}
+
+void SetVideoMode(VideoSettings* inVideoSettings)
+{
+	SDL_DisplayMode dm;
+	dm.w = inVideoSettings->dmPelsWidth;
+	dm.h = inVideoSettings->dmPelsHeight;
+	SDL_SetWindowDisplayMode (g_window, &dm);
 }
 
 void update_buffer()
