@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "shared/files.h"
 #include "qcommon/qcommon.h"
 #include "../../quake2/inc/quake2/sound/cd_win.h"
+#include <cstddef>
 
 // define this to dissalow any data but the demo pak file
 //#define	NO_ADDONS
@@ -124,17 +125,22 @@ FS_CreatePath
 Creates any directories needed to store the given filename
 ============
 */
-void	FS_CreatePath (char *path)
+void	FS_CreatePath (const char *path)
 {
-	char	*ofs;
+	char sub[512];
+	strcpy (sub, path);
+	std::size_t i{1u};
+	std::size_t path_len = strlen (path);
 
-	for (ofs = path+1 ; *ofs ; ofs++)
+	const char	*ofs;
+
+	for (i = 1; i < path_len;++i)
 	{
-		if (*ofs == '/')
+		if (sub[i] == '/')
 		{	// create the directory
-			*ofs = 0;
-			Sys_Mkdir (path);
-			*ofs = '/';
+			sub[i] = 0;
+			Sys_Mkdir (sub);
+			sub[i] = '/';
 		}
 	}
 }

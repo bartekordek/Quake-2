@@ -18,7 +18,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
-#include "server.h"
+#include "quake2/server/server.h"
+#include "quake2/server/sv_init.h"
 
 /*
 ===============================================================================
@@ -93,12 +94,11 @@ qboolean SV_SetPlayer (void)
 	client_t	*cl;
 	int			i;
 	int			idnum;
-	char		*s;
 
 	if (Cmd_Argc() < 2)
 		return e_false;
 
-	s = Cmd_Argv(1);
+	const char *s = Cmd_Argv (1);
 
 	// numeric values are just slot numbers
 	if (s[0] >= '0' && s[0] <= '9')
@@ -153,7 +153,7 @@ SV_WipeSavegame
 Delete save/<XXX>/
 =====================
 */
-void SV_WipeSavegame (char *savename)
+void SV_WipeSavegame (const char *savename)
 {
 	char	name[MAX_OSPATH];
 	char	*s;
@@ -225,7 +225,7 @@ void CopyFile (char *src, char *dst)
 SV_CopySaveGame
 ================
 */
-void SV_CopySaveGame (char *src, char *dst)
+void SV_CopySaveGame (const char *src, const char *dst)
 {
 	char	name[MAX_OSPATH], name2[MAX_OSPATH];
 	int		l, len;
@@ -373,23 +373,23 @@ void SV_WriteServerFile (qboolean autosave)
 
 	// write all CVAR_LATCH cvars
 	// these will be things like coop, skill, deathmatch, etc
-	for (var = cvar_vars ; var ; var=var->next)
-	{
-		if (!(var->flags & CVAR_LATCH))
-			continue;
-		if (strlen(var->name) >= sizeof(name)-1
-			|| strlen(var->string) >= sizeof(string)-1)
-		{
-			Com_Printf ("Cvar too long: %s = %s\n", var->name, var->string);
-			continue;
-		}
-		memset (name, 0, sizeof(name));
-		memset (string, 0, sizeof(string));
-		strcpy (name, var->name);
-		strcpy (string, var->string);
-		fwrite (name, 1, sizeof(name), f);
-		fwrite (string, 1, sizeof(string), f);
-	}
+	//for (var = cvar_vars ; var ; var=var->next)
+	//{
+	//	if (!(var->flags & CVAR_LATCH))
+	//		continue;
+	//	if (strlen(var->name) >= sizeof(name)-1
+	//		|| strlen(var->string) >= sizeof(string)-1)
+	//	{
+	//		Com_Printf ("Cvar too long: %s = %s\n", var->name, var->string);
+	//		continue;
+	//	}
+	//	memset (name, 0, sizeof(name));
+	//	memset (string, 0, sizeof(string));
+	//	strcpy (name, var->name);
+	//	strcpy (string, var->string);
+	//	fwrite (name, 1, sizeof(name), f);
+	//	fwrite (string, 1, sizeof(string), f);
+	//}
 
 	fclose (f);
 
@@ -487,7 +487,6 @@ goes to map jail.bsp.
 */
 void SV_GameMap_f (void)
 {
-	char		*map;
 	int			i;
 	client_t	*cl;
 	qboolean	*savedInuse;
@@ -503,7 +502,7 @@ void SV_GameMap_f (void)
 	FS_CreatePath (va("%s/save/current/", FS_Gamedir()));
 
 	// check for clearing the current savegame
-	map = Cmd_Argv(1);
+	const char *map = Cmd_Argv (1);
 	if (map[0] == '*')
 	{
 		// wipe all the *.sav files
@@ -516,7 +515,7 @@ void SV_GameMap_f (void)
 			// clear all the client inuse flags before saving so that
 			// when the level is re-entered, the clients will spawn
 			// at spawn points instead of occupying body shells
-			savedInuse = malloc(maxclients->value * sizeof(qboolean));
+			savedInuse = (qboolean*)malloc(maxclients->value * sizeof(qboolean));
 			for (i=0,cl=svs.clients ; i<maxclients->value; i++,cl++)
 			{
 				savedInuse[i] = cl->edict->inuse;
@@ -556,11 +555,10 @@ For development work
 */
 void SV_Map_f (void)
 {
-	char	*map;
 	char	expanded[MAX_QPATH];
 
 	// if not a pcx, demo, or cinematic, check to make sure the level exists
-	map = Cmd_Argv(1);
+	const char *map = Cmd_Argv (1);
 	if (!strstr (map, "."))
 	{
 		Com_sprintf (expanded, sizeof(expanded), "maps/%s.bsp", map);
@@ -595,7 +593,6 @@ void SV_Loadgame_f (void)
 {
 	char	name[MAX_OSPATH];
 	FILE	*f;
-	char	*dir;
 
 	if (Cmd_Argc() != 2)
 	{
@@ -605,7 +602,7 @@ void SV_Loadgame_f (void)
 
 	Com_Printf ("Loading game...\n");
 
-	dir = Cmd_Argv(1);
+	const char *dir = Cmd_Argv (1);
 	if (strstr (dir, "..") || strstr (dir, "/") || strstr (dir, "\\") )
 	{
 		Com_Printf ("Bad savedir.\n");
@@ -640,8 +637,6 @@ SV_Savegame_f
 */
 void SV_Savegame_f (void)
 {
-	char	*dir;
-
 	if (sv.state != ss_game)
 	{
 		Com_Printf ("You must be in a game to save.\n");
@@ -672,7 +667,7 @@ void SV_Savegame_f (void)
 		return;
 	}
 
-	dir = Cmd_Argv(1);
+	const char *dir = Cmd_Argv (1);
 	if (strstr (dir, "..") || strstr (dir, "/") || strstr (dir, "\\") )
 	{
 		Com_Printf ("Bad savedir.\n");
@@ -925,7 +920,7 @@ void SV_ServerRecord_f (void)
 	//
 	// write a single giant fake message with all the startup info
 	//
-	SZ_Init (&buf, buf_data, sizeof(buf_data));
+	SZ_Init (&buf, (byte*)buf_data, sizeof(buf_data));
 
 	//
 	// serverdata needs to go over for all types of servers

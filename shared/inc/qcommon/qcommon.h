@@ -401,8 +401,6 @@ Cvars are restricted from having the same names as commands to keep this
 interface from being ambiguous.
 */
 
-EXTERNC cvar_t *cvar_vars;
-
 EXTERNC cvar_t *Cvar_Get (const char *var_name, const char *value, int flags);
 // creates the variable if it doesn't exist, or returns the existing one
 // if it exists, the value will not be changed, but flags will be ORed in
@@ -425,7 +423,7 @@ EXTERNC float Cvar_VariableValue (const char *var_name);
 EXTERNC const char *Cvar_VariableString (const char *var_name);
 // returns an empty string if not defined
 
-EXTERNC char *Cvar_CompleteVariable(char *partial);
+EXTERNC const char *Cvar_CompleteVariable(const char *partial);
 // attempts to match a partial variable name for command line completion
 // returns NULL if nothing fits
 
@@ -505,7 +503,7 @@ EXTERNC qboolean NET_CompareAdr(netadr_t a, netadr_t b);
 EXTERNC qboolean NET_CompareBaseAdr(netadr_t a, netadr_t b);
 EXTERNC qboolean NET_IsLocalAddress(netadr_t adr);
 EXTERNC char	*NET_AdrToString(netadr_t a);
-EXTERNC qboolean NET_StringToAdr(char *s, netadr_t *a);
+EXTERNC qboolean NET_StringToAdr(const char *s, netadr_t *a);
 EXTERNC void	 NET_Sleep(int msec);
 
 //============================================================================
@@ -558,7 +556,7 @@ EXTERNC void Netchan_Setup(netsrc_t sock, netchan_t *chan, netadr_t adr, int qpo
 EXTERNC qboolean Netchan_NeedReliable(netchan_t *chan);
 EXTERNC void	 Netchan_Transmit(netchan_t *chan, int length, byte *data);
 EXTERNC void	 Netchan_OutOfBand(int net_socket, netadr_t adr, int length, byte *data);
-EXTERNC void	 Netchan_OutOfBandPrint(int net_socket, netadr_t adr, char *format, ...);
+EXTERNC void	 Netchan_OutOfBandPrint(int net_socket, netadr_t adr, const char *format, ...);
 EXTERNC qboolean Netchan_Process(netchan_t *chan, sizebuf_t *msg);
 
 qboolean Netchan_CanReliable(netchan_t *chan);
@@ -654,7 +652,7 @@ EXTERNC void FS_Read(void *buffer, int len, FILE *f);
 
 EXTERNC void FS_FreeFile(void *buffer);
 
-EXTERNC void FS_CreatePath(char *path);
+EXTERNC void FS_CreatePath(const char *path);
 
 /*
 ==============================================================

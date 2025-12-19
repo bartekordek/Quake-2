@@ -21,8 +21,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "qcommon/qcommon.h"
 #include "shared/common.h"
+#include <unordered_map>
+#include <memory>
+#include <string>
 
-cvar_t	*cvar_vars;
+std::unordered_map<std::string, std::unique_ptr<cvar_t>> cvar_vars;
 
 /*
 ============
@@ -47,13 +50,13 @@ Cvar_FindVar
 */
 static cvar_t *Cvar_FindVar (const char *var_name)
 {
-	cvar_t	*var;
+	auto it = cvar_vars.find (var_name);
+	if (it != cvar_vars.end ())
+	{
+		return it->second.get ();
+	}
 
-	for (var=cvar_vars ; var ; var=var->next)
-		if (!strcmp (var_name, var->name))
-			return var;
-
-	return NULL;
+	return nullptr;
 }
 
 /*
@@ -63,9 +66,7 @@ Cvar_VariableValue
 */
 float Cvar_VariableValue (const char *var_name)
 {
-	cvar_t	*var;
-
-	var = Cvar_FindVar (var_name);
+	cvar_t *var = Cvar_FindVar (var_name);
 	if (!var)
 		return 0;
 	return atof (var->string);
@@ -79,9 +80,7 @@ Cvar_VariableString
 */
 const char *Cvar_VariableString (const char *var_name)
 {
-	cvar_t *var;
-
-	var = Cvar_FindVar (var_name);
+	cvar_t *var = Cvar_FindVar (var_name);
 	if (!var)
 		return "";
 	return var->string;
@@ -93,27 +92,29 @@ const char *Cvar_VariableString (const char *var_name)
 Cvar_CompleteVariable
 ============
 */
-char *Cvar_CompleteVariable (char *partial)
+const char *Cvar_CompleteVariable (const char *partial)
 {
-	cvar_t		*cvar;
-	int			len;
-
-	len = strlen(partial);
-
-	if (!len)
+	if (!partial)
 		return NULL;
 
 	// check exact match
-	for (cvar=cvar_vars ; cvar ; cvar=cvar->next)
-		if (!strcmp (partial,cvar->name))
-			return cvar->name;
+	auto it = cvar_vars.find (partial);
+	if (it != cvar_vars.end())
+	{
+		return it->first.c_str();
+	}
 
 	// check partial match
-	for (cvar=cvar_vars ; cvar ; cvar=cvar->next)
-		if (!strncmp (partial,cvar->name, len))
-			return cvar->name;
 
-	return NULL;
+	for (const auto&[key,_]  : cvar_vars)
+	{
+		if (key.contains(partial))
+		{
+			return key.c_str ();
+		}
+	}
+
+	return nullptr;
 }
 
 
@@ -127,13 +128,13 @@ The flags will be or'ed in if the variable exists.
 */
 cvar_t *Cvar_Get (const char *var_name, const char *var_value, int flags)
 {
-	cvar_t	*var;
+	cvar_t *var{nullptr};
 
 	if (flags & (CVAR_USERINFO | CVAR_SERVERINFO))
 	{
 		if (!Cvar_InfoValidate (var_name))
 		{
-			Com_Printf("invalid info cvar name\n");
+			Com_Printf ("invalid info cvar name\n");
 			return NULL;
 		}
 	}
@@ -152,22 +153,21 @@ cvar_t *Cvar_Get (const char *var_name, const char *var_value, int flags)
 	{
 		if (!Cvar_InfoValidate (var_value))
 		{
-			Com_Printf("invalid info cvar value\n");
+			Com_Printf ("invalid info cvar value\n");
 			return NULL;
 		}
 	}
 
-	var = (cvar_t*)Z_Malloc(sizeof(*var));
-	var->name = CopyString (var_name);
-	var->string = CopyString (var_value);
-	var->modified = e_true;
-	var->value = atof (var->string);
+	cvar_vars.insert ({var_name, std::make_unique<cvar_t> ()});
+	const std::unique_ptr<cvar_t> &varPtr = cvar_vars.at (var_name);
+	var									  = varPtr.get ();
 
-	// link the variable in
-	var->next = cvar_vars;
-	cvar_vars = var;
+	var->name							  = CopyString (var_name);
+	var->string							  = CopyString (var_value);
+	var->modified						  = e_true;
+	var->value							  = atof (var->string);
 
-	var->flags = flags;
+	var->flags							  = flags;
 
 	return var;
 }
@@ -336,17 +336,15 @@ Any variables with latched values will now be updated
 */
 void Cvar_GetLatchedVars (void)
 {
-	cvar_t	*var;
-
-	for (var = cvar_vars ; var ; var = var->next)
+	for (auto &[_, var] : cvar_vars)
 	{
 		if (!var->latched_string)
 			continue;
 		Z_Free (var->string);
-		var->string = var->latched_string;
+		var->string			= var->latched_string;
 		var->latched_string = NULL;
-		var->value = atof(var->string);
-		if (!strcmp(var->name, "game"))
+		var->value			= atof (var->string);
+		if (!strcmp (var->name, "game"))
 		{
 			FS_SetGamedir (var->string);
 			FS_ExecAutoexec ();
@@ -391,10 +389,10 @@ Allows setting and defining of arbitrary cvars from console
 */
 void Cvar_Set_f (void)
 {
-	int		c;
-	int		flags;
+	int c;
+	int flags;
 
-	c = Cmd_Argc();
+	c = Cmd_Argc ();
 	if (c != 3 && c != 4)
 	{
 		Com_Printf ("usage: set <variable> <value> [u / s]\n");
@@ -403,19 +401,21 @@ void Cvar_Set_f (void)
 
 	if (c == 4)
 	{
-		if (!strcmp(Cmd_Argv(3), "u"))
+		if (!strcmp (Cmd_Argv (3), "u"))
 			flags = CVAR_USERINFO;
-		else if (!strcmp(Cmd_Argv(3), "s"))
+		else if (!strcmp (Cmd_Argv (3), "s"))
 			flags = CVAR_SERVERINFO;
 		else
 		{
 			Com_Printf ("flags can only be 'u' or 's'\n");
 			return;
 		}
-		Cvar_FullSet (Cmd_Argv(1), Cmd_Argv(2), flags);
+		Cvar_FullSet (Cmd_Argv (1), Cmd_Argv (2), flags);
 	}
 	else
-		Cvar_Set (Cmd_Argv(1), Cmd_Argv(2));
+	{
+		Cvar_Set (Cmd_Argv (1), Cmd_Argv (2));
+	}
 }
 
 
@@ -429,16 +429,13 @@ with the archive flag set to e_true.
 */
 void Cvar_WriteVariables (char *path)
 {
-	cvar_t	*var;
-	char	buffer[1024];
-	FILE	*f;
-
-	f = fopen (path, "a");
-	for (var = cvar_vars ; var ; var = var->next)
+	char  buffer[1024];
+	FILE *f = fopen (path, "a");
+	for (auto &[_, var] : cvar_vars)
 	{
 		if (var->flags & CVAR_ARCHIVE)
 		{
-			Com_sprintf (buffer, sizeof(buffer), "set %s \"%s\"\n", var->name, var->string);
+			Com_sprintf (buffer, sizeof (buffer), "set %s \"%s\"\n", var->name, var->string);
 			fprintf (f, "%s", buffer);
 		}
 	}
@@ -453,11 +450,8 @@ Cvar_List_f
 */
 void Cvar_List_f (void)
 {
-	cvar_t	*var;
-	int		i;
-
-	i = 0;
-	for (var = cvar_vars ; var ; var = var->next, i++)
+	std::size_t i{0u};
+	for (auto &[_, var] : cvar_vars)
 	{
 		if (var->flags & CVAR_ARCHIVE)
 			Com_Printf ("*");
@@ -478,6 +472,7 @@ void Cvar_List_f (void)
 		else
 			Com_Printf (" ");
 		Com_Printf (" %s \"%s\"\n", var->name, var->string);
+		++i;
 	}
 	Com_Printf ("%i cvars\n", i);
 }
@@ -489,11 +484,10 @@ qboolean userinfo_modified;
 char	*Cvar_BitInfo (int bit)
 {
 	static char	info[MAX_INFO_STRING];
-	cvar_t	*var;
 
 	info[0] = 0;
 
-	for (var = cvar_vars ; var ; var = var->next)
+	for (auto &[_, var] : cvar_vars)
 	{
 		if (var->flags & bit)
 			Info_SetValueForKey (info, var->name, var->string);
@@ -502,13 +496,13 @@ char	*Cvar_BitInfo (int bit)
 }
 
 // returns an info string containing all the CVAR_USERINFO cvars
-char	*Cvar_Userinfo (void)
+char *Cvar_Userinfo (void)
 {
 	return Cvar_BitInfo (CVAR_USERINFO);
 }
 
 // returns an info string containing all the CVAR_SERVERINFO cvars
-char	*Cvar_Serverinfo (void)
+char *Cvar_Serverinfo (void)
 {
 	return Cvar_BitInfo (CVAR_SERVERINFO);
 }
@@ -524,5 +518,4 @@ void Cvar_Init (void)
 {
 	Cmd_AddCommand ("set", Cvar_Set_f);
 	Cmd_AddCommand ("cvarlist", Cvar_List_f);
-
 }

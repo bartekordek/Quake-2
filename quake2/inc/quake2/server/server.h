@@ -182,23 +182,23 @@ typedef struct
 
 //=============================================================================
 
-extern	netadr_t	net_from;
-extern	sizebuf_t	net_message;
+EXTERNC netadr_t  net_from;
+EXTERNC sizebuf_t net_message;
 
-extern	netadr_t	master_adr[MAX_MASTERS];	// address of the master server
+EXTERNC netadr_t master_adr[MAX_MASTERS];  // address of the master server
 
-extern	server_static_t	svs;				// persistant server info
-extern	server_t		sv;					// local server
+EXTERNC	server_static_t	svs;				// persistant server info
+EXTERNC	server_t		sv;					// local server
 
-extern	cvar_t		*sv_paused;
-extern	cvar_t		*maxclients;
-extern	cvar_t		*sv_noreload;			// don't reload level state when reentering
-extern	cvar_t		*sv_airaccelerate;		// don't reload level state when reentering
+EXTERNC	cvar_t		*sv_paused;
+EXTERNC	cvar_t		*maxclients;
+EXTERNC	cvar_t		*sv_noreload;			// don't reload level state when reentering
+EXTERNC	cvar_t		*sv_airaccelerate;		// don't reload level state when reentering
 											// development tool
-extern	cvar_t		*sv_enforcetime;
+EXTERNC	cvar_t		*sv_enforcetime;
 
-extern	client_t	*sv_client;
-extern	edict_t		*sv_player;
+EXTERNC	client_t	*sv_client;
+EXTERNC	edict_t		*sv_player;
 
 //===========================================================
 
@@ -206,7 +206,7 @@ extern	edict_t		*sv_player;
 // sv_main.c
 //
 void SV_FinalMessage (char *message, qboolean reconnect);
-void SV_DropClient (client_t *drop);
+EXTERNC void SV_DropClient (client_t *drop);
 
 int SV_ModelIndex (char *name);
 int SV_SoundIndex (char *name);
@@ -215,7 +215,7 @@ int SV_ImageIndex (char *name);
 void SV_WriteClientdataToMessage (client_t *client, sizebuf_t *msg);
 
 void SV_ExecuteUserCommand (char *s);
-void SV_InitOperatorCommands (void);
+EXTERNC void SV_InitOperatorCommands (void);
 
 void SV_SendServerinfo (client_t *client);
 void SV_UserinfoChanged (client_t *cl);
@@ -227,8 +227,8 @@ void Master_Packet (void);
 //
 // sv_init.c
 //
-void SV_InitGame (void);
-void SV_Map (qboolean attractloop, char *levelstring, qboolean loadgame);
+EXTERNC void SV_InitGame (void);
+EXTERNC void SV_Map (qboolean attractloop, const char *levelstring, qboolean loadgame);
 
 
 //
@@ -242,20 +242,20 @@ void SV_PrepWorldFrame (void);
 typedef enum {RD_NONE, RD_CLIENT, RD_PACKET} redirect_t;
 #define	SV_OUTPUTBUF_LENGTH	(MAX_MSGLEN - 16)
 
-extern	char	sv_outputbuf[SV_OUTPUTBUF_LENGTH];
+EXTERNC	char	sv_outputbuf[SV_OUTPUTBUF_LENGTH];
 
 void SV_FlushRedirect (int sv_redirected, char *outputbuf);
 
 void SV_DemoCompleted (void);
 void SV_SendClientMessages (void);
 
-void SV_Multicast (vec3_t origin, multicast_t to);
-void SV_StartSound (vec3_t origin, edict_t *entity, int channel,
+EXTERNC void SV_Multicast (vec3_t origin, multicast_t to);
+EXTERNC void SV_StartSound (vec3_t origin, edict_t *entity, int channel,
 					int soundindex, float volume,
 					float attenuation, float timeofs);
-void SV_ClientPrintf (client_t *cl, int level, char *fmt, ...);
-void SV_BroadcastPrintf (int level, char *fmt, ...);
-void SV_BroadcastCommand (char *fmt, ...);
+EXTERNC void SV_ClientPrintf (client_t *cl, int level, const char *fmt, ...);
+EXTERNC void SV_BroadcastPrintf (int level, const char *fmt, ...);
+EXTERNC void SV_BroadcastCommand (const char *fmt, ...);
 
 //
 // sv_user.c
@@ -266,7 +266,7 @@ void SV_ExecuteClientMessage (client_t *cl);
 //
 // sv_ccmds.c
 //
-void SV_ReadLevelFile (void);
+EXTERNC void SV_ReadLevelFile (void);
 void SV_Status_f (void);
 
 //
@@ -282,7 +282,7 @@ void SV_Error (char *error, ...);
 //
 // sv_game.c
 //
-extern	game_export_t	*ge;
+EXTERNC	game_export_t	*ge;
 
 void SV_InitGameProgs (void);
 void SV_ShutdownGameProgs (void);

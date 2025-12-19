@@ -1,6 +1,6 @@
-project( quake2 LANGUAGES C)
+project( quake2 LANGUAGES C CXX)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 
 set(${PROJECT_NAME})
 
@@ -19,15 +19,16 @@ source_group( TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SOURCES} )
 
 list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/game/m_flash.c)
 list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/game/q_shared.c)
-list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/server/sv_ccmds.c)
+list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/server/sv_ccmds.cpp)
 list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/server/sv_ents.c)
 list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/server/sv_game.c)
-list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/server/sv_init.c)
 list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/server/sv_main.c)
 list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/server/sv_send.c)
 list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/server/sv_user.c)
 list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/server/sv_world.c)
 list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/win32/q_shwin.c)
+
+include_directories( SYSTEM ${Q2_ROOT_DIR}/deps/SDL/include )
 
 set(DEPENDENCIES
 PRIVATE game

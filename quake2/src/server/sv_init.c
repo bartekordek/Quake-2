@@ -18,7 +18,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
-#include "server.h"
+#include "quake2/server/sv_init.h"
+#include "quake2/server/server.h"
 #include "shared/common.h"
 
 server_static_t	svs;				// persistant server info
@@ -392,7 +393,7 @@ another level:
 	map tram.cin+jail_e3
 ======================
 */
-void SV_Map (qboolean attractloop, char *levelstring, qboolean loadgame)
+void SV_Map (qboolean attractloop, const char *levelstring, qboolean loadgame)
 {
 	char	level[MAX_QPATH];
 	char	*ch;

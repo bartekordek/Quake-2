@@ -18,24 +18,24 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
-#include "server.h"
+#include "quake2/server/server.h"
 #include "shared/common.h"
 
-netadr_t	master_adr[MAX_MASTERS];	// address of group servers
+netadr_t master_adr[MAX_MASTERS];  // address of group servers
 
-client_t	*sv_client;			// current client
+client_t *sv_client;  // current client
 
-cvar_t	*sv_paused;
-cvar_t	*sv_timedemo;
+cvar_t *sv_paused;
+cvar_t *sv_timedemo;
 
-cvar_t	*sv_enforcetime;
+cvar_t *sv_enforcetime;
 
-cvar_t	*timeout;				// seconds without any message
-cvar_t	*zombietime;			// seconds to sink messages after disconnect
+cvar_t *timeout;	 // seconds without any message
+cvar_t *zombietime;	 // seconds to sink messages after disconnect
 
-cvar_t	*rcon_password;			// password for remote server commands
+cvar_t *rcon_password;	// password for remote server commands
 
-cvar_t	*allow_download;
+cvar_t *allow_download;
 cvar_t *allow_download_players;
 cvar_t *allow_download_models;
 cvar_t *allow_download_sounds;
