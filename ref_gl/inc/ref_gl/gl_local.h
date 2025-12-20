@@ -187,12 +187,12 @@ EXTERNC cvar_t	*gl_particle_att_c;
 
 EXTERNC	cvar_t	*gl_nosubimage;
 EXTERNC	cvar_t	*gl_bitdepth;
-EXTERNC	cvar_t	*gl_mode;
+cvar_t	*gl_mode;
 EXTERNC	cvar_t	*gl_log;
 EXTERNC	cvar_t	*gl_lightmap;
 EXTERNC	cvar_t	*gl_shadows;
 EXTERNC	cvar_t	*gl_dynamic;
-EXTERNC  cvar_t  *gl_monolightmap;
+EXTERNC cvar_t  *gl_monolightmap;
 EXTERNC	cvar_t	*gl_nobind;
 EXTERNC	cvar_t	*gl_round_down;
 EXTERNC	cvar_t	*gl_picmip;

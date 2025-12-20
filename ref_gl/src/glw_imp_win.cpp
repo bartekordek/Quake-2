@@ -101,7 +101,7 @@ rserr_t GLimp_SetMode (int *pwidth, int *pheight, int mode, qboolean fullscreen)
 			ReleaseDC (0, hdc);
 		}
 
-		q2_assert (false, "TODO: implement");
+		Q2_Assert (false, "TODO: implement");
 
 		ri.Con_Printf (PRINT_ALL, "...calling CDS: ");
 		//if (ChangeDisplaySettings (&dm, CDS_FULLSCREEN) == DISP_CHANGE_SUCCESSFUL)

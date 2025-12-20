@@ -7,7 +7,7 @@
 
 #define assertm(exp, msg) assert ((void (msg), exp))
 
-void q2_assert (int value, const char *msg...)
+void Q2_Assert (int value, const char *msg...)
 {
 	if (value > 0)
 	{

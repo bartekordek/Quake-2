@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "quake2/client/client.h"
 #include "quake2/windows/winquake.h"
 #include "quake2/windows/window_util.h"
+#include "renderer/modern_opengl_c_.h"
 // #include "zmouse.h"
 
 // Structure containing functions exported from refresh DLL
@@ -564,11 +565,13 @@ qboolean VID_LoadRefresh (char *name)
 
 	Com_Printf ("------- Loading %s -------\n", name);
 
-	if ((reflib_library = LoadLibrary (name)) == 0)
+	if (strcmp (name, "ref_modern.dll")!=0)
 	{
-		Com_Printf ("LoadLibrary(\"%s\") failed\n", name);
-
-		return e_false;
+		if ((reflib_library = LoadLibrary (name)) == 0)
+		{
+			Com_Printf ("LoadLibrary(\"%s\") failed\n", name);
+			return e_false;
+		}
 	}
 
 	ri.Cmd_AddCommand	 = Cmd_AddCommand;
@@ -590,10 +593,19 @@ qboolean VID_LoadRefresh (char *name)
 	ri.create_window	 = create_window;
 	ri.Swap_buffers		 = update_buffer;
 
-	if ((GetRefAPI = (void *) GetProcAddress (reflib_library, "GetRefAPI")) == 0)
-		Com_Error (ERR_FATAL, "GetProcAddress failed on %s", name);
+	if (strcmp (name, "ref_modern.dll") == 0)
+	{
+		re = ImportModernOpenglApi (ri);
+	}
+	else
+	{
+		if ((GetRefAPI = (void *) GetProcAddress (reflib_library, "GetRefAPI")) == 0)
+		{
+			Com_Error (ERR_FATAL, "GetProcAddress failed on %s", name);
+		}
+		re = GetRefAPI (ri);
+	}
 
-	re = GetRefAPI (ri);
 
 	if (re.api_version != API_VERSION)
 	{
@@ -669,6 +681,7 @@ void VID_CheckChanges (void)
 		cls.disable_screen		 = e_true;
 
 		Com_sprintf (name, sizeof (name), "ref_%s.dll", vid_ref->string);
+		//Com_sprintf (name, sizeof (name), "ref_%s.dll", "modern");
 		if (!VID_LoadRefresh (name))
 		{
 			if (strcmp (vid_ref->string, "soft") == 0)

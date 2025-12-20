@@ -21,5 +21,6 @@ EXTERNC void	 Get_window_rect (WinRect* inOutRect);
 EXTERNC void	 Q2_SetMousePos (int x, int y);
 EXTERNC qboolean Get_Is_InForeground ();
 EXTERNC void	 SetVideoMode (VideoSettings* inVideoSettings);
+EXTERNC void	 Set_opengl_version(int major, int minor);
 
 #endif	// __window_util_h__

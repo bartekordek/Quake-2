@@ -6,6 +6,7 @@
 #include "quake2/client/keys.h"
 #include "quake2/video/vid_dll.h"
 #include "shared/logger.h"
+#include "shared/assert.h"
 #include "shared/ref.h"
 #include <string>
 #include <array>
@@ -179,6 +180,15 @@ qboolean create_window (int x, int y, int w, int h, qboolean fullscreen)
 	g_windowdata.rect.top	 = y;
 
 	return e_true;
+}
+
+void Set_opengl_version(int major, int minor)
+{
+	std::int32_t operatoion_result = SDL_GL_SetAttribute (SDL_GL_CONTEXT_MAJOR_VERSION, major);
+	Q2_Assert (operatoion_result == 0, "CANNOT SET GL MAJOR VERSION!");
+
+	operatoion_result = SDL_GL_SetAttribute (SDL_GL_CONTEXT_MINOR_VERSION, minor);
+	Q2_Assert (operatoion_result == 0, "CANNOT SET GL MAJOR VERSION!");
 }
 
 void SetVideoMode(VideoSettings* inVideoSettings)
