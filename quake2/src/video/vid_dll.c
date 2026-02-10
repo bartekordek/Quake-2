@@ -680,8 +680,8 @@ void VID_CheckChanges (void)
 		cl.refresh_prepped		 = e_false;
 		cls.disable_screen		 = e_true;
 
-		Com_sprintf (name, sizeof (name), "ref_%s.dll", vid_ref->string);
-		//Com_sprintf (name, sizeof (name), "ref_%s.dll", "modern");
+		//Com_sprintf (name, sizeof (name), "ref_%s.dll", vid_ref->string);
+		Com_sprintf (name, sizeof (name), "ref_%s.dll", "gl_modern");
 		if (!VID_LoadRefresh (name))
 		{
 			if (strcmp (vid_ref->string, "soft") == 0)
@@ -768,3 +768,4 @@ void VID_Shutdown (void)
 		VID_FreeReflib ();
 	}
 }
+ 

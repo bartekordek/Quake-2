@@ -33,6 +33,7 @@ include_directories( SYSTEM ${Q2_ROOT_DIR}/deps/SDL/include )
 set(DEPENDENCIES
 PRIVATE game
 PRIVATE ref_gl
+PRIVATE ref_gl_modern
 PRIVATE ref_soft
 PRIVATE shared
 PRIVATE SDL2-static
