@@ -4,11 +4,11 @@
 #include "shared/cvar.h"
 #include "quake2/windows/window_util.h"
 
-void R_BeginRegistration (char *model);
-model_s *R_RegisterModel (char *name);
-image_s *R_RegisterSkin (char *name);
-image_t *Draw_FindPic (char *name);
-void	 R_SetSky (char *name, float rotate, vec3_t axis);
+void R_BeginRegistration (const char *model);
+model_s *R_RegisterModel (const char *name);
+image_s *R_RegisterSkin (const char *name);
+image_t *Draw_FindPic (const char *name);
+void	 R_SetSky (const char *name, float rotate, vec3_t axis);
 void	 R_EndRegistration (void);
 void	 R_RenderFrame (refdef_t *fd);
 void	 Draw_GetPicSize (int *w, int *h, char *pic);
@@ -92,32 +92,32 @@ refexport_t ImportModernOpenglApi (refimport_t inImport)
 }
 
 
-void R_BeginRegistration (char *model)
+void R_BeginRegistration (const char *model)
 {
 	Q2_Assert (0, "R_BeginRegistration is not implemented");
 }
 
-model_s* R_RegisterModel(char* name)
+model_s* R_RegisterModel(const char* name)
 {
 	Q2_Assert (0, "R_RegisterModel is not implemented");
 
 	return nullptr;
 }
 
-image_s *R_RegisterSkin (char *name)
+image_s *R_RegisterSkin (const char *name)
 {
 	Q2_Assert (0, "R_BeginRegistration is not implemented");
 
 	return nullptr;
 }
 
-image_t *Draw_FindPic (char *name)
+image_t *Draw_FindPic (const char *name)
 {
 	Q2_Assert (0, "R_BeginRegistration is not implemented");
 	return nullptr;
 }
 
-void	 R_SetSky (char *name, float rotate, vec3_t axis)
+void	 R_SetSky (const char *name, float rotate, vec3_t axis)
 {
 	Q2_Assert (0, "R_BeginRegistration is not implemented");
 }

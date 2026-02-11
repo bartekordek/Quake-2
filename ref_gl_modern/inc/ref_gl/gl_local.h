@@ -11,7 +11,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -187,7 +187,7 @@ EXTERNC cvar_t	*gl_particle_att_c;
 
 EXTERNC	cvar_t	*gl_nosubimage;
 EXTERNC	cvar_t	*gl_bitdepth;
-cvar_t	*gl_mode;
+EXTERNC cvar_t	*gl_mode;
 EXTERNC	cvar_t	*gl_log;
 EXTERNC	cvar_t	*gl_lightmap;
 EXTERNC	cvar_t	*gl_shadows;
@@ -236,7 +236,7 @@ EXTERNC	int		c_visible_textures;
 EXTERNC	float	r_world_matrix[16];
 
 void R_TranslatePlayerSkin (int playernum);
-void GL_BindTexture (int texnum);
+EXTERNC void GL_BindTexture (int texnum);
 void GL_MBind( GLenum target, int texnum );
 void GL_TexEnv( GLenum value );
 void GL_EnableMultitexture( qboolean enable );
@@ -270,7 +270,7 @@ void R_RenderDlights (void);
 void R_DrawAlphaSurfaces (void);
 void R_RenderBrushPoly (msurface_t *fa);
 void R_InitParticleTexture (void);
-void Draw_InitLocal (void);
+EXTERNC void Draw_InitLocal (void);
 void GL_SubdivideSurface (msurface_t *fa);
 qboolean R_CullBox (vec3_t mins, vec3_t maxs);
 void R_RotateForEntity (entity_t *e);
@@ -289,20 +289,20 @@ short BigShort (short l);
 int	LittleLong (int l);
 float LittleFloat (float f);
 
-char	*va(char *format, ...);
+char	*va(const char *format, ...);
 // does a varargs printf into a temp buffer
 #endif
 
-void COM_StripExtension (char *in, char *out);
+void COM_StripExtension (const char *in, char *out);
 
-void	Draw_GetPicSize (int *w, int *h, char *name);
-void	Draw_Pic (int x, int y, char *name);
-void	Draw_StretchPic (int x, int y, int w, int h, char *name);
-void	Draw_Char (int x, int y, int c);
-void	Draw_TileClear (int x, int y, int w, int h, char *name);
-void	Draw_Fill (int x, int y, int w, int h, int c);
-void	Draw_FadeScreen (void);
-void	Draw_StretchRaw (int x, int y, int w, int h, int cols, int rows, byte *data);
+EXTERNC void Draw_GetPicSize (int *w, int *h, char *name);
+EXTERNC void Draw_Pic (int x, int y, char *name);
+EXTERNC void Draw_StretchPic (int x, int y, int w, int h, char *name);
+EXTERNC void Draw_Char (int x, int y, int c);
+EXTERNC void Draw_TileClear (int x, int y, int w, int h, char *name);
+EXTERNC void Draw_Fill (int x, int y, int w, int h, int c);
+EXTERNC void Draw_FadeScreen (void);
+EXTERNC void Draw_StretchRaw (int x, int y, int w, int h, int cols, int rows, byte *data);
 
 void	R_BeginFrame( float camera_separation );
 void	R_SwapBuffers( int );
@@ -312,11 +312,11 @@ int		Draw_GetPalette (void);
 
 void GL_ResampleTexture (unsigned *in, int inwidth, int inheight, unsigned *out,  int outwidth, int outheight);
 
-struct image_s *R_RegisterSkin (char *name);
+struct image_s *R_RegisterSkin (const char *name);
 
-void LoadPCX (char *filename, byte **pic, byte **palette, int *width, int *height);
-image_t *GL_LoadPic (char *name, byte *pic, int width, int height, imagetype_t type, int bits);
-image_t	*GL_FindImage (char *name, imagetype_t type);
+void LoadPCX (const char *filename, byte **pic, byte **palette, int *width, int *height);
+image_t *GL_LoadPic (const char *name, byte *pic, int width, int height, imagetype_t type, int bits);
+EXTERNC image_t	*GL_FindImage (const char *name, imagetype_t type);
 void	GL_TextureMode( char *string );
 void	GL_ImageList_f (void);
 

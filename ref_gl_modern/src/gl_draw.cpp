@@ -21,11 +21,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // draw.c
 
 #include "ref_gl/gl_local.h"
+#include "ref_gl/gl_image.h"
+#include "ref_gl/gl_main.h"
+#include "ref_gl/gl_draw.h"
 
 image_t *draw_chars;
-
-extern qboolean scrap_dirty;
-void			Scrap_Upload (void);
 
 /*
 ===============
@@ -89,7 +89,7 @@ void Draw_Char (int x, int y, int num)
 Draw_FindPic
 =============
 */
-image_t *Draw_FindPic (char *name)
+image_t *Draw_FindPic (const char *name)
 {
 	image_t *gl;
 	char	 fullname[MAX_QPATH];
@@ -305,8 +305,8 @@ void Draw_FadeScreen (void)
 Draw_StretchRaw
 =============
 */
-extern unsigned r_rawpalette[256];
 
+// TODO: Convert to modern
 void Draw_StretchRaw (int x, int y, int w, int h, int cols, int rows, byte *data)
 {
 	unsigned	  image32[256 * 256];

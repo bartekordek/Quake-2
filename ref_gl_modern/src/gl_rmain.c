@@ -19,20 +19,17 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 // r_main.c
 #include "ref_gl/gl_local.h"
+#include "ref_gl/gl_draw.h"
 #include "math/constants.h"
 
 void R_Clear (void);
 
-viddef_t vid;
-
+viddef_t	vid;
 refimport_t ri;
-
-model_t *r_worldmodel;
-
-float gldepthmin, gldepthmax;
-
-glconfig_t gl_config;
-glstate_t  gl_state;
+model_t	   *r_worldmodel;
+float		gldepthmin, gldepthmax;
+glconfig_t	gl_config;
+glstate_t	gl_state;
 
 image_t *r_notexture;		 // use for bad textures
 image_t *r_particletexture;	 // little dot for particles
@@ -1572,15 +1569,13 @@ void R_DrawBeam (entity_t *e)
 
 //===================================================================
 
-void			R_BeginRegistration (char *map);
-struct model_s *R_RegisterModel (char *name);
-struct image_s *R_RegisterSkin (char *name);
-void			R_SetSky (char *name, float rotate, vec3_t axis);
+void			R_BeginRegistration (const char *map);
+struct model_s *R_RegisterModel (const char *name);
+struct image_s *R_RegisterSkin (const char *name);
+void			R_SetSky (const char *name, float rotate, vec3_t axis);
 void			R_EndRegistration (void);
 
 void R_RenderFrame (refdef_t *fd);
-
-struct image_s *Draw_FindPic (char *name);
 
 void Draw_Pic (int x, int y, char *name);
 void Draw_Char (int x, int y, int c);
@@ -1640,7 +1635,7 @@ __declspec (dllexport) refexport_t GetRefAPI (refimport_t rimp)
 
 #ifndef REF_HARD_LINKED
 // this is only here so the functions in q_shared.c and q_shwin.c can link
-void Sys_Error (char *error, ...)
+void Sys_Error (const char *error, ...)
 {
 	va_list argptr;
 	char	text[1024];

@@ -11,7 +11,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -155,11 +155,11 @@ typedef struct
 	// are flood filled to eliminate mip map edge errors, and pics have
 	// an implicit "pics/" prepended to the name. (a pic name that starts with a
 	// slash will not use the "pics/" prefix or the ".pcx" postfix)
-	void	(*BeginRegistration) (char *map);
-	struct model_s *(*RegisterModel) (char *name);
-	struct image_s *(*RegisterSkin) (char *name);
-	struct image_s *(*RegisterPic) (char *name);
-	void	(*SetSky) (char *name, float rotate, vec3_t axis);
+	void	(*BeginRegistration) (const char *map);
+	struct model_s *(*RegisterModel) (const char *name);
+	struct image_s *(*RegisterSkin) (const char *name);
+	struct image_s *(*RegisterPic) (const char *name);
+	void	(*SetSky) (const char *name, float rotate, vec3_t axis);
 	void	(*EndRegistration) (void);
 
 	void	(*RenderFrame) (refdef_t *fd);
@@ -192,22 +192,22 @@ typedef struct
 //
 typedef struct
 {
-	void	(*Sys_Error) (int err_level, char *str, ...);
+	void	(*Sys_Error) (int err_level, const char *str, ...);
 
-	void	(*Cmd_AddCommand) (char *name, void(*cmd)(void));
-	void	(*Cmd_RemoveCommand) (char *name);
+	void	(*Cmd_AddCommand) (const char *name, void(*cmd)(void));
+	void	(*Cmd_RemoveCommand) (const char *name);
 	int		(*Cmd_Argc) (void);
 	char	*(*Cmd_Argv) (int i);
-	void	(*Cmd_ExecuteText) (int exec_when, char *text);
+	void	(*Cmd_ExecuteText) (int exec_when, const char *text);
 
-	void	(*Con_Printf) (int print_level, char *str, ...);
+	void	(*Con_Printf) (int print_level, const char *str, ...);
 
 	// files will be memory mapped read only
 	// the returned buffer may be part of a larger pak file,
 	// or a discrete file from anywhere in the quake search path
 	// a -1 return means the file does not exist
 	// NULL can be passed for buf to just determine existance
-	int		(*FS_LoadFile) (char *name, void **buf);
+	int		(*FS_LoadFile) (const char *name, void **buf);
 	void	(*FS_FreeFile) (void *buf);
 
 	// gamedir will be the current directory that generated

@@ -18,7 +18,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#include "ref_gl/gl_image.h"
 #include "ref_gl/gl_local.h"
+#include "ref_gl/gl_draw.h"
 
 image_t gltextures[MAX_GLTEXTURES];
 int		numgltextures;
@@ -118,8 +120,6 @@ void GL_TexEnv (GLenum mode)
 
 void GL_BindTexture (int texnum)
 {
-	extern image_t *draw_chars;
-
 	if (gl_nobind->value && draw_chars)	 // performance evaluation option
 		texnum = draw_chars->texnum;
 	if (gl_state.currenttextures[gl_state.currenttmu] == texnum)
@@ -187,7 +187,7 @@ gltmode_t gl_solid_modes[] = {
 GL_TextureMode
 ===============
 */
-void GL_TextureMode (char *string)
+void GL_TextureMode (const char *string)
 {
 	int		 i;
 	image_t *glt;
@@ -224,7 +224,7 @@ void GL_TextureMode (char *string)
 GL_TextureAlphaMode
 ===============
 */
-void GL_TextureAlphaMode (char *string)
+void GL_TextureAlphaMode (const char *string)
 {
 	int i;
 
@@ -248,7 +248,7 @@ void GL_TextureAlphaMode (char *string)
 GL_TextureSolidMode
 ===============
 */
-void GL_TextureSolidMode (char *string)
+void GL_TextureSolidMode (const char *string)
 {
 	int i;
 
@@ -394,7 +394,7 @@ PCX LOADING
 LoadPCX
 ==============
 */
-void LoadPCX (char *filename, byte **pic, byte **palette, int *width, int *height)
+void LoadPCX (const char *filename, byte **pic, byte **palette, int *width, int *height)
 {
 	byte  *raw;
 	pcx_t *pcx;
@@ -506,7 +506,7 @@ typedef struct _TargaHeader
 LoadTGA
 =============
 */
-void LoadTGA (char *name, byte **pic, int *width, int *height)
+void LoadTGA (const char *name, byte **pic, int *width, int *height)
 {
 	int			columns, rows, numPixels;
 	byte	   *pixbuf;
@@ -1179,7 +1179,7 @@ GL_LoadPic
 This is also used as an entry point for the generated r_notexture
 ================
 */
-image_t *GL_LoadPic (char *name, byte *pic, int width, int height, imagetype_t type, int bits)
+image_t *GL_LoadPic (const char *name, byte *pic, int width, int height, imagetype_t type, int bits)
 {
 	image_t *image;
 	int		 i;
@@ -1261,7 +1261,7 @@ image_t *GL_LoadPic (char *name, byte *pic, int width, int height, imagetype_t t
 GL_LoadWal
 ================
 */
-image_t *GL_LoadWal (char *name)
+image_t *GL_LoadWal (const char *name)
 {
 	miptex_t *mt;
 	int		  width, height, ofs;
@@ -1292,7 +1292,7 @@ GL_FindImage
 Finds or loads the given image
 ===============
 */
-image_t *GL_FindImage (char *name, imagetype_t type)
+image_t *GL_FindImage (const char *name, imagetype_t type)
 {
 	image_t *image;
 	int		 i, len;
@@ -1354,7 +1354,7 @@ image_t *GL_FindImage (char *name, imagetype_t type)
 R_RegisterSkin
 ===============
 */
-struct image_s *R_RegisterSkin (char *name)
+struct image_s *R_RegisterSkin (const char *name)
 {
 	return GL_FindImage (name, it_skin);
 }
