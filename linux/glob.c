@@ -3,10 +3,10 @@
 #include "../linux/glob.h"
 
 /* Like glob_match, but match PATTERN against any final segment of TEXT.  */
-static int glob_match_after_star(char *pattern, char *text)
+static int glob_match_after_star (const char *pattern, char *text)
 {
 	register char *p = pattern, *t = text;
-	register char c, c1;
+	register char  c, c1;
 
 	while ((c = *p++) == '?' || c == '*')
 		if (c == '?' && *t++ == '\0')
@@ -20,8 +20,9 @@ static int glob_match_after_star(char *pattern, char *text)
 	else
 		c1 = c;
 
-	while (1) {
-		if ((c == '[' || *t == c1) && glob_match(p - 1, t))
+	while (1)
+	{
+		if ((c == '[' || *t == c1) && glob_match (p - 1, t))
 			return 1;
 		if (*t++ == '\0')
 			return 0;
@@ -29,29 +30,29 @@ static int glob_match_after_star(char *pattern, char *text)
 }
 
 /* Return nonzero if PATTERN has any special globbing chars in it.  */
-static int glob_pattern_p(char *pattern)
+static int glob_pattern_p (const char *pattern)
 {
 	register char *p = pattern;
-	register char c;
-	int open = 0;
+	register char  c;
+	int			   open = 0;
 
-	while ((c = *p++) != '\0')
-		switch (c) {
-		case '?':
-		case '*':
-			return 1;
-
-		case '[':		/* Only accept an open brace if there is a close */
-			open++;		/* brace to match it.  Bracket expressions must be */
-			continue;	/* complete, according to Posix.2 */
-		case ']':
-			if (open)
+	while ((c = *p++) != '\0') switch (c)
+		{
+			case '?':
+			case '*':
 				return 1;
-			continue;
 
-		case '\\':
-			if (*p++ == '\0')
-				return 0;
+			case '[':	  /* Only accept an open brace if there is a close */
+				open++;	  /* brace to match it.  Bracket expressions must be */
+				continue; /* complete, according to Posix.2 */
+			case ']':
+				if (open)
+					return 1;
+				continue;
+
+			case '\\':
+				if (*p++ == '\0')
+					return 0;
 		}
 
 	return 0;
@@ -75,32 +76,32 @@ static int glob_pattern_p(char *pattern)
    and match the character exactly, precede it with a `\'.
 */
 
-int glob_match(char *pattern, char *text)
+int glob_match (const char *pattern, char *text)
 {
 	register char *p = pattern, *t = text;
-	register char c;
+	register char  c;
 
-	while ((c = *p++) != '\0')
-		switch (c) {
-		case '?':
-			if (*t == '\0')
-				return 0;
-			else
-				++t;
-			break;
+	while ((c = *p++) != '\0') switch (c)
+		{
+			case '?':
+				if (*t == '\0')
+					return 0;
+				else
+					++t;
+				break;
 
-		case '\\':
-			if (*p++ != *t++)
-				return 0;
-			break;
+			case '\\':
+				if (*p++ != *t++)
+					return 0;
+				break;
 
-		case '*':
-			return glob_match_after_star(p, t);
+			case '*':
+				return glob_match_after_star (p, t);
 
-		case '[':
+			case '[':
 			{
 				register char c1 = *t++;
-				int invert;
+				int			  invert;
 
 				if (!c1)
 					return (0);
@@ -110,18 +111,21 @@ int glob_match(char *pattern, char *text)
 					p++;
 
 				c = *p++;
-				while (1) {
+				while (1)
+				{
 					register char cstart = c, cend = c;
 
-					if (c == '\\') {
+					if (c == '\\')
+					{
 						cstart = *p++;
-						cend = cstart;
+						cend   = cstart;
 					}
 					if (c == '\0')
 						return 0;
 
 					c = *p++;
-					if (c == '-' && *p != ']') {
+					if (c == '-' && *p != ']')
+					{
 						cend = *p++;
 						if (cend == '\\')
 							cend = *p++;
@@ -138,9 +142,10 @@ int glob_match(char *pattern, char *text)
 					return 0;
 				break;
 
-			  match:
+			match:
 				/* Skip the rest of the [...] construct that already matched.  */
-				while (c != ']') {
+				while (c != ']')
+				{
 					if (c == '\0')
 						return 0;
 					c = *p++;
@@ -154,11 +159,10 @@ int glob_match(char *pattern, char *text)
 				break;
 			}
 
-		default:
-			if (c != *t++)
-				return 0;
+			default:
+				if (c != *t++)
+					return 0;
 		}
 
 	return *t == '\0';
 }
-

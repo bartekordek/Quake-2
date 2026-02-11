@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -25,7 +25,7 @@ void	SCR_UpdateScreen (void);
 
 void	SCR_SizeUp (void);
 void	SCR_SizeDown (void);
-void	SCR_CenterPrint (char *str);
+void	SCR_CenterPrint (const char *str);
 void	SCR_BeginLoadingPlaque (void);
 void	SCR_EndLoadingPlaque (void);
 
@@ -54,7 +54,7 @@ void SCR_DirtyScreen (void);
 //
 // scr_cin.c
 //
-void SCR_PlayCinematic (char *name);
+void SCR_PlayCinematic (const char *name);
 qboolean SCR_DrawCinematic (void);
 void SCR_RunCinematic (void);
 void SCR_StopCinematic (void);

@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -160,7 +160,7 @@ typedef struct
 	qboolean	initialized;				// sv_init has completed
 	int			realtime;					// always increasing, no clamping, etc
 
-	char		mapcmd[MAX_TOKEN_CHARS];	// ie: *intro.cin+base 
+	char		mapcmd[MAX_TOKEN_CHARS];	// ie: *intro.cin+base
 
 	int			spawncount;					// incremented each server start
 											// used to check late spawns
@@ -205,16 +205,16 @@ EXTERNC	edict_t		*sv_player;
 //
 // sv_main.c
 //
-void SV_FinalMessage (char *message, qboolean reconnect);
+void SV_FinalMessage (const char *message, qboolean reconnect);
 EXTERNC void SV_DropClient (client_t *drop);
 
-int SV_ModelIndex (char *name);
-int SV_SoundIndex (char *name);
-int SV_ImageIndex (char *name);
+int SV_ModelIndex (const char *name);
+int SV_SoundIndex (const char *name);
+int SV_ImageIndex (const char *name);
 
 void SV_WriteClientdataToMessage (client_t *client, sizebuf_t *msg);
 
-void SV_ExecuteUserCommand (char *s);
+void SV_ExecuteUserCommand (const char *s);
 EXTERNC void SV_InitOperatorCommands (void);
 
 void SV_SendServerinfo (client_t *client);
@@ -277,7 +277,7 @@ void SV_RecordDemoMessage (void);
 void SV_BuildClientFrame (client_t *client);
 
 
-void SV_Error (char *error, ...);
+void SV_Error (const char *error, ...);
 
 //
 // sv_game.c

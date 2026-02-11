@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -210,7 +210,7 @@ void CMod_LoadNodes (lump_t *l)
 	int			child;
 	cnode_t		*out;
 	int			i, j, count;
-	
+
 	dnode_t* in = (dnode_t*)(cmod_base + l->fileofs);
 	if (l->filelen % sizeof(*in))
 		Com_Error (ERR_DROP, "MOD_LoadBmodel: funny lump size");
@@ -247,7 +247,7 @@ void CMod_LoadBrushes (lump_t *l)
 {
 	cbrush_t	*out;
 	int			i, count;
-	
+
 	dbrush_t* in = (dbrush_t*)(cmod_base + l->fileofs);
 	if (l->filelen % sizeof(*in))
 		Com_Error (ERR_DROP, "MOD_LoadBmodel: funny lump size");
@@ -279,7 +279,7 @@ void CMod_LoadLeafs (lump_t *l)
 	int			i;
 	cleaf_t		*out;
 	int			count;
-	
+
 	dleaf_t* in = (dleaf_t*)(cmod_base + l->fileofs);
 	if (l->filelen % sizeof(*in))
 		Com_Error (ERR_DROP, "MOD_LoadBmodel: funny lump size");
@@ -291,7 +291,7 @@ void CMod_LoadLeafs (lump_t *l)
 	if (count > MAX_MAP_PLANES)
 		Com_Error (ERR_DROP, "Map has too many planes");
 
-	out = map_leafs;	
+	out = map_leafs;
 	numleafs = count;
 	numclusters = 0;
 
@@ -334,7 +334,7 @@ void CMod_LoadPlanes (lump_t *l)
 	cplane_t	*out;
 	int			count;
 	int			bits;
-	
+
 	dplane_t* in = (dplane_t*)(cmod_base + l->fileofs);
 	if (l->filelen % sizeof(*in))
 		Com_Error (ERR_DROP, "MOD_LoadBmodel: funny lump size");
@@ -346,7 +346,7 @@ void CMod_LoadPlanes (lump_t *l)
 	if (count > MAX_MAP_PLANES)
 		Com_Error (ERR_DROP, "Map has too many planes");
 
-	out = map_planes;	
+	out = map_planes;
 	numplanes = count;
 
 	for ( i=0 ; i<count ; i++, in++, out++)
@@ -375,7 +375,7 @@ void CMod_LoadLeafBrushes (lump_t *l)
 	int			i;
 	unsigned short	*out;
 	int			count;
-	
+
 	unsigned short* in = (unsigned short*)(cmod_base + l->fileofs);
 	if (l->filelen % sizeof(*in))
 		Com_Error (ERR_DROP, "MOD_LoadBmodel: funny lump size");
@@ -415,7 +415,7 @@ void CMod_LoadBrushSides (lump_t *l)
 	if (count > MAX_MAP_BRUSHSIDES)
 		Com_Error (ERR_DROP, "Map has too many planes");
 
-	out = map_brushsides;	
+	out = map_brushsides;
 	numbrushsides = count;
 
 	for ( i=0 ; i<count ; i++, in++, out++)
@@ -536,7 +536,7 @@ CM_LoadMap
 Loads in the map and all submodels
 ==================
 */
-cmodel_t *CM_LoadMap (char *name, qboolean clientload, unsigned *checksum)
+cmodel_t *CM_LoadMap (const char *name, qboolean clientload, unsigned *checksum)
 {
 	unsigned		*buf;
 	int				i;
@@ -627,7 +627,7 @@ cmodel_t *CM_LoadMap (char *name, qboolean clientload, unsigned *checksum)
 CM_InlineModel
 ==================
 */
-cmodel_t	*CM_InlineModel (char *name)
+cmodel_t	*CM_InlineModel (const char *name)
 {
 	int		num;
 
@@ -751,7 +751,7 @@ void CM_InitBoxHull (void)
 		p->signbits = 0;
 		VectorClear (p->normal);
 		p->normal[i>>1] = -1;
-	}	
+	}
 }
 
 
@@ -798,7 +798,7 @@ int CM_PointLeafnum_r (vec3_t p, int num)
 	{
 		node = map_nodes + num;
 		plane = node->plane;
-		
+
 		if (plane->type < 3)
 			d = p[plane->type] - plane->dist;
 		else
@@ -853,7 +853,7 @@ void CM_BoxLeafnums_r (int nodenum)
 			leaf_list[leaf_count++] = -1 - nodenum;
 			return;
 		}
-	
+
 		node = &map_nodes[nodenum];
 		plane = node->plane;
 //		s = BoxOnPlaneSide (leaf_mins, leaf_maxs, plane);
@@ -936,7 +936,7 @@ int	CM_TransformedPointContents (vec3_t p, int headnode, vec3_t origin, vec3_t a
 	VectorSubtract (p, origin, p_l);
 
 	// rotate start and end into the models frame of reference
-	if (headnode != box_headnode && 
+	if (headnode != box_headnode &&
 	(angles[0] || angles[1] || angles[2]) )
 	{
 		AngleVectors (angles, forward, right, up);
@@ -1308,7 +1308,7 @@ return;
 		frac = 0;
 	if (frac > 1)
 		frac = 1;
-		
+
 	midf = p1f + (p2f - p1f)*frac;
 	for (i=0 ; i<3 ; i++)
 		mid[i] = p1[i] + frac*(p2[i] - p1[i]);
@@ -1321,7 +1321,7 @@ return;
 		frac2 = 0;
 	if (frac2 > 1)
 		frac2 = 1;
-		
+
 	midf = p1f + (p2f - p1f)*frac2;
 	for (i=0 ; i<3 ; i++)
 		mid[i] = p1[i] + frac2*(p2[i] - p1[i]);
@@ -1456,7 +1456,7 @@ trace_t		CM_TransformedBoxTrace (vec3_t start, vec3_t end,
 	VectorSubtract (end, origin, end_l);
 
 	// rotate start and end into the models frame of reference
-	if (headnode != box_headnode && 
+	if (headnode != box_headnode &&
 	(angles[0] || angles[1] || angles[2]) )
 		rotated = e_true;
 	else
@@ -1524,7 +1524,7 @@ void CM_DecompressVis (byte *in, byte *out)
 	byte	*out_p;
 	int		row;
 
-	row = (numclusters+7)>>3;	
+	row = (numclusters+7)>>3;
 	out_p = out;
 
 	if (!in || !numvisibility)
@@ -1534,7 +1534,7 @@ void CM_DecompressVis (byte *in, byte *out)
 			*out_p++ = 0xff;
 			row--;
 		}
-		return;		
+		return;
 	}
 
 	do
@@ -1544,7 +1544,7 @@ void CM_DecompressVis (byte *in, byte *out)
 			*out_p++ = *in++;
 			continue;
 		}
-	
+
 		c = in[1];
 		in += 2;
 		if ((out_p - out) + c > row)

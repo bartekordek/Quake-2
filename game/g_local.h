@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -91,9 +91,9 @@ typedef enum
 	DAMAGE_AIM			// auto targeting recognizes this
 } damage_t;
 
-typedef enum 
+typedef enum
 {
-	WEAPON_READY, 
+	WEAPON_READY,
 	WEAPON_ACTIVATING,
 	WEAPON_DROPPING,
 	WEAPON_FIRING
@@ -222,15 +222,15 @@ typedef struct
 #define IT_POWERUP		32
 
 // gitem_t->weapmodel for weapons indicates model index
-#define WEAP_BLASTER			1 
-#define WEAP_SHOTGUN			2 
-#define WEAP_SUPERSHOTGUN		3 
-#define WEAP_MACHINEGUN			4 
-#define WEAP_CHAINGUN			5 
-#define WEAP_GRENADES			6 
-#define WEAP_GRENADELAUNCHER	7 
-#define WEAP_ROCKETLAUNCHER		8 
-#define WEAP_HYPERBLASTER		9 
+#define WEAP_BLASTER			1
+#define WEAP_SHOTGUN			2
+#define WEAP_SUPERSHOTGUN		3
+#define WEAP_MACHINEGUN			4
+#define WEAP_CHAINGUN			5
+#define WEAP_GRENADES			6
+#define WEAP_GRENADELAUNCHER	7
+#define WEAP_ROCKETLAUNCHER		8
+#define WEAP_HYPERBLASTER		9
 #define WEAP_RAILGUN			10
 #define WEAP_BFG				11
 
@@ -572,7 +572,7 @@ extern	cvar_t	*sv_maplist;
 #define FFL_NOSPAWN			2
 
 typedef enum {
-	F_INT, 
+	F_INT,
 	F_FLOAT,
 	F_LSTRING,			// string on disk, pointer in memory, TAG_LEVEL
 	F_GSTRING,			// string on disk, pointer in memory, TAG_GAME
@@ -611,8 +611,8 @@ void Cmd_Score_f (edict_t *ent);
 void PrecacheItem (gitem_t *it);
 void InitItems (void);
 void SetItemNames (void);
-gitem_t	*FindItem (char *pickup_name);
-gitem_t	*FindItemByClassname (char *classname);
+gitem_t	*FindItem (const char *pickup_name);
+gitem_t	*FindItemByClassname (const char *classname);
 #define	ITEM_INDEX(x) ((x)-itemlist)
 edict_t *Drop_Item (edict_t *ent, gitem_t *item);
 void SetRespawn (edict_t *ent, float delay);
@@ -632,7 +632,7 @@ qboolean	KillBox (edict_t *ent);
 void	G_ProjectSource (vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t result);
 edict_t *G_Find (edict_t *from, int fieldofs, char *match);
 edict_t *findradius (edict_t *from, vec3_t org, float rad);
-edict_t *G_PickTarget (char *targetname);
+edict_t *G_PickTarget (const char *targetname);
 void	G_UseTargets (edict_t *ent, edict_t *activator);
 void	G_SetMovedir (vec3_t angles, vec3_t movedir);
 
@@ -643,7 +643,7 @@ void	G_FreeEdict (edict_t *e);
 void	G_TouchTriggers (edict_t *ent);
 void	G_TouchSolids (edict_t *ent);
 
-char	*G_CopyString (char *in);
+char	*G_CopyString (const char *in);
 
 float	*tv (float x, float y, float z);
 char	*vtos (vec3_t v);
@@ -768,7 +768,7 @@ void player_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damag
 // g_svcmds.c
 //
 void	ServerCommand (void);
-qboolean SV_FilterPacket (char *from);
+qboolean SV_FilterPacket (const char *from);
 
 //
 // p_view.c
@@ -978,7 +978,7 @@ struct edict_s
 
 	// FIXME: move these fields to a server private sv_entity_t
 	link_t		area;				// linked to a division node or leaf
-	
+
 	int			num_clusters;		// if -1, use headnode instead
 	int			clusternums[MAX_ENT_CLUSTERS];
 	int			headnode;			// unused if num_clusters != -1
@@ -1003,7 +1003,7 @@ struct edict_s
 
 	char		*model;
 	float		freetime;			// sv.time when the object was freed
-	
+
 	//
 	// only used locally in game, not by server
 	//

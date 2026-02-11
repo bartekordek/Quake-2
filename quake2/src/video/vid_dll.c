@@ -406,7 +406,7 @@ LONG WINAPI MainWndProc (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			if (wParam & MK_MBUTTON)
 				temp |= 4;
 
-			//IN_MouseEvent (temp);
+			// IN_MouseEvent (temp);
 		}
 		break;
 
@@ -552,7 +552,7 @@ void VID_FreeReflib (void)
 VID_LoadRefresh
 ==============
 */
-qboolean VID_LoadRefresh (char *name)
+qboolean VID_LoadRefresh (const char *name)
 {
 	refimport_t ri;
 	GetRefAPI_t GetRefAPI;
@@ -565,7 +565,7 @@ qboolean VID_LoadRefresh (char *name)
 
 	Com_Printf ("------- Loading %s -------\n", name);
 
-	if (strcmp (name, "ref_modern.dll")!=0)
+	if (strcmp (name, "ref_modern.dll") != 0)
 	{
 		if ((reflib_library = LoadLibrary (name)) == 0)
 		{
@@ -605,7 +605,6 @@ qboolean VID_LoadRefresh (char *name)
 		}
 		re = GetRefAPI (ri);
 	}
-
 
 	if (re.api_version != API_VERSION)
 	{
@@ -680,7 +679,7 @@ void VID_CheckChanges (void)
 		cl.refresh_prepped		 = e_false;
 		cls.disable_screen		 = e_true;
 
-		//Com_sprintf (name, sizeof (name), "ref_%s.dll", vid_ref->string);
+		// Com_sprintf (name, sizeof (name), "ref_%s.dll", vid_ref->string);
 		Com_sprintf (name, sizeof (name), "ref_%s.dll", "gl_modern");
 		if (!VID_LoadRefresh (name))
 		{
@@ -768,4 +767,3 @@ void VID_Shutdown (void)
 		VID_FreeReflib ();
 	}
 }
- 

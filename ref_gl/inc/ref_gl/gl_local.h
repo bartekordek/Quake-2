@@ -11,7 +11,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -289,11 +289,11 @@ short BigShort (short l);
 int	LittleLong (int l);
 float LittleFloat (float f);
 
-char	*va(char *format, ...);
+char	*va(const char *format, ...);
 // does a varargs printf into a temp buffer
 #endif
 
-void COM_StripExtension (char *in, char *out);
+void COM_StripExtension (const char *in, char *out);
 
 void	Draw_GetPicSize (int *w, int *h, char *name);
 void	Draw_Pic (int x, int y, char *name);
@@ -312,13 +312,13 @@ int		Draw_GetPalette (void);
 
 void GL_ResampleTexture (unsigned *in, int inwidth, int inheight, unsigned *out,  int outwidth, int outheight);
 
-struct image_s *R_RegisterSkin (char *name);
+struct image_s *R_RegisterSkin (const char *name);
 
-void LoadPCX (char *filename, byte **pic, byte **palette, int *width, int *height);
-image_t *GL_LoadPic (char *name, byte *pic, int width, int height, imagetype_t type, int bits);
-image_t	*GL_FindImage (char *name, imagetype_t type);
-void	GL_TextureMode( char *string );
-void	GL_ImageList_f (void);
+void	 LoadPCX (const char *filename, byte **pic, byte **palette, int *width, int *height);
+image_t *GL_LoadPic (const char *name, byte *pic, int width, int height, imagetype_t type, int bits);
+image_t *GL_FindImage (const char *name, imagetype_t type);
+void	 GL_TextureMode (const char *string);
+void	 GL_ImageList_f (void);
 
 void	GL_SetTexturePalette( unsigned palette[256] );
 
@@ -327,8 +327,8 @@ void	GL_ShutdownImages (void);
 
 void	GL_FreeUnusedImages (void);
 
-void GL_TextureAlphaMode( char *string );
-void GL_TextureSolidMode( char *string );
+void GL_TextureAlphaMode (const char *string);
+void GL_TextureSolidMode (const char *string);
 
 /*
 ** GL extension emulation functions

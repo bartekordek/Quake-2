@@ -62,7 +62,7 @@ SYSTEM IO
 ===============================================================================
 */
 
-void Sys_Error (char *error, ...)
+void Sys_Error (const char *error, ...)
 {
 	va_list argptr;
 	char	text[1024];
@@ -326,7 +326,7 @@ Sys_ConsoleOutput
 Print text to the dedicated console
 ================
 */
-void Sys_ConsoleOutput (char *string)
+void Sys_ConsoleOutput (const char *string)
 {
 	int	 dummy;
 	char text[256];

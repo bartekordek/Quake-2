@@ -24,7 +24,7 @@
 
 cvar_t *nostdout;
 
-unsigned	sys_frame_time;
+unsigned sys_frame_time;
 
 qboolean stdin_active = true;
 
@@ -32,36 +32,37 @@ qboolean stdin_active = true;
 // General routines
 // =======================================================================
 
-void Sys_ConsoleOutput (char *string)
+void Sys_ConsoleOutput (const char *string)
 {
 	if (nostdout && nostdout->value)
 		return;
 
-	fputs(string, stdout);
+	fputs (string, stdout);
 }
 
-void Sys_Printf (char *fmt, ...)
+void Sys_Printf (const char *fmt, ...)
 {
-	va_list		argptr;
-	char		text[1024];
-	unsigned char		*p;
+	va_list		   argptr;
+	char		   text[1024];
+	unsigned char *p;
 
-	va_start (argptr,fmt);
-	vsprintf (text,fmt,argptr);
+	va_start (argptr, fmt);
+	vsprintf (text, fmt, argptr);
 	va_end (argptr);
 
-	if (strlen(text) > sizeof(text))
-		Sys_Error("memory overwrite in Sys_Printf");
+	if (strlen (text) > sizeof (text))
+		Sys_Error ("memory overwrite in Sys_Printf");
 
-    if (nostdout && nostdout->value)
-        return;
+	if (nostdout && nostdout->value)
+		return;
 
-	for (p = (unsigned char *)text; *p; p++) {
+	for (p = (unsigned char *) text; *p; p++)
+	{
 		*p &= 0x7f;
 		if ((*p > 128 || *p < 32) && *p != 10 && *p != 13 && *p != 9)
-			printf("[%02x]", *p);
+			printf ("[%02x]", *p);
 		else
-			putc(*p, stdout);
+			putc (*p, stdout);
 	}
 }
 
@@ -69,46 +70,45 @@ void Sys_Quit (void)
 {
 	CL_Shutdown ();
 	Qcommon_Shutdown ();
-    fcntl (0, F_SETFL, fcntl (0, F_GETFL, 0) & ~FNDELAY);
-	_exit(0);
+	fcntl (0, F_SETFL, fcntl (0, F_GETFL, 0) & ~FNDELAY);
+	_exit (0);
 }
 
-void Sys_Init(void)
+void Sys_Init (void)
 {
 #if id386
 //	Sys_SetFPCW();
 #endif
 }
 
-void Sys_Error (char *error, ...)
-{ 
-    va_list     argptr;
-    char        string[1024];
+void Sys_Error (const char *error, ...)
+{
+	va_list argptr;
+	char	string[1024];
 
-// change stdin to non blocking
-    fcntl (0, F_SETFL, fcntl (0, F_GETFL, 0) & ~FNDELAY);
-    
-    va_start (argptr,error);
-    vsprintf (string,error,argptr);
-    va_end (argptr);
-	fprintf(stderr, "Error: %s\n", string);
+	// change stdin to non blocking
+	fcntl (0, F_SETFL, fcntl (0, F_GETFL, 0) & ~FNDELAY);
+
+	va_start (argptr, error);
+	vsprintf (string, error, argptr);
+	va_end (argptr);
+	fprintf (stderr, "Error: %s\n", string);
 
 	CL_Shutdown ();
 	Qcommon_Shutdown ();
 	_exit (1);
+}
 
-} 
+void Sys_Warn (const char *warning, ...)
+{
+	va_list argptr;
+	char	string[1024];
 
-void Sys_Warn (char *warning, ...)
-{ 
-    va_list     argptr;
-    char        string[1024];
-    
-    va_start (argptr,warning);
-    vsprintf (string,warning,argptr);
-    va_end (argptr);
-	fprintf(stderr, "Warning: %s", string);
-} 
+	va_start (argptr, warning);
+	vsprintf (string, warning, argptr);
+	va_end (argptr);
+	fprintf (stderr, "Warning: %s", string);
+}
 
 /*
 ============
@@ -117,28 +117,28 @@ Sys_FileTime
 returns -1 if not present
 ============
 */
-int	Sys_FileTime (char *path)
+int Sys_FileTime (const char *path)
 {
-	struct	stat	buf;
-	
-	if (stat (path,&buf) == -1)
+	struct stat buf;
+
+	if (stat (path, &buf) == -1)
 		return -1;
-	
+
 	return buf.st_mtime;
 }
 
-void floating_point_exception_handler(int whatever)
+void floating_point_exception_handler (int whatever)
 {
-//	Sys_Warn("floating point exception\n");
-	signal(SIGFPE, floating_point_exception_handler);
+	//	Sys_Warn("floating point exception\n");
+	signal (SIGFPE, floating_point_exception_handler);
 }
 
-char *Sys_ConsoleInput(void)
+char *Sys_ConsoleInput (void)
 {
-    static char text[256];
-    int     len;
-	fd_set	fdset;
-    struct timeval timeout;
+	static char	   text[256];
+	int			   len;
+	fd_set		   fdset;
+	struct timeval timeout;
 
 	if (!dedicated || !dedicated->value)
 		return NULL;
@@ -146,21 +146,22 @@ char *Sys_ConsoleInput(void)
 	if (!stdin_active)
 		return NULL;
 
-	FD_ZERO(&fdset);
-	FD_SET(0, &fdset); // stdin
-	timeout.tv_sec = 0;
+	FD_ZERO (&fdset);
+	FD_SET (0, &fdset);	 // stdin
+	timeout.tv_sec	= 0;
 	timeout.tv_usec = 0;
-	if (select (1, &fdset, NULL, NULL, &timeout) == -1 || !FD_ISSET(0, &fdset))
+	if (select (1, &fdset, NULL, NULL, &timeout) == -1 || !FD_ISSET (0, &fdset))
 		return NULL;
 
-	len = read (0, text, sizeof(text));
-	if (len == 0) { // eof!
+	len = read (0, text, sizeof (text));
+	if (len == 0)
+	{  // eof!
 		stdin_active = false;
 		return NULL;
 	}
 	if (len < 1)
 		return NULL;
-	text[len-1] = 0;    // rip off the /n and terminate
+	text[len - 1] = 0;	// rip off the /n and terminate
 
 	return text;
 }
@@ -176,7 +177,7 @@ Sys_UnloadGame
 */
 void Sys_UnloadGame (void)
 {
-	if (game_library) 
+	if (game_library)
 		dlclose (game_library);
 	game_library = NULL;
 }
@@ -190,11 +191,11 @@ Loads the game dll
 */
 void *Sys_GetGameAPI (void *parms)
 {
-	void	*(*GetGameAPI) (void *);
+	void *(*GetGameAPI) (void *);
 
-	char	name[MAX_OSPATH];
-	char	curpath[MAX_OSPATH];
-	char	*path;
+	char  name[MAX_OSPATH];
+	char  curpath[MAX_OSPATH];
+	char *path;
 #ifdef __i386__
 	const char *gamename = "gamei386.so";
 #elif defined __sun__
@@ -206,9 +207,9 @@ void *Sys_GetGameAPI (void *parms)
 	if (game_library)
 		Com_Error (ERR_FATAL, "Sys_GetGameAPI without Sys_UnloadingGame");
 
-	getcwd(curpath, sizeof(curpath));
+	getcwd (curpath, sizeof (curpath));
 
-	Com_Printf("------- Loading %s -------", gamename);
+	Com_Printf ("------- Loading %s -------", gamename);
 
 	// now run through the search paths
 	path = NULL;
@@ -216,21 +217,22 @@ void *Sys_GetGameAPI (void *parms)
 	{
 		path = FS_NextPath (path);
 		if (!path)
-			return NULL;		// couldn't find one anywhere
+			return NULL;  // couldn't find one anywhere
 		sprintf (name, "%s/%s/%s", curpath, path, gamename);
-		game_library = dlopen (name, RTLD_NOW );
+		game_library = dlopen (name, RTLD_NOW);
 		if (game_library)
 		{
-			Com_DPrintf ("LoadLibrary (%s)\n",name);
+			Com_DPrintf ("LoadLibrary (%s)\n", name);
 			break;
-		} else
-			Com_Printf("error: %s\n", dlerror());
+		}
+		else
+			Com_Printf ("error: %s\n", dlerror ());
 	}
 
-	GetGameAPI = (void *)dlsym (game_library, "GetGameAPI");
+	GetGameAPI = (void *) dlsym (game_library, "GetGameAPI");
 	if (!GetGameAPI)
 	{
-		Sys_UnloadGame ();		
+		Sys_UnloadGame ();
 		return NULL;
 	}
 
@@ -245,20 +247,20 @@ void Sys_AppActivate (void)
 
 void Sys_SendKeyEvents (void)
 {
-	// grab frame time 
-	sys_frame_time = Sys_Milliseconds();
+	// grab frame time
+	sys_frame_time = Sys_Milliseconds ();
 }
 
 /*****************************************************************************/
 
-char *Sys_GetClipboardData(void)
+char *Sys_GetClipboardData (void)
 {
 	return NULL;
 }
 
 int main (int argc, char **argv)
 {
-	int 	time, oldtime, newtime;
+	int time, oldtime, newtime;
 
 #if 0
 	int newargc;
@@ -267,7 +269,7 @@ int main (int argc, char **argv)
 
 	// force dedicated
 	newargc = argc;
-	newargv = malloc((argc + 3) * sizeof(char *));
+	newargv = malloc((argc + 3) * sizeof(const char *));
 	newargv[0] = argv[0];
 	newargv[1] = "+set";
 	newargv[2] = "dedicated";
@@ -278,33 +280,34 @@ int main (int argc, char **argv)
 
 	Qcommon_Init(newargc, newargv);
 #else
-	Qcommon_Init(argc, argv);
+	Qcommon_Init (argc, argv);
 #endif
 
-	fcntl(0, F_SETFL, fcntl (0, F_GETFL, 0) | FNDELAY);
+	fcntl (0, F_SETFL, fcntl (0, F_GETFL, 0) | FNDELAY);
 
-	nostdout = Cvar_Get("nostdout", "0", 0);
+	nostdout = Cvar_Get ("nostdout", "0", 0);
 
-	if (!nostdout->value) {
-		fcntl(0, F_SETFL, fcntl (0, F_GETFL, 0) | FNDELAY);
-//		printf ("Linux Quake -- Version %0.3f\n", LINUX_VERSION);
+	if (!nostdout->value)
+	{
+		fcntl (0, F_SETFL, fcntl (0, F_GETFL, 0) | FNDELAY);
+		//		printf ("Linux Quake -- Version %0.3f\n", LINUX_VERSION);
 	}
 
-    oldtime = Sys_Milliseconds ();
-    while (1)
-    {
-// find time spent rendering last frame
-		do {
+	oldtime = Sys_Milliseconds ();
+	while (1)
+	{
+		// find time spent rendering last frame
+		do
+		{
 			newtime = Sys_Milliseconds ();
-			time = newtime - oldtime;
+			time	= newtime - oldtime;
 		} while (time < 1);
-        Qcommon_Frame (time);
+		Qcommon_Frame (time);
 		oldtime = newtime;
-    }
-
+	}
 }
 
-void Sys_CopyProtect(void)
+void Sys_CopyProtect (void)
 {
 	return;
 }

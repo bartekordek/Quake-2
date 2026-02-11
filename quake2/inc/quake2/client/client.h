@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -306,7 +306,7 @@ EXTERNC	cdlight_t	cl_dlights[MAX_DLIGHTS];
 
 // the cl_parse_entities must be large enough to hold UPDATE_BACKUP frames of
 // entities, so that when a delta compressed message arives from the server
-// it can be un-deltad from the original 
+// it can be un-deltad from the original
 #define	MAX_PARSE_ENTITIES	1024
 EXTERNC	entity_state_t	cl_parse_entities[MAX_PARSE_ENTITIES];
 
@@ -317,7 +317,7 @@ EXTERNC	sizebuf_t	net_message;
 
 void DrawString (int x, int y, char *s);
 void DrawAltString (int x, int y, char *s);	// toggle high bit
-qboolean	CL_CheckOrDownloadFile (char *filename);
+qboolean	CL_CheckOrDownloadFile (const char *filename);
 
 void CL_AddNetgraph (void);
 
@@ -507,7 +507,7 @@ EXTERNC	char *svc_strings[256];
 
 void CL_ParseServerMessage (void);
 void CL_LoadClientinfo (clientinfo_t *ci, char *s);
-void SHOWNET(char *s);
+void SHOWNET(const char *s);
 void CL_ParseClientinfo (int player);
 void CL_Download_f (void);
 

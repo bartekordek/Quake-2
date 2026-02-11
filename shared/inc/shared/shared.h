@@ -35,6 +35,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "shared/config.h"
 #include "shared/defines.h"
+#include "shared/cplane.h"
 #include "shared/usercmd.h"
 #include "math/vector.h"
 #include <assert.h>
@@ -152,16 +153,16 @@ EXTERNC void VectorMA(vec3_t veca, float scale, vec3_t vecb, vec3_t vecc);
 
 //=============================================
 
-EXTERNC char *COM_SkipPath(char *pathname);
-EXTERNC void  COM_StripExtension(char *in, char *out);
-EXTERNC void  COM_FileBase(char *in, char *out);
-EXTERNC void  COM_FilePath(char *in, char *out);
-EXTERNC void  COM_DefaultExtension(char *path, char *extension);
+EXTERNC char *COM_SkipPath(const char *pathname);
+EXTERNC void  COM_StripExtension(const char *in, char *out);
+EXTERNC void  COM_FileBase(const char *in, char *out);
+EXTERNC void  COM_FilePath(const char *in, char *out);
+EXTERNC void  COM_DefaultExtension(const char *path, char *extension);
 
 EXTERNC const char *COM_Parse (const char **data_p);
 // data is an in/out parm, returns a parsed out token
 
-EXTERNC void Com_sprintf(char *dest, int size, const char *fmt, ...);
+EXTERNC void Com_sprintf(const char *dest, int size, const char *fmt, ...);
 
 EXTERNC void Com_PageInMemory(byte *buffer, int size);
 
@@ -193,10 +194,10 @@ EXTERNC const char *va(const char *format, ...);
 #define MAX_INFO_VALUE	64
 #define MAX_INFO_STRING 512
 
-EXTERNC char	*Info_ValueForKey(char *s, char *key);
-EXTERNC void	 Info_RemoveKey(char *s, char *key);
-EXTERNC void	 Info_SetValueForKey(char *s, char *key, char *value);
-EXTERNC qboolean Info_Validate(char *s);
+EXTERNC char	*Info_ValueForKey(const char *s, char *key);
+EXTERNC void	 Info_RemoveKey(const char *s, char *key);
+EXTERNC void	 Info_SetValueForKey(const char *s, char *key, char *value);
+EXTERNC qboolean Info_Validate(const char *s);
 
 /*
 ==============================================================
@@ -209,7 +210,7 @@ SYSTEM SPECIFIC
 EXTERNC int curtime;  // time returned by last Sys_Milliseconds
 
 EXTERNC int	 Sys_Milliseconds(void);
-EXTERNC void Sys_Mkdir(char *path);
+EXTERNC void Sys_Mkdir(const char *path);
 
 // large block stack allocation routines
 EXTERNC void *Hunk_Begin(int maxsize);
@@ -227,7 +228,7 @@ EXTERNC int	  Hunk_End(void);
 /*
 ** pass in an attribute mask of things you wish to REJECT
 */
-EXTERNC char *Sys_FindFirst(char *path, unsigned musthave, unsigned canthave);
+EXTERNC char *Sys_FindFirst(const char *path, unsigned musthave, unsigned canthave);
 EXTERNC char *Sys_FindNext(unsigned musthave, unsigned canthave);
 EXTERNC void  Sys_FindClose(void);
 
@@ -306,16 +307,7 @@ COLLISION DETECTION
 #define AREA_SOLID	  1
 #define AREA_TRIGGERS 2
 
-// plane_t structure
-// !!! if this is changed, it must be changed in asm code too !!!
-typedef struct cplane_s
-{
-	vec3_t normal;
-	float  dist;
-	byte   type;	  // for fast side tests
-	byte   signbits;  // signx + (signy<<1) + (signz<<1)
-	byte   pad[2];
-} cplane_t;
+
 
 // structure offset for asm code
 #define CPLANE_NORMAL_X 0

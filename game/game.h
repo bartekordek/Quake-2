@@ -11,7 +11,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -30,7 +30,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -97,7 +97,7 @@ struct edict_s
 
 	// FIXME: move these fields to a server private sv_entity_t
 	link_t		area;				// linked to a division node or leaf
-	
+
 	int			num_clusters;		// if -1, use headnode instead
 	int			clusternums[MAX_ENT_CLUSTERS];
 	int			headnode;			// unused if num_clusters != -1
@@ -127,7 +127,7 @@ typedef struct
 {
 	// special messages
 	void	(*bprintf) (int printlevel, char *fmt, ...);
-	void	(*dprintf) (char *fmt, ...);
+	void	(*dprintf) (const char *fmt, ...);
 	void	(*cprintf) (edict_t *ent, int printlevel, char *fmt, ...);
 	void	(*centerprintf) (edict_t *ent, char *fmt, ...);
 	void	(*sound) (edict_t *ent, int channel, int soundindex, float volume, float attenuation, float timeofs);
@@ -139,12 +139,12 @@ typedef struct
 	// they connect, and changes are sent to all connected clients.
 	void	(*configstring) (int num, char *string);
 
-	void	(*error) (char *fmt, ...);
+	void	(*error) (const char *fmt, ...);
 
 	// the *index functions create configstrings and some internal server state
-	int		(*modelindex) (char *name);
-	int		(*soundindex) (char *name);
-	int		(*imageindex) (char *name);
+	int		(*modelindex) (const char *name);
+	int		(*soundindex) (const char *name);
+	int		(*imageindex) (const char *name);
 
 	void	(*setmodel) (edict_t *ent, char *name);
 
@@ -172,7 +172,7 @@ typedef struct
 	void	(*WriteShort) (int c);
 	void	(*WriteLong) (int c);
 	void	(*WriteFloat) (float f);
-	void	(*WriteString) (char *s);
+	void	(*WriteString) (const char *s);
 	void	(*WritePosition) (vec3_t pos);	// some fractional bits
 	void	(*WriteDir) (vec3_t pos);		// single byte encoded, very coarse
 	void	(*WriteAngle) (float f);
@@ -183,9 +183,9 @@ typedef struct
 	void	(*FreeTags) (int tag);
 
 	// console variable interaction
-	cvar_t	*(*cvar) (char *var_name, char *value, int flags);
-	cvar_t	*(*cvar_set) (char *var_name, char *value);
-	cvar_t	*(*cvar_forceset) (char *var_name, char *value);
+	cvar_t	*(*cvar) (const char *var_name, char *value, int flags);
+	cvar_t	*(*cvar_set) (const char *var_name, char *value);
+	cvar_t	*(*cvar_forceset) (const char *var_name, char *value);
 
 	// ClientCommand and ServerCommand parameter access
 	int		(*argc) (void);
@@ -194,7 +194,7 @@ typedef struct
 
 	// add commands to the server console as if they were typed in
 	// for map changing, etc
-	void	(*AddCommandString) (char *text);
+	void	(*AddCommandString) (const char *text);
 
 	void	(*DebugGraph) (float value, int color);
 } game_import_t;
@@ -213,19 +213,19 @@ typedef struct
 	void		(*Shutdown) (void);
 
 	// each new level entered will cause a call to SpawnEntities
-	void		(*SpawnEntities) (char *mapname, char *entstring, char *spawnpoint);
+	void		(*SpawnEntities) (const char *mapname, char *entstring, char *spawnpoint);
 
 	// Read/Write Game is for storing persistant cross level information
 	// about the world state and the clients.
 	// WriteGame is called every time a level is exited.
 	// ReadGame is called on a loadgame.
-	void		(*WriteGame) (char *filename, qboolean autosave);
-	void		(*ReadGame) (char *filename);
+	void		(*WriteGame) (const char *filename, qboolean autosave);
+	void		(*ReadGame) (const char *filename);
 
 	// ReadLevel is called after the default map information has been
 	// loaded with SpawnEntities
-	void		(*WriteLevel) (char *filename);
-	void		(*ReadLevel) (char *filename);
+	void		(*WriteLevel) (const char *filename);
+	void		(*ReadLevel) (const char *filename);
 
 	qboolean	(*ClientConnect) (edict_t *ent, char *userinfo);
 	void		(*ClientBegin) (edict_t *ent);
@@ -248,7 +248,7 @@ typedef struct
 
 	// The edict array is allocated in the game dll so it
 	// can vary in size from one game to another.
-	// 
+	//
 	// The size will be fixed when ge->Init() is called
 	struct edict_s	*edicts;
 	int			edict_size;

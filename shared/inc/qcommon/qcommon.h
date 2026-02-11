@@ -89,8 +89,8 @@ extern float LittleFloat(float l);
 EXTERNC int	  COM_Argc(void);
 EXTERNC const char *COM_Argv (int arg);	 // range and null checked
 EXTERNC void  COM_ClearArgv(int arg);
-EXTERNC int	  COM_CheckParm(char *parm);
-EXTERNC void  COM_AddParm(char *parm);
+EXTERNC int	  COM_CheckParm(const char *parm);
+EXTERNC void  COM_AddParm(const char *parm);
 
 EXTERNC void COM_Init(void);
 EXTERNC void COM_InitArgv(int argc, char **argv);
@@ -102,7 +102,7 @@ EXTERNC char *CopyString (const char *in);
 
 //============================================================================
 
-EXTERNC void Info_Print(char *s);
+EXTERNC void Info_Print(const char *s);
 
 /* crc.h */
 
@@ -351,12 +351,12 @@ EXTERNC void Cmd_AddCommand(const char *cmd_name, xcommand_t function);
 // The cmd_name is referenced later, so it should not be in temp memory
 // if function is NULL, the command will be forwarded to the server
 // as a clc_stringcmd instead of executed locally
-EXTERNC void Cmd_RemoveCommand(char *cmd_name);
+EXTERNC void Cmd_RemoveCommand(const char *cmd_name);
 
-EXTERNC qboolean Cmd_Exists(char *cmd_name);
+EXTERNC qboolean Cmd_Exists(const char *cmd_name);
 // used by the cvar code to check for cvar / command name overlap
 
-EXTERNC const char *Cmd_CompleteCommand (char *partial);
+EXTERNC const char *Cmd_CompleteCommand (const char *partial);
 // attempts to match a partial command for automatic command line completion
 // returns NULL if nothing fits
 
@@ -409,12 +409,12 @@ EXTERNC cvar_t *Cvar_Get (const char *var_name, const char *value, int flags);
 EXTERNC cvar_t *Cvar_Set(const char *var_name, const char *value);
 // will create the variable if it doesn't exist
 
-EXTERNC cvar_t *Cvar_ForceSet(char *var_name, char *value);
+EXTERNC cvar_t *Cvar_ForceSet(const char *var_name, char *value);
 // will set the variable even if NOSET or LATCH
 
 EXTERNC cvar_t *Cvar_FullSet(const char *var_name, const char *value, int flags);
 
-EXTERNC void Cvar_SetValue(char *var_name, float value);
+EXTERNC void Cvar_SetValue(const char *var_name, float value);
 // expands value to a string and calls Cvar_Set
 
 EXTERNC float Cvar_VariableValue (const char *var_name);
@@ -435,7 +435,7 @@ EXTERNC qboolean Cvar_Command(void);
 // command.  Returns e_true if the command was a variable reference that
 // was handled. (print or change)
 
-EXTERNC void Cvar_WriteVariables(char *path);
+EXTERNC void Cvar_WriteVariables(const char *path);
 // appends lines containing "set variable value" for all variables
 // with the archive flag set to e_true.
 
@@ -571,8 +571,8 @@ CMODEL
 
 #include "../qcommon/qfiles.h"
 
-EXTERNC cmodel_t *CM_LoadMap(char *name, qboolean clientload, unsigned *checksum);
-EXTERNC cmodel_t *CM_InlineModel(char *name);  // *1, *2, etc
+EXTERNC cmodel_t *CM_LoadMap(const char *name, qboolean clientload, unsigned *checksum);
+EXTERNC cmodel_t *CM_InlineModel(const char *name);  // *1, *2, etc
 
 EXTERNC int	  CM_NumClusters(void);
 EXTERNC int	  CM_NumInlineModels(void);
@@ -634,9 +634,9 @@ FILESYSTEM
 */
 
 EXTERNC void  FS_InitFilesystem(void);
-EXTERNC void  FS_SetGamedir(char *dir);
+EXTERNC void  FS_SetGamedir(const char *dir);
 EXTERNC char *FS_Gamedir(void);
-EXTERNC char *FS_NextPath(char *prevpath);
+EXTERNC char *FS_NextPath(const char *prevpath);
 EXTERNC void  FS_ExecAutoexec(void);
 
 EXTERNC int	 FS_FOpenFile (const char *filename, FILE **file);
@@ -740,7 +740,7 @@ EXTERNC void *Sys_GetGameAPI(void *parms);
 // loads the game dll and calls the api init function
 
 EXTERNC char *Sys_ConsoleInput(void);
-EXTERNC void  Sys_ConsoleOutput(char *string);
+EXTERNC void  Sys_ConsoleOutput(const char *string);
 EXTERNC void  Sys_SendKeyEvents(void);
 EXTERNC void  Sys_Error(const char *error, ...);
 EXTERNC void  Sys_Quit(void);
@@ -759,7 +759,7 @@ EXTERNC void CL_Init(void);
 EXTERNC void CL_Drop(void);
 EXTERNC void CL_Shutdown(void);
 EXTERNC void CL_Frame(int msec);
-EXTERNC void Con_Print(char *text);
+EXTERNC void Con_Print(const char *text);
 EXTERNC void SCR_BeginLoadingPlaque(void);
 
 EXTERNC void SV_Init(void);

@@ -132,7 +132,7 @@ int Sys_Milliseconds (void)
 	return curtime;
 }
 
-void Sys_Mkdir (char *path)
+void Sys_Mkdir (const char *path)
 {
 	_mkdir (path);
 }
@@ -170,7 +170,7 @@ static qboolean CompareAttributes( unsigned found, unsigned musthave, unsigned c
 	return e_true;
 }
 
-char *Sys_FindFirst (char *path, unsigned musthave, unsigned canthave )
+char *Sys_FindFirst (const char *path, unsigned musthave, unsigned canthave)
 {
 	struct _finddata_t findinfo;
 

@@ -4,7 +4,7 @@
 
 #include "qcommon/qcommon.h"
 
-void Key_Bind_Null_f(void)
+void Key_Bind_Null_f (void)
 {
 }
 
@@ -24,7 +24,7 @@ void CL_Frame (int msec)
 {
 }
 
-void Con_Print (char *text)
+void Con_Print (const char *text)
 {
 }
 
@@ -32,7 +32,7 @@ void Cmd_ForwardToServer (void)
 {
 	char *cmd;
 
-	cmd = Cmd_Argv(0);
+	cmd = Cmd_Argv (0);
 	Com_Printf ("Unknown command \"%s\"\n", cmd);
 }
 
@@ -52,4 +52,3 @@ void Key_Init (void)
 {
 	Cmd_AddCommand ("bind", Key_Bind_Null_f);
 }
-

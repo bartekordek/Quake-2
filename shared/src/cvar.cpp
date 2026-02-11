@@ -266,7 +266,7 @@ cvar_t *Cvar_Set2 (const char *var_name, const char *value, qboolean force)
 Cvar_ForceSet
 ============
 */
-cvar_t *Cvar_ForceSet (char *var_name, char *value)
+cvar_t *Cvar_ForceSet (const char *var_name, char *value)
 {
 	return Cvar_Set2 (var_name, value, e_true);
 }
@@ -315,7 +315,7 @@ cvar_t *Cvar_FullSet (const char *var_name, const char *value, int flags)
 Cvar_SetValue
 ============
 */
-void Cvar_SetValue (char *var_name, float value)
+void Cvar_SetValue (const char *var_name, float value)
 {
 	char	val[32];
 
@@ -427,7 +427,7 @@ Appends lines containing "set variable value" for all variables
 with the archive flag set to e_true.
 ============
 */
-void Cvar_WriteVariables (char *path)
+void Cvar_WriteVariables (const char *path)
 {
 	char  buffer[1024];
 	FILE *f = fopen (path, "a");

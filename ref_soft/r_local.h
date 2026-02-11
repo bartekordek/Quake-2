@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -17,7 +17,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
-  
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -51,7 +51,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
-typedef enum 
+typedef enum
 {
 	it_skin,
 	it_sprite,
@@ -88,7 +88,7 @@ typedef struct
 	pixel_t                 *alphamap;              // 256 * 256 translucency map
 	int                             rowbytes;               // may be > width if displayed in a window
 									// can be negative for stupid dibs
-	int						width;          
+	int						width;
 	int						height;
 } viddef_t;
 
@@ -122,14 +122,14 @@ typedef struct
 										// right and bottom edges, for clamping
 	float           fvrectright;                    // rightmost edge, for Alias clamping
 	float           fvrectbottom;                   // bottommost edge, for Alias clamping
-	float           horizontalFieldOfView;  // at Z = 1.0, this many X is visible 
+	float           horizontalFieldOfView;  // at Z = 1.0, this many X is visible
 										// 2.0 = 90 degrees
 	float           xOrigin;                        // should probably always be 0.5
 	float           yOrigin;                        // between be around 0.3 to 0.5
 
 	vec3_t          vieworg;
 	vec3_t          viewangles;
-	
+
 	int                     ambientlight;
 } oldrefdef_t;
 
@@ -766,13 +766,13 @@ void R_InitCaches (void);
 void D_FlushCaches (void);
 
 void	R_ScreenShot_f( void );
-void    R_BeginRegistration (char *map);
-struct model_s  *R_RegisterModel (char *name);
+void    R_BeginRegistration (const char *map);
+struct model_s  *R_RegisterModel (const char *name);
 void    R_EndRegistration (void);
 
 void    R_RenderFrame (refdef_t *fd);
 
-struct image_s  *Draw_FindPic (char *name);
+struct image_s  *Draw_FindPic (const char *name);
 
 void    Draw_GetPicSize (int *w, int *h, char *name);
 void    Draw_Pic (int x, int y, char *name);
@@ -794,11 +794,11 @@ extern unsigned d_8to24table[256]; // base
 void    Sys_MakeCodeWriteable (unsigned long startaddr, unsigned long length);
 void    Sys_SetFPCW (void);
 
-void LoadPCX (char *filename, byte **pic, byte **palette, int *width, int *height);
+void LoadPCX (const char *filename, byte **pic, byte **palette, int *width, int *height);
 
 void    R_InitImages (void);
 void	R_ShutdownImages (void);
-image_t *R_FindImage (char *name, imagetype_t type);
+image_t *R_FindImage (const char *name, imagetype_t type);
 void    R_FreeUnusedImages (void);
 
 void	R_GammaCorrectAndSetPalette( const unsigned char *pal );

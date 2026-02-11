@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -54,8 +54,8 @@ void Con_DrawCharacter (int cx, int line, int num);
 void Con_CheckResize (void);
 void Con_Init (void);
 void Con_DrawConsole (float frac);
-void Con_Print (char *txt);
-void Con_CenteredPrint (char *text);
+void Con_Print (const char *txt);
+void Con_CenteredPrint (const char *text);
 void Con_Clear_f (void);
 void Con_DrawNotify (void);
 void Con_ClearNotify (void);

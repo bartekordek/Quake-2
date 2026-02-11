@@ -288,7 +288,7 @@ Returns the position (1 to argc-1) in the program's argument list
 where the given parameter apears, or 0 if not present
 ================
 */
-int COM_CheckParm (char *parm)
+int COM_CheckParm (const char *parm)
 {
 	int		i;
 
@@ -349,7 +349,7 @@ COM_AddParm
 Adds the given string at the end of the current argument list
 ================
 */
-void COM_AddParm (char *parm)
+void COM_AddParm (const char *parm)
 {
 	if (com_argc == MAX_NUM_ARGVS)
 		Com_Error (ERR_FATAL, "COM_AddParm: MAX_NUM)ARGS");
@@ -379,7 +379,7 @@ char *CopyString (const char *in)
 
 
 
-void Info_Print (char *s)
+void Info_Print (const char *s)
 {
 	char	key[512];
 	char	value[512];

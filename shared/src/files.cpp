@@ -287,7 +287,7 @@ int FS_FOpenFile (const char *filename, FILE **file)
 
 // this is just for demos to prevent add on hacking
 
-int FS_FOpenFile (char *filename, FILE **file)
+int FS_FOpenFile (const char *filename, FILE **file)
 {
 	searchpath_t	*search;
 	char			netpath[MAX_OSPATH];
@@ -449,7 +449,7 @@ Loads the header and directory, adding the files at the beginning
 of the list so they override previous pack files.
 =================
 */
-pack_t *FS_LoadPackFile (char *packfile)
+pack_t *FS_LoadPackFile (const char *packfile)
 {
 	dpackheader_t	header;
 	int				i;
@@ -585,7 +585,7 @@ FS_SetGamedir
 Sets the gamedir and path to a different directory.
 ================
 */
-void FS_SetGamedir (char *dir)
+void FS_SetGamedir (const char *dir)
 {
 	searchpath_t	*next;
 
@@ -811,7 +811,7 @@ FS_NextPath
 Allows enumerating all of the directories in the search path
 ================
 */
-char *FS_NextPath (char *prevpath)
+char *FS_NextPath (const char *prevpath)
 {
 	searchpath_t	*s;
 	char			*prev;

@@ -111,15 +111,15 @@ void Hunk_Free (void *base)
 //===========================================================================
 
 
-void Sys_Mkdir (char *path)
+void Sys_Mkdir (const char *path)
 {
 	if (mkdir (path, 0777) != -1)
 		return;
 	if (errno != EEXIST)
-		Com_Error (ERR_FATAL, "mkdir %s: %s",path, strerror(errno)); 
+		Com_Error (ERR_FATAL, "mkdir %s: %s",path, strerror(errno));
 }
 
-char	*Sys_FindFirst (char *path, unsigned musthave, unsigned canthave)
+char	*Sys_FindFirst (const char *path, unsigned musthave, unsigned canthave)
 {
     return NULL;
 }
@@ -145,13 +145,13 @@ int Sys_Milliseconds (void)
 	static int		secbase;
 
 	gettimeofday(&tp, &tzp);
-	
+
 	if (!secbase)
 	{
 		secbase = tp.tv_sec;
 		return tp.tv_usec/1000;
 	}
-	
+
     curtime = (tp.tv_sec - secbase)*1000 + tp.tv_usec/1000;
 
     return curtime;
@@ -162,11 +162,11 @@ int Sys_Milliseconds (void)
 Sys_Error
 ================
 */
-void Sys_Error (char *error, ...)
+void Sys_Error (const char *error, ...)
 {
 	va_list		argptr;
 	char		string[1024];
-	
+
 // change stdin to non blocking
 	fcntl (0, F_SETFL, fcntl (0, F_GETFL, 0) & ~FNDELAY);
 
@@ -174,7 +174,7 @@ void Sys_Error (char *error, ...)
 	vsprintf (string,error,argptr);
 	va_end (argptr);
 	printf ("Fatal error: %s\n",string);
-	
+
 	if (!NSApp)
 	{	// appkit isn't running, so don't try to pop up a panel
 		exit (1);
@@ -190,14 +190,14 @@ void Sys_Error (char *error, ...)
 Sys_Printf
 ================
 */
-void	Sys_ConsoleOutput (char *text)
+void	Sys_ConsoleOutput (const char *text)
 {
 	char		*t_p;
 	int			l, r;
-	
+
 	l = strlen(text);
 	t_p = text;
-	
+
 // make sure everything goes through, even though we are non-blocking
 	while (l)
 	{
@@ -239,7 +239,7 @@ void Sys_Init(void)
     moncontrol(0);	// turn off profiling except during real Quake work
 
 // change stdin to non blocking
-     fcntl (0, F_SETFL, fcntl (0, F_GETFL, 0) | FNDELAY);	
+     fcntl (0, F_SETFL, fcntl (0, F_GETFL, 0) | FNDELAY);
 }
 
 
@@ -275,7 +275,7 @@ void Sys_SendKeyEvents (void)
 			[NSApp	sendEvent: event];
 	} while (event);
 
-    // grab frame time 
+    // grab frame time
     sys_frame_time = Sys_Milliseconds();
 }
 
@@ -297,7 +297,7 @@ char *Sys_ConsoleInput (void)
 	if (len < 1)
 		return NULL;
 	text[len-1] = 0;	// rip off the /n and terminate
-	
+
 	return text;
 }
 
@@ -312,9 +312,9 @@ void main (int argc, char **argv)
     int		frame;
     NSAutoreleasePool *pool;
 	int		oldtime, t;
-        
+
     pool = [[NSAutoreleasePool alloc] init];
-        
+
     Qcommon_Init (argc, argv);
 
     [pool release];
