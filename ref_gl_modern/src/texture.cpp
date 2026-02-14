@@ -9,16 +9,23 @@
 
 namespace Q2
 {
+constexpr float g_float_epsilon = 0.000001f;
+bool float_equal (float a, float b)
+{
+	return std::abs (a - b) < g_float_epsilon;
+}
+
+
 Texture::Texture ()
 {
 	const float m_firstVerticeX{0.f};
 	const float m_firstVerticeZ{0.f};
 	float vertices[] = {
 		// positions               // colors                // texture coords
-		0.5f,  0.5f,  0.0f, 1.0f, 0.0f, 0.0f,  1.0f, 0.0f,  // top right
-	   -0.5f, -0.5f,  0.0f, 0.0f, 1.0f, 0.0f,  0.0f, 1.0f,  // bottom right
-	    0.5f, -0.5f,  0.0f, 0.0f, 0.0f, 1.0f,  1.0f, 1.0f,  // bottom left
-	   -0.5f,  0.5f,  0.0f, 1.0f, 1.0f, 0.0f,  0.0f, 0.0f   // top let
+		1.0f,  1.0f,  0.0f, 1.0f, 0.0f, 0.0f,  m_scale,    0.0f,  // top right
+	   -1.0f, -1.0f,  0.0f, 0.0f, 1.0f, 0.0f,     0.0f, m_scale,  // bottom right
+	    1.0f, -1.0f,  0.0f, 0.0f, 0.0f, 1.0f,  m_scale, m_scale,  // bottom left
+	   -1.0f,  1.0f,  0.0f, 1.0f, 1.0f, 0.0f,     0.0f,    0.0f   // top let
 	};
 	unsigned int indices[] = {
 		0, 1, 2,  // first triangle
@@ -56,6 +63,14 @@ Texture::Texture ()
 	//glUniform1i( glGetUniformLocation( m_shader->ID, "texture1" ), 0 );
 }
 
+void Texture::changeScale (float in_scale)
+{
+	if (float_equal (m_scale, in_scale))
+	{
+		return;
+	}
+}
+
 void Texture::init ()
 {
 }
@@ -81,22 +96,13 @@ void Texture::drawStatic (const RenderData &rd)
 		glDisable (GL_ALPHA_TEST);
 	}
 
-	glBegin (GL_QUADS);
-	glTexCoord2f (rd.s[0], rd.t[0]);
-	glVertex2f (rd.x, rd.y);
-	glTexCoord2f (rd.s[1], rd.t[1]);
-	glVertex2f (rd.x + rd.w, rd.y);
-	glTexCoord2f (rd.s[2], rd.t[2]);
-	glVertex2f (rd.x + rd.w, rd.y + rd.h);
-	glTexCoord2f (rd.s[3], rd.t[3]);
-	glVertex2f (rd.x, rd.y + rd.h);
-	glEnd ();
 
 	if (rd.alphaTest)
 	{
 		glEnable (GL_ALPHA_TEST);
 	}
 }
+
 Texture::~Texture ()
 {
 }

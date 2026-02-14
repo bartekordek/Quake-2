@@ -390,8 +390,7 @@ void Draw_StretchRaw (int x, int y, int w, int h, int cols, int rows, byte *data
 	rd.alphaTest = (gl_config.renderer == GL_RENDERER_MCD) || (gl_config.renderer & GL_RENDERER_RENDITION);
 	rd.w		 = w;
 	rd.h		 = h;
-	rd.s		 = {0.0f, 1.0f, 1.0f, 0.0f};
-	rd.t		 = {0.0f, 0.0f,    t,    t};
+	rd.scale	 = t;
 
 	static Q2::Texture stretchTexture;
 	stretchTexture.draw (rd);

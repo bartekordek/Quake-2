@@ -38,8 +38,7 @@ struct AttributeMeta
 		std::int32_t imgW{0};
 		std::int32_t imgH{0};
 
-		std::array<float, 4> s;
-		std::array<float, 4> t;
+		float scale{1.f};
 
 		bool alphaTest{false};
 		std::int32_t data_type{0};
@@ -57,16 +56,18 @@ struct AttributeMeta
 		void		init ();
 		void		draw (const RenderData &inData);
 		static void drawStatic (const RenderData &inData);
+		void		changeScale (float in_scale);
 
 		~Texture ();
 
 		Q2_NONCOPYABLE (Texture)
 	protected:
 	private:
-		std::uint32_t m_vao{0u};
-		std::uint32_t m_vbo{0u};
-		std::uint32_t m_ebo{0u};
-
+		void					initBuffers ();
+		std::uint32_t			m_vao{0u};
+		std::uint32_t			m_vbo{0u};
+		std::uint32_t			m_ebo{0u};
 		std::unique_ptr<Shader> m_shader;
+		float					m_scale{0.9375f};
 	};
 	}
