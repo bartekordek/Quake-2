@@ -63,11 +63,12 @@ struct AttributeMeta
 		Q2_NONCOPYABLE (Texture)
 	protected:
 	private:
-		void					initBuffers ();
-		std::uint32_t			m_vao{0u};
-		std::uint32_t			m_vbo{0u};
-		std::uint32_t			m_ebo{0u};
-		std::unique_ptr<Shader> m_shader;
-		float					m_scale{0.9375f};
+		void						 initBuffers ();
+		static std::array<float, 32> createBufferData (float in_scale);
+		std::uint32_t				 m_vao{0u};
+		std::uint32_t				 m_vbo{0u};
+		std::uint32_t				 m_ebo{0u};
+		std::unique_ptr<Shader>		 m_shader;
+		float						 m_scale{1.0f};
 	};
 	}

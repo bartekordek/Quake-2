@@ -393,5 +393,6 @@ void Draw_StretchRaw (int x, int y, int w, int h, int cols, int rows, byte *data
 	rd.scale	 = t;
 
 	static Q2::Texture stretchTexture;
+	stretchTexture.changeScale (t);
 	stretchTexture.draw (rd);
 }
