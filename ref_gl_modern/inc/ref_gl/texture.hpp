@@ -55,7 +55,6 @@ struct AttributeMeta
 
 		void		init ();
 		void		draw (const RenderData &inData);
-		static void drawStatic (const RenderData &inData);
 		void		changeScale (float in_scale);
 
 		~Texture ();

@@ -20,13 +20,7 @@ Texture::Texture ()
 {
 	const float m_firstVerticeX{0.f};
 	const float m_firstVerticeZ{0.f};
-	float vertices[] = {
-		// positions               // colors                // texture coords
-		1.0f,  1.0f,  0.0f, 1.0f, 0.0f, 0.0f,  m_scale,    0.0f,  // top right
-	   -1.0f, -1.0f,  0.0f, 0.0f, 1.0f, 0.0f,     0.0f, m_scale,  // bottom right
-	    1.0f, -1.0f,  0.0f, 0.0f, 0.0f, 1.0f,  m_scale, m_scale,  // bottom left
-	   -1.0f,  1.0f,  0.0f, 1.0f, 1.0f, 0.0f,     0.0f,    0.0f   // top let
-	};
+	const std::array<float, 32> vertices  = createBufferData (m_scale);
 	unsigned int indices[] = {
 		0, 1, 2,  // first triangle
 		1, 3, 0	  // second triangle
@@ -40,7 +34,7 @@ Texture::Texture ()
 	glBindVertexArray (m_vao);
 
 	glBindBuffer (GL_ARRAY_BUFFER, m_vbo);
-	glBufferData (GL_ARRAY_BUFFER, sizeof (vertices), vertices, GL_STATIC_DRAW);
+	glBufferData (GL_ARRAY_BUFFER, sizeof (vertices), vertices.data (), GL_STATIC_DRAW);
 
 	glBindBuffer (GL_ELEMENT_ARRAY_BUFFER, m_ebo);
 	glBufferData (GL_ELEMENT_ARRAY_BUFFER, sizeof (indices), indices, GL_STATIC_DRAW);
@@ -63,12 +57,32 @@ Texture::Texture ()
 	//glUniform1i( glGetUniformLocation( m_shader->ID, "texture1" ), 0 );
 }
 
+
 void Texture::changeScale (float in_scale)
 {
 	if (float_equal (m_scale, in_scale))
 	{
 		return;
 	}
+
+	m_scale = in_scale;
+
+	glBindBuffer (GL_ARRAY_BUFFER, m_vbo);
+
+	const std::array<float, 32> vertices = createBufferData (m_scale);
+	glBufferSubData (GL_ARRAY_BUFFER, 0, sizeof (float) * vertices.size(), vertices.data ());
+}
+
+std::array<float, 32> Texture::createBufferData (float in_scale)
+{
+	std::array<float, 32> result = {
+		// positions               // colors                // texture coords
+		1.0f,  1.0f,  0.0f, 1.0f, 0.0f, 0.0f, in_scale,     0.0f,  // top right
+	   -1.0f, -1.0f,  0.0f, 0.0f, 1.0f, 0.0f,     0.0f, in_scale,  // bottom right
+	    1.0f, -1.0f,  0.0f, 0.0f, 0.0f, 1.0f, in_scale, in_scale,  // bottom left
+	   -1.0f,  1.0f,  0.0f, 1.0f, 1.0f, 0.0f,     0.0f,     0.0f   // top let
+	};
+	return result;
 }
 
 void Texture::init ()
@@ -77,27 +91,23 @@ void Texture::init ()
 
 void Texture::draw (const RenderData &inData)
 {
+	if (inData.alphaTest)
+	{
+		glDisable (GL_ALPHA_TEST);
+	}
+
 	glActiveTexture (GL_TEXTURE0);
 	glBindTexture (GL_TEXTURE_2D, inData.id);
 
 	glTexImage2D (GL_TEXTURE_2D, 0, inData.internal_format, inData.imgW, inData.imgH, 0, inData.format, inData.data_type, inData.data);
 	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	//drawStatic (inData);
+
 	m_shader->use ();
 	glBindVertexArray (m_vao);
 	glDrawElements (GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-}
 
-void Texture::drawStatic (const RenderData &rd)
-{
-	if (rd.alphaTest)
-	{
-		glDisable (GL_ALPHA_TEST);
-	}
-
-
-	if (rd.alphaTest)
+	if (inData.alphaTest)
 	{
 		glEnable (GL_ALPHA_TEST);
 	}
@@ -106,4 +116,5 @@ void Texture::drawStatic (const RenderData &rd)
 Texture::~Texture ()
 {
 }
+
 }  // namespace Q2
