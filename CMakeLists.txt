@@ -39,7 +39,20 @@ set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${Q2_OUTPUT_DIR} )
 list( APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules" )
 
 # Add sub directories
+
+set(ENV{GLEW_ROOT} ${CMAKE_CURRENT_SOURCE_DIR}/deps/glew-2.1.0)
+
+set(GLEW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(GLEW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+set(GLEW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
+set(GLEW_BUILD_UTILS OFF CACHE BOOL "" FORCE)
+set(GLEW_STATIC ON CACHE BOOL "" FORCE)
+add_subdirectory($ENV{GLEW_ROOT}/build/cmake)
+
+
 add_subdirectory(ctf)
+
+
 add_subdirectory(game)
 add_subdirectory(mathlib)
 add_subdirectory(quake2)
@@ -51,3 +64,4 @@ add_subdirectory(shared)
 set( SDL2_INCLUDE deps/SDL/include )
 set(SDLVIDEO ON CACHE BOOL "REPLACE GLUT" FORCE)
 add_subdirectory(deps/SDL)
+

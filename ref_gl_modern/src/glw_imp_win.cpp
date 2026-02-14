@@ -179,7 +179,7 @@ rserr_t GLimp_SetMode (int *pwidth, int *pheight, int mode, qboolean fullscreen)
 		*pwidth				= width;
 		*pheight			= height;
 		gl_state.fullscreen = e_false;
-		if (ri.create_window(512, 0, width, height, e_false))
+		if (ri.create_window(512, 64, width, height, e_false))
 		{
 			if (GLimp_InitGL() == e_false)
 			{

@@ -18,9 +18,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 // r_main.c
+#include <GL/glew.h>
 #include "ref_gl/gl_local.h"
 #include "ref_gl/gl_draw.h"
 #include "math/constants.h"
+
 
 void R_Clear (void);
 
@@ -1310,6 +1312,11 @@ int R_Init (void *hinstance, void *hWnd)
 	err = qglGetError ();
 	if (err != GL_NO_ERROR)
 		ri.Con_Printf (PRINT_ALL, "glGetError() = 0x%x\n", err);
+
+	
+	const auto glew_init_result = glewInit ();
+	Q2_Assert (glew_init_result == GLEW_OK, "Cannot initialize glew.");
+	// GLEW_OK
 }
 
 /*

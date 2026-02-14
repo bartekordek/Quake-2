@@ -24,6 +24,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "ref_gl/gl_image.h"
 #include "ref_gl/gl_main.h"
 #include "ref_gl/gl_draw.h"
+#include "ref_gl/texture.hpp"
+#include <cmath>
 
 image_t *draw_chars;
 
@@ -131,9 +133,7 @@ Draw_StretchPic
 */
 void Draw_StretchPic (int x, int y, int w, int h, char *pic)
 {
-	image_t *gl;
-
-	gl = Draw_FindPic (pic);
+	image_t *gl = Draw_FindPic (pic);
 	if (!gl)
 	{
 		ri.Con_Printf (PRINT_ALL, "Can't find pic: %s\n", pic);
@@ -141,7 +141,9 @@ void Draw_StretchPic (int x, int y, int w, int h, char *pic)
 	}
 
 	if (scrap_dirty)
+	{
 		Scrap_Upload ();
+	}
 
 	if (((gl_config.renderer == GL_RENDERER_MCD) || (gl_config.renderer & GL_RENDERER_RENDITION)) && !gl->has_alpha)
 		qglDisable (GL_ALPHA_TEST);
@@ -316,9 +318,11 @@ void Draw_StretchRaw (int x, int y, int w, int h, int cols, int rows, byte *data
 	int			  frac, fracstep;
 	float		  hscale;
 	int			  row;
-	float		  t;
 
 	GL_BindTexture (0);
+	Q2::RenderData rd;
+	rd.imgW = 256;
+	rd.imgH = 256;
 
 	if (rows <= 256)
 	{
@@ -330,7 +334,7 @@ void Draw_StretchRaw (int x, int y, int w, int h, int cols, int rows, byte *data
 		hscale = rows / 256.0;
 		trows  = 256;
 	}
-	t = rows * hscale / 256;
+	float t = rows * hscale / 256;
 
 	if (!qglColorTableEXT)
 	{
@@ -352,7 +356,10 @@ void Draw_StretchRaw (int x, int y, int w, int h, int cols, int rows, byte *data
 			}
 		}
 
-		qglTexImage2D (GL_TEXTURE_2D, 0, gl_tex_solid_format, 256, 256, 0, GL_RGBA, GL_UNSIGNED_BYTE, image32);
+		rd.data_type	   = GL_UNSIGNED_BYTE;
+		rd.format		   = GL_RGBA;
+		rd.internal_format = gl_tex_solid_format;
+		rd.data			   = &image32;
 	}
 	else
 	{
@@ -374,25 +381,18 @@ void Draw_StretchRaw (int x, int y, int w, int h, int cols, int rows, byte *data
 			}
 		}
 
-		qglTexImage2D (GL_TEXTURE_2D, 0, GL_COLOR_INDEX8_EXT, 256, 256, 0, GL_COLOR_INDEX, GL_UNSIGNED_BYTE, image8);
+		rd.data_type	   = GL_UNSIGNED_BYTE;
+		rd.format		   = GL_COLOR_INDEX;
+		rd.internal_format = GL_COLOR_INDEX8_EXT;
+		rd.data			   = &image8;
 	}
-	qglTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	qglTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	if ((gl_config.renderer == GL_RENDERER_MCD) || (gl_config.renderer & GL_RENDERER_RENDITION))
-		qglDisable (GL_ALPHA_TEST);
+	rd.alphaTest = (gl_config.renderer == GL_RENDERER_MCD) || (gl_config.renderer & GL_RENDERER_RENDITION);
+	rd.w		 = w;
+	rd.h		 = h;
+	rd.s		 = {0.0f, 1.0f, 1.0f, 0.0f};
+	rd.t		 = {0.0f, 0.0f,    t,    t};
 
-	qglBegin (GL_QUADS);
-	qglTexCoord2f (0, 0);
-	qglVertex2f (x, y);
-	qglTexCoord2f (1, 0);
-	qglVertex2f (x + w, y);
-	qglTexCoord2f (1, t);
-	qglVertex2f (x + w, y + h);
-	qglTexCoord2f (0, t);
-	qglVertex2f (x, y + h);
-	qglEnd ();
-
-	if ((gl_config.renderer == GL_RENDERER_MCD) || (gl_config.renderer & GL_RENDERER_RENDITION))
-		qglEnable (GL_ALPHA_TEST);
+	static Q2::Texture stretchTexture;
+	stretchTexture.draw (rd);
 }

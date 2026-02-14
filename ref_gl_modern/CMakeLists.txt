@@ -8,7 +8,12 @@ set( PROJECT_NAME ref_gl_modern )
 
 project(${PROJECT_NAME} LANGUAGES C CXX)
 
-set( CMAKE_ENABLE_EXPORTS e_true )
+#find_package(GLEW REQUIRED)
+find_package(OpenGL REQUIRED)
+
+set( CMAKE_ENABLE_EXPORTS true )
+message("INCLUDING: $ENV{GLEW_ROOT}")
+include_directories($ENV{GLEW_ROOT}/include)
 
 if( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC" )
     message(STATUS "WARNING: building msvc version.")
@@ -43,9 +48,9 @@ list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/win32/q_shwin.c)
 
 add_library( ${PROJECT_NAME} SHARED ${SOURCES} )
 
-set(DEPENDENCIES shared)
+set(DEPENDENCIES PRIVATE shared PRIVATE OpenGL::GL PRIVATE glew_s )
 if (MSVC)
-list(APPEND DEPENDENCIES winmm )
+list(APPEND DEPENDENCIES PRIVATE winmm )
 endif()
 
 set_property( TARGET ${PROJECT_NAME} PROPERTY "LINK_LIBRARY_DEPENDENCIES" e_true )
