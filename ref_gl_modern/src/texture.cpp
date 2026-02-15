@@ -15,6 +15,33 @@ bool float_equal (float a, float b)
 	return std::abs (a - b) < g_float_epsilon;
 }
 
+TextureStore &TextureStore::get_instance ()
+{
+	static TextureStore s_instance;
+	return s_instance;
+}
+
+TextureStore::TextureStore()
+{
+
+}
+
+Texture* TextureStore::getOrCreate (const std::string &inName)
+{
+	auto it = m_textureCache.find (inName);
+	if (it != m_textureCache.end ())
+	{
+		return it->second.get ();
+	}
+	std::unique_ptr<Texture> newTexture = std::make_unique<Texture> ();
+	Texture					*result		= newTexture.get ();
+	m_textureCache[inName]				= std::move (newTexture);
+	return result;
+}
+
+TextureStore::~TextureStore ()
+{
+}
 
 Texture::Texture ()
 {

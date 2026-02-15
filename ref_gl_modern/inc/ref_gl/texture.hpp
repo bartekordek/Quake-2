@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <array>
 #include <memory>
+#include <unordered_map>
 
 namespace Q2
 {
@@ -12,13 +13,13 @@ class Shader;
 
 struct AttributeMeta
 {
-	std::string	 name;
-	int			 index		= 0;
-	int			 size		= 0;
-	unsigned	 type		= 0;
-	bool		 normalized = false;
-	int			 stride		= 0;
-	void		*pointer	= nullptr;
+	std::string name;
+	int			index	   = 0;
+	int			size	   = 0;
+	unsigned	type	   = 0;
+	bool		normalized = false;
+	int			stride	   = 0;
+	void	   *pointer	   = nullptr;
 
 	AttributeMeta (const std::string &inName, int inIndex, int inSize, int inType, bool inNormalized, int inStride, void *inPointer)
 		: name (inName), index (inIndex), size (inSize), type (inType), normalized (inNormalized), stride (inStride), pointer (inPointer)
@@ -26,48 +27,63 @@ struct AttributeMeta
 	}
 };
 
-	struct RenderData
-	{
-		std::int32_t id{0};
+struct RenderData
+{
+	std::int32_t id{0};
 
-		std::int32_t x{0};
-		std::int32_t y{0};
-		std::int32_t w{0};
-		std::int32_t h{0};
+	std::int32_t x{0};
+	std::int32_t y{0};
+	std::int32_t w{0};
+	std::int32_t h{0};
 
-		std::int32_t imgW{0};
-		std::int32_t imgH{0};
+	std::int32_t imgW{0};
+	std::int32_t imgH{0};
 
-		float scale{1.f};
+	float scale{1.f};
 
-		bool alphaTest{false};
-		std::int32_t data_type{0};
-		std::int32_t format{0};
-		std::int32_t internal_format{0};
+	bool		 alphaTest{false};
+	std::int32_t data_type{0};
+	std::int32_t format{0};
+	std::int32_t internal_format{0};
 
-		void *data{nullptr};
-	};
+	void *data{nullptr};
+};
 
-	class Texture
-	{
-	public:
-		Texture ();
+class Texture
+{
+public:
+	Texture ();
+	void			init ();
+	void			draw (const RenderData &inData);
+	void			changeScale (float in_scale);
+	~Texture ();
 
-		void		init ();
-		void		draw (const RenderData &inData);
-		void		changeScale (float in_scale);
+	Q2_NONCOPYABLE (Texture)
+protected:
+private:
 
-		~Texture ();
+	
+	static std::array<float, 32> createBufferData (float in_scale);
+	
 
-		Q2_NONCOPYABLE (Texture)
-	protected:
-	private:
-		void						 initBuffers ();
-		static std::array<float, 32> createBufferData (float in_scale);
-		std::uint32_t				 m_vao{0u};
-		std::uint32_t				 m_vbo{0u};
-		std::uint32_t				 m_ebo{0u};
-		std::unique_ptr<Shader>		 m_shader;
-		float						 m_scale{1.0f};
-	};
-	}
+	std::uint32_t			m_vao{0u};
+	std::uint32_t			m_vbo{0u};
+	std::uint32_t			m_ebo{0u};
+	std::unique_ptr<Shader> m_shader;
+	float					m_scale{1.0f};
+};
+
+class TextureStore
+{
+public:
+	static TextureStore &get_instance ();
+	Texture				*getOrCreate (const std::string &inName);
+
+protected:
+private:
+	TextureStore ();
+	~TextureStore ();
+
+	std::unordered_map<std::string, std::unique_ptr<Texture>> m_textureCache;
+};
+}  // namespace Q2
