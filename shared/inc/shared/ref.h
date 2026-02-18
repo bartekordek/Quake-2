@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "qcommon/qcommon.h"
+#include "shared/renderer_types.h"
 
 #define	MAX_DLIGHTS		32
 #define	MAX_ENTITIES	128
@@ -134,7 +135,8 @@ typedef struct
 typedef struct
 {
 	// if api_version is different, the dll cannot be used
-	int		api_version;
+	int			  api_version;
+	RendererTypes renderer_type;
 
 	// called when the library is loaded
 	qboolean (*Init) (void);
@@ -185,6 +187,7 @@ typedef struct
 	void	(*AppActivate)( qboolean activate );
 	qboolean (*create_window) (int x, int y, int w, int h, qboolean);
 	void (*Swap_buffers) ();
+
 } refexport_t;
 
 //
