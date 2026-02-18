@@ -593,9 +593,14 @@ qboolean VID_LoadRefresh (const char *name)
 	ri.create_window	 = create_window;
 	ri.Swap_buffers		 = update_buffer;
 
-	if (strcmp (name, "ref_modern.dll") == 0)
+	if (strcmp (name, "ref_gl_modern.dll") == 0)
 	{
-		re = ImportModernOpenglApi (ri);
+		if ((GetRefAPI = (void *) GetProcAddress (reflib_library, "GetRefAPI")) == 0)
+		{
+			Com_Error (ERR_FATAL, "GetProcAddress failed on %s", name);
+		}
+		re				 = GetRefAPI (ri);
+		re.renderer_type = OpenGL_Modern;
 	}
 	else
 	{
@@ -604,6 +609,7 @@ qboolean VID_LoadRefresh (const char *name)
 			Com_Error (ERR_FATAL, "GetProcAddress failed on %s", name);
 		}
 		re = GetRefAPI (ri);
+		re.renderer_type = OpenGL_Legacy;
 	}
 
 	if (re.api_version != API_VERSION)
@@ -679,7 +685,7 @@ void VID_CheckChanges (void)
 		cl.refresh_prepped		 = e_false;
 		cls.disable_screen		 = e_true;
 
-		// Com_sprintf (name, sizeof (name), "ref_%s.dll", vid_ref->string);
+		//Com_sprintf (name, sizeof (name), "ref_%s.dll", vid_ref->string);
 		Com_sprintf (name, sizeof (name), "ref_%s.dll", "gl_modern");
 		if (!VID_LoadRefresh (name))
 		{
