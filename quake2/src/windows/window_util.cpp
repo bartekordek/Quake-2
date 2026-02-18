@@ -34,105 +34,6 @@ struct WindowsData
 
 WindowsData g_windowdata;
 
-void APIENTRY glDebugOutput (GLenum source, GLenum type, unsigned int id, GLenum severity, GLsizei length,
-							 const char *  // message
-							 ,
-							 const void *  // userParam
-);
-
-
-void APIENTRY glDebugOutput (GLenum source, GLenum type, unsigned int id, GLenum severity, GLsizei length, const char *message,
-							 const void *userParam)
-{
-	if (id == 131185)
-	{
-		// Buffer detailed info: Buffer object [x] (bound to GL_ARRAY_BUFFER_ARB, usage hint is GL_STATIC_DRAW) will use VIDEO memory as the
-		// source for buffer object operations.
-		// https://stackoverflow.com/questions/62248552/opengl-debug-context-warning-will-use-video-memory-as-the-source-for-buffer-o
-		// can be safely ignored.
-		return;
-	}
-
-	std::string messageString = "glDebugOutput Severity: ";
-
-	switch (severity)
-	{
-		case GL_DEBUG_SEVERITY_HIGH:
-			messageString += "HIGH";
-			break;
-		case GL_DEBUG_SEVERITY_MEDIUM:
-			messageString += "MEDIUM";
-			break;
-		case GL_DEBUG_SEVERITY_LOW:
-			messageString += "LOW";
-			break;
-		case GL_DEBUG_SEVERITY_NOTIFICATION:
-			messageString += "NOTIFICATION";
-			break;
-	}
-
-	messageString += ", Source: ";
-	switch (source)
-	{
-		case GL_DEBUG_SOURCE_API:
-			messageString += "API";
-			break;
-		case GL_DEBUG_SOURCE_WINDOW_SYSTEM:
-			messageString += "WINDOW SYSTEM";
-			break;
-		case GL_DEBUG_SOURCE_SHADER_COMPILER:
-			messageString += "SHADER COMPILER";
-			break;
-		case GL_DEBUG_SOURCE_THIRD_PARTY:
-			messageString += "THIRD PARTY";
-			break;
-		case GL_DEBUG_SOURCE_APPLICATION:
-			messageString += "APPLICATION";
-			break;
-		case GL_DEBUG_SOURCE_OTHER:
-			messageString += "OTHER";
-			break;
-	}
-
-	messageString += ", Type: ";
-	switch (type)
-	{
-		case GL_DEBUG_TYPE_ERROR:
-			messageString += "ERROR";
-			break;
-		case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
-			messageString += "DEPRECATED BEHAVIOR";
-			break;
-		case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
-			messageString += "UNDEFINED BEHAVIOR";
-			break;
-		case GL_DEBUG_TYPE_PORTABILITY:
-			messageString += "PORTABILITY";
-			break;
-		case GL_DEBUG_TYPE_PERFORMANCE:
-			messageString += "PERFORMANCE";
-			break;
-		case GL_DEBUG_TYPE_MARKER:
-			messageString += "MARKER";
-			break;
-		case GL_DEBUG_TYPE_PUSH_GROUP:
-			messageString += "PUSH GROUP";
-			break;
-		case GL_DEBUG_TYPE_POP_GROUP:
-			messageString += "POP GROUP";
-			break;
-		case GL_DEBUG_TYPE_OTHER:
-			messageString += "OTHER";
-			break;
-		default:
-			messageString += "UNKOWN";
-	}
-	messageString += ", Message: ";
-	messageString += message;
-
-	return;
-}
-
 qboolean create_window (int x, int y, int w, int h, qboolean fullscreen)
 {
 	Uint32 flags = SDL_WINDOW_SHOWN | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_OPENGL;
@@ -153,8 +54,18 @@ qboolean create_window (int x, int y, int w, int h, qboolean fullscreen)
 	SDL_GL_SetAttribute (SDL_GL_CONTEXT_MAJOR_VERSION, 4);
 	SDL_GL_SetAttribute (SDL_GL_CONTEXT_MINOR_VERSION, 3);
 	SDL_GL_SetAttribute (SDL_GL_ACCELERATED_VISUAL, 1);
-	SDL_GL_SetAttribute (SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
+
+	if (re.renderer_type == RendererTypes::OpenGL_Modern)
+	{
+		SDL_GL_SetAttribute (SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+	}
+	else
+	{
+		SDL_GL_SetAttribute (SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
+	}
+	
 	SDL_GL_SetAttribute (SDL_GL_DOUBLEBUFFER, 1);
+	SDL_GL_SetAttribute (SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
 
 	g_window = SDL_CreateWindow ("Quake 2", x, y, w, h, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_ALLOW_HIGHDPI);
 	SDL_assert (g_window);
@@ -178,6 +89,8 @@ qboolean create_window (int x, int y, int w, int h, qboolean fullscreen)
 	g_windowdata.rect.bottom = y + h;
 	g_windowdata.rect.right	 = x + h;
 	g_windowdata.rect.top	 = y;
+
+
 
 	return e_true;
 }

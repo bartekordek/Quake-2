@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 // r_main.c
+#include "shared/assert.h"
 #include <GL/glew.h>
 #include "ref_gl/gl_local.h"
 #include "ref_gl/gl_draw.h"
@@ -132,6 +133,12 @@ cvar_t *gl_3dlabs_broken;
 cvar_t *vid_fullscreen;
 cvar_t *vid_gamma;
 cvar_t *vid_ref;
+
+void APIENTRY glDebugOutput (GLenum source, GLenum type, unsigned int id, GLenum severity, GLsizei length,
+							 const char *  // message
+							 ,
+							 const void *  // userParam
+);
 
 /*
 =================
@@ -1218,80 +1225,83 @@ int R_Init (void *hinstance, void *hWnd)
 	** grab extensions
 	*/
 #ifdef WIN32
-	if (strstr (gl_config.extensions_string, "GL_EXT_compiled_vertex_array") ||
-		strstr (gl_config.extensions_string, "GL_SGI_compiled_vertex_array"))
+	if (gl_config.extensions_string)
 	{
-		ri.Con_Printf (PRINT_ALL, "...enabling GL_EXT_compiled_vertex_array\n");
-		qglLockArraysEXT   = (void *) qwglGetProcAddress ("glLockArraysEXT");
-		qglUnlockArraysEXT = (void *) qwglGetProcAddress ("glUnlockArraysEXT");
-	}
-	else
-	{
-		ri.Con_Printf (PRINT_ALL, "...GL_EXT_compiled_vertex_array not found\n");
-	}
-
-	if (strstr (gl_config.extensions_string, "WGL_EXT_swap_control"))
-	{
-		qwglSwapIntervalEXT = (BOOL (WINAPI *) (int)) qwglGetProcAddress ("wglSwapIntervalEXT");
-		ri.Con_Printf (PRINT_ALL, "...enabling WGL_EXT_swap_control\n");
-	}
-	else
-	{
-		ri.Con_Printf (PRINT_ALL, "...WGL_EXT_swap_control not found\n");
-	}
-
-	if (strstr (gl_config.extensions_string, "GL_EXT_point_parameters"))
-	{
-		if (gl_ext_pointparameters->value)
+		if (strstr (gl_config.extensions_string, "GL_EXT_compiled_vertex_array") ||
+			strstr (gl_config.extensions_string, "GL_SGI_compiled_vertex_array"))
 		{
-			qglPointParameterfEXT  = (void (APIENTRY *) (GLenum, GLfloat)) qwglGetProcAddress ("glPointParameterfEXT");
-			qglPointParameterfvEXT = (void (APIENTRY *) (GLenum, const GLfloat *)) qwglGetProcAddress ("glPointParameterfvEXT");
-			ri.Con_Printf (PRINT_ALL, "...using GL_EXT_point_parameters\n");
+			ri.Con_Printf (PRINT_ALL, "...enabling GL_EXT_compiled_vertex_array\n");
+			qglLockArraysEXT   = (void *) qwglGetProcAddress ("glLockArraysEXT");
+			qglUnlockArraysEXT = (void *) qwglGetProcAddress ("glUnlockArraysEXT");
 		}
 		else
 		{
-			ri.Con_Printf (PRINT_ALL, "...ignoring GL_EXT_point_parameters\n");
+			ri.Con_Printf (PRINT_ALL, "...GL_EXT_compiled_vertex_array not found\n");
 		}
-	}
-	else
-	{
-		ri.Con_Printf (PRINT_ALL, "...GL_EXT_point_parameters not found\n");
-	}
 
-	if (strstr (gl_config.extensions_string, "GL_EXT_paletted_texture") &&
-		strstr (gl_config.extensions_string, "GL_EXT_shared_texture_palette"))
-	{
-		if (gl_ext_palettedtexture->value)
+		if (strstr (gl_config.extensions_string, "WGL_EXT_swap_control"))
 		{
-			ri.Con_Printf (PRINT_ALL, "...using GL_EXT_shared_texture_palette\n");
-			qglColorTableEXT = (void (APIENTRY *) (int, int, int, int, int, const void *)) qwglGetProcAddress ("glColorTableEXT");
+			qwglSwapIntervalEXT = (BOOL (WINAPI *) (int)) qwglGetProcAddress ("wglSwapIntervalEXT");
+			ri.Con_Printf (PRINT_ALL, "...enabling WGL_EXT_swap_control\n");
 		}
 		else
 		{
-			ri.Con_Printf (PRINT_ALL, "...ignoring GL_EXT_shared_texture_palette\n");
+			ri.Con_Printf (PRINT_ALL, "...WGL_EXT_swap_control not found\n");
 		}
-	}
-	else
-	{
-		ri.Con_Printf (PRINT_ALL, "...GL_EXT_shared_texture_palette not found\n");
-	}
 
-	if (strstr (gl_config.extensions_string, "GL_SGIS_multitexture"))
-	{
-		if (gl_ext_multitexture->value)
+		if (strstr (gl_config.extensions_string, "GL_EXT_point_parameters"))
 		{
-			ri.Con_Printf (PRINT_ALL, "...using GL_SGIS_multitexture\n");
-			qglMTexCoord2fSGIS	 = (void *) qwglGetProcAddress ("glMTexCoord2fSGIS");
-			qglSelectTextureSGIS = (void *) qwglGetProcAddress ("glSelectTextureSGIS");
+			if (gl_ext_pointparameters->value)
+			{
+				qglPointParameterfEXT  = (void (APIENTRY *) (GLenum, GLfloat)) qwglGetProcAddress ("glPointParameterfEXT");
+				qglPointParameterfvEXT = (void (APIENTRY *) (GLenum, const GLfloat *)) qwglGetProcAddress ("glPointParameterfvEXT");
+				ri.Con_Printf (PRINT_ALL, "...using GL_EXT_point_parameters\n");
+			}
+			else
+			{
+				ri.Con_Printf (PRINT_ALL, "...ignoring GL_EXT_point_parameters\n");
+			}
 		}
 		else
 		{
-			ri.Con_Printf (PRINT_ALL, "...ignoring GL_SGIS_multitexture\n");
+			ri.Con_Printf (PRINT_ALL, "...GL_EXT_point_parameters not found\n");
 		}
-	}
-	else
-	{
-		ri.Con_Printf (PRINT_ALL, "...GL_SGIS_multitexture not found\n");
+
+		if (strstr (gl_config.extensions_string, "GL_EXT_paletted_texture") &&
+			strstr (gl_config.extensions_string, "GL_EXT_shared_texture_palette"))
+		{
+			if (gl_ext_palettedtexture->value)
+			{
+				ri.Con_Printf (PRINT_ALL, "...using GL_EXT_shared_texture_palette\n");
+				qglColorTableEXT = (void (APIENTRY *) (int, int, int, int, int, const void *)) qwglGetProcAddress ("glColorTableEXT");
+			}
+			else
+			{
+				ri.Con_Printf (PRINT_ALL, "...ignoring GL_EXT_shared_texture_palette\n");
+			}
+		}
+		else
+		{
+			ri.Con_Printf (PRINT_ALL, "...GL_EXT_shared_texture_palette not found\n");
+		}
+
+		if (strstr (gl_config.extensions_string, "GL_SGIS_multitexture"))
+		{
+			if (gl_ext_multitexture->value)
+			{
+				ri.Con_Printf (PRINT_ALL, "...using GL_SGIS_multitexture\n");
+				qglMTexCoord2fSGIS	 = (void *) qwglGetProcAddress ("glMTexCoord2fSGIS");
+				qglSelectTextureSGIS = (void *) qwglGetProcAddress ("glSelectTextureSGIS");
+			}
+			else
+			{
+				ri.Con_Printf (PRINT_ALL, "...ignoring GL_SGIS_multitexture\n");
+			}
+		}
+		else
+		{
+			ri.Con_Printf (PRINT_ALL, "...GL_SGIS_multitexture not found\n");
+		}
 	}
 #endif
 
@@ -1313,10 +1323,27 @@ int R_Init (void *hinstance, void *hWnd)
 	if (err != GL_NO_ERROR)
 		ri.Con_Printf (PRINT_ALL, "glGetError() = 0x%x\n", err);
 
-	
+	glewExperimental			= 1;
 	const auto glew_init_result = glewInit ();
 	Q2_Assert (glew_init_result == GLEW_OK, "Cannot initialize glew.");
 	// GLEW_OK
+	
+
+	if (glDebugMessageCallback)
+	{
+		glDebugMessageCallback (glDebugOutput, 0);
+		glEnable (GL_DEBUG_OUTPUT);
+		glEnable (GL_DEBUG_OUTPUT_SYNCHRONOUS);
+		//checkLastCommandForErrors ();
+
+		// glEnable( GL_DEBUG_OUTPUT );
+		// checkLastCommandForErrors();
+
+		// glDebugMessageCallback( glDebugOutput, 0 );
+		////checkLastCommandForErrors();
+
+		// glEnable( GL_DEBUG_OUTPUT_SYNCHRONOUS );
+	}
 }
 
 /*
@@ -1398,22 +1425,26 @@ void R_BeginFrame (float camera_separation)
 		}
 	}
 
+	glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClearColor (0.f, 0.f, 0.f, 0.f);
+
 	GLimp_BeginFrame (camera_separation);
 
 	/*
 	** go into 2D mode
 	*/
-	qglViewport (0, 0, vid.width, vid.height);
-	qglMatrixMode (GL_PROJECTION);
-	qglLoadIdentity ();
-	qglOrtho (0, vid.width, vid.height, 0, -99999, 99999);
-	qglMatrixMode (GL_MODELVIEW);
-	qglLoadIdentity ();
-	qglDisable (GL_DEPTH_TEST);
-	qglDisable (GL_CULL_FACE);
-	qglDisable (GL_BLEND);
-	qglEnable (GL_ALPHA_TEST);
-	qglColor4f (1, 1, 1, 1);
+
+	//qglViewport (0, 0, vid.width, vid.height);
+	//qglMatrixMode (GL_PROJECTION);
+	//qglLoadIdentity ();
+	//qglOrtho (0, vid.width, vid.height, 0, -99999, 99999);
+	//qglMatrixMode (GL_MODELVIEW);
+	//qglLoadIdentity ();
+	//qglDisable (GL_DEPTH_TEST);
+	//qglDisable (GL_CULL_FACE);
+	//qglDisable (GL_BLEND);
+	//qglEnable (GL_ALPHA_TEST);
+	//qglColor4f (1, 1, 1, 1);
 
 	/*
 	** draw buffer stuff
@@ -1667,3 +1698,126 @@ void Com_Printf (const char *fmt, ...)
 }
 
 #endif
+
+
+void APIENTRY glDebugOutput (GLenum source, GLenum type, unsigned int id, GLenum severity, GLsizei length, const char *message,
+							 const void *userParam)
+{
+	if (id == 131185)
+	{
+		// Buffer detailed info: Buffer object [x] (bound to GL_ARRAY_BUFFER_ARB, usage hint is GL_STATIC_DRAW) will use VIDEO memory as the
+		// source for buffer object operations.
+		// https://stackoverflow.com/questions/62248552/opengl-debug-context-warning-will-use-video-memory-as-the-source-for-buffer-o
+		// can be safely ignored.
+		return;
+	}
+
+
+	char error_buffer[1024];
+	char tmp[1024];
+
+	sprintf (error_buffer, "%s", "glDebugOutput Severity:");
+	sprintf (tmp, "%s", error_buffer);
+
+	switch (severity)
+	{
+		case GL_DEBUG_SEVERITY_HIGH:
+			sprintf (error_buffer, "%s HIGH", tmp);
+			sprintf (tmp, "%s", error_buffer);
+			break;
+		case GL_DEBUG_SEVERITY_MEDIUM:
+			sprintf (error_buffer, "%s %s", tmp, "MEDIUM");
+			sprintf (tmp, "%s", error_buffer);
+			break;
+		case GL_DEBUG_SEVERITY_LOW:
+			sprintf (error_buffer, "%s %s", tmp, "LOW");
+			sprintf (tmp, "%s", error_buffer);
+			break;
+		case GL_DEBUG_SEVERITY_NOTIFICATION:
+			sprintf (error_buffer, "%s %s", tmp, "NOTIFICATION");
+			sprintf (tmp, "%s", error_buffer);
+			break;
+	}
+
+	sprintf (error_buffer, "%s %s", tmp, ", Source: ");
+	sprintf (tmp, "%s", error_buffer);
+
+	switch (source)
+	{
+		case GL_DEBUG_SOURCE_API:
+			sprintf (error_buffer, "%s %s", tmp, "API");
+			sprintf (tmp, "%s", error_buffer);
+			break;
+		case GL_DEBUG_SOURCE_WINDOW_SYSTEM:
+			sprintf (error_buffer, "%s %s", tmp, "WINDOW SYSTEM");
+			sprintf (tmp, "%s", error_buffer);
+			break;
+		case GL_DEBUG_SOURCE_SHADER_COMPILER:
+			sprintf (error_buffer, "%s %s", tmp, "SHADER COMPILER");
+			sprintf (tmp, "%s", error_buffer);
+			break;
+		case GL_DEBUG_SOURCE_THIRD_PARTY:
+			sprintf (error_buffer, "%s %s", tmp, "THIRD PARTY");
+			sprintf (tmp, "%s", error_buffer);
+			break;
+		case GL_DEBUG_SOURCE_APPLICATION:
+			sprintf (error_buffer, "%s %s", tmp, "APPLICATION");
+			sprintf (tmp, "%s", error_buffer);
+			break;
+		case GL_DEBUG_SOURCE_OTHER:
+			sprintf (error_buffer, "%s %s", tmp, "OTHER");
+			sprintf (tmp, "%s", error_buffer);
+			break;
+	}
+
+	sprintf (error_buffer, "%s %s", tmp, ", Type: ");
+	sprintf (tmp, "%s", error_buffer);
+	switch (type)
+	{
+		case GL_DEBUG_TYPE_ERROR:
+			sprintf (error_buffer, "%s %s", tmp, "ERROR");
+			sprintf (tmp, "%s", error_buffer);
+			break;
+		case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
+			sprintf (error_buffer, "%s %s", tmp, "DEPRECATED BEHAVIOR");
+			sprintf (tmp, "%s", error_buffer);
+			break;
+		case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
+			sprintf (error_buffer, "%s %s", tmp, "UNDEFINED BEHAVIOR");
+			sprintf (tmp, "%s", error_buffer);
+			break;
+		case GL_DEBUG_TYPE_PORTABILITY:
+			sprintf (error_buffer, "%s %s", tmp, "GL_DEBUG_TYPE_PORTABILITY");
+			sprintf (tmp, "%s", error_buffer);
+			break;
+		case GL_DEBUG_TYPE_PERFORMANCE:
+			sprintf (error_buffer, "%s %s", tmp, "GL_DEBUG_TYPE_PERFORMANCE");
+			sprintf (tmp, "%s", error_buffer);
+			break;
+		case GL_DEBUG_TYPE_MARKER:
+			sprintf (error_buffer, "%s %s", tmp, "GL_DEBUG_TYPE_MARKER");
+			sprintf (tmp, "%s", error_buffer);
+			break;
+		case GL_DEBUG_TYPE_PUSH_GROUP:
+			sprintf (error_buffer, "%s %s", tmp, "GL_DEBUG_TYPE_PUSH_GROUP");
+			sprintf (tmp, "%s", error_buffer);
+
+			break;
+		case GL_DEBUG_TYPE_POP_GROUP:
+			sprintf (error_buffer, "%s %s", tmp, "GL_DEBUG_TYPE_POP_GROUP");
+			sprintf (tmp, "%s", error_buffer);
+			break;
+		case GL_DEBUG_TYPE_OTHER:
+			sprintf (error_buffer, "%s %s", tmp, "GL_DEBUG_TYPE_OTHER");
+			sprintf (tmp, "%s", error_buffer);
+			break;
+		default:
+			sprintf (error_buffer, "%s %s", tmp, "UNKOWN");
+			sprintf (tmp, "%s", error_buffer);
+	}
+
+
+	sprintf (error_buffer, "%s, Message: %s", tmp, message);
+	Q2_Assert (severity != GL_DEBUG_SEVERITY_HIGH, error_buffer);
+	return;
+}

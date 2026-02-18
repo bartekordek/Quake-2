@@ -29,7 +29,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ** GLimp_Shutdown
 **
 */
+
 #include "ref_gl/gl_local.h"
+
 #include "shared/assert.h"
 
 #ifdef _WIN32
@@ -38,6 +40,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "ref_gl/glw_win.h"
 #include "ref_gl/glw.h"
+#include <string>
 //ToDo: do we really need to have this here?
 #include "../../quake2/inc/quake2/windows/winquake.h"
 #include "../../quake2/inc/quake2/video/VideoSettings.h"
@@ -52,6 +55,7 @@ static qboolean VerifyDriver (void)
 {
 	return e_true;
 }
+
 
 /*
 ** GLimp_SetMode
@@ -358,7 +362,7 @@ void GLimp_EndFrame (void)
 	
 	int err;
 
-	err = qglGetError ();
+	err = glGetError ();
 	assert (err == GL_NO_ERROR);
 
 	if (stricmp (gl_drawbuffer->string, "GL_BACK") == 0)

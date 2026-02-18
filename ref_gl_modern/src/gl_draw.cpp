@@ -20,11 +20,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 // draw.c
 
+#include <GL/glew.h>
 #include "ref_gl/gl_local.h"
 #include "ref_gl/gl_image.h"
 #include "ref_gl/gl_main.h"
 #include "ref_gl/gl_draw.h"
 #include "ref_gl/texture.hpp"
+#include "ref_gl/quad.hpp"
+#include "ref_gl/utils.hpp"
 #include <cmath>
 
 image_t *draw_chars;
@@ -38,9 +41,6 @@ void Draw_InitLocal (void)
 {
 	// load console characters (don't bilerp characters)
 	draw_chars = GL_FindImage ("pics/conchars.pcx", it_pic);
-	GL_BindTexture (draw_chars->texnum);
-	qglTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	qglTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 }
 
 /*
@@ -52,38 +52,61 @@ It can be clipped to the top of the screen to allow the console to be
 smoothly scrolled off.
 ================
 */
-void Draw_Char (int x, int y, int num)
+void Draw_Char (int int_x, int int_y, int num)
 {
-	int	  row, col;
-	float frow, fcol, size;
-
 	num &= 255;
 
 	if ((num & 127) == 32)
 		return;	 // space
 
-	if (y <= -8)
+	if (int_y <= -8)
 		return;	 // totally off screen
 
-	row	 = num >> 4;
-	col	 = num & 15;
+	const float row = num >> 4;
+	const float col = num & 15;
 
-	frow = row * 0.0625;
-	fcol = col * 0.0625;
-	size = 0.0625;
+	static Q2::Texture font_atlas_tex (draw_chars, "pics/conchars.pcx");
+	const float		   width	 = font_atlas_tex.get_width ();
+	const float		   height	 = font_atlas_tex.get_height ();
+	constexpr float	   char_size = 8.f;
+	const float		   fraction	 = char_size / width;
+	const float		   frow		 = row * fraction;
+	const float		   fcol		 = col * fraction;
 
-	GL_BindTexture (draw_chars->texnum);
+	const float x0				 = Q2::to_x_normalized (int_x);
+	const float y0				 = Q2::to_y_normalized (int_y);
+	const float x1				 = Q2::to_x_normalized (int_x + char_size);
+	const float y1				 = Q2::to_y_normalized (int_y + char_size);
 
-	qglBegin (GL_QUADS);
-	qglTexCoord2f (fcol, frow);
-	qglVertex2f (x, y);
-	qglTexCoord2f (fcol + size, frow);
-	qglVertex2f (x + 8, y);
-	qglTexCoord2f (fcol + size, frow + size);
-	qglVertex2f (x + 8, y + 8);
-	qglTexCoord2f (fcol, frow + size);
-	qglVertex2f (x, y + 8);
-	qglEnd ();
+	const float Upx				 = width * fcol;
+	const float Vpx				 = height * frow;
+	const float Upx2			 = Upx / 0.0625;
+	const float Vpx2			 = Vpx / 0.0625;
+
+	const float size			 = char_size / width;
+
+	static Q2::PosAndUV pau;
+	pau.Data[0].U = fcol + size;
+	pau.Data[0].V = frow;
+	pau.Data[0].X = x1;
+	pau.Data[0].Y = y0;
+
+	pau.Data[1].U = fcol;
+	pau.Data[1].V = frow + size;
+	pau.Data[1].X = x0;
+	pau.Data[1].Y = y1;
+
+	pau.Data[2].U = fcol + size;
+	pau.Data[2].V = frow + size;
+	pau.Data[2].X = x1;
+	pau.Data[2].Y = y1;
+
+	pau.Data[3].U = fcol;
+	pau.Data[3].V = frow;
+	pau.Data[3].X = x0;
+	pau.Data[3].Y = y0;
+
+	font_atlas_tex.draw (pau);
 }
 
 /*
@@ -171,34 +194,13 @@ Draw_Pic
 */
 void Draw_Pic (int x, int y, char *pic)
 {
-	image_t *gl;
-
-	gl = Draw_FindPic (pic);
-	if (!gl)
-	{
-		ri.Con_Printf (PRINT_ALL, "Can't find pic: %s\n", pic);
-		return;
-	}
 	if (scrap_dirty)
 		Scrap_Upload ();
 
-	if (((gl_config.renderer == GL_RENDERER_MCD) || (gl_config.renderer & GL_RENDERER_RENDITION)) && !gl->has_alpha)
-		qglDisable (GL_ALPHA_TEST);
-
-	GL_BindTexture (gl->texnum);
-	qglBegin (GL_QUADS);
-	qglTexCoord2f (gl->sl, gl->tl);
-	qglVertex2f (x, y);
-	qglTexCoord2f (gl->sh, gl->tl);
-	qglVertex2f (x + gl->width, y);
-	qglTexCoord2f (gl->sh, gl->th);
-	qglVertex2f (x + gl->width, y + gl->height);
-	qglTexCoord2f (gl->sl, gl->th);
-	qglVertex2f (x, y + gl->height);
-	qglEnd ();
-
-	if (((gl_config.renderer == GL_RENDERER_MCD) || (gl_config.renderer & GL_RENDERER_RENDITION)) && !gl->has_alpha)
-		qglEnable (GL_ALPHA_TEST);
+	Q2::Texture* texture = Q2::TextureStore::get_instance ().get_or_create (pic);
+	texture->fetch_uv_and_apply_them ();
+	texture->set_pos_global (x, y);
+	texture->draw ();
 }
 
 /*
@@ -211,32 +213,38 @@ refresh window.
 */
 void Draw_TileClear (int x, int y, int w, int h, char *pic)
 {
-	image_t *image;
+	//Q2::RenderData rd;
 
-	image = Draw_FindPic (pic);
-	if (!image)
-	{
-		ri.Con_Printf (PRINT_ALL, "Can't find pic: %s\n", pic);
-		return;
-	}
+	//Q2::Texture *texture = Q2::TextureStore::get_instance ().get (pic);
+	//if (texture == nullptr)
+	//{
+	//	texture = Q2::TextureStore::get_instance ().get_or_create (pic);
+	//	rd.alphaTest   = (gl_config.renderer == GL_RENDERER_MCD) || (gl_config.renderer & GL_RENDERER_RENDITION);
+	//}
 
-	if (((gl_config.renderer == GL_RENDERER_MCD) || (gl_config.renderer & GL_RENDERER_RENDITION)) && !image->has_alpha)
-		qglDisable (GL_ALPHA_TEST);
+	//texture->draw ();
 
-	GL_BindTexture (image->texnum);
-	qglBegin (GL_QUADS);
-	qglTexCoord2f (x / 64.0, y / 64.0);
-	qglVertex2f (x, y);
-	qglTexCoord2f ((x + w) / 64.0, y / 64.0);
-	qglVertex2f (x + w, y);
-	qglTexCoord2f ((x + w) / 64.0, (y + h) / 64.0);
-	qglVertex2f (x + w, y + h);
-	qglTexCoord2f (x / 64.0, (y + h) / 64.0);
-	qglVertex2f (x, y + h);
-	qglEnd ();
+	//if (
+	//	((gl_config.renderer == GL_RENDERER_MCD) || (gl_config.renderer & GL_RENDERER_RENDITION)) && !image->has_alpha
+	//)
+	//{
+	//	qglDisable (GL_ALPHA_TEST);
+	//}
 
-	if (((gl_config.renderer == GL_RENDERER_MCD) || (gl_config.renderer & GL_RENDERER_RENDITION)) && !image->has_alpha)
-		qglEnable (GL_ALPHA_TEST);
+	//GL_BindTexture (image->texnum);
+	//qglBegin (GL_QUADS);
+	//qglTexCoord2f (x / 64.0, y / 64.0);
+	//qglVertex2f (x, y);
+	//qglTexCoord2f ((x + w) / 64.0, y / 64.0);
+	//qglVertex2f (x + w, y);
+	//qglTexCoord2f ((x + w) / 64.0, (y + h) / 64.0);
+	//qglVertex2f (x + w, y + h);
+	//qglTexCoord2f (x / 64.0, (y + h) / 64.0);
+	//qglVertex2f (x, y + h);
+	//qglEnd ();
+
+	//if (((gl_config.renderer == GL_RENDERER_MCD) || (gl_config.renderer & GL_RENDERER_RENDITION)) && !image->has_alpha)
+	//	qglEnable (GL_ALPHA_TEST);
 }
 
 /*
@@ -257,21 +265,21 @@ void Draw_Fill (int x, int y, int w, int h, int c)
 	if ((unsigned) c > 255)
 		ri.Sys_Error (ERR_FATAL, "Draw_Fill: bad color");
 
-	qglDisable (GL_TEXTURE_2D);
-
 	color.c = d_8to24table[c];
-	qglColor3f (color.v[0] / 255.0, color.v[1] / 255.0, color.v[2] / 255.0);
 
-	qglBegin (GL_QUADS);
+	static Q2::DrawData dd;
+	static Q2::Quad fillQuad;
 
-	qglVertex2f (x, y);
-	qglVertex2f (x + w, y);
-	qglVertex2f (x + w, y + h);
-	qglVertex2f (x, y + h);
+	dd.color.r = color.v[0] / 255.0f;
+	dd.color.g = color.v[1] / 255.0f;
+	dd.color.b = color.v[2] / 255.0f;
+	dd.pos.x   = x;
+	dd.pos.y   = y;
+	dd.pos.z   = 0.f;
+	dd.size.w  = w;
+	dd.size.h  = h;
 
-	qglEnd ();
-	qglColor3f (1, 1, 1);
-	qglEnable (GL_TEXTURE_2D);
+	fillQuad.draw (dd);
 }
 
 //=============================================================================
@@ -358,7 +366,7 @@ void Draw_StretchRaw (int x, int y, int w, int h, int cols, int rows, byte *data
 
 		rd.data_type	   = GL_UNSIGNED_BYTE;
 		rd.format		   = GL_RGBA;
-		rd.internal_format = gl_tex_solid_format;
+		rd.internal_format = GL_RGBA8;
 		rd.data			   = &image32;
 	}
 	else
@@ -387,7 +395,6 @@ void Draw_StretchRaw (int x, int y, int w, int h, int cols, int rows, byte *data
 		rd.data			   = &image8;
 	}
 
-	rd.alphaTest = (gl_config.renderer == GL_RENDERER_MCD) || (gl_config.renderer & GL_RENDERER_RENDITION);
 	rd.w		 = w;
 	rd.h		 = h;
 	rd.scale	 = t;

@@ -464,10 +464,16 @@ void Menu_DrawStringR2L( int x, int y, const char *string )
 void Menu_DrawStringR2LDark( int x, int y, const char *string )
 {
 	unsigned i;
+	char	 c;
+	int		 string_length;
+	int		 char_val;
+	string_length = strlen (string);
 
-	for ( i = 0; i < strlen( string ); i++ )
+	for (i = 0; i < string_length; i++)
 	{
-		Draw_Char( ( x - i*8 ), y, string[strlen(string)-i-1]+128 );
+		char_val = string[string_length - i - 1];
+		c		 = char_val;
+		Draw_Char ((x - i * 8), y, char_val + 128);
 	}
 }
 

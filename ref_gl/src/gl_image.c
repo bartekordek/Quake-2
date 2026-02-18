@@ -1238,7 +1238,7 @@ image_t *GL_LoadPic (const char *name, byte *pic, int width, int height, imagety
 	{
 	nonscrap:
 		image->scrap  = e_false;
-		image->texnum = TEXNUM_IMAGES + (image - gltextures);
+		qglGenTextures (1, image->texnum);
 		GL_Bind (image->texnum);
 		if (bits == 8)
 			image->has_alpha = GL_Upload8 (pic, width, height, (image->type != it_pic && image->type != it_sky), image->type == it_sky);

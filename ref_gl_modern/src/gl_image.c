@@ -19,8 +19,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "ref_gl/gl_image.h"
+#include <GL/glew.h>
 #include "ref_gl/gl_local.h"
 #include "ref_gl/gl_draw.h"
+
 
 image_t gltextures[MAX_GLTEXTURES];
 int		numgltextures;
@@ -43,7 +45,7 @@ int gl_tex_solid_format = 3;
 int gl_tex_alpha_format = 4;
 
 int gl_filter_min		= GL_LINEAR_MIPMAP_NEAREST;
-int gl_filter_max		= GL_LINEAR;
+int gl_filter_max		= GL_NEAREST;
 
 void GL_SetTexturePalette (unsigned palette[256])
 {
@@ -113,7 +115,7 @@ void GL_TexEnv (GLenum mode)
 
 	if (mode != lastmodes[gl_state.currenttmu])
 	{
-		qglTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, mode);
+		//qglTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, mode);
 		lastmodes[gl_state.currenttmu] = mode;
 	}
 }
@@ -376,8 +378,8 @@ int scrap_uploads;
 void Scrap_Upload (void)
 {
 	scrap_uploads++;
-	GL_BindTexture (TEXNUM_SCRAPS);
-	GL_Upload8 (scrap_texels[0], BLOCK_WIDTH, BLOCK_HEIGHT, e_false, e_false);
+	//GL_BindTexture (TEXNUM_SCRAPS);
+	//GL_Upload8 (scrap_texels[0], BLOCK_WIDTH, BLOCK_HEIGHT, e_false, e_false);
 	scrap_dirty = e_false;
 }
 
@@ -995,9 +997,9 @@ qboolean GL_Upload32 (unsigned *data, int width, int height, qboolean mipmap)
 	}
 
 	if (samples == gl_solid_format)
-		comp = gl_tex_solid_format;
+		comp = GL_RGB;
 	else if (samples == gl_alpha_format)
-		comp = gl_tex_alpha_format;
+		comp = GL_RGB8;
 	else
 	{
 		ri.Con_Printf (PRINT_ALL, "Unknown number of texture components %i\n", samples);
@@ -1030,7 +1032,21 @@ qboolean GL_Upload32 (unsigned *data, int width, int height, qboolean mipmap)
 			}
 			else
 			{
-				qglTexImage2D (GL_TEXTURE_2D, 0, comp, scaled_width, scaled_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+				if (samples == gl_solid_format)
+				{
+					qglTexImage2D (GL_TEXTURE_2D, 0, gl_tex_solid_format, scaled_width, scaled_height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+				}
+				else if (samples == gl_alpha_format)
+				{
+					glPixelStorei (GL_UNPACK_ALIGNMENT, 1);
+					glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+					glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+					glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+					glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+					qglTexImage2D (GL_TEXTURE_2D, 0, GL_RGBA8, scaled_width, scaled_height, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+								   data);
+				}
+				
 			}
 			goto done;
 		}
@@ -1211,7 +1227,8 @@ image_t *GL_LoadPic (const char *name, byte *pic, int width, int height, imagety
 		R_FloodFillSkin (pic, width, height);
 
 	// load little pics into the scrap
-	if (image->type == it_pic && bits == 8 && image->width < 64 && image->height < 64)
+	//if (image->type == it_pic && bits == 8 && image->width < 64 && image->height < 64)
+	if (0)
 	{
 		int x, y;
 		int i, j, k;
@@ -1226,7 +1243,7 @@ image_t *GL_LoadPic (const char *name, byte *pic, int width, int height, imagety
 		k			= 0;
 		for (i = 0; i < image->height; i++)
 			for (j = 0; j < image->width; j++, k++) scrap_texels[texnum][(y + i) * BLOCK_WIDTH + x + j] = pic[k];
-		image->texnum	 = TEXNUM_SCRAPS + texnum;
+		glGenTextures (1, &image->texnum);
 		image->scrap	 = e_true;
 		image->has_alpha = e_true;
 		image->sl		 = (x + 0.01) / (float) BLOCK_WIDTH;
@@ -1238,7 +1255,7 @@ image_t *GL_LoadPic (const char *name, byte *pic, int width, int height, imagety
 	{
 	nonscrap:
 		image->scrap  = e_false;
-		image->texnum = TEXNUM_IMAGES + (image - gltextures);
+		glGenTextures (1, &image->texnum);
 		GL_BindTexture (image->texnum);
 		if (bits == 8)
 			image->has_alpha = GL_Upload8 (pic, width, height, (image->type != it_pic && image->type != it_sky), image->type == it_sky);
