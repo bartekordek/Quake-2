@@ -1,4 +1,5 @@
 #include "ref_gl/shader.hpp"
+#include "shared/assert.h"
 #include <GL/glew.h>
 #include <fstream>
 #include <sstream>
@@ -39,9 +40,23 @@ void Shader::init (const char *vertex_shader, const char *fragment_shader)
 	glShaderSource (m_fragment_id, 1, &frag_code_cstr, NULL);
 	glCompileShader (m_fragment_id);
 
+	int	 success{1};
+	char infoLog[512];
+	glGetShaderiv (m_fragment_id, GL_COMPILE_STATUS, &success);
+	if (!success)
+	{
+		glGetShaderInfoLog (m_fragment_id, 512, NULL, infoLog);
+		Q2_Assert (false, infoLog);
+	}
+
 	const char *vert_code_cstr = vertex_code.c_str ();
 	glShaderSource (m_vertex_id, 1, &vert_code_cstr, NULL);
 	glCompileShader (m_vertex_id);
+	if (!success)
+	{
+		glGetShaderInfoLog (m_vertex_id, 512, NULL, infoLog);
+		Q2_Assert (false, infoLog);
+	}
 
 	glAttachShader (m_program_id, m_vertex_id);
 	glAttachShader (m_program_id, m_fragment_id);
