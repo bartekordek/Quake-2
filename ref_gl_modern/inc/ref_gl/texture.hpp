@@ -7,25 +7,13 @@
 #include <memory>
 #include <unordered_map>
 
+
+struct image_s;
+typedef image_s image_t;
+
 namespace Q2
 {
 class Shader;
-
-struct AttributeMeta
-{
-	std::string name;
-	int			index	   = 0;
-	int			size	   = 0;
-	unsigned	type	   = 0;
-	bool		normalized = false;
-	int			stride	   = 0;
-	void	   *pointer	   = nullptr;
-
-	AttributeMeta (const std::string &inName, int inIndex, int inSize, int inType, bool inNormalized, int inStride, void *inPointer)
-		: name (inName), index (inIndex), size (inSize), type (inType), normalized (inNormalized), stride (inStride), pointer (inPointer)
-	{
-	}
-};
 
 struct RenderData
 {
@@ -49,35 +37,80 @@ struct RenderData
 	void *data{nullptr};
 };
 
+struct TextureVertex
+{
+	float X{0.f};
+	float Y{0.f};
+	float U{0.f};
+	float V{0.f};
+};
+
+enum class ColorMode: std::uint8_t
+{
+	RGBA = 0u,
+	RGBM
+};
+
+struct PosAndUV
+{
+	std::array<TextureVertex, 4> Data;
+};
+
 class Texture
 {
 public:
 	Texture ();
-	void			init ();
-	void			draw (const RenderData &inData);
-	void			changeScale (float in_scale);
+	Texture (image_t *in_image, const char* in_name);
+	void			   init ();
+	void			   draw ();
+	void			   draw (const RenderData &inData);
+	void			   draw (const PosAndUV &in_data);
+	void			   changeScale (float in_scale);
+	void			   set_has_alpha (bool inHasAlpha);
+	bool			   has_alpha () const;
+	const std::string &get_path () const;
+	void			   set_path (const std::string &inPath);
+	void			   set_pos (float in_x, float in_y);
+	void			   set_pos_global (float in_x, float in_y);
+	void			   fetch_uv_and_apply_them ();
+	float			   get_width () const;
+	float			   get_height () const;
+
 	~Texture ();
 
 	Q2_NONCOPYABLE (Texture)
 protected:
 private:
-
-	
-	static std::array<float, 32> createBufferData (float in_scale);
-	
-
-	std::uint32_t			m_vao{0u};
-	std::uint32_t			m_vbo{0u};
-	std::uint32_t			m_ebo{0u};
-	std::unique_ptr<Shader> m_shader;
-	float					m_scale{1.0f};
+	std::array<float, 32>		 createBufferData (float in_scale) const;
+	std::array<float, 32>		 createBufferData (const std::array<TextureVertex, 4> &in_arg) const;
+	void						 update_buffer_data ();
+	void						 initialize_data ();
+	void						 fetch_uv ();
+	ColorMode					 m_colorMode{ColorMode::RGBA};
+	image_t						*m_image{nullptr};
+	std::array<TextureVertex, 4> m_data;
+	float						 m_x{-1.f};
+	float						 m_y{-1.f};
+	float						 m_width{2.f};
+	float						 m_height{2.f};
+	float						 m_scale{1.0f};
+	std::int32_t				 m_id{-1};
+	std::string					 m_path;
+	bool						 m_hasAlpha{false};
+	std::uint32_t				 m_vao{0u};
+	std::uint32_t				 m_vbo{0u};
+	std::uint32_t				 m_ebo{0u};
+	std::unique_ptr<Shader>		 m_shader;
 };
 
 class TextureStore
 {
 public:
+	friend Texture;
+
 	static TextureStore &get_instance ();
-	Texture				*getOrCreate (const std::string &inName);
+	Texture				*get (const std::string &inName) const;
+	Texture				*get_or_create (const std::string &inName);
 
 protected:
 private:
