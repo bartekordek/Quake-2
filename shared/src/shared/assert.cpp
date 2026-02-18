@@ -5,6 +5,10 @@
 #include <cstdarg>
 #include <cstdio>
 
+#if Q2_WINDOWS 
+#include <windows.h>
+#endif // Q2_WINDOWS
+
 #define assertm(exp, msg) assert ((void (msg), exp))
 
 void Q2_Assert (int value, const char *msg...)
@@ -14,7 +18,6 @@ void Q2_Assert (int value, const char *msg...)
 		return;
 	}
 
-
 	va_list args;
 	va_start (args, msg);
 
@@ -23,6 +26,10 @@ void Q2_Assert (int value, const char *msg...)
 	snprintf (buffer, bufferSize, msg, args);
 
 	va_end (args);
+
+#if Q2_WINDOWS
+	OutputDebugStringA (buffer);
+#endif	// #if Q2_WINDOWS
 
 	assertm (0, buffer);
 }
