@@ -8,6 +8,18 @@ namespace Q2
 {
 Quad::Quad ()
 {
+	init ();
+}
+
+Quad::Quad (const char *in_name)
+{
+	init ();
+	m_name = in_name;
+	set_name (in_name);
+}
+
+void Quad::init ()
+{
 	initialize_data ();
 	const std::array<float, 28> vertices  = createBufferData (m_raw_data);
 	unsigned int				indices[] = {
@@ -39,6 +51,23 @@ Quad::Quad ()
 
 	m_shader = std::make_unique<Shader> ();
 	m_shader->init ("../shaders/quad.vert", "../shaders/quad.frag");
+}
+
+void Quad::set_name (const char *in_name)
+{
+	m_name = in_name;
+	char buffer[256u];
+
+	sprintf (buffer, "VAO: %s", in_name);
+	glObjectLabel (GL_VERTEX_ARRAY, m_vao, -1, buffer);
+
+	sprintf (buffer, "VBO: %s", in_name);
+	glObjectLabel (GL_BUFFER, m_vbo, -1, buffer);
+
+	sprintf (buffer, "IBO: %s", in_name);
+	glObjectLabel (GL_BUFFER, m_ebo, -1, buffer);
+
+	m_shader->set_name (in_name);
 }
 
 void Quad::initialize_data()

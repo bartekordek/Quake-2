@@ -13,7 +13,7 @@ float to_x_normalized (float in_x)
 
 float to_y_normalized (float in_y)
 {
-	return 1.f - 2.f * in_y / static_cast<float> (vid.height);
+	return (2.f * in_y / static_cast<float> (vid.height)) - 1.f;
 }
 
 float to_x_normalized(float in_x, float width)

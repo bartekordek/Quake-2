@@ -4,6 +4,7 @@
 #include "shared/noncopyable.hpp"
 #include <array>
 #include <memory>
+#include <string>
 
 namespace Q2
 {
@@ -47,17 +48,22 @@ class Quad
 {
 public:
 	Quad ();
+	
+	Quad (const char *in_name);
 
 	void draw (const DrawData &in_data);
+	void set_name (const char *in_name);
 
 	~Quad ();
 
 	Q2_NONCOPYABLE (Quad)
 protected:
 private:
+	void					  init ();
 	void					  initialize_data ();
 	std::array<float, 28>	  createBufferData (const std::array<QuadVertex, 4> &in_arg) const;
 	void					  update_buffer_data ();
+	std::string				  m_name;
 	DrawData				  m_data;
 	std::array<QuadVertex, 4> m_raw_data;
 	std::uint32_t			  m_vao{0u};

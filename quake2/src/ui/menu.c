@@ -406,8 +406,7 @@ void M_Main_Draw (void)
 	{
 		if (i != m_main_cursor)
 		{
-			float y = ystart + i * 40 + 13;
-			re.DrawPic (xoffset, y, names[i]);
+			re.DrawPic (xoffset, ystart + i * 40 + 13, names[i]);
 		}
 	}
 	strcpy (litname, names[m_main_cursor]);
@@ -417,13 +416,9 @@ void M_Main_Draw (void)
 	M_DrawCursor (xoffset - 25, ystart + m_main_cursor * 40 + 11, (int) (cls.realtime / 100) % NUM_CURSOR_FRAMES);
 
 	re.DrawGetPicSize (&w, &h, "m_main_plaque");
-	const float fh = (float)h;
-	first_y += (fh / 2.f);
-	re.DrawPic (xoffset - 30 - w, first_y, "m_main_plaque");
+	re.DrawPic (xoffset - 30 - w, ystart, "m_main_plaque");
 
-	re.DrawGetPicSize (&w, &h, "m_main_logo");
-	first_y += h + 5;
-	re.DrawPic (xoffset - 30 - w, first_y, "m_main_logo");
+	re.DrawPic (xoffset - 30 - w, ystart + h + 5, "m_main_logo");
 }
 
 const char *M_Main_Key (int key)
@@ -3837,7 +3832,7 @@ void M_Quit_Draw (void)
 	int w, h;
 
 	re.DrawGetPicSize (&w, &h, "quit");
-	re.DrawPic ((viddef.width - w) / 2, 0, "quit");
+	re.DrawPic ((viddef.width - w) / 2, (viddef.height - h) / 2, "quit");
 }
 
 void M_Menu_Quit_f (void)

@@ -65,19 +65,22 @@ Texture::Texture ()
 	init ();
 }
 
+Texture::Texture (const char *in_name)
+{
+	init ();
+	glGenTextures (1, &m_id);
+	set_name (in_name);
+}
+
 Texture::Texture (image_t *in_image, const char *in_name)
 {
+	m_name	= in_name;
 	m_image = in_image;
 	m_id	= m_image->texnum;
 	init ();
 	m_colorMode = ColorMode::RGBM;
 
-
-
-	glObjectLabel (GL_TEXTURE,	// object type
-				   m_id,		// OpenGL object name
-				   -1,			// null-terminated string
-				   in_name);
+	set_name (in_name);
 }
 
 void Texture::init ()
@@ -174,6 +177,29 @@ void Texture::set_path (const std::string &inPath)
 					   -1,			// null-terminated string
 					   buffer);
 	}
+
+	set_name (inPath.c_str ());
+}
+
+void Texture::set_name (const char *in_name)
+{
+	char buffer[256u];
+
+	glBindTexture (GL_TEXTURE_2D, m_id); 
+
+	sprintf (buffer, "Texture: %s", in_name);
+	glObjectLabel (GL_TEXTURE, m_id, -1, buffer);
+
+	sprintf (buffer, "VAO: %s", in_name);
+	glObjectLabel (GL_VERTEX_ARRAY, m_vao, -1, buffer);
+
+	sprintf (buffer, "VBO: %s", in_name);
+	glObjectLabel (GL_BUFFER, m_vbo, -1, buffer);
+
+	sprintf (buffer, "IBO: %s", in_name);
+	glObjectLabel (GL_BUFFER, m_ebo, -1, buffer);
+
+	m_shader->set_name (in_name);
 }
 
 void Texture::set_pos_global (float in_x, float in_y)
@@ -291,10 +317,10 @@ void Texture::update_buffer_data ()
 void Texture::initialize_data ()
 {
 	// X, Y, U, V
-	m_data[0] = TextureVertex{m_x + m_width, m_y + m_height, m_scale, 0.f};
-	m_data[1] = TextureVertex{m_x, m_y, 0.f, m_scale};
-	m_data[2] = TextureVertex{m_x + m_width, m_y, m_scale, m_scale};
-	m_data[3] = TextureVertex{m_x, m_y + m_height, 0.f, 0.f};
+	m_data[0] = TextureVertex{m_x + m_width, m_y + m_height, m_scale, m_scale};
+	m_data[1] = TextureVertex{m_x, m_y, 0.f, 0.f};
+	m_data[2] = TextureVertex{m_x + m_width, m_y, m_scale, 0.f};
+	m_data[3] = TextureVertex{m_x, m_y + m_height, 0.f, m_scale};
 }
 
 std::array<float, 32> Texture::createBufferData (const std::array<TextureVertex, 4> &in_arg) const
@@ -340,15 +366,13 @@ void Texture::draw ()
 
 void Texture::draw (const RenderData &inData)
 {
-	m_id = inData.id;
-
 	if (has_alpha())
 	{
 		glDisable (GL_ALPHA_TEST);
 	}
 
 	glActiveTexture (GL_TEXTURE0);
-	glBindTexture (GL_TEXTURE_2D, inData.id);
+	glBindTexture (GL_TEXTURE_2D, m_id);
 
 	//internal_format = GL_COLOR_INDEX8_EXT = 0x80E5
 	//format = GL_COLOR_INDEX 0x1900 = 

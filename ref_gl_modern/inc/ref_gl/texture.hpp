@@ -17,7 +17,7 @@ class Shader;
 
 struct RenderData
 {
-	std::int32_t id{0};
+	std::int32_t id{-1};
 
 	std::int32_t x{0};
 	std::int32_t y{0};
@@ -60,6 +60,7 @@ class Texture
 {
 public:
 	Texture ();
+	Texture (const char* in_name);
 	Texture (image_t *in_image, const char* in_name);
 	void			   init ();
 	void			   draw ();
@@ -76,6 +77,8 @@ public:
 	float			   get_width () const;
 	float			   get_height () const;
 
+	void set_name (const char *in_name);
+
 	~Texture ();
 
 	Q2_NONCOPYABLE (Texture)
@@ -86,6 +89,8 @@ private:
 	void						 update_buffer_data ();
 	void						 initialize_data ();
 	void						 fetch_uv ();
+	
+	std::string					 m_name;
 	ColorMode					 m_colorMode{ColorMode::RGBA};
 	image_t						*m_image{nullptr};
 	std::array<TextureVertex, 4> m_data;
@@ -94,7 +99,7 @@ private:
 	float						 m_width{2.f};
 	float						 m_height{2.f};
 	float						 m_scale{1.0f};
-	std::int32_t				 m_id{-1};
+	std::uint32_t				 m_id{0u};
 	std::string					 m_path;
 	bool						 m_hasAlpha{false};
 	std::uint32_t				 m_vao{0u};

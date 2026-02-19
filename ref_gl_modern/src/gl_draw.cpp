@@ -256,6 +256,8 @@ Fills a box of pixels with a single color
 */
 void Draw_Fill (int x, int y, int w, int h, int c)
 {
+	return;
+
 	union
 	{
 		unsigned c;
@@ -268,7 +270,7 @@ void Draw_Fill (int x, int y, int w, int h, int c)
 	color.c = d_8to24table[c];
 
 	static Q2::DrawData dd;
-	static Q2::Quad fillQuad;
+	static Q2::Quad		fillQuad ("fill_quad");
 
 	dd.color.r = color.v[0] / 255.0f;
 	dd.color.g = color.v[1] / 255.0f;
@@ -399,7 +401,7 @@ void Draw_StretchRaw (int x, int y, int w, int h, int cols, int rows, byte *data
 	rd.h		 = h;
 	rd.scale	 = t;
 
-	static Q2::Texture stretchTexture;
+	static Q2::Texture stretchTexture ("Cinematic");
 	stretchTexture.changeScale (t);
 	stretchTexture.draw (rd);
 }
