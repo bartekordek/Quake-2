@@ -267,6 +267,10 @@ std::int32_t SDL_Key_to_Quake_Key (std::int32_t inKey)
 			return 96;
 		case SDL_SCANCODE_0:
 			return 48;
+		case SDL_SCANCODE_SLASH:
+			return K_KP_SLASH;
+		case SDL_SCANCODE_BACKSLASH:
+			return 30;
 		default:
 			if ((inKey >= SDL_SCANCODE_1) && (SDL_SCANCODE_0))
 			{

@@ -18,12 +18,16 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 // r_main.c
+#include "ref_gl/gl_rmain.h"
+#include "ref_gl/gl_main.h"
+#include "ref_gl/gl_rmisc.h"
+#include "ref_gl/gl_warp.h"
 #include "shared/assert.h"
 #include <GL/glew.h>
 #include "ref_gl/gl_local.h"
 #include "ref_gl/gl_draw.h"
 #include "math/constants.h"
-
+#include <cstdint>
 
 void R_Clear (void);
 
@@ -48,8 +52,6 @@ int r_framecount;	  // used for dlight push checking
 int c_brush_polys, c_alias_polys;
 
 float v_blend[4];  // final blending color
-
-void GL_Strings_f (void);
 
 //
 // view origin
@@ -661,7 +663,7 @@ void R_SetupFrame (void)
 	}
 }
 
-void MYgluPerspective (GLdouble fovy, GLdouble aspect, GLdouble zNear, GLdouble zFar)
+void MYgluPerspective (double fovy, double aspect, double zNear, double zFar)
 {
 	GLdouble xmin, xmax, ymin, ymax;
 
@@ -1030,7 +1032,6 @@ R_SetMode
 */
 qboolean R_SetMode (void)
 {
-	rserr_t	 err;
 	qboolean fullscreen;
 
 	if (vid_fullscreen->modified && !gl_config.allow_cds)
@@ -1040,12 +1041,17 @@ qboolean R_SetMode (void)
 		vid_fullscreen->modified = e_false;
 	}
 
-	fullscreen				 = vid_fullscreen->value;
+	fullscreen				 = static_cast<qboolean> (vid_fullscreen->value);
 
 	vid_fullscreen->modified = e_false;
 	gl_mode->modified		 = e_false;
 
-	if ((err = GLimp_SetMode (&vid.width, &vid.height, gl_mode->value, fullscreen)) == rserr_ok)
+	std::int32_t width{0};
+	std::int32_t height{0};
+	rserr_t		 err = GLimp_SetMode (&width, &height, gl_mode->value, fullscreen);
+	vid.width		 = width;
+	vid.height		 = height;
+	if (err == rserr_ok)
 	{
 		gl_state.prev_mode = gl_mode->value;
 	}
@@ -1056,8 +1062,15 @@ qboolean R_SetMode (void)
 			ri.Cvar_SetValue ("vid_fullscreen", 0);
 			vid_fullscreen->modified = e_false;
 			ri.Con_Printf (PRINT_ALL, "ref_gl::R_SetMode() - fullscreen unavailable in this mode\n");
-			if ((err = GLimp_SetMode (&vid.width, &vid.height, gl_mode->value, e_false)) == rserr_ok)
+
+			err		   = GLimp_SetMode (&width, &height, gl_mode->value, e_false);
+			vid.width  = width;
+			vid.height = height;
+
+			if (err == rserr_ok)
+			{
 				return e_true;
+			}
 		}
 		else if (err == rserr_invalid_mode)
 		{
@@ -1067,7 +1080,11 @@ qboolean R_SetMode (void)
 		}
 
 		// try setting it back to something safe
-		if ((err = GLimp_SetMode (&vid.width, &vid.height, gl_state.prev_mode, e_false)) != rserr_ok)
+		err		   = GLimp_SetMode (&width, &height, gl_state.prev_mode, e_false);
+		vid.width  = width;
+		vid.height = height;
+
+		if (err != rserr_ok)
 		{
 			ri.Con_Printf (PRINT_ALL, "ref_gl::R_SetMode() - could not revert to safe mode\n");
 			return e_false;
@@ -1081,13 +1098,12 @@ qboolean R_SetMode (void)
 R_Init
 ===============
 */
-int R_Init (void *hinstance, void *hWnd)
+qboolean R_Init ()
 {
-	char		 renderer_buffer[1000];
-	char		 vendor_buffer[1000];
-	int			 err;
-	int			 j;
-	extern float r_turbsin[256];
+	char renderer_buffer[1000];
+	char vendor_buffer[1000];
+	int	 err;
+	int	 j;
 
 	for (j = 0; j < 256; j++)
 	{
@@ -1105,14 +1121,14 @@ int R_Init (void *hinstance, void *hWnd)
 	{
 		QGL_Shutdown ();
 		ri.Con_Printf (PRINT_ALL, "ref_gl::R_Init() - could not load \"%s\"\n", gl_driver->string);
-		return -1;
+		return e_false;
 	}
 
 	// initialize OS-specific parts of OpenGL
 	if (!GLimp_Init ())
 	{
 		QGL_Shutdown ();
-		return -1;
+		return e_false;
 	}
 
 	// set our "safe" modes
@@ -1123,7 +1139,7 @@ int R_Init (void *hinstance, void *hWnd)
 	{
 		QGL_Shutdown ();
 		ri.Con_Printf (PRINT_ALL, "ref_gl::R_Init() - could not R_SetMode()\n");
-		return -1;
+		return e_false;
 	}
 
 	ri.Vid_MenuInit ();
@@ -1131,13 +1147,13 @@ int R_Init (void *hinstance, void *hWnd)
 	/*
 	** get our various GL strings
 	*/
-	gl_config.vendor_string = qglGetString (GL_VENDOR);
+	gl_config.vendor_string = reinterpret_cast<const char *> (qglGetString (GL_VENDOR));
 	ri.Con_Printf (PRINT_ALL, "GL_VENDOR: %s\n", gl_config.vendor_string);
-	gl_config.renderer_string = qglGetString (GL_RENDERER);
+	gl_config.renderer_string = reinterpret_cast<const char *> (qglGetString (GL_RENDERER));
 	ri.Con_Printf (PRINT_ALL, "GL_RENDERER: %s\n", gl_config.renderer_string);
-	gl_config.version_string = qglGetString (GL_VERSION);
+	gl_config.version_string = reinterpret_cast<const char *> (qglGetString (GL_VERSION));
 	ri.Con_Printf (PRINT_ALL, "GL_VERSION: %s\n", gl_config.version_string);
-	gl_config.extensions_string = qglGetString (GL_EXTENSIONS);
+	gl_config.extensions_string = reinterpret_cast<const char *> (qglGetString (GL_EXTENSIONS));
 	ri.Con_Printf (PRINT_ALL, "GL_EXTENSIONS: %s\n", gl_config.extensions_string);
 
 	strcpy (renderer_buffer, gl_config.renderer_string);
@@ -1227,18 +1243,6 @@ int R_Init (void *hinstance, void *hWnd)
 #ifdef WIN32
 	if (gl_config.extensions_string)
 	{
-		if (strstr (gl_config.extensions_string, "GL_EXT_compiled_vertex_array") ||
-			strstr (gl_config.extensions_string, "GL_SGI_compiled_vertex_array"))
-		{
-			ri.Con_Printf (PRINT_ALL, "...enabling GL_EXT_compiled_vertex_array\n");
-			qglLockArraysEXT   = (void *) qwglGetProcAddress ("glLockArraysEXT");
-			qglUnlockArraysEXT = (void *) qwglGetProcAddress ("glUnlockArraysEXT");
-		}
-		else
-		{
-			ri.Con_Printf (PRINT_ALL, "...GL_EXT_compiled_vertex_array not found\n");
-		}
-
 		if (strstr (gl_config.extensions_string, "WGL_EXT_swap_control"))
 		{
 			qwglSwapIntervalEXT = (BOOL (WINAPI *) (int)) qwglGetProcAddress ("wglSwapIntervalEXT");
@@ -1284,24 +1288,6 @@ int R_Init (void *hinstance, void *hWnd)
 		{
 			ri.Con_Printf (PRINT_ALL, "...GL_EXT_shared_texture_palette not found\n");
 		}
-
-		if (strstr (gl_config.extensions_string, "GL_SGIS_multitexture"))
-		{
-			if (gl_ext_multitexture->value)
-			{
-				ri.Con_Printf (PRINT_ALL, "...using GL_SGIS_multitexture\n");
-				qglMTexCoord2fSGIS	 = (void *) qwglGetProcAddress ("glMTexCoord2fSGIS");
-				qglSelectTextureSGIS = (void *) qwglGetProcAddress ("glSelectTextureSGIS");
-			}
-			else
-			{
-				ri.Con_Printf (PRINT_ALL, "...ignoring GL_SGIS_multitexture\n");
-			}
-		}
-		else
-		{
-			ri.Con_Printf (PRINT_ALL, "...GL_SGIS_multitexture not found\n");
-		}
 	}
 #endif
 
@@ -1327,14 +1313,13 @@ int R_Init (void *hinstance, void *hWnd)
 	const auto glew_init_result = glewInit ();
 	Q2_Assert (glew_init_result == GLEW_OK, "Cannot initialize glew.");
 	// GLEW_OK
-	
 
 	if (glDebugMessageCallback)
 	{
 		glDebugMessageCallback (glDebugOutput, 0);
 		glEnable (GL_DEBUG_OUTPUT);
 		glEnable (GL_DEBUG_OUTPUT_SYNCHRONOUS);
-		//checkLastCommandForErrors ();
+		// checkLastCommandForErrors ();
 
 		// glEnable( GL_DEBUG_OUTPUT );
 		// checkLastCommandForErrors();
@@ -1344,6 +1329,8 @@ int R_Init (void *hinstance, void *hWnd)
 
 		// glEnable( GL_DEBUG_OUTPUT_SYNCHRONOUS );
 	}
+
+	return e_true;
 }
 
 /*
@@ -1395,7 +1382,7 @@ void R_BeginFrame (float camera_separation)
 
 	if (gl_log->modified)
 	{
-		GLimp_EnableLogging (gl_log->value);
+		GLimp_EnableLogging (static_cast<qboolean> (gl_log->value));
 		gl_log->modified = e_false;
 	}
 
@@ -1434,17 +1421,17 @@ void R_BeginFrame (float camera_separation)
 	** go into 2D mode
 	*/
 
-	//qglViewport (0, 0, vid.width, vid.height);
-	//qglMatrixMode (GL_PROJECTION);
-	//qglLoadIdentity ();
-	//qglOrtho (0, vid.width, vid.height, 0, -99999, 99999);
-	//qglMatrixMode (GL_MODELVIEW);
-	//qglLoadIdentity ();
-	//qglDisable (GL_DEPTH_TEST);
-	//qglDisable (GL_CULL_FACE);
-	//qglDisable (GL_BLEND);
-	//qglEnable (GL_ALPHA_TEST);
-	//qglColor4f (1, 1, 1, 1);
+	// qglViewport (0, 0, vid.width, vid.height);
+	// qglMatrixMode (GL_PROJECTION);
+	// qglLoadIdentity ();
+	// qglOrtho (0, vid.width, vid.height, 0, -99999, 99999);
+	// qglMatrixMode (GL_MODELVIEW);
+	// qglLoadIdentity ();
+	// qglDisable (GL_DEPTH_TEST);
+	// qglDisable (GL_CULL_FACE);
+	// qglDisable (GL_BLEND);
+	// qglEnable (GL_ALPHA_TEST);
+	// qglColor4f (1, 1, 1, 1);
 
 	/*
 	** draw buffer stuff
@@ -1608,9 +1595,7 @@ void R_DrawBeam (entity_t *e)
 //===================================================================
 
 void			R_BeginRegistration (const char *map);
-struct model_s *R_RegisterModel (const char *name);
 struct image_s *R_RegisterSkin (const char *name);
-void			R_SetSky (const char *name, float rotate, vec3_t axis);
 void			R_EndRegistration (void);
 
 void R_RenderFrame (refdef_t *fd);
@@ -1627,7 +1612,7 @@ GetRefAPI
 
 @@@@@@@@@@@@@@@@@@@@@
 */
-__declspec (dllexport) refexport_t GetRefAPI (refimport_t rimp)
+refexport_t GetRefAPI (refimport_t rimp)
 {
 	refexport_t re;
 
@@ -1699,7 +1684,6 @@ void Com_Printf (const char *fmt, ...)
 
 #endif
 
-
 void APIENTRY glDebugOutput (GLenum source, GLenum type, unsigned int id, GLenum severity, GLsizei length, const char *message,
 							 const void *userParam)
 {
@@ -1711,7 +1695,6 @@ void APIENTRY glDebugOutput (GLenum source, GLenum type, unsigned int id, GLenum
 		// can be safely ignored.
 		return;
 	}
-
 
 	char error_buffer[1024];
 	char tmp[1024];
@@ -1815,7 +1798,6 @@ void APIENTRY glDebugOutput (GLenum source, GLenum type, unsigned int id, GLenum
 			sprintf (error_buffer, "%s %s", tmp, "UNKOWN");
 			sprintf (tmp, "%s", error_buffer);
 	}
-
 
 	sprintf (error_buffer, "%s, Message: %s", tmp, message);
 	Q2_Assert (severity != GL_DEBUG_SEVERITY_HIGH, error_buffer);

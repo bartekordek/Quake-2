@@ -105,13 +105,11 @@ typedef enum
 
 #include "gl_model.h"
 
-void GL_BeginRendering (int *x, int *y, int *width, int *height);
-void GL_EndRendering (void);
-
-void GL_SetDefaultState( void );
-void GL_UpdateSwapInterval( void );
-
-EXTERNC	float	gldepthmin, gldepthmax;
+EXTERNC void  GL_BeginRendering (int *x, int *y, int *width, int *height);
+EXTERNC void  GL_EndRendering (void);
+EXTERNC void  GL_SetDefaultState (void);
+EXTERNC void  GL_UpdateSwapInterval (void);
+EXTERNC float gldepthmin, gldepthmax;
 
 typedef struct
 {
@@ -234,16 +232,14 @@ EXTERNC	int		c_visible_lightmaps;
 EXTERNC	int		c_visible_textures;
 
 EXTERNC	float	r_world_matrix[16];
-
-void R_TranslatePlayerSkin (int playernum);
-EXTERNC void GL_BindTexture (int texnum);
-void GL_MBind( GLenum target, int texnum );
-void GL_TexEnv( GLenum value );
-void GL_EnableMultitexture( qboolean enable );
-void GL_SelectTexture( GLenum );
-
-void R_LightPoint (vec3_t p, vec3_t color);
-void R_PushDlights (void);
+EXTERNC void	R_TranslatePlayerSkin (int playernum);
+EXTERNC void	GL_BindTexture (int texnum);
+EXTERNC void	GL_MBind (GLenum target, int texnum);
+EXTERNC void	GL_TexEnv (GLenum value);
+EXTERNC void	GL_EnableMultitexture (qboolean enable);
+EXTERNC void	GL_SelectTexture (GLenum);
+EXTERNC void	R_LightPoint (vec3_t p, vec3_t color);
+EXTERNC void	R_PushDlights (void);
 
 //====================================================================
 
@@ -256,32 +252,30 @@ EXTERNC	int		registration_sequence;
 
 void V_AddBlend (float r, float g, float b, float a, float *v_blend);
 
-int	 R_Init ();
-void R_Shutdown (void);
-
-void R_RenderView (refdef_t *fd);
-void GL_ScreenShot_f (void);
-void R_DrawAliasModel (entity_t *e);
-void R_DrawBrushModel (entity_t *e);
-void R_DrawSpriteModel (entity_t *e);
-void R_DrawBeam( entity_t *e );
-void R_DrawWorld (void);
-void R_RenderDlights (void);
-void R_DrawAlphaSurfaces (void);
-void R_RenderBrushPoly (msurface_t *fa);
-void R_InitParticleTexture (void);
-EXTERNC void Draw_InitLocal (void);
-void GL_SubdivideSurface (msurface_t *fa);
-qboolean R_CullBox (vec3_t mins, vec3_t maxs);
-void R_RotateForEntity (entity_t *e);
-void R_MarkLeaves (void);
-
-glpoly_t *WaterWarpPolyVerts (glpoly_t *p);
-void EmitWaterPolys (msurface_t *fa);
-void R_AddSkySurface (msurface_t *fa);
-void R_ClearSkyBox (void);
-void R_DrawSkyBox (void);
-void R_MarkLights (dlight_t *light, int bit, mnode_t *node);
+qboolean			 R_Init ();
+void				 R_Shutdown (void);
+EXTERNC void		 R_RenderView (refdef_t *fd);
+EXTERNC void		 GL_ScreenShot_f (void);
+EXTERNC void		 R_DrawAliasModel (entity_t *e);
+EXTERNC void		 R_DrawBrushModel (entity_t *e);
+EXTERNC void		 R_DrawSpriteModel (entity_t *e);
+EXTERNC void		 R_DrawBeam (entity_t *e);
+EXTERNC void		 R_DrawWorld (void);
+EXTERNC void		 R_RenderDlights (void);
+EXTERNC void		 R_DrawAlphaSurfaces (void);
+EXTERNC void		 R_RenderBrushPoly (msurface_t *fa);
+EXTERNC void				 R_InitParticleTexture (void);
+EXTERNC void				 Draw_InitLocal (void);
+EXTERNC void				 GL_SubdivideSurface (msurface_t *fa);
+EXTERNC qboolean			 R_CullBox (vec3_t mins, vec3_t maxs);
+EXTERNC void				 R_RotateForEntity (entity_t *e);
+EXTERNC void				 R_MarkLeaves (void);
+EXTERNC glpoly_t			*WaterWarpPolyVerts (glpoly_t *p);
+EXTERNC void				 EmitWaterPolys (msurface_t *fa);
+EXTERNC void				 R_AddSkySurface (msurface_t *fa);
+EXTERNC void				 R_ClearSkyBox (void);
+EXTERNC void				 R_DrawSkyBox (void);
+EXTERNC void				 R_MarkLights (dlight_t *light, int bit, mnode_t *node);
 
 #if 0
 short LittleShort (short l);
@@ -298,37 +292,29 @@ void COM_StripExtension (const char *in, char *out);
 EXTERNC void Draw_GetPicSize (int *w, int *h, char *name);
 EXTERNC void Draw_Pic (int x, int y, char *name);
 EXTERNC void Draw_StretchPic (int x, int y, int w, int h, char *name);
-EXTERNC void Draw_Char (int x, int y, int c);
-EXTERNC void Draw_TileClear (int x, int y, int w, int h, char *name);
-EXTERNC void Draw_Fill (int x, int y, int w, int h, int c);
-EXTERNC void Draw_FadeScreen (void);
-EXTERNC void Draw_StretchRaw (int x, int y, int w, int h, int cols, int rows, byte *data);
-
-void	R_BeginFrame( float camera_separation );
-void	R_SwapBuffers( int );
-void	R_SetPalette ( const unsigned char *palette);
-
-int		Draw_GetPalette (void);
-
-void GL_ResampleTexture (unsigned *in, int inwidth, int inheight, unsigned *out,  int outwidth, int outheight);
-
-struct image_s *R_RegisterSkin (const char *name);
+EXTERNC void	Draw_Char (int x, int y, int c);
+EXTERNC void	Draw_TileClear (int x, int y, int w, int h, char *name);
+EXTERNC void	Draw_Fill (int x, int y, int w, int h, int c);
+EXTERNC void	Draw_FadeScreen (void);
+EXTERNC void	Draw_StretchRaw (int x, int y, int w, int h, int cols, int rows, byte *data);
+EXTERNC void			R_BeginFrame (float camera_separation);
+EXTERNC void			R_SwapBuffers (int);
+EXTERNC void			R_SetPalette (const unsigned char *palette);
+EXTERNC int				Draw_GetPalette (void);
+EXTERNC void			GL_ResampleTexture (unsigned *in, int inwidth, int inheight, unsigned *out, int outwidth, int outheight);
+EXTERNC struct image_s *R_RegisterSkin (const char *name);
 
 void LoadPCX (const char *filename, byte **pic, byte **palette, int *width, int *height);
 image_t *GL_LoadPic (const char *name, byte *pic, int width, int height, imagetype_t type, int bits);
 EXTERNC image_t	*GL_FindImage (const char *name, imagetype_t type);
-void	GL_TextureMode( char *string );
-void	GL_ImageList_f (void);
-
-void	GL_SetTexturePalette( unsigned palette[256] );
-
-void	GL_InitImages (void);
-void	GL_ShutdownImages (void);
-
-void	GL_FreeUnusedImages (void);
-
-void GL_TextureAlphaMode( char *string );
-void GL_TextureSolidMode( char *string );
+EXTERNC void	GL_TextureMode( char *string );
+EXTERNC void	GL_ImageList_f (void);
+EXTERNC void	GL_SetTexturePalette( unsigned palette[256] );
+EXTERNC void	GL_InitImages (void);
+EXTERNC void	GL_ShutdownImages (void);
+EXTERNC void	GL_FreeUnusedImages (void);
+EXTERNC void GL_TextureAlphaMode( char *string );
+EXTERNC void GL_TextureSolidMode( char *string );
 
 /*
 ** GL extension emulation functions

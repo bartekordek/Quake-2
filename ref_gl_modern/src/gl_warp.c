@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 // gl_warp.c -- sky and water polygons
 
+#include "ref_gl/gl_warp.h"
 #include "ref_gl/gl_local.h"
 #include "math/constants.h"
 

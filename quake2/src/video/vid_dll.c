@@ -158,22 +158,142 @@ void VID_Error (int err_level, char *fmt, ...)
 byte scantokey[128] = {
 	//  0           1       2       3       4       5       6       7
 	//  8           9       A       B       C       D       E       F
-	0,			 27,	 '1',	'2',   '3',	  '4',	   '5',		'6',	'7',	   '8',	   '9',		   '0',			'-',	'=',
-	K_BACKSPACE, 9,	 // 0
-	'q',		 'w',	 'e',	'r',   't',	  'y',	   'u',		'i',	'o',	   'p',	   '[',		   ']',			13,		K_CTRL,
-	'a',		 's',  // 1
-	'd',		 'f',	 'g',	'h',   'j',	  'k',	   'l',		';',	'\'',	   '`',	   K_SHIFT,	   '\\',		'z',	'x',
-	'c',		 'v',  // 2
-	'b',		 'n',	 'm',	',',   '.',	  '/',	   K_SHIFT, '*',	K_ALT,	   ' ',	   0,		   K_F1,		K_F2,	K_F3,
-	K_F4,		 K_F5,	// 3
-	K_F6,		 K_F7,	 K_F8,	K_F9,  K_F10, K_PAUSE, 0,		K_HOME, K_UPARROW, K_PGUP, K_KP_MINUS, K_LEFTARROW, K_KP_5, K_RIGHTARROW,
-	K_KP_PLUS,	 K_END,	 // 4
-	K_DOWNARROW, K_PGDN, K_INS, K_DEL, 0,	  0,	   0,		K_F11,	K_F12,	   0,	   0,		   0,			0,		0,
-	0,			 0,	 // 5
-	0,			 0,		 0,		0,	   0,	  0,	   0,		0,		0,		   0,	   0,		   0,			0,		0,
-	0,			 0,	 // 6
-	0,			 0,		 0,		0,	   0,	  0,	   0,		0,		0,		   0,	   0,		   0,			0,		0,
-	0,			 0	// 7
+	0,			 27,
+	'1', // 028
+	'2', // 029
+	'3', // 030
+	'4', // 031
+	'5', // 032
+	'6', // 033
+	'7', // 034
+	'8', // 035
+	'9', // 036
+	'0', // 037
+	'-', // 038
+	'=', // 039
+	K_BACKSPACE, // 040
+	  9, // 041
+	'q', // 042
+	'w', // 043
+	'e', // 044
+	'r', // 045
+	't', // 046
+	'y', // 047
+	'u', // 048
+	'i', // 049
+	'o', // 050
+	'p', // 051
+	'[', // 052
+	']', // 053
+	 13, // 054
+ K_CTRL, // 055
+	'a', // 056
+	's', // 057
+	'd', // 058
+	'f', // 059
+	'g', // 060
+	'h', // 061
+	'j', // 062
+	'k', // 063
+	'l', // 064
+	';', // 067
+   '\'', // 068
+	'`', // 069
+K_SHIFT, // 070
+   '\\', // 071
+	'z', // 072
+	'x', // 073
+	'c', // 074
+	'v', // 075
+	'b',
+	'n',
+	'm',
+	',',
+	'.',
+	'/',
+	K_SHIFT,
+ '*',
+	K_ALT,
+	' ',
+	0,
+	K_F1,
+	K_F2,
+	K_F3,
+
+	K_F4,
+	 K_F5,
+	// 3
+	K_F6,
+	 K_F7,
+	 K_F8,
+	K_F9,
+  K_F10,
+ K_PAUSE,
+ 0,
+	K_HOME,
+ K_UPARROW,
+ K_PGUP,
+ K_KP_MINUS,
+ K_LEFTARROW,
+ K_KP_5,
+ K_RIGHTARROW,
+
+	K_KP_PLUS,
+	 K_END,
+	 // 4
+	K_DOWNARROW,
+ K_PGDN,
+ K_INS,
+ K_DEL,
+ 0,
+	0,
+	0,
+	K_F11,
+	K_F12,
+	0,
+	0,
+	0,
+	0,
+	0,
+
+	0,
+	 0,
+	 // 5
+	0,
+	 0,
+	 0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+
+	0,
+	 0,
+	 // 6
+	0,
+	 0,
+	 0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+
+	0,
+	 0	// 7
 };
 
 /*
@@ -685,8 +805,8 @@ void VID_CheckChanges (void)
 		cl.refresh_prepped		 = e_false;
 		cls.disable_screen		 = e_true;
 
-		//Com_sprintf (name, sizeof (name), "ref_%s.dll", vid_ref->string);
-		Com_sprintf (name, sizeof (name), "ref_%s.dll", "gl_modern");
+		Com_sprintf (name, sizeof (name), "ref_%s.dll", vid_ref->string);
+		//Com_sprintf (name, sizeof (name), "ref_%s.dll", "gl_modern");
 		if (!VID_LoadRefresh (name))
 		{
 			if (strcmp (vid_ref->string, "soft") == 0)
