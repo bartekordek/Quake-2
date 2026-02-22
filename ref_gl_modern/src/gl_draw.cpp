@@ -156,35 +156,16 @@ Draw_StretchPic
 */
 void Draw_StretchPic (int x, int y, int w, int h, char *pic)
 {
-	image_t *gl = Draw_FindPic (pic);
-	if (!gl)
-	{
-		ri.Con_Printf (PRINT_ALL, "Can't find pic: %s\n", pic);
-		return;
-	}
-
 	if (scrap_dirty)
 	{
 		Scrap_Upload ();
 	}
 
-	if (((gl_config.renderer == GL_RENDERER_MCD) || (gl_config.renderer & GL_RENDERER_RENDITION)) && !gl->has_alpha)
-		qglDisable (GL_ALPHA_TEST);
-
-	GL_BindTexture (gl->texnum);
-	qglBegin (GL_QUADS);
-	qglTexCoord2f (gl->sl, gl->tl);
-	qglVertex2f (x, y);
-	qglTexCoord2f (gl->sh, gl->tl);
-	qglVertex2f (x + w, y);
-	qglTexCoord2f (gl->sh, gl->th);
-	qglVertex2f (x + w, y + h);
-	qglTexCoord2f (gl->sl, gl->th);
-	qglVertex2f (x, y + h);
-	qglEnd ();
-
-	if (((gl_config.renderer == GL_RENDERER_MCD) || (gl_config.renderer & GL_RENDERER_RENDITION)) && !gl->has_alpha)
-		qglEnable (GL_ALPHA_TEST);
+	Q2::Texture *texture = Q2::TextureStore::get_instance ().get_or_create (pic);
+	texture->fetch_uv_and_apply_them ();
+	texture->set_pos_global (x, y);
+	texture->set_size (w, h);
+	texture->draw ();
 }
 
 /*
