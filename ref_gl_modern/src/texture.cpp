@@ -209,6 +209,13 @@ void Texture::set_pos_global (float in_x, float in_y)
 	update_buffer_data ();
 }
 
+void Texture::set_size (float in_w, float in_h)
+{
+	m_width	 = width_to_normalized (in_w);
+	m_height = height_to_normalized (in_h);
+	update_buffer_data ();
+}
+
 void Texture::set_pos (float in_x, float in_y)
 {
 	m_x = in_x;

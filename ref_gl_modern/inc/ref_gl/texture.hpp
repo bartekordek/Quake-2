@@ -73,6 +73,7 @@ public:
 	void			   set_path (const std::string &inPath);
 	void			   set_pos (float in_x, float in_y);
 	void			   set_pos_global (float in_x, float in_y);
+	void			   set_size (float in_w, float in_h);
 	void			   fetch_uv_and_apply_them ();
 	float			   get_width () const;
 	float			   get_height () const;
