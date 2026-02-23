@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 // r_misc.c
 
+#include "ref_gl/gl_image.h"
 #include "ref_gl/gl_local.h"
 #include "ref_gl/gl_rmisc.h"
 
@@ -92,7 +93,6 @@ GL_ScreenShot_f
 */
 void GL_ScreenShot_f (void)
 {
-	byte *buffer;
 	char  picname[80];
 	char  checkname[MAX_OSPATH];
 	int	  i, c, temp;
@@ -123,7 +123,7 @@ void GL_ScreenShot_f (void)
 		return;
 	}
 
-	buffer = malloc (vid.width * vid.height * 3 + 18);
+	byte *buffer = static_cast<byte *> (malloc (vid.width * vid.height * 3 + 18));
 	memset (buffer, 0, 18);
 	buffer[2]  = 2;	 // uncompressed type
 	buffer[12] = vid.width & 255;
