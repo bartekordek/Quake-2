@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <GL/glew.h>
 #include "ref_gl/gl_local.h"
 #include "ref_gl/gl_draw.h"
-
+#include <cstdint>
 
 image_t gltextures[MAX_GLTEXTURES];
 int		numgltextures;
@@ -115,7 +115,7 @@ void GL_TexEnv (GLenum mode)
 
 	if (mode != lastmodes[gl_state.currenttmu])
 	{
-		//qglTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, mode);
+		// qglTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, mode);
 		lastmodes[gl_state.currenttmu] = mode;
 	}
 }
@@ -148,8 +148,8 @@ void GL_MBind (GLenum target, int texnum)
 
 typedef struct
 {
-	char *name;
-	int	  minimize, maximize;
+	const char *name;
+	int			minimize, maximize;
 } glmode_t;
 
 glmode_t modes[] = {{"GL_NEAREST", GL_NEAREST, GL_NEAREST},
@@ -163,8 +163,8 @@ glmode_t modes[] = {{"GL_NEAREST", GL_NEAREST, GL_NEAREST},
 
 typedef struct
 {
-	char *name;
-	int	  mode;
+	const char *name;
+	int			mode;
 } gltmode_t;
 
 gltmode_t gl_alpha_modes[] = {
@@ -378,8 +378,8 @@ int scrap_uploads;
 void Scrap_Upload (void)
 {
 	scrap_uploads++;
-	//GL_BindTexture (TEXNUM_SCRAPS);
-	//GL_Upload8 (scrap_texels[0], BLOCK_WIDTH, BLOCK_HEIGHT, e_false, e_false);
+	// GL_BindTexture (TEXNUM_SCRAPS);
+	// GL_Upload8 (scrap_texels[0], BLOCK_WIDTH, BLOCK_HEIGHT, e_false, e_false);
 	scrap_dirty = e_false;
 }
 
@@ -441,7 +441,7 @@ void LoadPCX (const char *filename, byte **pic, byte **palette, int *width, int 
 		return;
 	}
 
-	out	 = malloc ((pcx->ymax + 1) * (pcx->xmax + 1));
+	out	 = static_cast<byte *> (malloc ((pcx->ymax + 1) * (pcx->xmax + 1)));
 
 	*pic = out;
 
@@ -449,7 +449,7 @@ void LoadPCX (const char *filename, byte **pic, byte **palette, int *width, int 
 
 	if (palette)
 	{
-		*palette = malloc (768);
+		*palette = static_cast<byte *> (malloc (768));
 		memcpy (*palette, (byte *) pcx + len - 768, 768);
 	}
 
@@ -573,7 +573,7 @@ void LoadTGA (const char *name, byte **pic, int *width, int *height)
 	if (height)
 		*height = rows;
 
-	targa_rgba = malloc (numPixels * 4);
+	targa_rgba = static_cast<byte *> (malloc (numPixels * 4));
 	*pic	   = targa_rgba;
 
 	if (targa_header.id_length != 0)
@@ -1043,10 +1043,8 @@ qboolean GL_Upload32 (unsigned *data, int width, int height, qboolean mipmap)
 					glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 					glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 					glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-					qglTexImage2D (GL_TEXTURE_2D, 0, GL_RGBA8, scaled_width, scaled_height, 0, GL_RGBA, GL_UNSIGNED_BYTE,
-								   data);
+					qglTexImage2D (GL_TEXTURE_2D, 0, GL_RGBA8, scaled_width, scaled_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 				}
-				
 			}
 			goto done;
 		}
@@ -1055,7 +1053,7 @@ qboolean GL_Upload32 (unsigned *data, int width, int height, qboolean mipmap)
 	else
 		GL_ResampleTexture (data, width, height, scaled, scaled_width, scaled_height);
 
-	GL_LightScaleTexture (scaled, scaled_width, scaled_height, !mipmap);
+	GL_LightScaleTexture (scaled, scaled_width, scaled_height, (mipmap ? e_false : e_true));
 
 	if (qglColorTableEXT && gl_ext_palettedtexture->value && (samples == gl_solid_format))
 	{
@@ -1111,7 +1109,7 @@ done:;
 		qglTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter_max);
 	}
 
-	return (samples == gl_alpha_format);
+	return (samples == gl_alpha_format) ? e_true : e_false;
 }
 
 /*
@@ -1227,7 +1225,7 @@ image_t *GL_LoadPic (const char *name, byte *pic, int width, int height, imagety
 		R_FloodFillSkin (pic, width, height);
 
 	// load little pics into the scrap
-	//if (image->type == it_pic && bits == 8 && image->width < 64 && image->height < 64)
+	// if (image->type == it_pic && bits == 8 && image->width < 64 && image->height < 64)
 	if (0)
 	{
 		int x, y;
@@ -1243,7 +1241,10 @@ image_t *GL_LoadPic (const char *name, byte *pic, int width, int height, imagety
 		k			= 0;
 		for (i = 0; i < image->height; i++)
 			for (j = 0; j < image->width; j++, k++) scrap_texels[texnum][(y + i) * BLOCK_WIDTH + x + j] = pic[k];
-		glGenTextures (1, &image->texnum);
+
+		std::uint32_t tex{0u};
+		glGenTextures (1, &tex);
+		image->texnum	 = tex;
 		image->scrap	 = e_true;
 		image->has_alpha = e_true;
 		image->sl		 = (x + 0.01) / (float) BLOCK_WIDTH;
@@ -1254,13 +1255,22 @@ image_t *GL_LoadPic (const char *name, byte *pic, int width, int height, imagety
 	else
 	{
 	nonscrap:
-		image->scrap  = e_false;
-		glGenTextures (1, &image->texnum);
+		image->scrap = e_false;
+		std::uint32_t tex{0u};
+		glGenTextures (1, &tex);
+		image->texnum = tex;
 		GL_BindTexture (image->texnum);
 		if (bits == 8)
-			image->has_alpha = GL_Upload8 (pic, width, height, (image->type != it_pic && image->type != it_sky), image->type == it_sky);
+		{
+			const qboolean mipmap = (image->type != it_pic && image->type != it_sky) ? e_true : e_false;
+			const qboolean is_sky = (image->type == it_sky) ? e_true : e_false;
+			image->has_alpha	  = GL_Upload8 (pic, width, height, mipmap, is_sky);
+		}
 		else
-			image->has_alpha = GL_Upload32 ((unsigned *) pic, width, height, (image->type != it_pic && image->type != it_sky));
+		{
+			const qboolean mipmap = (image->type != it_pic && image->type != it_sky) ? e_true : e_false;
+			image->has_alpha	  = GL_Upload32 ((unsigned *) pic, width, height, mipmap);
+		}
 		image->upload_width	 = upload_width;  // after power of 2 and scales
 		image->upload_height = upload_height;
 		image->paletted		 = uploaded_paletted;
@@ -1402,7 +1412,9 @@ void GL_FreeUnusedImages (void)
 		if (image->type == it_pic)
 			continue;  // don't free pics
 		// free it
-		qglDeleteTextures (1, &image->texnum);
+
+		const std::uint32_t texnum = image->texnum;
+		qglDeleteTextures (1, &texnum);
 		memset (image, 0, sizeof (*image));
 	}
 }
@@ -1468,7 +1480,7 @@ void GL_InitImages (void)
 
 	if (qglColorTableEXT)
 	{
-		ri.FS_LoadFile ("pics/16to8.dat", &gl_state.d_16to8table);
+		ri.FS_LoadFile ("pics/16to8.dat", (void **) &gl_state.d_16to8table);
 		if (!gl_state.d_16to8table)
 			ri.Sys_Error (ERR_FATAL, "Couldn't load pics/16to8.pcx");
 	}
@@ -1521,7 +1533,9 @@ void GL_ShutdownImages (void)
 		if (!image->registration_sequence)
 			continue;  // free image_t slot
 		// free it
-		qglDeleteTextures (1, &image->texnum);
+
+		const std::uint32_t texnum = image->texnum;
+		qglDeleteTextures (1, &texnum);
 		memset (image, 0, sizeof (*image));
 	}
 }

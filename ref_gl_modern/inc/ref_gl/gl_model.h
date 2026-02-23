@@ -1,3 +1,10 @@
+#ifndef __ref_gl_gl_model_h__
+#define __ref_gl_gl_model_h__
+
+#include "qcommon/qfiles.h"
+#include "ref_gl/gl_image.h"
+#include "math/vector.h"
+
 /*
 Copyright (C) 1997-2001 Id Software, Inc.
 
@@ -259,3 +266,7 @@ EXTERNC void			Mod_Free (model_t *mod);
 EXTERNC void			R_BeginRegistration (const char *model);
 EXTERNC struct model_s *R_RegisterModel (const char *name);
 EXTERNC void			R_EndRegistration (void);
+EXTERNC void			GL_EndBuildingLightmaps (void);
+EXTERNC void			GL_BeginBuildingLightmaps (model_t *m);
+
+#endif	// __ref_gl_gl_model_h__
