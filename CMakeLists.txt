@@ -65,3 +65,6 @@ set( SDL2_INCLUDE deps/SDL/include )
 set(SDLVIDEO ON CACHE BOOL "REPLACE GLUT" FORCE)
 add_subdirectory(deps/SDL)
 
+
+
+add_subdirectory(deps/glm)

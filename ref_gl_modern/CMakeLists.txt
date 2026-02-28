@@ -48,7 +48,7 @@ list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/win32/q_shwin.c)
 
 add_library( ${PROJECT_NAME} SHARED ${SOURCES} )
 
-set(DEPENDENCIES PRIVATE shared PRIVATE OpenGL::GL PRIVATE glew_s )
+set(DEPENDENCIES PRIVATE shared PRIVATE OpenGL::GL PRIVATE glew_s PRIVATE glm::glm )
 if (MSVC)
 list(APPEND DEPENDENCIES PRIVATE winmm )
 endif()
