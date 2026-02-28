@@ -19,9 +19,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 // r_main.c
 #include "ref_gl/gl_rmain.h"
+#include "ref_gl/camera.hpp"
 #include "ref_gl/gl_main.h"
 #include "ref_gl/gl_rmisc.h"
+#include "ref_gl/gl_state.hpp"
 #include "ref_gl/gl_warp.h"
+#include "ref_gl/gl_state.hpp"
 #include "shared/assert.h"
 #include <GL/glew.h>
 #include "ref_gl/gl_local.h"
@@ -36,7 +39,6 @@ refimport_t ri;
 model_t	   *r_worldmodel;
 float		gldepthmin, gldepthmax;
 glconfig_t	gl_config;
-glstate_t	gl_state;
 
 image_t *r_notexture;		 // use for bad textures
 image_t *r_particletexture;	 // little dot for particles
@@ -136,7 +138,9 @@ cvar_t *vid_fullscreen;
 cvar_t *vid_gamma;
 cvar_t *vid_ref;
 
-void APIENTRY glDebugOutput (GLenum source, GLenum type, unsigned int id, GLenum severity, GLsizei length,
+Q2::Camera g_camera;
+
+void APIENTRY glDebugOutput (GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length,
 							 const char *  // message
 							 ,
 							 const void *  // userParam
@@ -673,8 +677,8 @@ void MYgluPerspective (double fovy, double aspect, double zNear, double zFar)
 	xmin = ymin * aspect;
 	xmax = ymax * aspect;
 
-	xmin += -(2 * gl_state.camera_separation) / zNear;
-	xmax += -(2 * gl_state.camera_separation) / zNear;
+	xmin += -(2 * Q2::glstate_t::get_instance ().camera_separation) / zNear;
+	xmax += -(2 * Q2::glstate_t::get_instance ().camera_separation) / zNear;
 
 	qglFrustum (xmin, xmax, ymin, ymax, zNear, zFar);
 }
@@ -708,26 +712,27 @@ void R_SetupGL (void)
 	//
 	screenaspect = (float) r_newrefdef.width / r_newrefdef.height;
 	//	yfov = 2*atan((float)r_newrefdef.height/r_newrefdef.width)*180/M_PI;
-	qglMatrixMode (GL_PROJECTION);
-	qglLoadIdentity ();
-	MYgluPerspective (r_newrefdef.fov_y, screenaspect, 4, 4096);
+	//qglMatrixMode (GL_PROJECTION);
+	//qglLoadIdentity ();
+	//MYgluPerspective (r_newrefdef.fov_y, screenaspect, 4, 4096);
 
 	qglCullFace (GL_FRONT);
 
-	qglMatrixMode (GL_MODELVIEW);
-	qglLoadIdentity ();
+	//qglMatrixMode (GL_MODELVIEW);
+	//qglLoadIdentity ();
 
-	qglRotatef (-90, 1, 0, 0);	// put Z going up
-	qglRotatef (90, 0, 0, 1);	// put Z going up
-	qglRotatef (-r_newrefdef.viewangles[2], 1, 0, 0);
-	qglRotatef (-r_newrefdef.viewangles[0], 0, 1, 0);
-	qglRotatef (-r_newrefdef.viewangles[1], 0, 0, 1);
-	qglTranslatef (-r_newrefdef.vieworg[0], -r_newrefdef.vieworg[1], -r_newrefdef.vieworg[2]);
+
+	g_camera.rotate (-90.f, 1.f, 0.f, 0.f);	 // put Z going up
+	g_camera.rotate (90.f, 0.f, 0.f, 1.f);	 // put Z going up
+	g_camera.rotate (-r_newrefdef.viewangles[2], 1.f, 0.f, 0.f);
+	g_camera.rotate (-r_newrefdef.viewangles[0], 0.f, 1.f, 0.f);
+	g_camera.rotate (-r_newrefdef.viewangles[1], 0.f, 0.f, 1.f);
+	g_camera.translate (-r_newrefdef.vieworg[0], -r_newrefdef.vieworg[1], -r_newrefdef.vieworg[2]);
 
 	//	if ( gl_state.camera_separation != 0 && gl_state.stereo_enabled )
 	//		qglTranslatef ( gl_state.camera_separation, 0, 0 );
 
-	qglGetFloatv (GL_MODELVIEW_MATRIX, r_world_matrix);
+	//qglGetFloatv (GL_MODELVIEW_MATRIX, r_world_matrix);
 
 	//
 	// set drawing parms
@@ -738,7 +743,7 @@ void R_SetupGL (void)
 		qglDisable (GL_CULL_FACE);
 
 	qglDisable (GL_BLEND);
-	qglDisable (GL_ALPHA_TEST);
+	//qglDisable (GL_ALPHA_TEST);
 	qglEnable (GL_DEPTH_TEST);
 }
 
@@ -877,7 +882,7 @@ static void GL_DrawStereoPattern (void)
 	if (!(gl_config.renderer & GL_RENDERER_INTERGRAPH))
 		return;
 
-	if (!gl_state.stereo_enabled)
+	if (!Q2::glstate_t::get_instance ().stereo_enabled)
 		return;
 
 	R_SetGL2D ();
@@ -1053,7 +1058,7 @@ qboolean R_SetMode (void)
 	vid.height		 = height;
 	if (err == rserr_ok)
 	{
-		gl_state.prev_mode = gl_mode->value;
+		Q2::glstate_t::get_instance ().prev_mode = gl_mode->value;
 	}
 	else
 	{
@@ -1074,13 +1079,13 @@ qboolean R_SetMode (void)
 		}
 		else if (err == rserr_invalid_mode)
 		{
-			ri.Cvar_SetValue ("gl_mode", gl_state.prev_mode);
+			ri.Cvar_SetValue ("gl_mode", Q2::glstate_t::get_instance ().prev_mode);
 			gl_mode->modified = e_false;
 			ri.Con_Printf (PRINT_ALL, "ref_gl::R_SetMode() - invalid mode\n");
 		}
 
 		// try setting it back to something safe
-		err		   = GLimp_SetMode (&width, &height, gl_state.prev_mode, e_false);
+		err		   = GLimp_SetMode (&width, &height, Q2::glstate_t::get_instance ().prev_mode, e_false);
 		vid.width  = width;
 		vid.height = height;
 
@@ -1132,7 +1137,7 @@ qboolean R_Init ()
 	}
 
 	// set our "safe" modes
-	gl_state.prev_mode = 3;
+	Q2::glstate_t::get_instance ().prev_mode = 3;
 
 	// create the window and set up the context
 	if (!R_SetMode ())
@@ -1367,7 +1372,7 @@ R_BeginFrame
 */
 void R_BeginFrame (float camera_separation)
 {
-	gl_state.camera_separation = camera_separation;
+	Q2::glstate_t::get_instance ().camera_separation = camera_separation;
 
 	/*
 	** change modes if necessary
@@ -1440,7 +1445,7 @@ void R_BeginFrame (float camera_separation)
 	{
 		gl_drawbuffer->modified = e_false;
 
-		if (gl_state.camera_separation == 0 || !gl_state.stereo_enabled)
+		if (Q2::glstate_t::get_instance ().camera_separation == 0 || !Q2::glstate_t::get_instance ().stereo_enabled)
 		{
 			if (Q_stricmp (gl_drawbuffer->string, "GL_FRONT") == 0)
 				qglDrawBuffer (GL_FRONT);
@@ -1684,7 +1689,7 @@ void Com_Printf (const char *fmt, ...)
 
 #endif
 
-void APIENTRY glDebugOutput (GLenum source, GLenum type, unsigned int id, GLenum severity, GLsizei length, const char *message,
+void APIENTRY glDebugOutput (GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const char *message,
 							 const void *userParam)
 {
 	if (id == 131185)

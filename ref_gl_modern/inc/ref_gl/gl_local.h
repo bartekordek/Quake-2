@@ -80,12 +80,6 @@ EXTERNC viddef_t vid;
 
 */
 
-#define TEXNUM_LIGHTMAPS 1024
-#define TEXNUM_SCRAPS	 1152
-#define TEXNUM_IMAGES	 1153
-
-#define MAX_GLTEXTURES 1024
-
 //===================================================================
 
 typedef enum
@@ -361,30 +355,7 @@ typedef struct
 	qboolean allow_cds;
 } glconfig_t;
 
-typedef struct
-{
-	float	 inverse_intensity;
-	qboolean fullscreen;
-
-	int prev_mode;
-
-	unsigned char *d_16to8table;
-
-	int lightmap_textures;
-
-	int currenttextures[2];
-	int currenttmu;
-
-	float	 camera_separation;
-	qboolean stereo_enabled;
-
-	unsigned char originalRedGammaTable[256];
-	unsigned char originalGreenGammaTable[256];
-	unsigned char originalBlueGammaTable[256];
-} glstate_t;
-
 EXTERNC glconfig_t gl_config;
-EXTERNC glstate_t  gl_state;
 
 /*
 ====================================================================

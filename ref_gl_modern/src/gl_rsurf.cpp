@@ -21,6 +21,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "ref_gl/gl_surf.h"
 #include "ref_gl/gl_local.h"
 #include "ref_gl/gl_light.h"
+#include "ref_gl/gl_state.hpp"
+#include "ref_gl/lightmapstate.hpp"
+#include "ref_gl/polygon.hpp"
 #include <assert.h>
 
 static vec3_t modelorg;	 // relative to viewpoint
@@ -32,31 +35,14 @@ msurface_t *r_alpha_surfaces;
 
 #define LIGHTMAP_BYTES 4
 
-#define BLOCK_WIDTH	 128
-#define BLOCK_HEIGHT 128
 
-#define MAX_LIGHTMAPS 128
+
+
 
 int c_visible_lightmaps;
 int c_visible_textures;
 
 #define GL_LIGHTMAP_FORMAT GL_RGBA
-
-typedef struct
-{
-	int internal_format;
-	int current_lightmap_texture;
-
-	msurface_t *lightmap_surfaces[MAX_LIGHTMAPS];
-
-	int allocated[BLOCK_WIDTH];
-
-	// the lightmap texture data needs to be kept in
-	// main memory so texsubimage can update properly
-	byte lightmap_buffer[4 * BLOCK_WIDTH * BLOCK_HEIGHT];
-} gllightmapstate_t;
-
-static gllightmapstate_t gl_lms;
 
 static void		LM_InitBlock (void);
 static void		LM_UploadBlock (qboolean dynamic);
@@ -226,6 +212,8 @@ void DrawGLFlowingPoly (msurface_t *fa)
 */
 void R_DrawTriangleOutlines (void)
 {
+	auto &gl_lms = Q2::Light_map_state::get_instance ();
+
 	int		  i, j;
 	glpoly_t *p;
 
@@ -311,7 +299,7 @@ void DrawGLPolyChain (glpoly_t *p, float soffset, float toffset)
 */
 void R_BlendLightmaps (void)
 {
-	int			i;
+	auto	   &gl_lms = Q2::Light_map_state::get_instance ();
 	msurface_t *surf, *newdrawsurf = 0;
 
 	// don't bother if we're set to fullbright
@@ -366,19 +354,18 @@ void R_BlendLightmaps (void)
 	/*
 	** render static lightmaps first
 	*/
-	for (i = 1; i < MAX_LIGHTMAPS; i++)
+	for (std::size_t i = 1u; i < MAX_LIGHTMAPS; ++i)
 	{
-		if (gl_lms.lightmap_surfaces[i])
+		msurface_s *surface = gl_lms.lightmap_surfaces[i];
+		if (surface)
 		{
 			if (currentmodel == r_worldmodel)
-				c_visible_lightmaps++;
-			GL_BindTexture (gl_state.lightmap_textures + i);
-
-			for (surf = gl_lms.lightmap_surfaces[i]; surf != 0; surf = surf->lightmapchain)
 			{
-				if (surf->polys)
-					DrawGLPolyChain (surf->polys, 0, 0);
+				c_visible_lightmaps++;
 			}
+
+			Q2::Polygon::draw_surface (surface, Q2::glstate_t::get_instance ().lightmap_textures[i]);
+
 		}
 	}
 
@@ -389,7 +376,7 @@ void R_BlendLightmaps (void)
 	{
 		LM_InitBlock ();
 
-		GL_BindTexture (gl_state.lightmap_textures + 0);
+		GL_BindTexture (Q2::glstate_t::get_instance ().lightmap_textures[0]);
 
 		if (currentmodel == r_worldmodel)
 			c_visible_lightmaps++;
@@ -473,95 +460,13 @@ R_RenderBrushPoly
 */
 void R_RenderBrushPoly (msurface_t *fa)
 {
+	Q2::Polygon* polygon = Q2::PolygonStore::get_instance ().get_or_create (fa);
+
 	int		 maps;
-	image_t *image;
 	qboolean is_dynamic = e_false;
 
 	c_brush_polys++;
-
-	image = R_TextureAnimation (fa->texinfo);
-
-	if (fa->flags & SURF_DRAWTURB)
-	{
-		GL_BindTexture (image->texnum);
-
-		// warp texture, no lightmaps
-		GL_TexEnv (GL_MODULATE);
-		qglColor4f (gl_state.inverse_intensity, gl_state.inverse_intensity, gl_state.inverse_intensity, 1.0F);
-		EmitWaterPolys (fa);
-		GL_TexEnv (GL_REPLACE);
-
-		return;
-	}
-	else
-	{
-		GL_BindTexture (image->texnum);
-
-		GL_TexEnv (GL_REPLACE);
-	}
-
-	//======
-	// PGM
-	if (fa->texinfo->flags & SURF_FLOWING)
-		DrawGLFlowingPoly (fa);
-	else
-		DrawGLPoly (fa->polys);
-	// PGM
-	//======
-
-	/*
-	** check for lightmap modification
-	*/
-	for (maps = 0; maps < MAXLIGHTMAPS && fa->styles[maps] != 255; maps++)
-	{
-		if (r_newrefdef.lightstyles[fa->styles[maps]].white != fa->cached_light[maps])
-			goto dynamic;
-	}
-
-	// dynamic this frame or dynamic previously
-	if ((fa->dlightframe == r_framecount))
-	{
-	dynamic:
-		if (gl_dynamic->value)
-		{
-			if (!(fa->texinfo->flags & (SURF_SKY | SURF_TRANS33 | SURF_TRANS66 | SURF_WARP)))
-			{
-				is_dynamic = e_true;
-			}
-		}
-	}
-
-	if (is_dynamic)
-	{
-		if ((fa->styles[maps] >= 32 || fa->styles[maps] == 0) && (fa->dlightframe != r_framecount))
-		{
-			unsigned temp[34 * 34];
-			int		 smax, tmax;
-
-			smax = (fa->extents[0] >> 4) + 1;
-			tmax = (fa->extents[1] >> 4) + 1;
-
-			R_BuildLightMap (fa, (byte *) temp, smax * 4);
-			R_SetCacheState (fa);
-
-			GL_BindTexture (gl_state.lightmap_textures + fa->lightmaptexturenum);
-
-			qglTexSubImage2D (GL_TEXTURE_2D, 0, fa->light_s, fa->light_t, smax, tmax, GL_LIGHTMAP_FORMAT, GL_UNSIGNED_BYTE, temp);
-
-			fa->lightmapchain								 = gl_lms.lightmap_surfaces[fa->lightmaptexturenum];
-			gl_lms.lightmap_surfaces[fa->lightmaptexturenum] = fa;
-		}
-		else
-		{
-			fa->lightmapchain			= gl_lms.lightmap_surfaces[0];
-			gl_lms.lightmap_surfaces[0] = fa;
-		}
-	}
-	else
-	{
-		fa->lightmapchain								 = gl_lms.lightmap_surfaces[fa->lightmaptexturenum];
-		gl_lms.lightmap_surfaces[fa->lightmaptexturenum] = fa;
-	}
+	polygon->draw ();
 }
 
 /*
@@ -588,7 +493,7 @@ void R_DrawAlphaSurfaces (void)
 
 	// the textures are prescaled up for a better lighting range,
 	// so scale it back down
-	intens = gl_state.inverse_intensity;
+	intens = Q2::glstate_t::get_instance ().inverse_intensity;
 
 	for (s = r_alpha_surfaces; s; s = s->texturechain)
 	{
@@ -726,7 +631,7 @@ static void GL_RenderLightmappedPoly (msurface_t *surf)
 			R_BuildLightMap (surf, (byte *) temp, smax * 4);
 			R_SetCacheState (surf);
 
-			GL_MBind (GL_TEXTURE1_SGIS, gl_state.lightmap_textures + surf->lightmaptexturenum);
+			GL_MBind (GL_TEXTURE1_SGIS, Q2::glstate_t::get_instance ().lightmap_textures[surf->lightmaptexturenum]);
 
 			lmtex = surf->lightmaptexturenum;
 
@@ -739,7 +644,7 @@ static void GL_RenderLightmappedPoly (msurface_t *surf)
 
 			R_BuildLightMap (surf, (byte *) temp, smax * 4);
 
-			GL_MBind (GL_TEXTURE1_SGIS, gl_state.lightmap_textures + 0);
+			GL_MBind (GL_TEXTURE1_SGIS, Q2::glstate_t::get_instance ().lightmap_textures[0]);
 
 			lmtex = 0;
 
@@ -749,7 +654,7 @@ static void GL_RenderLightmappedPoly (msurface_t *surf)
 		c_brush_polys++;
 
 		GL_MBind (GL_TEXTURE0_SGIS, image->texnum);
-		GL_MBind (GL_TEXTURE1_SGIS, gl_state.lightmap_textures + lmtex);
+		GL_MBind (GL_TEXTURE1_SGIS, Q2::glstate_t::get_instance ().lightmap_textures[lmtex]);
 
 		//==========
 		// PGM
@@ -797,7 +702,7 @@ static void GL_RenderLightmappedPoly (msurface_t *surf)
 		c_brush_polys++;
 
 		GL_MBind (GL_TEXTURE0_SGIS, image->texnum);
-		GL_MBind (GL_TEXTURE1_SGIS, gl_state.lightmap_textures + lmtex);
+		GL_MBind (GL_TEXTURE1_SGIS, Q2::glstate_t::get_instance ().lightmap_textures[lmtex]);
 
 		//==========
 		// PGM
@@ -930,6 +835,7 @@ R_DrawBrushModel
 */
 void R_DrawBrushModel (entity_t *e)
 {
+	auto	&gl_lms = Q2::Light_map_state::get_instance ();
 	vec3_t	 mins, maxs;
 	int		 i;
 	qboolean rotated;
@@ -937,8 +843,8 @@ void R_DrawBrushModel (entity_t *e)
 	if (currentmodel->nummodelsurfaces == 0)
 		return;
 
-	currententity				= e;
-	gl_state.currenttextures[0] = gl_state.currenttextures[1] = -1;
+	currententity									  = e;
+	Q2::glstate_t::get_instance ().currenttextures[0] = Q2::glstate_t::get_instance ().currenttextures[1] = -1;
 
 	if (e->angles[0] || e->angles[1] || e->angles[2])
 	{
@@ -1169,6 +1075,7 @@ R_DrawWorld
 */
 void R_DrawWorld (void)
 {
+	auto	&gl_lms = Q2::Light_map_state::get_instance ();
 	entity_t ent;
 
 	if (!r_drawworld->value)
@@ -1183,12 +1090,12 @@ void R_DrawWorld (void)
 
 	// auto cycle the world frame for texture animation
 	memset (&ent, 0, sizeof (ent));
-	ent.frame					= (int) (r_newrefdef.time * 2);
-	currententity				= &ent;
+	ent.frame										  = (int) (r_newrefdef.time * 2);
+	currententity									  = &ent;
 
-	gl_state.currenttextures[0] = gl_state.currenttextures[1] = -1;
+	Q2::glstate_t::get_instance ().currenttextures[0] = Q2::glstate_t::get_instance ().currenttextures[1] = -1;
 
-	qglColor3f (1, 1, 1);
+	//qglColor3f (1, 1, 1);
 	memset (gl_lms.lightmap_surfaces, 0, sizeof (gl_lms.lightmap_surfaces));
 	R_ClearSkyBox ();
 
@@ -1320,11 +1227,13 @@ void R_MarkLeaves (void)
 
 static void LM_InitBlock (void)
 {
+	auto &gl_lms = Q2::Light_map_state::get_instance ();
 	memset (gl_lms.allocated, 0, sizeof (gl_lms.allocated));
 }
 
 static void LM_UploadBlock (qboolean dynamic)
 {
+	auto &gl_lms = Q2::Light_map_state::get_instance ();
 	int texture;
 	int height = 0;
 
@@ -1337,7 +1246,7 @@ static void LM_UploadBlock (qboolean dynamic)
 		texture = gl_lms.current_lightmap_texture;
 	}
 
-	GL_BindTexture (gl_state.lightmap_textures + texture);
+	GL_BindTexture (Q2::glstate_t::get_instance ().lightmap_textures[texture]);
 	qglTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	qglTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
@@ -1365,6 +1274,7 @@ static void LM_UploadBlock (qboolean dynamic)
 // returns a texture number and the position inside it
 static qboolean LM_AllocBlock (int w, int h, int *x, int *y)
 {
+	auto &gl_lms = Q2::Light_map_state::get_instance ();
 	int i, j;
 	int best, best2;
 
@@ -1480,6 +1390,7 @@ GL_CreateSurfaceLightmap
 */
 void GL_CreateSurfaceLightmap (msurface_t *surf)
 {
+	auto &gl_lms = Q2::Light_map_state::get_instance ();
 	int	  smax, tmax;
 	byte *base;
 
@@ -1516,6 +1427,7 @@ GL_BeginBuildingLightmaps
 */
 void GL_BeginBuildingLightmaps (model_t *m)
 {
+	auto			   &gl_lms = Q2::Light_map_state::get_instance ();
 	static lightstyle_t lightstyles[MAX_LIGHTSTYLES];
 	int					i;
 	unsigned			dummy[128 * 128];
@@ -1540,11 +1452,17 @@ void GL_BeginBuildingLightmaps (model_t *m)
 	}
 	r_newrefdef.lightstyles = lightstyles;
 
-	if (!gl_state.lightmap_textures)
+	static bool lightmap_textures_initialized = false;
+	if (!lightmap_textures_initialized)
 	{
-		gl_state.lightmap_textures = TEXNUM_LIGHTMAPS;
+		for (std::size_t i = 0u; i < TEXNUM_LIGHTMAPS; ++i)
+		{
+			qglGenTextures (1, &Q2::glstate_t::get_instance ().lightmap_textures[i]);
+		}
+
 		//		gl_state.lightmap_textures	= gl_state.texture_extension_number;
 		//		gl_state.texture_extension_number = gl_state.lightmap_textures + MAX_LIGHTMAPS;
+		lightmap_textures_initialized					 = true;
 	}
 
 	gl_lms.current_lightmap_texture = 1;
@@ -1583,13 +1501,13 @@ void GL_BeginBuildingLightmaps (model_t *m)
 	}
 	else
 	{
-		gl_lms.internal_format = gl_tex_solid_format;
+		gl_lms.internal_format = GL_RGBA;
 	}
 
 	/*
 	** initialize the dynamic lightmap texture
 	*/
-	GL_BindTexture (gl_state.lightmap_textures + 0);
+	GL_BindTexture (Q2::glstate_t::get_instance ().lightmap_textures[0]);
 	qglTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	qglTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	qglTexImage2D (GL_TEXTURE_2D, 0, gl_lms.internal_format, BLOCK_WIDTH, BLOCK_HEIGHT, 0, GL_LIGHTMAP_FORMAT, GL_UNSIGNED_BYTE, dummy);

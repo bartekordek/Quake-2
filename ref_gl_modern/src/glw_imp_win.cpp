@@ -31,6 +31,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "ref_gl/gl_local.h"
+#include "ref_gl/gl_state.hpp"
 
 #include "shared/assert.h"
 
@@ -41,21 +42,20 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "ref_gl/glw_win.h"
 #include "ref_gl/glw.h"
 #include <string>
-//ToDo: do we really need to have this here?
+// ToDo: do we really need to have this here?
 #include "../../quake2/inc/quake2/windows/winquake.h"
 #include "../../quake2/inc/quake2/video/VideoSettings.h"
 
 glwstate_t glw_state;
 
-extern cvar_t *vid_fullscreen;
-extern cvar_t *vid_ref;
+extern cvar_t  *vid_fullscreen;
+extern cvar_t  *vid_ref;
 EXTERNC cvar_t *gl_allow_software;
 
 static qboolean VerifyDriver (void)
 {
 	return e_true;
 }
-
 
 /*
 ** GLimp_SetMode
@@ -80,7 +80,6 @@ rserr_t GLimp_SetMode (int *pwidth, int *pheight, int mode, qboolean fullscreen)
 	// do a CDS if needed
 	if (fullscreen)
 	{
-
 		VideoSettings vs;
 
 		ri.Con_Printf (PRINT_ALL, "...attempting fullscreen\n");
@@ -108,23 +107,23 @@ rserr_t GLimp_SetMode (int *pwidth, int *pheight, int mode, qboolean fullscreen)
 		Q2_Assert (false, "TODO: implement");
 
 		ri.Con_Printf (PRINT_ALL, "...calling CDS: ");
-		//if (ChangeDisplaySettings (&dm, CDS_FULLSCREEN) == DISP_CHANGE_SUCCESSFUL)
+		// if (ChangeDisplaySettings (&dm, CDS_FULLSCREEN) == DISP_CHANGE_SUCCESSFUL)
 		{
-			*pwidth				= width;
-			*pheight			= height;
+			*pwidth									  = width;
+			*pheight								  = height;
 
-			gl_state.fullscreen = e_true;
+			Q2::glstate_t::get_instance ().fullscreen = e_true;
 
 			ri.Con_Printf (PRINT_ALL, "ok\n");
 
-			if (!ri.create_window(0, 0, width, height, e_true))
+			if (!ri.create_window (0, 0, width, height, e_true))
 			{
 				return rserr_invalid_mode;
 			}
 
 			return rserr_ok;
 		}
-		//else
+		// else
 		{
 			*pwidth	 = width;
 			*pheight = height;
@@ -133,21 +132,21 @@ rserr_t GLimp_SetMode (int *pwidth, int *pheight, int mode, qboolean fullscreen)
 
 			ri.Con_Printf (PRINT_ALL, "...calling CDS assuming dual monitors:");
 
-			//dm.dmPelsWidth	= width * 2;
-			//dm.dmPelsHeight = height;
-			//dm.dmFields		= DM_PELSWIDTH | DM_PELSHEIGHT;
+			// dm.dmPelsWidth	= width * 2;
+			// dm.dmPelsHeight = height;
+			// dm.dmFields		= DM_PELSWIDTH | DM_PELSHEIGHT;
 
 			if (gl_bitdepth->value != 0)
 			{
-				//dm.dmBitsPerPel = gl_bitdepth->value;
-				//dm.dmFields |= DM_BITSPERPEL;
+				// dm.dmBitsPerPel = gl_bitdepth->value;
+				// dm.dmFields |= DM_BITSPERPEL;
 			}
 
 			/*
 			** our first CDS failed, so maybe we're running on some weird dual monitor
 			** system
 			*/
-			//if (ChangeDisplaySettings (&dm, CDS_FULLSCREEN) != DISP_CHANGE_SUCCESSFUL)
+			// if (ChangeDisplaySettings (&dm, CDS_FULLSCREEN) != DISP_CHANGE_SUCCESSFUL)
 			{
 				ri.Con_Printf (PRINT_ALL, " failed\n");
 
@@ -155,21 +154,21 @@ rserr_t GLimp_SetMode (int *pwidth, int *pheight, int mode, qboolean fullscreen)
 
 				ChangeDisplaySettings (0, 0);
 
-				*pwidth				= width;
-				*pheight			= height;
-				gl_state.fullscreen = e_false;
+				*pwidth									  = width;
+				*pheight								  = height;
+				Q2::glstate_t::get_instance ().fullscreen = e_false;
 
 				if (!ri.create_window (0, 0, width, height, e_false))
 					return rserr_invalid_mode;
 				return rserr_invalid_fullscreen;
 			}
-			//else
+			// else
 			{
 				ri.Con_Printf (PRINT_ALL, " ok\n");
 				if (!ri.create_window (0, 0, width, height, e_true))
 					return rserr_invalid_mode;
 
-				gl_state.fullscreen = e_true;
+				Q2::glstate_t::get_instance ().fullscreen = e_true;
 				return rserr_ok;
 			}
 		}
@@ -178,14 +177,14 @@ rserr_t GLimp_SetMode (int *pwidth, int *pheight, int mode, qboolean fullscreen)
 	{
 		ri.Con_Printf (PRINT_ALL, "...setting windowed mode\n");
 
-		//ChangeDisplaySettings (0, 0);
+		// ChangeDisplaySettings (0, 0);
 
-		*pwidth				= width;
-		*pheight			= height;
-		gl_state.fullscreen = e_false;
-		if (ri.create_window(512, 64, width, height, e_false))
+		*pwidth									  = width;
+		*pheight								  = height;
+		Q2::glstate_t::get_instance ().fullscreen = e_false;
+		if (ri.create_window (512, 64, width, height, e_false))
 		{
-			if (GLimp_InitGL() == e_false)
+			if (GLimp_InitGL () == e_false)
 			{
 				return rserr_invalid_mode;
 			}
@@ -278,13 +277,12 @@ qboolean GLimp_InitGL (void)
 	{
 		ri.Con_Printf (PRINT_ALL, "...attempting to use stereo\n");
 		pfd.dwFlags |= PFD_STEREO;
-		gl_state.stereo_enabled = e_true;
+		Q2::glstate_t::get_instance ().stereo_enabled = e_true;
 	}
 	else
 	{
-		gl_state.stereo_enabled = e_false;
+		Q2::glstate_t::get_instance ().stereo_enabled = e_false;
 	}
-
 
 	/*
 	** report if stereo is desired but unavailable
@@ -293,21 +291,21 @@ qboolean GLimp_InitGL (void)
 	{
 		ri.Con_Printf (PRINT_ALL, "...failed to select stereo pixel format\n");
 		ri.Cvar_SetValue ("cl_stereo", 0);
-		gl_state.stereo_enabled = e_false;
+		Q2::glstate_t::get_instance ().stereo_enabled = e_false;
 	}
 
 	/*
 	** startup the OpenGL subsystem by creating a context and making
 	** it current
 	*/
-	//if ((glw_state.hGLRC = qwglCreateContext (glw_state.hDC)) == 0)
+	// if ((glw_state.hGLRC = qwglCreateContext (glw_state.hDC)) == 0)
 	//{
 	//	ri.Con_Printf (PRINT_ALL, "GLimp_Init() - qwglCreateContext failed\n");
 
 	//	goto fail;
 	//}
 
-	//if (!qwglMakeCurrent (glw_state.hDC, glw_state.hGLRC))
+	// if (!qwglMakeCurrent (glw_state.hDC, glw_state.hGLRC))
 	//{
 	//	ri.Con_Printf (PRINT_ALL, "GLimp_Init() - qwglMakeCurrent failed\n");
 
@@ -336,11 +334,11 @@ fail:
 */
 EXTERNC void GLimp_BeginFrame (float camera_separation)
 {
-	if (camera_separation < 0 && gl_state.stereo_enabled)
+	if (camera_separation < 0 && Q2::glstate_t::get_instance ().stereo_enabled)
 	{
 		qglDrawBuffer (GL_BACK_LEFT);
 	}
-	else if (camera_separation > 0 && gl_state.stereo_enabled)
+	else if (camera_separation > 0 && Q2::glstate_t::get_instance ().stereo_enabled)
 	{
 		qglDrawBuffer (GL_BACK_RIGHT);
 	}
@@ -359,7 +357,6 @@ EXTERNC void GLimp_BeginFrame (float camera_separation)
 */
 void GLimp_EndFrame (void)
 {
-	
 	int err;
 
 	err = glGetError ();
@@ -368,12 +365,11 @@ void GLimp_EndFrame (void)
 	if (stricmp (gl_drawbuffer->string, "GL_BACK") == 0)
 	{
 		ri.Swap_buffers ();
-		//if (!qwglSwapBuffers (glw_state.hDC))
+		// if (!qwglSwapBuffers (glw_state.hDC))
 		//	ri.Sys_Error (ERR_FATAL, "GLimp_EndFrame() - SwapBuffers() failed!\n");
 	}
-	//ri.Swap_buffers ();
+	// ri.Swap_buffers ();
 }
-
 
 /*
 ** GLimp_AppActivate

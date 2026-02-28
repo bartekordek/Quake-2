@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "ref_gl/gl_image.h"
 #include "ref_gl/gl_local.h"
+#include "ref_gl/gl_state.hpp"
 #include "ref_gl/gl_rmisc.h"
 
 /*
@@ -227,7 +228,7 @@ void GL_UpdateSwapInterval (void)
 	{
 		gl_swapinterval->modified = e_false;
 
-		if (!gl_state.stereo_enabled)
+		if (!Q2::glstate_t::get_instance ().stereo_enabled)
 		{
 #ifdef _WIN32
 			if (qwglSwapIntervalEXT)

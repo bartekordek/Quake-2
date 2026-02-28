@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "ref_gl/gl_image.h"
+#include "ref_gl/gl_state.hpp"
 #include <GL/glew.h>
 #include "ref_gl/gl_local.h"
 #include "ref_gl/gl_draw.h"
@@ -41,8 +42,8 @@ qboolean GL_Upload32 (unsigned *data, int width, int height, qboolean mipmap);
 int gl_solid_format		= 3;
 int gl_alpha_format		= 4;
 
-int gl_tex_solid_format = 3;
-int gl_tex_alpha_format = 4;
+int gl_tex_solid_format = GL_RGB;
+int gl_tex_alpha_format = GL_RGBA;
 
 int gl_filter_min		= GL_LINEAR_MIPMAP_NEAREST;
 int gl_filter_max		= GL_NEAREST;
@@ -98,10 +99,10 @@ void GL_SelectTexture (GLenum texture)
 	else
 		tmu = 1;
 
-	if (tmu == gl_state.currenttmu)
+	if (tmu == Q2::glstate_t::get_instance ().currenttmu)
 		return;
 
-	gl_state.currenttmu = tmu;
+	Q2::glstate_t::get_instance ().currenttmu = tmu;
 
 	if (tmu == 0)
 		qglSelectTextureSGIS (GL_TEXTURE0_SGIS);
@@ -113,10 +114,10 @@ void GL_TexEnv (GLenum mode)
 {
 	static int lastmodes[2] = {-1, -1};
 
-	if (mode != lastmodes[gl_state.currenttmu])
+	if (mode != lastmodes[Q2::glstate_t::get_instance ().currenttmu])
 	{
 		// qglTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, mode);
-		lastmodes[gl_state.currenttmu] = mode;
+		lastmodes[Q2::glstate_t::get_instance ().currenttmu] = mode;
 	}
 }
 
@@ -124,9 +125,9 @@ void GL_BindTexture (int texnum)
 {
 	if (gl_nobind->value && draw_chars)	 // performance evaluation option
 		texnum = draw_chars->texnum;
-	if (gl_state.currenttextures[gl_state.currenttmu] == texnum)
+	if (Q2::glstate_t::get_instance ().currenttextures[Q2::glstate_t::get_instance ().currenttmu] == texnum)
 		return;
-	gl_state.currenttextures[gl_state.currenttmu] = texnum;
+	Q2::glstate_t::get_instance ().currenttextures[Q2::glstate_t::get_instance ().currenttmu] = texnum;
 	qglBindTexture (GL_TEXTURE_2D, texnum);
 }
 
@@ -135,12 +136,12 @@ void GL_MBind (GLenum target, int texnum)
 	GL_SelectTexture (target);
 	if (target == GL_TEXTURE0_SGIS)
 	{
-		if (gl_state.currenttextures[0] == texnum)
+		if (Q2::glstate_t::get_instance ().currenttextures[0] == texnum)
 			return;
 	}
 	else
 	{
-		if (gl_state.currenttextures[1] == texnum)
+		if (Q2::glstate_t::get_instance ().currenttextures[1] == texnum)
 			return;
 	}
 	GL_BindTexture (texnum);
@@ -175,7 +176,7 @@ gltmode_t gl_alpha_modes[] = {
 #define NUM_GL_ALPHA_MODES (sizeof (gl_alpha_modes) / sizeof (gltmode_t))
 
 gltmode_t gl_solid_modes[] = {
-	{"default", 3},			  {"GL_RGB", GL_RGB},	{"GL_RGB8", GL_RGB8},
+	{"default", GL_RGB},	  {"GL_RGB", GL_RGB},	{"GL_RGB8", GL_RGB8},
 	{"GL_RGB5", GL_RGB5},	  {"GL_RGB4", GL_RGB4}, {"GL_R3_G3_B2", GL_R3_G3_B2},
 #ifdef GL_RGB2_EXT
 	{"GL_RGB2", GL_RGB2_EXT},
@@ -931,7 +932,7 @@ void GL_BuildPalettedTexture (unsigned char *paletted_texture, unsigned char *sc
 
 		c					= r | (g << 5) | (b << 11);
 
-		paletted_texture[i] = gl_state.d_16to8table[c];
+		paletted_texture[i] = Q2::glstate_t::get_instance ().d_16to8table[c];
 
 		scaled += 4;
 	}
@@ -1474,14 +1475,14 @@ void GL_InitImages (void)
 	if (intensity->value <= 1)
 		ri.Cvar_Set ("intensity", "1");
 
-	gl_state.inverse_intensity = 1 / intensity->value;
+	Q2::glstate_t::get_instance ().inverse_intensity = 1 / intensity->value;
 
 	Draw_GetPalette ();
 
 	if (qglColorTableEXT)
 	{
-		ri.FS_LoadFile ("pics/16to8.dat", (void **) &gl_state.d_16to8table);
-		if (!gl_state.d_16to8table)
+		ri.FS_LoadFile ("pics/16to8.dat", (void **) &Q2::glstate_t::get_instance ().d_16to8table);
+		if (!Q2::glstate_t::get_instance ().d_16to8table)
 			ri.Sys_Error (ERR_FATAL, "Couldn't load pics/16to8.pcx");
 	}
 
