@@ -19,10 +19,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 // r_misc.c
 
-#include "ref_gl/gl_image.h"
-#include "ref_gl/gl_local.h"
-#include "ref_gl/gl_state.hpp"
-#include "ref_gl/gl_rmisc.h"
+#include "gl_modern/gl_image.h"
+#include "gl_modern/gl_local.h"
+#include "gl_modern/gl_state.hpp"
+#include "gl_modern/gl_rmisc.h"
 
 /*
 ==================

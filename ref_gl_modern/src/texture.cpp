@@ -1,11 +1,11 @@
 #include <GL/glew.h>
-#include "ref_gl/texture.hpp"
-#include "ref_gl/shader.hpp"
-#include "ref_gl/gl_image.h"
-#include "ref_gl/gl_draw.h"
-#include "ref_gl/gl_local.h"
-#include "ref_gl/attribute_meta.hpp"
-#include "ref_gl/utils.hpp"
+#include "gl_modern/texture.hpp"
+#include "gl_modern/shader.hpp"
+#include "gl_modern/gl_image.h"
+#include "gl_modern/gl_draw.h"
+#include "gl_modern/gl_local.h"
+#include "gl_modern/attribute_meta.hpp"
+#include "gl_modern/utils.hpp"
 
 #include <vector>
 
@@ -343,6 +343,8 @@ std::array<float, 32> Texture::createBufferData (const std::array<TextureVertex,
 
 void Texture::draw ()
 {
+	IRenderable::draw ();
+
 	if (has_alpha ())
 	{
 		glDisable (GL_ALPHA_TEST);
@@ -372,6 +374,8 @@ void Texture::draw ()
 
 void Texture::draw (const RenderData &inData)
 {
+	IRenderable::draw ();
+
 	if (has_alpha ())
 	{
 		glDisable (GL_ALPHA_TEST);

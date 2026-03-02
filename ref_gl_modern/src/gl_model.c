@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 // models.c -- model loading and caching
 
-#include "ref_gl/gl_local.h"
+#include "gl_modern/gl_local.h"
 
 model_t *loadmodel;
 int		 modfilelen;
@@ -525,8 +525,6 @@ void CalcSurfaceExtents (msurface_t *s)
 		//			ri.Sys_Error (ERR_DROP, "Bad surface extents");
 	}
 }
-
-
 
 /*
 =================

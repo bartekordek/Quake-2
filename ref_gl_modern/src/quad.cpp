@@ -1,6 +1,6 @@
-#include "ref_gl/quad.hpp"
-#include "ref_gl/attribute_meta.hpp"
-#include "ref_gl/shader.hpp"
+#include "gl_modern/quad.hpp"
+#include "gl_modern/attribute_meta.hpp"
+#include "gl_modern/shader.hpp"
 #include <GL/glew.h>
 #include <vector>
 
@@ -70,7 +70,7 @@ void Quad::set_name (const char *in_name)
 	m_shader->set_name (in_name);
 }
 
-void Quad::initialize_data()
+void Quad::initialize_data ()
 {
 	m_raw_data[0].color = m_data.color;
 	m_raw_data[0].pos	= {m_data.pos.x + m_data.size.w, m_data.pos.y + m_data.size.h, 0.f};
@@ -88,11 +88,15 @@ void Quad::initialize_data()
 std::array<float, 28> Quad::createBufferData (const std::array<QuadVertex, 4> &in_arg) const
 {
 	std::array<float, 28> result = {
-		// positions               // colors            
-		in_arg[0].pos.x, in_arg[0].pos.y, in_arg[0].pos.z, in_arg[0].color.r, in_arg[0].color.g, in_arg[0].color.b, in_arg[0].color.a,  // top right
-		in_arg[1].pos.x, in_arg[1].pos.y, in_arg[1].pos.z, in_arg[1].color.r, in_arg[1].color.g, in_arg[1].color.b, in_arg[1].color.a,  // bottom right
-		in_arg[2].pos.x, in_arg[2].pos.y, in_arg[2].pos.z, in_arg[2].color.r, in_arg[2].color.g, in_arg[2].color.b, in_arg[2].color.a,  // bottom left
-		in_arg[3].pos.x, in_arg[3].pos.y, in_arg[3].pos.z, in_arg[3].color.r, in_arg[2].color.g, in_arg[3].color.b, in_arg[3].color.a  // top let
+		// positions               // colors
+		in_arg[0].pos.x,   in_arg[0].pos.y,	  in_arg[0].pos.z,	 in_arg[0].color.r,
+		in_arg[0].color.g, in_arg[0].color.b, in_arg[0].color.a,  // top right
+		in_arg[1].pos.x,   in_arg[1].pos.y,	  in_arg[1].pos.z,	 in_arg[1].color.r,
+		in_arg[1].color.g, in_arg[1].color.b, in_arg[1].color.a,  // bottom right
+		in_arg[2].pos.x,   in_arg[2].pos.y,	  in_arg[2].pos.z,	 in_arg[2].color.r,
+		in_arg[2].color.g, in_arg[2].color.b, in_arg[2].color.a,  // bottom left
+		in_arg[3].pos.x,   in_arg[3].pos.y,	  in_arg[3].pos.z,	 in_arg[3].color.r,
+		in_arg[2].color.g, in_arg[3].color.b, in_arg[3].color.a	 // top let
 	};
 	return result;
 }

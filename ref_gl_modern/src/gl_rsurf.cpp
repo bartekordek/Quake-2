@@ -18,12 +18,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 // GL_RSURF.C: surface-related refresh code
-#include "ref_gl/gl_surf.h"
-#include "ref_gl/gl_local.h"
-#include "ref_gl/gl_light.h"
-#include "ref_gl/gl_state.hpp"
-#include "ref_gl/lightmapstate.hpp"
-#include "ref_gl/polygon.hpp"
+#include "gl_modern/gl_surf.h"
+#include "gl_modern/gl_local.h"
+#include "gl_modern/gl_light.h"
+#include "gl_modern/gl_state.hpp"
+#include "gl_modern/lightmapstate.hpp"
+#include "gl_modern/polygon.hpp"
 #include <assert.h>
 
 static vec3_t modelorg;	 // relative to viewpoint
@@ -34,10 +34,6 @@ msurface_t *r_alpha_surfaces;
 #define DYNAMIC_LIGHT_HEIGHT 128
 
 #define LIGHTMAP_BYTES 4
-
-
-
-
 
 int c_visible_lightmaps;
 int c_visible_textures;
@@ -364,8 +360,9 @@ void R_BlendLightmaps (void)
 				c_visible_lightmaps++;
 			}
 
-			Q2::Polygon::draw_surface (surface, Q2::glstate_t::get_instance ().lightmap_textures[i]);
-
+			auto polygon = Q2::PolygonStore::get_instance ().get_or_create (surface);
+			auto tex_id	 = Q2::glstate_t::get_instance ().lightmap_textures[i];
+			polygon->draw (tex_id);
 		}
 	}
 
@@ -460,7 +457,7 @@ R_RenderBrushPoly
 */
 void R_RenderBrushPoly (msurface_t *fa)
 {
-	Q2::Polygon* polygon = Q2::PolygonStore::get_instance ().get_or_create (fa);
+	Q2::Polygon *polygon = Q2::PolygonStore::get_instance ().get_or_create (fa);
 
 	int		 maps;
 	qboolean is_dynamic = e_false;
@@ -1095,7 +1092,7 @@ void R_DrawWorld (void)
 
 	Q2::glstate_t::get_instance ().currenttextures[0] = Q2::glstate_t::get_instance ().currenttextures[1] = -1;
 
-	//qglColor3f (1, 1, 1);
+	// qglColor3f (1, 1, 1);
 	memset (gl_lms.lightmap_surfaces, 0, sizeof (gl_lms.lightmap_surfaces));
 	R_ClearSkyBox ();
 
@@ -1234,8 +1231,8 @@ static void LM_InitBlock (void)
 static void LM_UploadBlock (qboolean dynamic)
 {
 	auto &gl_lms = Q2::Light_map_state::get_instance ();
-	int texture;
-	int height = 0;
+	int	  texture;
+	int	  height = 0;
 
 	if (dynamic)
 	{
@@ -1275,8 +1272,8 @@ static void LM_UploadBlock (qboolean dynamic)
 static qboolean LM_AllocBlock (int w, int h, int *x, int *y)
 {
 	auto &gl_lms = Q2::Light_map_state::get_instance ();
-	int i, j;
-	int best, best2;
+	int	  i, j;
+	int	  best, best2;
 
 	best = BLOCK_HEIGHT;
 
@@ -1450,7 +1447,7 @@ void GL_BeginBuildingLightmaps (model_t *m)
 		lightstyles[i].rgb[2] = 1;
 		lightstyles[i].white  = 3;
 	}
-	r_newrefdef.lightstyles = lightstyles;
+	r_newrefdef.lightstyles					  = lightstyles;
 
 	static bool lightmap_textures_initialized = false;
 	if (!lightmap_textures_initialized)
@@ -1462,7 +1459,7 @@ void GL_BeginBuildingLightmaps (model_t *m)
 
 		//		gl_state.lightmap_textures	= gl_state.texture_extension_number;
 		//		gl_state.texture_extension_number = gl_state.lightmap_textures + MAX_LIGHTMAPS;
-		lightmap_textures_initialized					 = true;
+		lightmap_textures_initialized = true;
 	}
 
 	gl_lms.current_lightmap_texture = 1;

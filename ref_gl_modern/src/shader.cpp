@@ -1,4 +1,4 @@
-#include "ref_gl/shader.hpp"
+#include "gl_modern/shader.hpp"
 #include "shared/assert.h"
 #include <GL/glew.h>
 #include <fstream>
@@ -15,9 +15,9 @@ void Shader::init (const char *vertex_shader, const char *fragment_shader)
 	m_fragment_shader_path = fragment_shader;
 	m_vertex_shader_path   = vertex_shader;
 
-	m_program_id = glCreateProgram ();
-	m_vertex_id	 = glCreateShader (GL_VERTEX_SHADER);
-	m_fragment_id = glCreateShader (GL_FRAGMENT_SHADER);
+	m_program_id		   = glCreateProgram ();
+	m_vertex_id			   = glCreateShader (GL_VERTEX_SHADER);
+	m_fragment_id		   = glCreateShader (GL_FRAGMENT_SHADER);
 
 	std::string	  vertex_code;
 	std::string	  fragment_code;
@@ -36,8 +36,8 @@ void Shader::init (const char *vertex_shader, const char *fragment_shader)
 	vertex_file.close ();
 	fragment_file.close ();
 
-	vertex_code	  = vertex_ss.str ();
-	fragment_code = fragment_ss.str ();
+	vertex_code				   = vertex_ss.str ();
+	fragment_code			   = fragment_ss.str ();
 
 	const char *frag_code_cstr = fragment_code.c_str ();
 	glShaderSource (m_fragment_id, 1, &frag_code_cstr, NULL);
@@ -75,10 +75,10 @@ void Shader::set_name (const char *in_name)
 	sprintf (buffer, "Shader Program: %s", in_name);
 	glObjectLabel (GL_PROGRAM, m_program_id, -1, buffer);
 
-	sprintf (buffer, "Vertex Shader: %s", m_fragment_shader_path.c_str());
+	sprintf (buffer, "Vertex Shader: %s", m_fragment_shader_path.c_str ());
 	glObjectLabel (GL_SHADER, m_vertex_id, -1, buffer);
 
-	sprintf (buffer, "Fragment Shader: %s", m_fragment_shader_path.c_str());
+	sprintf (buffer, "Fragment Shader: %s", m_fragment_shader_path.c_str ());
 	glObjectLabel (GL_SHADER, m_fragment_id, -1, buffer);
 }
 

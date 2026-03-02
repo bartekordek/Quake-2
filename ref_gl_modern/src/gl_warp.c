@@ -19,8 +19,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 // gl_warp.c -- sky and water polygons
 
-#include "ref_gl/gl_warp.h"
-#include "ref_gl/gl_local.h"
+#include "gl_modern/gl_warp.h"
+#include "gl_modern/gl_local.h"
 #include "math/constants.h"
 
 extern model_t *loadmodel;
@@ -194,7 +194,7 @@ void GL_SubdivideSurface (msurface_t *fa)
 
 // speed up sin calculations - Ed
 float r_turbsin[] = {
-#include "ref_gl/warpsin.h"
+#include "gl_modern/warpsin.h"
 };
 #define TURBSCALE (256.0 / (2 * M_PI))
 
@@ -543,6 +543,9 @@ R_DrawSkyBox
 int	 skytexorder[6] = {0, 2, 1, 3, 4, 5};
 void R_DrawSkyBox (void)
 {
+	// TODO
+	return;
+
 	int i;
 
 #if 0

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "shared/noncopyable.hpp"
+#include "gl_modern/i_renderable.hpp"
 #include <string>
 #include <cstdint>
 #include <array>
@@ -56,14 +56,14 @@ struct PosAndUV
 	std::array<TextureVertex, 4> Data;
 };
 
-class Texture
+class Texture: public IRenderable
 {
 public:
 	Texture ();
 	Texture (const char* in_name);
 	Texture (image_t *in_image, const char* in_name);
 	void			   init ();
-	void			   draw ();
+	void			   draw () override;
 	void			   draw (const RenderData &inData);
 	void			   draw (const PosAndUV &in_data);
 	void			   changeScale (float in_scale);

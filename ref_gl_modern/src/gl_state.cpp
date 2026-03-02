@@ -1,4 +1,4 @@
-#include "ref_gl/gl_state.hpp"
+#include "gl_modern/gl_state.hpp"
 
 namespace Q2
 {

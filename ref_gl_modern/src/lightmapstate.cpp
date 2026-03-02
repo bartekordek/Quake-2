@@ -1,4 +1,4 @@
-#include "ref_gl/lightmapstate.hpp"
+#include "gl_modern/lightmapstate.hpp"
 
 namespace Q2
 {

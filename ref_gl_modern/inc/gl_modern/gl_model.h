@@ -2,7 +2,7 @@
 #define __ref_gl_gl_model_h__
 
 #include "qcommon/qfiles.h"
-#include "ref_gl/gl_image.h"
+#include "gl_modern/gl_image.h"
 #include "math/vector.h"
 
 /*

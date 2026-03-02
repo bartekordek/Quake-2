@@ -1,5 +1,5 @@
-#include "ref_gl/utils.hpp"
-#include "ref_gl/gl_local.h"
+#include "gl_modern/utils.hpp"
+#include "gl_modern/gl_local.h"
 
 EXTERNC viddef_t vid;
 
@@ -16,12 +16,12 @@ float to_y_normalized (float in_y)
 	return (2.f * in_y / static_cast<float> (vid.height)) - 1.f;
 }
 
-float to_x_normalized(float in_x, float width)
+float to_x_normalized (float in_x, float width)
 {
 	return (in_x * 2.f / static_cast<float> (width)) - 1.f;
 }
 
-float to_y_normalized(float in_y, float height)
+float to_y_normalized (float in_y, float height)
 {
 	return 1.f - 2.f * in_y / static_cast<float> (height);
 }
@@ -36,4 +36,4 @@ float height_to_normalized (float in_height)
 	return 2.f * in_height / static_cast<float> (vid.height);
 }
 
-}
+}  // namespace Q2

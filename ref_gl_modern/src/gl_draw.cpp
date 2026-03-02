@@ -21,13 +21,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // draw.c
 
 #include <GL/glew.h>
-#include "ref_gl/gl_local.h"
-#include "ref_gl/gl_image.h"
-#include "ref_gl/gl_main.h"
-#include "ref_gl/gl_draw.h"
-#include "ref_gl/texture.hpp"
-#include "ref_gl/quad.hpp"
-#include "ref_gl/utils.hpp"
+#include "gl_modern/gl_local.h"
+#include "gl_modern/gl_image.h"
+#include "gl_modern/gl_main.h"
+#include "gl_modern/gl_draw.h"
+#include "gl_modern/texture.hpp"
+#include "gl_modern/quad.hpp"
+#include "gl_modern/utils.hpp"
 #include <cmath>
 
 image_t *draw_chars;
@@ -178,7 +178,7 @@ void Draw_Pic (int x, int y, char *pic)
 	if (scrap_dirty)
 		Scrap_Upload ();
 
-	Q2::Texture* texture = Q2::TextureStore::get_instance ().get_or_create (pic);
+	Q2::Texture *texture = Q2::TextureStore::get_instance ().get_or_create (pic);
 	texture->fetch_uv_and_apply_them ();
 	texture->set_pos_global (x, y);
 	texture->draw ();
@@ -194,37 +194,37 @@ refresh window.
 */
 void Draw_TileClear (int x, int y, int w, int h, char *pic)
 {
-	//Q2::RenderData rd;
+	// Q2::RenderData rd;
 
-	//Q2::Texture *texture = Q2::TextureStore::get_instance ().get (pic);
-	//if (texture == nullptr)
+	// Q2::Texture *texture = Q2::TextureStore::get_instance ().get (pic);
+	// if (texture == nullptr)
 	//{
 	//	texture = Q2::TextureStore::get_instance ().get_or_create (pic);
 	//	rd.alphaTest   = (gl_config.renderer == GL_RENDERER_MCD) || (gl_config.renderer & GL_RENDERER_RENDITION);
-	//}
+	// }
 
-	//texture->draw ();
+	// texture->draw ();
 
-	//if (
+	// if (
 	//	((gl_config.renderer == GL_RENDERER_MCD) || (gl_config.renderer & GL_RENDERER_RENDITION)) && !image->has_alpha
 	//)
 	//{
 	//	qglDisable (GL_ALPHA_TEST);
-	//}
+	// }
 
-	//GL_BindTexture (image->texnum);
-	//qglBegin (GL_QUADS);
-	//qglTexCoord2f (x / 64.0, y / 64.0);
-	//qglVertex2f (x, y);
-	//qglTexCoord2f ((x + w) / 64.0, y / 64.0);
-	//qglVertex2f (x + w, y);
-	//qglTexCoord2f ((x + w) / 64.0, (y + h) / 64.0);
-	//qglVertex2f (x + w, y + h);
-	//qglTexCoord2f (x / 64.0, (y + h) / 64.0);
-	//qglVertex2f (x, y + h);
-	//qglEnd ();
+	// GL_BindTexture (image->texnum);
+	// qglBegin (GL_QUADS);
+	// qglTexCoord2f (x / 64.0, y / 64.0);
+	// qglVertex2f (x, y);
+	// qglTexCoord2f ((x + w) / 64.0, y / 64.0);
+	// qglVertex2f (x + w, y);
+	// qglTexCoord2f ((x + w) / 64.0, (y + h) / 64.0);
+	// qglVertex2f (x + w, y + h);
+	// qglTexCoord2f (x / 64.0, (y + h) / 64.0);
+	// qglVertex2f (x, y + h);
+	// qglEnd ();
 
-	//if (((gl_config.renderer == GL_RENDERER_MCD) || (gl_config.renderer & GL_RENDERER_RENDITION)) && !image->has_alpha)
+	// if (((gl_config.renderer == GL_RENDERER_MCD) || (gl_config.renderer & GL_RENDERER_RENDITION)) && !image->has_alpha)
 	//	qglEnable (GL_ALPHA_TEST);
 }
 
@@ -299,7 +299,6 @@ Draw_StretchRaw
 =============
 */
 
-// TODO: Convert to modern
 void Draw_StretchRaw (int x, int y, int w, int h, int cols, int rows, byte *data)
 {
 	unsigned	  image32[256 * 256];
@@ -378,9 +377,9 @@ void Draw_StretchRaw (int x, int y, int w, int h, int cols, int rows, byte *data
 		rd.data			   = &image8;
 	}
 
-	rd.w		 = w;
-	rd.h		 = h;
-	rd.scale	 = t;
+	rd.w	 = w;
+	rd.h	 = h;
+	rd.scale = t;
 
 	static Q2::Texture stretchTexture ("Cinematic");
 	stretchTexture.changeScale (t);

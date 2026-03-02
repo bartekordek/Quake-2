@@ -18,17 +18,17 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 // r_main.c
-#include "ref_gl/gl_rmain.h"
-#include "ref_gl/camera.hpp"
-#include "ref_gl/gl_main.h"
-#include "ref_gl/gl_rmisc.h"
-#include "ref_gl/gl_state.hpp"
-#include "ref_gl/gl_warp.h"
-#include "ref_gl/gl_state.hpp"
+#include "gl_modern/gl_rmain.h"
+#include "gl_modern/camera.hpp"
+#include "gl_modern/gl_main.h"
+#include "gl_modern/gl_rmisc.h"
+#include "gl_modern/gl_state.hpp"
+#include "gl_modern/gl_warp.h"
+#include "gl_modern/gl_state.hpp"
 #include "shared/assert.h"
 #include <GL/glew.h>
-#include "ref_gl/gl_local.h"
-#include "ref_gl/gl_draw.h"
+#include "gl_modern/gl_local.h"
+#include "gl_modern/gl_draw.h"
 #include "math/constants.h"
 #include <cstdint>
 
@@ -414,6 +414,9 @@ void R_DrawEntitiesOnList (void)
 */
 void GL_DrawParticles (int num_particles, const particle_t particles[], const unsigned colortable[768])
 {
+	// TODO:
+	return;
+
 	const particle_t *p;
 	int				  i;
 	vec3_t			  up, right;
@@ -712,15 +715,14 @@ void R_SetupGL (void)
 	//
 	screenaspect = (float) r_newrefdef.width / r_newrefdef.height;
 	//	yfov = 2*atan((float)r_newrefdef.height/r_newrefdef.width)*180/M_PI;
-	//qglMatrixMode (GL_PROJECTION);
-	//qglLoadIdentity ();
-	//MYgluPerspective (r_newrefdef.fov_y, screenaspect, 4, 4096);
+	// qglMatrixMode (GL_PROJECTION);
+	// qglLoadIdentity ();
+	// MYgluPerspective (r_newrefdef.fov_y, screenaspect, 4, 4096);
 
 	qglCullFace (GL_FRONT);
 
-	//qglMatrixMode (GL_MODELVIEW);
-	//qglLoadIdentity ();
-
+	// qglMatrixMode (GL_MODELVIEW);
+	// qglLoadIdentity ();
 
 	g_camera.rotate (-90.f, 1.f, 0.f, 0.f);	 // put Z going up
 	g_camera.rotate (90.f, 0.f, 0.f, 1.f);	 // put Z going up
@@ -732,7 +734,7 @@ void R_SetupGL (void)
 	//	if ( gl_state.camera_separation != 0 && gl_state.stereo_enabled )
 	//		qglTranslatef ( gl_state.camera_separation, 0, 0 );
 
-	//qglGetFloatv (GL_MODELVIEW_MATRIX, r_world_matrix);
+	// qglGetFloatv (GL_MODELVIEW_MATRIX, r_world_matrix);
 
 	//
 	// set drawing parms
@@ -743,7 +745,7 @@ void R_SetupGL (void)
 		qglDisable (GL_CULL_FACE);
 
 	qglDisable (GL_BLEND);
-	//qglDisable (GL_ALPHA_TEST);
+	// qglDisable (GL_ALPHA_TEST);
 	qglEnable (GL_DEPTH_TEST);
 }
 
@@ -832,25 +834,28 @@ void R_RenderView (refdef_t *fd)
 
 	R_DrawWorld ();
 
-	R_DrawEntitiesOnList ();
+	//R_DrawEntitiesOnList ();
 
-	R_RenderDlights ();
+	//R_RenderDlights ();
 
-	R_DrawParticles ();
+	//R_DrawParticles ();
 
-	R_DrawAlphaSurfaces ();
+	//R_DrawAlphaSurfaces ();
 
-	R_Flash ();
+	//R_Flash ();
 
-	if (r_speeds->value)
-	{
-		ri.Con_Printf (PRINT_ALL, "%4i wpoly %4i epoly %i tex %i lmaps\n", c_brush_polys, c_alias_polys, c_visible_textures,
-					   c_visible_lightmaps);
-	}
+	//if (r_speeds->value)
+	//{
+	//	ri.Con_Printf (PRINT_ALL, "%4i wpoly %4i epoly %i tex %i lmaps\n", c_brush_polys, c_alias_polys, c_visible_textures,
+	//				   c_visible_lightmaps);
+	//}
 }
 
 void R_SetGL2D (void)
 {
+	// TODO:
+	return;
+
 	// set 2D virtual screen size
 	qglViewport (0, 0, vid.width, vid.height);
 	qglMatrixMode (GL_PROJECTION);

@@ -30,8 +30,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 **
 */
 
-#include "ref_gl/gl_local.h"
-#include "ref_gl/gl_state.hpp"
+#include "gl_modern/gl_local.h"
+#include "gl_modern/gl_state.hpp"
 
 #include "shared/assert.h"
 
@@ -39,8 +39,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <assert.h>
 #include <windows.h>
 
-#include "ref_gl/glw_win.h"
-#include "ref_gl/glw.h"
+#include "gl_modern/glw_win.h"
+#include "gl_modern/glw.h"
 #include <string>
 // ToDo: do we really need to have this here?
 #include "../../quake2/inc/quake2/windows/winquake.h"

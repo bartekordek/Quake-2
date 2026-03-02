@@ -19,8 +19,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 // r_light.c
 
-#include "ref_gl/gl_local.h"
-#include "ref_gl/gl_light.h"
+#include "gl_modern/gl_local.h"
+#include "gl_modern/gl_light.h"
 #include "math/constants.h"
 
 int r_dlightframecount;

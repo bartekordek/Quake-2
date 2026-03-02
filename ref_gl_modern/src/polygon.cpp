@@ -1,16 +1,15 @@
 #include <GL/glew.h>
-#include "ref_gl/polygon.hpp"
-#include "ref_gl/gl_model.h"
-#include "ref_gl/gl_surf.h"
-#include "ref_gl/gl_local.h"
-#include "ref_gl/gl_light.h"
-#include "ref_gl/gl_state.hpp"
-#include "ref_gl/attribute_meta.hpp"
-#include "ref_gl/lightmapstate.hpp"
-#include "ref_gl/shader.hpp"
+#include "gl_modern/polygon.hpp"
+#include "gl_modern/gl_model.h"
+#include "gl_modern/gl_surf.h"
+#include "gl_modern/gl_local.h"
+#include "gl_modern/gl_light.h"
+#include "gl_modern/gl_state.hpp"
+#include "gl_modern/attribute_meta.hpp"
+#include "gl_modern/lightmapstate.hpp"
+#include "gl_modern/shader.hpp"
 
 #include "shared/assert.h"
-
 
 #define GL_LIGHTMAP_FORMAT GL_RGBA
 
@@ -78,13 +77,16 @@ Polygon::Polygon (msurface_s *in_surface) : m_surface_info (in_surface)
 
 		std::vector<AttributeMeta> attributeInfo;
 		attributeInfo.push_back (AttributeMeta ("pos", 0, 3, (int) GL_FLOAT, false, vertex_size * sizeof (float), nullptr));
-		attributeInfo.push_back (AttributeMeta ("uv", 1, 2, (int) GL_FLOAT, false, vertex_size * sizeof (float), (void *) (3 * sizeof (float))));
+		attributeInfo.push_back (
+			AttributeMeta ("uv", 1, 2, (int) GL_FLOAT, false, vertex_size * sizeof (float), (void *) (3 * sizeof (float))));
 
 		for (const auto &att : attributeInfo)
 		{
 			glVertexAttribPointer (att.index, att.size, att.type, att.normalized, att.stride, att.pointer);
 			glEnableVertexAttribArray (att.index);
 		}
+
+		m_texId = m_surface_info->texinfo->image->texnum;
 	}
 
 	m_shader = std::make_unique<Shader> ();
@@ -117,6 +119,18 @@ void Polygon::set_name (const char *in_name)
 
 void Polygon::draw ()
 {
+	draw_impl (m_texId);
+}
+
+void Polygon::draw (std::uint32_t in_tex_id)
+{
+	draw_impl (in_tex_id);
+}
+
+void Polygon::draw_impl (std::uint32_t in_tex_id)
+{
+	IRenderable::draw ();
+
 	auto &gl_state		= Q2::glstate_t::get_instance ();
 	auto &gl_lms		= Q2::Light_map_state::get_instance ();
 
@@ -126,7 +140,7 @@ void Polygon::draw ()
 
 	m_image				= R_TextureAnimation (fa->texinfo);
 
-	glBindTexture (GL_TEXTURE_2D, fa->texinfo->image->texnum);
+	glBindTexture (GL_TEXTURE_2D, in_tex_id);
 
 	if (fa->texinfo->flags & SURF_DRAWTURB)
 	{
@@ -202,12 +216,17 @@ void Polygon::draw ()
 	}
 }
 
+void Polygon::overwerite_tex_id (std::uint32_t tex_id)
+{
+	m_texId = tex_id;
+}
+
 void Polygon::draw_surface (msurface_s *surface_info, std::uint32_t tex_id)
 {
 	// TODO: implement this function
-	//GL_BindTexture (tex_id);
-	//msurface_s *surf = surface_info;
-	//for (; surf != 0; surf = surf->lightmapchain)
+	// GL_BindTexture (tex_id);
+	// msurface_s *surf = surface_info;
+	// for (; surf != 0; surf = surf->lightmapchain)
 	//{
 	//	if (surf->polys)
 	//	{
@@ -218,40 +237,40 @@ void Polygon::draw_surface (msurface_s *surface_info, std::uint32_t tex_id)
 
 void Polygon::DrawGLFlowingPoly (msurface_s *fa)
 {
-	//int		  i;
-	//float	 *v;
-	//glpoly_t *p;
-	//float	  scroll;
+	// int		  i;
+	// float	 *v;
+	// glpoly_t *p;
+	// float	  scroll;
 
-	//p	   = fa->polys;
+	// p	   = fa->polys;
 
-	//scroll = -64 * ((r_newrefdef.time / 40.0) - (int) (r_newrefdef.time / 40.0));
-	//if (scroll == 0.0)
+	// scroll = -64 * ((r_newrefdef.time / 40.0) - (int) (r_newrefdef.time / 40.0));
+	// if (scroll == 0.0)
 	//	scroll = -64.0;
 
-	//qglBegin (GL_POLYGON);
-	//v = p->verts[0];
-	//for (i = 0; i < p->numverts; i++, v += VERTEXSIZE)
+	// qglBegin (GL_POLYGON);
+	// v = p->verts[0];
+	// for (i = 0; i < p->numverts; i++, v += VERTEXSIZE)
 	//{
 	//	qglTexCoord2f ((v[3] + scroll), v[4]);
 	//	qglVertex3fv (v);
-	//}
-	//qglEnd ();
+	// }
+	// qglEnd ();
 }
 
 void Polygon::DrawGLPoly (glpoly_s *p)
 {
-	//int	   i;
-	//float *v;
+	// int	   i;
+	// float *v;
 
-	//qglBegin (GL_POLYGON);
-	//v = p->verts[0];
-	//for (i = 0; i < p->numverts; i++, v += VERTEXSIZE)
+	// qglBegin (GL_POLYGON);
+	// v = p->verts[0];
+	// for (i = 0; i < p->numverts; i++, v += VERTEXSIZE)
 	//{
 	//	qglTexCoord2f (v[3], v[4]);
 	//	qglVertex3fv (v);
-	//}
-	//qglEnd ();
+	// }
+	// qglEnd ();
 
 	m_shader->use ();
 	glBindVertexArray (m_polygon_data.m_vao);

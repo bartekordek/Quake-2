@@ -1,4 +1,4 @@
-#include "ref_gl/camera.hpp"
+#include "gl_modern/camera.hpp"
 #ifdef _WIN32
 #include <windows.h>
 #endif
