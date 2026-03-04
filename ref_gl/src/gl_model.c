@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // models.c -- model loading and caching
 
 #include "ref_gl/gl_local.h"
+#include "ref_gl/gl_rsurf.h"
 
 model_t *loadmodel;
 int		 modfilelen;
@@ -526,10 +527,6 @@ void CalcSurfaceExtents (msurface_t *s)
 	}
 }
 
-void GL_BuildPolygonFromSurface (msurface_t *fa);
-void GL_CreateSurfaceLightmap (msurface_t *surf);
-void GL_EndBuildingLightmaps (void);
-void GL_BeginBuildingLightmaps (model_t *m);
 
 /*
 =================

@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 // r_main.c
 #include "ref_gl/gl_local.h"
+#include "ref_gl/gl_rsurf.h"
 #include "math/constants.h"
 
 void R_Clear (void);

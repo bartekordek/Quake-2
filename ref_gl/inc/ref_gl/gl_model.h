@@ -1,3 +1,6 @@
+#ifndef __ref_gl_gl_model_h__
+#define __ref_gl_gl_model_h__
+
 /*
 Copyright (C) 1997-2001 Id Software, Inc.
 
@@ -244,11 +247,11 @@ typedef struct model_s
 
 //============================================================================
 
-void	Mod_Init (void);
-void	Mod_ClearAll (void);
-model_t *Mod_ForName (const char *name, qboolean crash);
-mleaf_t *Mod_PointInLeaf (float *p, model_t *model);
-byte	*Mod_ClusterPVS (int cluster, model_t *model);
+void			 Mod_Init (void);
+void			 Mod_ClearAll (void);
+model_t			*Mod_ForName (const char *name, qboolean crash);
+mleaf_t			*Mod_PointInLeaf (float *p, model_t *model);
+EXTERNC byte	*Mod_ClusterPVS (int cluster, model_t *model);
 
 void	Mod_Modellist_f (void);
 
@@ -259,3 +262,6 @@ void	Hunk_Free (void *base);
 
 void	Mod_FreeAll (void);
 void	Mod_Free (model_t *mod);
+
+
+#endif	// __ref_gl_gl_model_h__

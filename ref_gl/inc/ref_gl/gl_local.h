@@ -178,7 +178,7 @@ EXTERNC cvar_t *gl_particle_att_c;
 
 EXTERNC cvar_t *gl_nosubimage;
 EXTERNC cvar_t *gl_bitdepth;
-cvar_t		   *gl_mode;
+EXTERNC cvar_t *gl_mode;
 EXTERNC cvar_t *gl_log;
 EXTERNC cvar_t *gl_lightmap;
 EXTERNC cvar_t *gl_shadows;
@@ -227,14 +227,14 @@ EXTERNC int c_visible_textures;
 EXTERNC float r_world_matrix[16];
 
 void R_TranslatePlayerSkin (int playernum);
-void GL_Bind (int texnum);
-void GL_MBind (GLenum target, int texnum);
-void GL_TexEnv (GLenum value);
-void GL_EnableMultitexture (qboolean enable);
-void GL_SelectTexture (GLenum);
+EXTERNC void GL_Bind (int texnum);
+EXTERNC void GL_MBind (GLenum target, int texnum);
+EXTERNC void GL_TexEnv (GLenum value);
+EXTERNC void GL_EnableMultitexture (qboolean enable);
+EXTERNC void GL_SelectTexture (GLenum);
 
-void R_LightPoint (vec3_t p, vec3_t color);
-void R_PushDlights (void);
+EXTERNC void R_LightPoint (vec3_t p, vec3_t color);
+EXTERNC void R_PushDlights (void);
 
 //====================================================================
 
@@ -249,29 +249,26 @@ void V_AddBlend (float r, float g, float b, float a, float *v_blend);
 int	 R_Init ();
 void R_Shutdown (void);
 
-void	 R_RenderView (refdef_t *fd);
-void	 GL_ScreenShot_f (void);
-void	 R_DrawAliasModel (entity_t *e);
-void	 R_DrawBrushModel (entity_t *e);
-void	 R_DrawSpriteModel (entity_t *e);
-void	 R_DrawBeam (entity_t *e);
-void	 R_DrawWorld (void);
-void	 R_RenderDlights (void);
-void	 R_DrawAlphaSurfaces (void);
-void	 R_RenderBrushPoly (msurface_t *fa);
-void	 R_InitParticleTexture (void);
-void	 Draw_InitLocal (void);
-void	 GL_SubdivideSurface (msurface_t *fa);
-qboolean R_CullBox (vec3_t mins, vec3_t maxs);
-void	 R_RotateForEntity (entity_t *e);
-void	 R_MarkLeaves (void);
+EXTERNC void	 R_RenderView (refdef_t *fd);
+EXTERNC void	 GL_ScreenShot_f (void);
+EXTERNC void	 R_DrawAliasModel (entity_t *e);
+EXTERNC void	 R_DrawSpriteModel (entity_t *e);
+EXTERNC void	 R_DrawBeam (entity_t *e);
+EXTERNC void	 R_RenderDlights (void);
+EXTERNC void	 R_RenderBrushPoly (msurface_t *fa);
+EXTERNC void	 R_InitParticleTexture (void);
+EXTERNC void	 Draw_InitLocal (void);
+EXTERNC void	 GL_SubdivideSurface (msurface_t *fa);
+EXTERNC qboolean R_CullBox (vec3_t mins, vec3_t maxs);
+EXTERNC void	 R_RotateForEntity (entity_t *e);
 
-glpoly_t *WaterWarpPolyVerts (glpoly_t *p);
-void	  EmitWaterPolys (msurface_t *fa);
-void	  R_AddSkySurface (msurface_t *fa);
-void	  R_ClearSkyBox (void);
-void	  R_DrawSkyBox (void);
-void	  R_MarkLights (dlight_t *light, int bit, mnode_t *node);
+EXTERNC glpoly_t *WaterWarpPolyVerts (glpoly_t *p);
+EXTERNC void	  EmitWaterPolys (msurface_t *fa);
+EXTERNC void	  R_AddSkySurface (msurface_t *fa);
+EXTERNC void	  R_ClearSkyBox (void);
+EXTERNC void	  R_DrawSkyBox (void);
+EXTERNC void	  R_MarkLights (dlight_t *light, int bit, mnode_t *node);
+EXTERNC void	  R_BuildLightMap (msurface_t *surf, byte *dest, int stride);
 
 #if 0
 short LittleShort (short l);

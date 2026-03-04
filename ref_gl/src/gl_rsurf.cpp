@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <assert.h>
 
 #include "ref_gl/gl_local.h"
+#include "ref_gl/gl_rsurf.h"
 
 static vec3_t modelorg;	 // relative to viewpoint
 
@@ -61,7 +62,8 @@ static void		LM_InitBlock (void);
 static void		LM_UploadBlock (qboolean dynamic);
 static qboolean LM_AllocBlock (int w, int h, int *x, int *y);
 
-extern void R_BuildLightMap (msurface_t *surf, byte *dest, int stride);
+extern void	 R_BuildLightMap (msurface_t *surf, byte *dest, int stride);
+EXTERNC void R_SetCacheState (msurface_t *surf);
 
 /*
 =============================================================
@@ -542,7 +544,7 @@ void R_RenderBrushPoly (msurface_t *fa)
 			smax = (fa->extents[0] >> 4) + 1;
 			tmax = (fa->extents[1] >> 4) + 1;
 
-			R_BuildLightMap (fa, (void *) temp, smax * 4);
+			R_BuildLightMap (fa, (byte *) temp, smax * 4);
 			R_SetCacheState (fa);
 
 			GL_Bind (gl_state.lightmap_textures + fa->lightmaptexturenum);
@@ -724,7 +726,7 @@ static void GL_RenderLightmappedPoly (msurface_t *surf)
 			smax = (surf->extents[0] >> 4) + 1;
 			tmax = (surf->extents[1] >> 4) + 1;
 
-			R_BuildLightMap (surf, (void *) temp, smax * 4);
+			R_BuildLightMap (surf, (byte *) temp, smax * 4);
 			R_SetCacheState (surf);
 
 			GL_MBind (GL_TEXTURE1_SGIS, gl_state.lightmap_textures + surf->lightmaptexturenum);
@@ -738,7 +740,7 @@ static void GL_RenderLightmappedPoly (msurface_t *surf)
 			smax = (surf->extents[0] >> 4) + 1;
 			tmax = (surf->extents[1] >> 4) + 1;
 
-			R_BuildLightMap (surf, (void *) temp, smax * 4);
+			R_BuildLightMap (surf, (byte *) temp, smax * 4);
 
 			GL_MBind (GL_TEXTURE1_SGIS, gl_state.lightmap_textures + 0);
 
@@ -1421,7 +1423,7 @@ void GL_BuildPolygonFromSurface (msurface_t *fa)
 	//
 	// draw texture
 	//
-	poly		   = Hunk_Alloc (sizeof (glpoly_t) + (lnumverts - 4) * VERTEXSIZE * sizeof (float));
+	poly		   = static_cast<glpoly_t *> (Hunk_Alloc (sizeof (glpoly_t) + (lnumverts - 4) * VERTEXSIZE * sizeof (float)));
 	poly->next	   = fa->polys;
 	poly->flags	   = fa->flags;
 	fa->polys	   = poly;
