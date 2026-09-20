@@ -282,14 +282,14 @@ char	*va(const char *format, ...);
 
 void COM_StripExtension (const char *in, char *out);
 
-void Draw_GetPicSize (int *w, int *h, char *name);
-void Draw_Pic (int x, int y, char *name);
-void Draw_StretchPic (int x, int y, int w, int h, char *name);
-void Draw_Char (int x, int y, int c);
-void Draw_TileClear (int x, int y, int w, int h, char *name);
-void Draw_Fill (int x, int y, int w, int h, int c);
-void Draw_FadeScreen (void);
-void Draw_StretchRaw (int x, int y, int w, int h, int cols, int rows, byte *data);
+EXTERNC void Draw_GetPicSize (int *w, int *h, char *name);
+EXTERNC void Draw_Pic (int x, int y, char *name);
+EXTERNC void Draw_StretchPic (int x, int y, int w, int h, char *name);
+EXTERNC void Draw_Char (int x, int y, int c);
+EXTERNC void Draw_TileClear (int x, int y, int w, int h, char *name);
+EXTERNC void Draw_Fill (int x, int y, int w, int h, int c);
+EXTERNC void Draw_FadeScreen (void);
+EXTERNC void Draw_StretchRaw (int x, int y, int w, int h, int cols, int rows, byte *data);
 
 void R_BeginFrame (float camera_separation);
 void R_SwapBuffers (int);
@@ -303,7 +303,7 @@ struct image_s *R_RegisterSkin (const char *name);
 
 void	 LoadPCX (const char *filename, byte **pic, byte **palette, int *width, int *height);
 image_t *GL_LoadPic (const char *name, byte *pic, int width, int height, imagetype_t type, int bits);
-image_t *GL_FindImage (const char *name, imagetype_t type);
+EXTERNC image_t *GL_FindImage (const char *name, imagetype_t type);
 void	 GL_ImageList_f (void);
 
 void GL_SetTexturePalette (unsigned palette[256]);

@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // r_main.c
 #include "ref_gl/gl_local.h"
 #include "ref_gl/gl_rsurf.h"
+#include "ref_gl/gl_draw.h"
 #include "math/constants.h"
 
 void R_Clear (void);
@@ -1580,8 +1581,6 @@ void			R_SetSky (const char *name, float rotate, vec3_t axis);
 void			R_EndRegistration (void);
 
 void R_RenderFrame (refdef_t *fd);
-
-struct image_s *Draw_FindPic (const char *name);
 
 void Draw_Pic (int x, int y, char *name);
 void Draw_Char (int x, int y, int c);

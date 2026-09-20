@@ -1,4 +1,8 @@
+cmake_minimum_required(VERSION 3.5)
+
 project(quake-2-main)
+
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address")
 
 message("CMAKE BUILD TYPE: ${CMAKE_BUILD_TYPE}")
 

@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "ref_gl/gl_local.h"
+#include "ref_gl/gl_draw.h"
 
 image_t gltextures[MAX_GLTEXTURES];
 int		numgltextures;
@@ -118,8 +119,6 @@ void GL_TexEnv (GLenum mode)
 
 void GL_Bind (int texnum)
 {
-	extern image_t *draw_chars;
-
 	if (gl_nobind->value && draw_chars)	 // performance evaluation option
 		texnum = draw_chars->texnum;
 	if (gl_state.currenttextures[gl_state.currenttmu] == texnum)

@@ -21,11 +21,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // draw.c
 
 #include "ref_gl/gl_local.h"
+#include "ref_gl/gl_draw.h"
+#include "ref_gl/gl_image.h"
 
 image_t *draw_chars;
 
 extern qboolean scrap_dirty;
-void			Scrap_Upload (void);
+
 
 /*
 ===============
@@ -305,7 +307,7 @@ void Draw_FadeScreen (void)
 Draw_StretchRaw
 =============
 */
-extern unsigned r_rawpalette[256];
+EXTERNC unsigned r_rawpalette[256];
 
 void Draw_StretchRaw (int x, int y, int w, int h, int cols, int rows, byte *data)
 {
