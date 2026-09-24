@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "ref_gl/gl_rsurf.h"
 #include "ref_gl/gl_draw.h"
 #include "ref_gl/gl_image.h"
+#include "ref_gl/gl_warp.h"
 #include "math/constants.h"
 
 void R_Clear (void);
@@ -1080,11 +1081,10 @@ R_Init
 */
 int R_Init (void *hinstance, void *hWnd)
 {
-	char		 renderer_buffer[1000];
-	char		 vendor_buffer[1000];
-	int			 err;
-	int			 j;
-	extern float r_turbsin[256];
+	char renderer_buffer[1000];
+	char vendor_buffer[1000];
+	int	 err;
+	int	 j;
 
 	for (j = 0; j < 256; j++)
 	{
@@ -1578,7 +1578,6 @@ void R_DrawBeam (entity_t *e)
 void			R_BeginRegistration (const char *map);
 struct model_s *R_RegisterModel (const char *name);
 struct image_s *R_RegisterSkin (const char *name);
-void			R_SetSky (const char *name, float rotate, vec3_t axis);
 void			R_EndRegistration (void);
 
 void R_RenderFrame (refdef_t *fd);

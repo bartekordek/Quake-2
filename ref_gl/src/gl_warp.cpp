@@ -20,9 +20,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // gl_warp.c -- sky and water polygons
 
 #include "ref_gl/gl_local.h"
+#include "ref_gl/gl_warp.h"
 #include "math/constants.h"
 
-extern model_t *loadmodel;
+EXTERNC model_t *loadmodel;
 
 char	 skyname[MAX_QPATH];
 float	 skyrotate;
@@ -54,18 +55,17 @@ void BoundPoly (int numverts, float *verts, vec3_t mins, vec3_t maxs)
 
 void SubdividePolygon (int numverts, float *verts)
 {
-	int		  i, j, k;
-	vec3_t	  mins, maxs;
-	float	  m;
-	float	 *v;
-	vec3_t	  front[64], back[64];
-	int		  f, b;
-	float	  dist[64];
-	float	  frac;
-	glpoly_t *poly;
-	float	  s, t;
-	vec3_t	  total;
-	float	  total_s, total_t;
+	int	   i, j, k;
+	vec3_t mins, maxs;
+	float  m;
+	float *v;
+	vec3_t front[64], back[64];
+	int	   f, b;
+	float  dist[64];
+	float  frac;
+	float  s, t;
+	vec3_t total;
+	float  total_s, total_t;
 
 	if (numverts > 60)
 		ri.Sys_Error (ERR_DROP, "numverts = %i", numverts);
@@ -122,7 +122,7 @@ void SubdividePolygon (int numverts, float *verts)
 	}
 
 	// add a point in the center to help keep warp valid
-	poly			= Hunk_Alloc (sizeof (glpoly_t) + ((numverts - 4) + 2) * VERTEXSIZE * sizeof (float));
+	glpoly_t *poly	= (glpoly_t *) Hunk_Alloc (sizeof (glpoly_t) + ((numverts - 4) + 2) * VERTEXSIZE * sizeof (float));
 	poly->next		= warpface->polys;
 	warpface->polys = poly;
 	poly->numverts	= numverts + 2;
