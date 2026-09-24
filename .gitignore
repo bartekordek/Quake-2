@@ -2,7 +2,7 @@
 .vs
 *.dll
 *.suo
-Build-Linux
-Build-Windows
+Build*
+Build
 quake_data
 runDir
