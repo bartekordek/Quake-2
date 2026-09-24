@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <assert.h>
 
 #include "ref_gl/gl_local.h"
+#include "ref_gl/gl_light.h"
 #include "ref_gl/gl_rsurf.h"
 
 static vec3_t modelorg;	 // relative to viewpoint
@@ -62,8 +63,7 @@ static void		LM_InitBlock (void);
 static void		LM_UploadBlock (qboolean dynamic);
 static qboolean LM_AllocBlock (int w, int h, int *x, int *y);
 
-extern void	 R_BuildLightMap (msurface_t *surf, byte *dest, int stride);
-EXTERNC void R_SetCacheState (msurface_t *surf);
+extern void R_BuildLightMap (msurface_t *surf, byte *dest, int stride);
 
 /*
 =============================================================

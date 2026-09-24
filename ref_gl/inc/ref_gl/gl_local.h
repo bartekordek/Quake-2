@@ -295,23 +295,20 @@ void R_BeginFrame (float camera_separation);
 void R_SwapBuffers (int);
 void R_SetPalette (const unsigned char *palette);
 
-int Draw_GetPalette (void);
+EXTERNC int Draw_GetPalette (void);
 
 void GL_ResampleTexture (unsigned *in, int inwidth, int inheight, unsigned *out, int outwidth, int outheight);
 
-struct image_s *R_RegisterSkin (const char *name);
+EXTERNC struct image_s *R_RegisterSkin (const char *name);
 
-void	 LoadPCX (const char *filename, byte **pic, byte **palette, int *width, int *height);
-image_t *GL_LoadPic (const char *name, byte *pic, int width, int height, imagetype_t type, int bits);
+void			 LoadPCX (const char *filename, byte **pic, byte **palette, int *width, int *height);
 EXTERNC image_t *GL_FindImage (const char *name, imagetype_t type);
-void	 GL_ImageList_f (void);
+EXTERNC void	 GL_ImageList_f (void);
 
-void GL_SetTexturePalette (unsigned palette[256]);
+EXTERNC void GL_SetTexturePalette (unsigned palette[256]);
 
-void GL_InitImages (void);
-void GL_ShutdownImages (void);
-
-void GL_FreeUnusedImages (void);
+EXTERNC void GL_InitImages (void);
+EXTERNC void GL_ShutdownImages (void);
 
 /*
 ** GL extension emulation functions
