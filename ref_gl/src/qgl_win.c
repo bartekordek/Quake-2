@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -31,7 +31,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "ref_gl/gl_local.h"
 #include "ref_gl/glw_win.h"
 
-int   ( WINAPI * qwglChoosePixelFormat )(HDC, CONST PIXELFORMATDESCRIPTOR *);
 int   ( WINAPI * qwglDescribePixelFormat) (HDC, int, UINT, LPPIXELFORMATDESCRIPTOR);
 int   ( WINAPI * qwglGetPixelFormat)(HDC);
 BOOL  ( WINAPI * qwglSetPixelFormat)(HDC, int, CONST PIXELFORMATDESCRIPTOR *);
@@ -2994,7 +2993,6 @@ void QGL_Shutdown( void )
 	qwglUseFontBitmaps           = NULL;
 	qwglUseFontOutlines          = NULL;
 
-	qwglChoosePixelFormat        = NULL;
 	qwglDescribePixelFormat      = NULL;
 	qwglGetPixelFormat           = NULL;
 	qwglSetPixelFormat           = NULL;
@@ -3012,12 +3010,12 @@ void QGL_Shutdown( void )
 /*
 ** QGL_Init
 **
-** This is responsible for binding our qgl function pointers to 
-** the appropriate GL stuff.  In Windows this means doing a 
+** This is responsible for binding our qgl function pointers to
+** the appropriate GL stuff.  In Windows this means doing a
 ** LoadLibrary and a bunch of calls to GetProcAddress.  On other
 ** operating systems we need to do the right thing, whatever that
 ** might be.
-** 
+**
 */
 qboolean QGL_Init( const char *dllname )
 {
@@ -3398,7 +3396,6 @@ qboolean QGL_Init( const char *dllname )
 	qwglUseFontBitmaps           = GPA( "wglUseFontBitmapsA" );
 	qwglUseFontOutlines          = GPA( "wglUseFontOutlinesA" );
 
-	qwglChoosePixelFormat        = GPA( "wglChoosePixelFormat" );
 	qwglDescribePixelFormat      = GPA( "wglDescribePixelFormat" );
 	qwglGetPixelFormat           = GPA( "wglGetPixelFormat" );
 	qwglSetPixelFormat           = GPA( "wglSetPixelFormat" );
@@ -3429,7 +3426,7 @@ void GLimp_EnableLogging( qboolean enable )
 
 			asctime( newtime );
 
-			Com_sprintf( buffer, sizeof(buffer), "%s/gl.log", ri.FS_Gamedir() ); 
+			Com_sprintf( buffer, sizeof(buffer), "%s/gl.log", ri.FS_Gamedir() );
 			glw_state.log_fp = fopen( buffer, "wt" );
 
 			fprintf( glw_state.log_fp, "%s\n", asctime( newtime ) );
