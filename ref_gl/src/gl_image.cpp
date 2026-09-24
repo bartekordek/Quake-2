@@ -18,8 +18,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#include "ref_gl/gl_image.h"
 #include "ref_gl/gl_local.h"
 #include "ref_gl/gl_draw.h"
+#include "shared/boolean_cpp.hpp"
+#include "shared/memory.hpp"
 
 image_t gltextures[MAX_GLTEXTURES];
 int		numgltextures;
@@ -400,7 +403,7 @@ void LoadPCX (const char *filename, byte **pic, byte **palette, int *width, int 
 	int	   x, y;
 	int	   len;
 	int	   dataByte, runLength;
-	byte  *out, *pix;
+	byte  *pix;
 
 	*pic	 = NULL;
 	*palette = NULL;
@@ -438,7 +441,7 @@ void LoadPCX (const char *filename, byte **pic, byte **palette, int *width, int 
 		return;
 	}
 
-	out	 = malloc ((pcx->ymax + 1) * (pcx->xmax + 1));
+	byte* out	 = (byte*)malloc ((pcx->ymax + 1) * (pcx->xmax + 1));
 
 	*pic = out;
 
@@ -446,7 +449,7 @@ void LoadPCX (const char *filename, byte **pic, byte **palette, int *width, int 
 
 	if (palette)
 	{
-		*palette = malloc (768);
+		*palette = (byte*)malloc (768);
 		memcpy (*palette, (byte *) pcx + len - 768, 768);
 	}
 
@@ -570,7 +573,7 @@ void LoadTGA (const char *name, byte **pic, int *width, int *height)
 	if (height)
 		*height = rows;
 
-	targa_rgba = malloc (numPixels * 4);
+	targa_rgba = (byte *) malloc (numPixels * 4);
 	*pic	   = targa_rgba;
 
 	if (targa_header.id_length != 0)
@@ -1038,7 +1041,7 @@ qboolean GL_Upload32 (unsigned *data, int width, int height, qboolean mipmap)
 	else
 		GL_ResampleTexture (data, width, height, scaled, scaled_width, scaled_height);
 
-	GL_LightScaleTexture (scaled, scaled_width, scaled_height, !mipmap);
+	GL_LightScaleTexture (scaled, scaled_width, scaled_height, to_qboolean(!mipmap));
 
 	if (qglColorTableEXT && gl_ext_palettedtexture->value && (samples == gl_solid_format))
 	{
@@ -1094,7 +1097,7 @@ done:;
 		qglTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter_max);
 	}
 
-	return (samples == gl_alpha_format);
+	return to_qboolean (samples == gl_alpha_format);
 }
 
 /*
@@ -1240,9 +1243,13 @@ image_t *GL_LoadPic (const char *name, byte *pic, int width, int height, imagety
 		image->texnum = TEXNUM_IMAGES + (image - gltextures);
 		GL_Bind (image->texnum);
 		if (bits == 8)
-			image->has_alpha = GL_Upload8 (pic, width, height, (image->type != it_pic && image->type != it_sky), image->type == it_sky);
+		{
+			image->has_alpha = GL_Upload8 (pic, width, height, to_qboolean(image->type != it_pic && image->type != it_sky), to_qboolean(image->type == it_sky));
+		}
 		else
-			image->has_alpha = GL_Upload32 ((unsigned *) pic, width, height, (image->type != it_pic && image->type != it_sky));
+		{
+			image->has_alpha = GL_Upload32 ((unsigned *) pic, width, height, to_qboolean(image->type != it_pic && image->type != it_sky));
+		}
 		image->upload_width	 = upload_width;  // after power of 2 and scales
 		image->upload_height = upload_height;
 		image->paletted		 = uploaded_paletted;
@@ -1384,7 +1391,8 @@ void GL_FreeUnusedImages (void)
 		if (image->type == it_pic)
 			continue;  // don't free pics
 		// free it
-		qglDeleteTextures (1, &image->texnum);
+		const GLuint texnum = static_cast<GLuint>(image->texnum);
+		qglDeleteTextures (1, &texnum);
 		memset (image, 0, sizeof (*image));
 	}
 }
@@ -1450,7 +1458,8 @@ void GL_InitImages (void)
 
 	if (qglColorTableEXT)
 	{
-		ri.FS_LoadFile ("pics/16to8.dat", &gl_state.d_16to8table);
+		void *data = gl_state.d_16to8table;
+		ri.FS_LoadFile ("pics/16to8.dat", &data);
 		if (!gl_state.d_16to8table)
 			ri.Sys_Error (ERR_FATAL, "Couldn't load pics/16to8.pcx");
 	}
@@ -1503,7 +1512,8 @@ void GL_ShutdownImages (void)
 		if (!image->registration_sequence)
 			continue;  // free image_t slot
 		// free it
-		qglDeleteTextures (1, &image->texnum);
+		const GLuint texnum = static_cast<GLuint>(image->texnum);
+		qglDeleteTextures (1, &texnum);
 		memset (image, 0, sizeof (*image));
 	}
 }
