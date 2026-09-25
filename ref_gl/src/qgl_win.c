@@ -31,7 +31,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "ref_gl/gl_local.h"
 #include "ref_gl/glw_win.h"
 
-int   ( WINAPI * qwglDescribePixelFormat) (HDC, int, UINT, LPPIXELFORMATDESCRIPTOR);
 int   ( WINAPI * qwglGetPixelFormat)(HDC);
 BOOL  ( WINAPI * qwglSetPixelFormat)(HDC, int, CONST PIXELFORMATDESCRIPTOR *);
 BOOL  ( WINAPI * qwglSwapBuffers)(HDC);
@@ -2993,7 +2992,6 @@ void QGL_Shutdown( void )
 	qwglUseFontBitmaps           = NULL;
 	qwglUseFontOutlines          = NULL;
 
-	qwglDescribePixelFormat      = NULL;
 	qwglGetPixelFormat           = NULL;
 	qwglSetPixelFormat           = NULL;
 	qwglSwapBuffers              = NULL;
@@ -3396,7 +3394,6 @@ qboolean QGL_Init( const char *dllname )
 	qwglUseFontBitmaps           = GPA( "wglUseFontBitmapsA" );
 	qwglUseFontOutlines          = GPA( "wglUseFontOutlinesA" );
 
-	qwglDescribePixelFormat      = GPA( "wglDescribePixelFormat" );
 	qwglGetPixelFormat           = GPA( "wglGetPixelFormat" );
 	qwglSetPixelFormat           = GPA( "wglSetPixelFormat" );
 	qwglSwapBuffers              = GPA( "wglSwapBuffers" );

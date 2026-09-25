@@ -384,7 +384,6 @@ EXTERNC	void ( APIENTRY * qglSelectTextureSGIS)( GLenum );
 
 #ifdef _WIN32
 
-EXTERNC  int   ( WINAPI * qwglDescribePixelFormat) (HDC, int, UINT, LPPIXELFORMATDESCRIPTOR);
 EXTERNC  int   ( WINAPI * qwglGetPixelFormat)(HDC);
 EXTERNC  BOOL  ( WINAPI * qwglSetPixelFormat)(HDC, int, CONST PIXELFORMATDESCRIPTOR *);
 EXTERNC  BOOL  ( WINAPI * qwglSwapBuffers)(HDC);
