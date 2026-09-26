@@ -421,4 +421,6 @@ EXTERNC void	 GLimp_AppActivate (qboolean active);
 EXTERNC void	 GLimp_EnableLogging (qboolean enable);
 EXTERNC void	 GLimp_LogNewFrame (void);
 
+EXTERNC void MYgluPerspective (GLdouble fovy, GLdouble aspect, GLdouble zNear, GLdouble zFar);
+
 #endif	// __ref_gl_gl_local_h__
