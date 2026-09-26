@@ -53,8 +53,6 @@ int c_brush_polys, c_alias_polys;
 
 float v_blend[4];  // final blending color
 
-void GL_Strings_f (void);
-
 //
 // view origin
 //

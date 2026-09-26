@@ -103,8 +103,8 @@ typedef enum
 void GL_BeginRendering (int *x, int *y, int *width, int *height);
 void GL_EndRendering (void);
 
-void GL_SetDefaultState (void);
-void GL_UpdateSwapInterval (void);
+EXTERNC void GL_SetDefaultState (void);
+EXTERNC void GL_UpdateSwapInterval (void);
 
 EXTERNC float gldepthmin, gldepthmax;
 
@@ -422,5 +422,6 @@ EXTERNC void	 GLimp_EnableLogging (qboolean enable);
 EXTERNC void	 GLimp_LogNewFrame (void);
 
 EXTERNC void MYgluPerspective (GLdouble fovy, GLdouble aspect, GLdouble zNear, GLdouble zFar);
+EXTERNC void GL_Strings_f (void);
 
 #endif	// __ref_gl_gl_local_h__
