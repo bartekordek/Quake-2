@@ -247,21 +247,23 @@ typedef struct model_s
 
 //============================================================================
 
-void			 Mod_Init (void);
-void			 Mod_ClearAll (void);
-model_t			*Mod_ForName (const char *name, qboolean crash);
-mleaf_t			*Mod_PointInLeaf (float *p, model_t *model);
+EXTERNC void	 Mod_Init (void);
+EXTERNC void	 Mod_ClearAll (void);
+EXTERNC model_t *Mod_ForName (const char *name, qboolean crash);
+EXTERNC mleaf_t *Mod_PointInLeaf (float *p, model_t *model);
 EXTERNC byte	*Mod_ClusterPVS (int cluster, model_t *model);
 
-void	Mod_Modellist_f (void);
+EXTERNC void Mod_Modellist_f (void);
 
 void	*Hunk_Begin (int maxsize);
 void	*Hunk_Alloc (int size);
 int		Hunk_End (void);
 void	Hunk_Free (void *base);
 
-void	Mod_FreeAll (void);
-void	Mod_Free (model_t *mod);
-
+EXTERNC void			Mod_FreeAll (void);
+EXTERNC void			Mod_Free (model_t *mod);
+EXTERNC void			R_BeginRegistration (const char *map);
+EXTERNC struct model_s *R_RegisterModel (const char *name);
+EXTERNC void			R_EndRegistration (void);
 
 #endif	// __ref_gl_gl_model_h__

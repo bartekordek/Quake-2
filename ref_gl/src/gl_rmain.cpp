@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "ref_gl/gl_image.h"
 #include "ref_gl/gl_warp.h"
 #include "math/constants.h"
+#include "shared/boolean_cpp.hpp"
 
 void R_Clear (void);
 
@@ -1036,12 +1037,12 @@ qboolean R_SetMode (void)
 		vid_fullscreen->modified = e_false;
 	}
 
-	fullscreen				 = vid_fullscreen->value;
+	fullscreen				 = to_qboolean (vid_fullscreen->value);
 
 	vid_fullscreen->modified = e_false;
 	gl_mode->modified		 = e_false;
 
-	if ((err = GLimp_SetMode (&vid.width, &vid.height, gl_mode->value, fullscreen)) == rserr_ok)
+	if ((err = GLimp_SetMode ((int *) &vid.width, (int *) &vid.height, gl_mode->value, fullscreen)) == rserr_ok)
 	{
 		gl_state.prev_mode = gl_mode->value;
 	}
@@ -1052,7 +1053,7 @@ qboolean R_SetMode (void)
 			ri.Cvar_SetValue ("vid_fullscreen", 0);
 			vid_fullscreen->modified = e_false;
 			ri.Con_Printf (PRINT_ALL, "ref_gl::R_SetMode() - fullscreen unavailable in this mode\n");
-			if ((err = GLimp_SetMode (&vid.width, &vid.height, gl_mode->value, e_false)) == rserr_ok)
+			if ((err = GLimp_SetMode ((int *) &vid.width, (int *) &vid.height, gl_mode->value, e_false)) == rserr_ok)
 				return e_true;
 		}
 		else if (err == rserr_invalid_mode)
@@ -1063,7 +1064,7 @@ qboolean R_SetMode (void)
 		}
 
 		// try setting it back to something safe
-		if ((err = GLimp_SetMode (&vid.width, &vid.height, gl_state.prev_mode, e_false)) != rserr_ok)
+		if ((err = GLimp_SetMode ((int *) &vid.width, (int *) &vid.height, gl_state.prev_mode, e_false)) != rserr_ok)
 		{
 			ri.Con_Printf (PRINT_ALL, "ref_gl::R_SetMode() - could not revert to safe mode\n");
 			return e_false;
@@ -1077,7 +1078,7 @@ qboolean R_SetMode (void)
 R_Init
 ===============
 */
-int R_Init (void *hinstance, void *hWnd)
+qboolean R_Init ()
 {
 	char renderer_buffer[1000];
 	char vendor_buffer[1000];
@@ -1100,14 +1101,14 @@ int R_Init (void *hinstance, void *hWnd)
 	{
 		QGL_Shutdown ();
 		ri.Con_Printf (PRINT_ALL, "ref_gl::R_Init() - could not load \"%s\"\n", gl_driver->string);
-		return -1;
+		return e_false;
 	}
 
 	// initialize OS-specific parts of OpenGL
 	if (!GLimp_Init ())
 	{
 		QGL_Shutdown ();
-		return -1;
+		return e_false;
 	}
 
 	// set our "safe" modes
@@ -1118,7 +1119,7 @@ int R_Init (void *hinstance, void *hWnd)
 	{
 		QGL_Shutdown ();
 		ri.Con_Printf (PRINT_ALL, "ref_gl::R_Init() - could not R_SetMode()\n");
-		return -1;
+		return e_false;
 	}
 
 	ri.Vid_MenuInit ();
@@ -1126,13 +1127,13 @@ int R_Init (void *hinstance, void *hWnd)
 	/*
 	** get our various GL strings
 	*/
-	gl_config.vendor_string = qglGetString (GL_VENDOR);
+	gl_config.vendor_string = (const char*)qglGetString (GL_VENDOR);
 	ri.Con_Printf (PRINT_ALL, "GL_VENDOR: %s\n", gl_config.vendor_string);
-	gl_config.renderer_string = qglGetString (GL_RENDERER);
+	gl_config.renderer_string = (const char*)qglGetString (GL_RENDERER);
 	ri.Con_Printf (PRINT_ALL, "GL_RENDERER: %s\n", gl_config.renderer_string);
-	gl_config.version_string = qglGetString (GL_VERSION);
+	gl_config.version_string = (const char*)qglGetString (GL_VERSION);
 	ri.Con_Printf (PRINT_ALL, "GL_VERSION: %s\n", gl_config.version_string);
-	gl_config.extensions_string = qglGetString (GL_EXTENSIONS);
+	gl_config.extensions_string = (const char*)qglGetString (GL_EXTENSIONS);
 	ri.Con_Printf (PRINT_ALL, "GL_EXTENSIONS: %s\n", gl_config.extensions_string);
 
 	strcpy (renderer_buffer, gl_config.renderer_string);
@@ -1224,8 +1225,8 @@ int R_Init (void *hinstance, void *hWnd)
 		strstr (gl_config.extensions_string, "GL_SGI_compiled_vertex_array"))
 	{
 		ri.Con_Printf (PRINT_ALL, "...enabling GL_EXT_compiled_vertex_array\n");
-		qglLockArraysEXT   = (void *) qwglGetProcAddress ("glLockArraysEXT");
-		qglUnlockArraysEXT = (void *) qwglGetProcAddress ("glUnlockArraysEXT");
+		qglLockArraysEXT   = (void (APIENTRY *) (int, int)) qwglGetProcAddress ("glLockArraysEXT");
+		qglUnlockArraysEXT = (void (APIENTRY *) (void)) qwglGetProcAddress ("glUnlockArraysEXT");
 	}
 	else
 	{
@@ -1283,8 +1284,8 @@ int R_Init (void *hinstance, void *hWnd)
 		if (gl_ext_multitexture->value)
 		{
 			ri.Con_Printf (PRINT_ALL, "...using GL_SGIS_multitexture\n");
-			qglMTexCoord2fSGIS	 = (void *) qwglGetProcAddress ("glMTexCoord2fSGIS");
-			qglSelectTextureSGIS = (void *) qwglGetProcAddress ("glSelectTextureSGIS");
+			qglMTexCoord2fSGIS	 = (void (APIENTRY *) (GLenum, GLfloat, GLfloat)) qwglGetProcAddress ("glMTexCoord2fSGIS");
+			qglSelectTextureSGIS = (void (APIENTRY *) (GLenum)) qwglGetProcAddress ("glSelectTextureSGIS");
 		}
 		else
 		{
@@ -1314,6 +1315,8 @@ int R_Init (void *hinstance, void *hWnd)
 	err = qglGetError ();
 	if (err != GL_NO_ERROR)
 		ri.Con_Printf (PRINT_ALL, "glGetError() = 0x%x\n", err);
+
+	return e_true;
 }
 
 /*
@@ -1365,7 +1368,7 @@ void R_BeginFrame (float camera_separation)
 
 	if (gl_log->modified)
 	{
-		GLimp_EnableLogging (gl_log->value);
+		GLimp_EnableLogging (gl_log->value  > 0.f ? e_true : e_false);
 		gl_log->modified = e_false;
 	}
 
@@ -1573,10 +1576,10 @@ void R_DrawBeam (entity_t *e)
 
 //===================================================================
 
-void			R_BeginRegistration (const char *map);
-struct model_s *R_RegisterModel (const char *name);
+
+
 struct image_s *R_RegisterSkin (const char *name);
-void			R_EndRegistration (void);
+
 
 void R_RenderFrame (refdef_t *fd);
 

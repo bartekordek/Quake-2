@@ -307,7 +307,6 @@ void Draw_FadeScreen (void)
 Draw_StretchRaw
 =============
 */
-EXTERNC unsigned r_rawpalette[256];
 
 void Draw_StretchRaw (int x, int y, int w, int h, int cols, int rows, byte *data)
 {
