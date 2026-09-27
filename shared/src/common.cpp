@@ -180,16 +180,16 @@ do the apropriate things.
 */
 void Com_Error (int code, const char *fmt, ...)
 {
-	va_list		argptr;
+	va_list			argptr;
 	static char		msg[MAXPRINTMSG];
-	static	qboolean	recursive;
+	static qboolean recursive;
 
 	if (recursive)
 		Sys_Error ("recursive error after: %s", msg);
 	recursive = e_true;
 
-	va_start (argptr,fmt);
-	vsprintf (msg,fmt,argptr);
+	va_start (argptr, fmt);
+	vsprintf (msg, fmt, argptr);
 	va_end (argptr);
 
 	if (code == ERR_DISCONNECT)
@@ -201,14 +201,14 @@ void Com_Error (int code, const char *fmt, ...)
 	else if (code == ERR_DROP)
 	{
 		Com_Printf ("********************\nERROR: %s\n********************\n", msg);
-		SV_Shutdown (va("Server crashed: %s\n", msg), e_false);
+		SV_Shutdown (va ("Server crashed: %s\n", msg), e_false);
 		CL_Drop ();
 		recursive = e_false;
 		longjmp (abortframe, -1);
 	}
 	else
 	{
-		SV_Shutdown (va("Server fatal crashed: %s\n", msg), e_false);
+		SV_Shutdown (va ("Server fatal crashed: %s\n", msg), e_false);
 		CL_Shutdown ();
 	}
 
@@ -219,6 +219,7 @@ void Com_Error (int code, const char *fmt, ...)
 	}
 
 	Sys_Error ("%s", msg);
+	assert (false);
 }
 
 
