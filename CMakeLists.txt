@@ -4,8 +4,6 @@ project(quake-2-main)
 
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address")
 
-message("CMAKE BUILD TYPE: ${CMAKE_BUILD_TYPE}")
-
 macro(CmakeToWindow InputPath OutputPath)
     string(REGEX REPLACE "/" "\\\\" ${OutputPath} "${InputPath}")
 endmacro()
@@ -30,15 +28,6 @@ set( Q2_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR} )
 set( ENV{Q2_ROOT_DIR} ${Q2_ROOT_DIR} )
 set( Q2_BUILD_ROOT ${CMAKE_SOURCE_DIR} )
 
-if( MSVC )
-    set( Q2_OUTPUT_DIR ${Q2_BUILD_ROOT}/Build-Windows )
-else()
-    set( Q2_OUTPUT_DIR ${Q2_BUILD_ROOT}/Build-Linux )
-endif()
-
-set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${Q2_OUTPUT_DIR} )
-set( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${Q2_OUTPUT_DIR} )
-set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${Q2_OUTPUT_DIR} )
 
 list( APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules" )
 
