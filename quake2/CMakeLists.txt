@@ -64,4 +64,13 @@ endif()
 
 target_link_libraries(${PROJECT_NAME} ${DEPENDENCIES})
 
+if (MSVC)
+    set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "/INCREMENTAL:NO")
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "${CMAKE_BINARY_DIR}/$<CONFIG>"
+            "$(LocalDebuggerWorkingDirectory)"
+        COMMENT "Copying runtime files and debug symbols to debugger working directory.")
+endif()
+
 target_include_directories(${PROJECT_NAME} PUBLIC inc PRIVATE src)
