@@ -421,7 +421,6 @@ EXTERNC qboolean GLimp_Init (void);
 EXTERNC void	 GLimp_Shutdown (void);
 EXTERNC rserr_t	 GLimp_SetMode (int *pwidth, int *pheight, int mode, qboolean fullscreen);
 EXTERNC void	 GLimp_AppActivate (qboolean active);
-EXTERNC void	 GLimp_EnableLogging (qboolean enable);
 EXTERNC void	 GLimp_LogNewFrame (void);
 
 EXTERNC void MYgluPerspective (GLdouble fovy, GLdouble aspect, GLdouble zNear, GLdouble zFar);
