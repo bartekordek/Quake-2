@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "ref_gl/gl_rsurf.h"
 #include "ref_gl/gl_image.h"
 
-model_t *loadmodel;
+EXTERNC model_t *loadmodel = NULL;
 int		 modfilelen;
 
 void	 Mod_LoadSpriteModel (model_t *mod, void *buffer);
@@ -174,7 +174,6 @@ Loads in a model for the given name
 model_t *Mod_ForName (const char *name, qboolean crash)
 {
 	model_t	 *mod;
-	unsigned *buf;
 	int		  i;
 
 	if (!name[0])
@@ -221,6 +220,7 @@ model_t *Mod_ForName (const char *name, qboolean crash)
 	//
 	// load the file
 	//
+	void *buf{nullptr};
 	modfilelen = ri.FS_LoadFile (mod->name, &buf);
 	if (!buf)
 	{
@@ -289,7 +289,7 @@ void Mod_LoadLighting (lump_t *l)
 		loadmodel->lightdata = NULL;
 		return;
 	}
-	loadmodel->lightdata = Hunk_Alloc (l->filelen);
+	loadmodel->lightdata = (byte*)Hunk_Alloc (l->filelen);
 	memcpy (loadmodel->lightdata, mod_base + l->fileofs, l->filelen);
 }
 
@@ -307,7 +307,7 @@ void Mod_LoadVisibility (lump_t *l)
 		loadmodel->vis = NULL;
 		return;
 	}
-	loadmodel->vis = Hunk_Alloc (l->filelen);
+	loadmodel->vis = (dvis_t*)Hunk_Alloc (l->filelen);
 	memcpy (loadmodel->vis, mod_base + l->fileofs, l->filelen);
 
 	loadmodel->vis->numclusters = LittleLong (loadmodel->vis->numclusters);
@@ -325,20 +325,18 @@ Mod_LoadVertexes
 */
 void Mod_LoadVertexes (lump_t *l)
 {
-	dvertex_t *in;
-	mvertex_t *out;
-	int		   i, count;
-
-	in = (void *) (mod_base + l->fileofs);
+	dvertex_t *in = (dvertex_t *) (mod_base + l->fileofs);
 	if (l->filelen % sizeof (*in))
+	{
 		ri.Sys_Error (ERR_DROP, "MOD_LoadBmodel: funny lump size in %s", loadmodel->name);
-	count				   = l->filelen / sizeof (*in);
-	out					   = Hunk_Alloc (count * sizeof (*out));
+	}
+	const int count = l->filelen / sizeof (*in);
+	mvertex_t *out = (mvertex_t *) Hunk_Alloc (count * sizeof (*out));
 
 	loadmodel->vertexes	   = out;
 	loadmodel->numvertexes = count;
 
-	for (i = 0; i < count; i++, in++, out++)
+	for (int i = 0; i < count; i++, in++, out++)
 	{
 		out->position[0] = LittleFloat (in->point[0]);
 		out->position[1] = LittleFloat (in->point[1]);
@@ -371,15 +369,15 @@ Mod_LoadSubmodels
 */
 void Mod_LoadSubmodels (lump_t *l)
 {
-	dmodel_t *in;
-	mmodel_t *out;
-	int		  i, j, count;
+	int		  i, j;
 
-	in = (void *) (mod_base + l->fileofs);
+	dmodel_t *in = (dmodel_t *) (mod_base + l->fileofs);
 	if (l->filelen % sizeof (*in))
+	{
 		ri.Sys_Error (ERR_DROP, "MOD_LoadBmodel: funny lump size in %s", loadmodel->name);
-	count					= l->filelen / sizeof (*in);
-	out						= Hunk_Alloc (count * sizeof (*out));
+	}
+	int		  count			= l->filelen / sizeof (*in);
+	mmodel_t *out			= (mmodel_t *)Hunk_Alloc (count * sizeof (*out));
 
 	loadmodel->submodels	= out;
 	loadmodel->numsubmodels = count;
@@ -406,15 +404,13 @@ Mod_LoadEdges
 */
 void Mod_LoadEdges (lump_t *l)
 {
-	dedge_t *in;
-	medge_t *out;
-	int		 i, count;
+	int		 i;
 
-	in = (void *) (mod_base + l->fileofs);
+	dedge_t *in = (dedge_t *) (mod_base + l->fileofs);
 	if (l->filelen % sizeof (*in))
 		ri.Sys_Error (ERR_DROP, "MOD_LoadBmodel: funny lump size in %s", loadmodel->name);
-	count				= l->filelen / sizeof (*in);
-	out					= Hunk_Alloc ((count + 1) * sizeof (*out));
+	int		  count			= l->filelen / sizeof (*in);
+	medge_t *out			= (medge_t *) Hunk_Alloc ((size_t)((count + 1) * sizeof (*out)));
 
 	loadmodel->edges	= out;
 	loadmodel->numedges = count;
@@ -433,17 +429,16 @@ Mod_LoadTexinfo
 */
 void Mod_LoadTexinfo (lump_t *l)
 {
-	texinfo_t  *in;
-	mtexinfo_t *out, *step;
-	int			i, j, count;
+	mtexinfo_t	*step;
+	int			i, j;
 	char		name[MAX_QPATH];
 	int			next;
 
-	in = (void *) (mod_base + l->fileofs);
+	texinfo_t *in = (texinfo_t *) (mod_base + l->fileofs);
 	if (l->filelen % sizeof (*in))
 		ri.Sys_Error (ERR_DROP, "MOD_LoadBmodel: funny lump size in %s", loadmodel->name);
-	count				  = l->filelen / sizeof (*in);
-	out					  = Hunk_Alloc (count * sizeof (*out));
+	const int	count	  = l->filelen / sizeof (*in);
+	mtexinfo_t *out		  = (mtexinfo_t *) Hunk_Alloc (count * sizeof (*out));
 
 	loadmodel->texinfo	  = out;
 	loadmodel->numtexinfo = count;
@@ -536,17 +531,15 @@ Mod_LoadFaces
 */
 void Mod_LoadFaces (lump_t *l)
 {
-	dface_t	   *in;
-	msurface_t *out;
-	int			i, count, surfnum;
+	int			i, surfnum;
 	int			planenum, side;
 	int			ti;
 
-	in = (void *) (mod_base + l->fileofs);
+	dface_t *in = (dface_t *) (mod_base + l->fileofs);
 	if (l->filelen % sizeof (*in))
 		ri.Sys_Error (ERR_DROP, "MOD_LoadBmodel: funny lump size in %s", loadmodel->name);
-	count				   = l->filelen / sizeof (*in);
-	out					   = Hunk_Alloc (count * sizeof (*out));
+	const int	count	  = l->filelen / sizeof (*in);
+	msurface_t *out		  = (msurface_t *) Hunk_Alloc (count * sizeof (*out));
 
 	loadmodel->surfaces	   = out;
 	loadmodel->numsurfaces = count;
@@ -634,11 +627,11 @@ void Mod_LoadNodes (lump_t *l)
 	dnode_t *in;
 	mnode_t *out;
 
-	in = (void *) (mod_base + l->fileofs);
+	in = (dnode_t *) (mod_base + l->fileofs);
 	if (l->filelen % sizeof (*in))
 		ri.Sys_Error (ERR_DROP, "MOD_LoadBmodel: funny lump size in %s", loadmodel->name);
 	count				= l->filelen / sizeof (*in);
-	out					= Hunk_Alloc (count * sizeof (*out));
+	out					= (mnode_t *) Hunk_Alloc (count * sizeof (*out));
 
 	loadmodel->nodes	= out;
 	loadmodel->numnodes = count;
@@ -683,11 +676,11 @@ void Mod_LoadLeafs (lump_t *l)
 	int		 i, j, count, p;
 	//	glpoly_t	*poly;
 
-	in = (void *) (mod_base + l->fileofs);
+	in = (dleaf_t *) (mod_base + l->fileofs);
 	if (l->filelen % sizeof (*in))
 		ri.Sys_Error (ERR_DROP, "MOD_LoadBmodel: funny lump size in %s", loadmodel->name);
 	count				= l->filelen / sizeof (*in);
-	out					= Hunk_Alloc (count * sizeof (*out));
+	out					= (mleaf_t *) Hunk_Alloc (count * sizeof (*out));
 
 	loadmodel->leafs	= out;
 	loadmodel->numleafs = count;
@@ -735,11 +728,11 @@ void Mod_LoadMarksurfaces (lump_t *l)
 	short		*in;
 	msurface_t **out;
 
-	in = (void *) (mod_base + l->fileofs);
+	in = (short *) (mod_base + l->fileofs);
 	if (l->filelen % sizeof (*in))
 		ri.Sys_Error (ERR_DROP, "MOD_LoadBmodel: funny lump size in %s", loadmodel->name);
 	count					   = l->filelen / sizeof (*in);
-	out						   = Hunk_Alloc (count * sizeof (*out));
+	out						   = (msurface_t **) Hunk_Alloc (count * sizeof (*out));
 
 	loadmodel->marksurfaces	   = out;
 	loadmodel->nummarksurfaces = count;
@@ -763,14 +756,14 @@ void Mod_LoadSurfedges (lump_t *l)
 	int	 i, count;
 	int *in, *out;
 
-	in = (void *) (mod_base + l->fileofs);
+	in = (int *) (mod_base + l->fileofs);
 	if (l->filelen % sizeof (*in))
 		ri.Sys_Error (ERR_DROP, "MOD_LoadBmodel: funny lump size in %s", loadmodel->name);
 	count = l->filelen / sizeof (*in);
 	if (count < 1 || count >= MAX_MAP_SURFEDGES)
 		ri.Sys_Error (ERR_DROP, "MOD_LoadBmodel: bad surfedges count in %s: %i", loadmodel->name, count);
 
-	out						= Hunk_Alloc (count * sizeof (*out));
+	out						= (int *) Hunk_Alloc (count * sizeof (*out));
 
 	loadmodel->surfedges	= out;
 	loadmodel->numsurfedges = count;
@@ -791,11 +784,11 @@ void Mod_LoadPlanes (lump_t *l)
 	int		  count;
 	int		  bits;
 
-	in = (void *) (mod_base + l->fileofs);
+	in = (dplane_t *) (mod_base + l->fileofs);
 	if (l->filelen % sizeof (*in))
 		ri.Sys_Error (ERR_DROP, "MOD_LoadBmodel: funny lump size in %s", loadmodel->name);
 	count				 = l->filelen / sizeof (*in);
-	out					 = Hunk_Alloc (count * 2 * sizeof (*out));
+	out					 = (cplane_t *) Hunk_Alloc (count * 2 * sizeof (*out));
 
 	loadmodel->planes	 = out;
 	loadmodel->numplanes = count;
@@ -916,7 +909,7 @@ void Mod_LoadAliasModel (model_t *mod, void *buffer)
 	if (version != ALIAS_VERSION)
 		ri.Sys_Error (ERR_DROP, "%s has wrong version number (%i should be %i)", mod->name, version, ALIAS_VERSION);
 
-	pheader = Hunk_Alloc (LittleLong (pinmodel->ofs_end));
+	pheader = (dmdl_t *) Hunk_Alloc (LittleLong (pinmodel->ofs_end));
 
 	// byte swap the header fields and sanity check
 	for (i = 0; i < sizeof (dmdl_t) / 4; i++) ((int *) pheader)[i] = LittleLong (((int *) buffer)[i]);
@@ -994,7 +987,7 @@ void Mod_LoadAliasModel (model_t *mod, void *buffer)
 	for (i = 0; i < pheader->num_glcmds; i++) poutcmd[i] = LittleLong (pincmd[i]);
 
 	// register all skins
-	memcpy ((const char *) pheader + pheader->ofs_skins, (const char *) pinmodel + pheader->ofs_skins, pheader->num_skins * MAX_SKINNAME);
+	memcpy ((char *) pheader + pheader->ofs_skins, (char *) pinmodel + pheader->ofs_skins, pheader->num_skins * MAX_SKINNAME);
 	for (i = 0; i < pheader->num_skins; i++)
 	{
 		mod->skins[i] = GL_FindImage ((const char *) pheader + pheader->ofs_skins + i * MAX_SKINNAME, it_skin);
@@ -1027,7 +1020,7 @@ void Mod_LoadSpriteModel (model_t *mod, void *buffer)
 	int		   i;
 
 	sprin			  = (dsprite_t *) buffer;
-	sprout			  = Hunk_Alloc (modfilelen);
+	sprout			  = (dsprite_t *) Hunk_Alloc (modfilelen);
 
 	sprout->ident	  = LittleLong (sprin->ident);
 	sprout->version	  = LittleLong (sprin->version);
