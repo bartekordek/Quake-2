@@ -227,7 +227,7 @@ void GL_DrawAliasFrameLerp (dmdl_t *paliashdr, float backlerp)
 					//					l = shadedots[verts[index_xyz].lightnormalindex];
 
 					//					qglColor4f (l* shadelight[0], l*shadelight[1], l*shadelight[2], alpha);
-					qglArrayElement (index_xyz);
+					glArrayElement (index_xyz);
 
 				} while (--count);
 			}

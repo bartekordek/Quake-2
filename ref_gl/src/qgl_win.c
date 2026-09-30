@@ -31,7 +31,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "ref_gl/gl_local.h"
 #include "ref_gl/glw_win.h"
 
-void (APIENTRY *qglArrayElement) (GLint i);
 void (APIENTRY *qglBegin) (GLenum mode);
 void (APIENTRY *qglBindTexture) (GLenum target, GLuint texture);
 void (APIENTRY *qglBlendFunc) (GLenum sfactor, GLenum dfactor);
@@ -160,7 +159,6 @@ static void (APIENTRY *dllViewport) (GLint x, GLint y, GLsizei width, GLsizei he
 */
 void QGL_Shutdown (void)
 {
-	qglArrayElement		 = NULL;
 	qglBegin			 = NULL;
 	qglBindTexture		 = NULL;
 	qglBlendFunc		 = NULL;
@@ -255,7 +253,6 @@ qboolean QGL_Init (const char *dllname)
 
 	gl_config.allow_cds = e_true;
 
-	qglArrayElement = dllArrayElement = GPA ("glArrayElement");
 	qglBegin = dllBegin = GPA ("glBegin");
 	qglBindTexture = dllBindTexture = GPA ("glBindTexture");
 	qglBlendFunc = dllBlendFunc = GPA ("glBlendFunc");
