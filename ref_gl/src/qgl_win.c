@@ -31,9 +31,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "ref_gl/gl_local.h"
 #include "ref_gl/glw_win.h"
 
-PROC (WINAPI *qwglGetProcAddress) (LPCSTR);
-BOOL (WINAPI *qwglMakeCurrent) (HDC, HGLRC);
-
 void (APIENTRY *qglAccum) (GLenum op, GLfloat value);
 void (APIENTRY *qglAlphaFunc) (GLenum func, GLclampf ref);
 GLboolean (APIENTRY *qglAreTexturesResident) (GLsizei n, const GLuint *textures, GLboolean *residences);
@@ -2976,9 +2973,6 @@ void QGL_Shutdown (void)
 	qglVertexPointer		  = NULL;
 	qglViewport				  = NULL;
 
-	qwglGetProcAddress		  = NULL;
-	qwglMakeCurrent			  = NULL;
-
 	qwglSwapIntervalEXT		  = NULL;
 }
 
@@ -3357,9 +3351,6 @@ qboolean QGL_Init (const char *dllname)
 	qglVertex4sv = dllVertex4sv = GPA ("glVertex4sv");
 	qglVertexPointer = dllVertexPointer = GPA ("glVertexPointer");
 	qglViewport = dllViewport = GPA ("glViewport");
-
-	qwglGetProcAddress		  = GPA ("wglGetProcAddress");
-	qwglMakeCurrent			  = GPA ("wglMakeCurrent");
 
 	qwglSwapIntervalEXT		  = 0;
 	qglPointParameterfEXT	  = 0;

@@ -393,10 +393,6 @@ EXTERNC void (APIENTRY *qglMTexCoord2fSGIS) (GLenum, GLfloat, GLfloat);
 EXTERNC void (APIENTRY *qglSelectTextureSGIS) (GLenum);
 
 #ifdef _WIN32
-
-EXTERNC PROC (WINAPI *qwglGetProcAddress) (LPCSTR);
-EXTERNC BOOL (WINAPI *qwglMakeCurrent) (HDC, HGLRC);
-
 EXTERNC BOOL (WINAPI *qwglSwapIntervalEXT) (int interval);
 
 #endif

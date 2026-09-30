@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // Quake refresh engine.
 #include <assert.h>
 #include <float.h>
+#include <SDL_video.h>
 
 #include "quake2/client/client.h"
 #include "quake2/windows/winquake.h"
@@ -158,53 +159,53 @@ void VID_Error (int err_level, char *fmt, ...)
 byte scantokey[128] = {
 	//  0           1       2       3       4       5       6       7
 	//  8           9       A       B       C       D       E       F
-	0,			 27,
-	'1', // 028
-	'2', // 029
-	'3', // 030
-	'4', // 031
-	'5', // 032
-	'6', // 033
-	'7', // 034
-	'8', // 035
-	'9', // 036
-	'0', // 037
-	'-', // 038
-	'=', // 039
-	K_BACKSPACE, // 040
-	  9, // 041
-	'q', // 042
-	'w', // 043
-	'e', // 044
-	'r', // 045
-	't', // 046
-	'y', // 047
-	'u', // 048
-	'i', // 049
-	'o', // 050
-	'p', // 051
-	'[', // 052
-	']', // 053
-	 13, // 054
- K_CTRL, // 055
-	'a', // 056
-	's', // 057
-	'd', // 058
-	'f', // 059
-	'g', // 060
-	'h', // 061
-	'j', // 062
-	'k', // 063
-	'l', // 064
-	';', // 067
-   '\'', // 068
-	'`', // 069
-K_SHIFT, // 070
-   '\\', // 071
-	'z', // 072
-	'x', // 073
-	'c', // 074
-	'v', // 075
+	0, 27,
+	'1',		  // 028
+	'2',		  // 029
+	'3',		  // 030
+	'4',		  // 031
+	'5',		  // 032
+	'6',		  // 033
+	'7',		  // 034
+	'8',		  // 035
+	'9',		  // 036
+	'0',		  // 037
+	'-',		  // 038
+	'=',		  // 039
+	K_BACKSPACE,  // 040
+	9,			  // 041
+	'q',		  // 042
+	'w',		  // 043
+	'e',		  // 044
+	'r',		  // 045
+	't',		  // 046
+	'y',		  // 047
+	'u',		  // 048
+	'i',		  // 049
+	'o',		  // 050
+	'p',		  // 051
+	'[',		  // 052
+	']',		  // 053
+	13,			  // 054
+	K_CTRL,		  // 055
+	'a',		  // 056
+	's',		  // 057
+	'd',		  // 058
+	'f',		  // 059
+	'g',		  // 060
+	'h',		  // 061
+	'j',		  // 062
+	'k',		  // 063
+	'l',		  // 064
+	';',		  // 067
+	'\'',		  // 068
+	'`',		  // 069
+	K_SHIFT,	  // 070
+	'\\',		  // 071
+	'z',		  // 072
+	'x',		  // 073
+	'c',		  // 074
+	'v',		  // 075
 	'b',
 	'n',
 	'm',
@@ -240,7 +241,7 @@ K_SHIFT, // 070
 
 	K_KP_PLUS,
 	 K_END,
-	 // 4
+	// 4
 	K_DOWNARROW,
  K_PGDN,
  K_INS,
@@ -258,7 +259,7 @@ K_SHIFT, // 070
 
 	0,
 	 0,
-	 // 5
+	// 5
 	0,
 	 0,
 	 0,
@@ -276,7 +277,7 @@ K_SHIFT, // 070
 
 	0,
 	 0,
-	 // 6
+	// 6
 	0,
 	 0,
 	 0,
@@ -293,7 +294,7 @@ K_SHIFT, // 070
 	0,
 
 	0,
-	 0	// 7
+	0  // 7
 };
 
 /*
@@ -658,6 +659,15 @@ void VID_NewWindow (int width, int height)
 	cl.force_refdef = e_true;  // can't use a paused refdef
 }
 
+static qboolean VID_UnbindGLContext (void)
+{
+	SDL_Window *current_window = SDL_GL_GetCurrentWindow ();
+	if (!current_window)
+		return e_true;
+
+	return SDL_GL_MakeCurrent (current_window, NULL) == 0 ? e_true : e_false;
+}
+
 void VID_FreeReflib (void)
 {
 	if (!FreeLibrary (reflib_library))
@@ -712,6 +722,7 @@ qboolean VID_LoadRefresh (const char *name)
 	ri.Vid_NewWindow	 = VID_NewWindow;
 	ri.create_window	 = create_window;
 	ri.Swap_buffers		 = update_buffer;
+	ri.UnbindGLContext	 = VID_UnbindGLContext;
 
 	if (strcmp (name, "ref_gl_modern.dll") == 0)
 	{
@@ -724,11 +735,12 @@ qboolean VID_LoadRefresh (const char *name)
 	}
 	else
 	{
-		if ((GetRefAPI = (void *) GetProcAddress (reflib_library, "GetRefAPI")) == 0)
+		GetRefAPI = GetProcAddress (reflib_library, "GetRefAPI");
+		if (!GetRefAPI)
 		{
 			Com_Error (ERR_FATAL, "GetProcAddress failed on %s", name);
 		}
-		re = GetRefAPI (ri);
+		re				 = GetRefAPI (ri);
 		re.renderer_type = OpenGL_Legacy;
 	}
 
@@ -806,7 +818,7 @@ void VID_CheckChanges (void)
 		cls.disable_screen		 = e_true;
 
 		Com_sprintf (name, sizeof (name), "ref_%s.dll", vid_ref->string);
-		//Com_sprintf (name, sizeof (name), "ref_%s.dll", "gl_modern");
+		// Com_sprintf (name, sizeof (name), "ref_%s.dll", "gl_modern");
 		if (!VID_LoadRefresh (name))
 		{
 			if (strcmp (vid_ref->string, "soft") == 0)

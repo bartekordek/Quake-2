@@ -198,16 +198,13 @@ rserr_t GLimp_SetMode (int *pwidth, int *pheight, int mode, qboolean fullscreen)
 /*
 ** GLimp_Shutdown
 **
-** This routine does all OS specific shutdown procedures for the OpenGL
-** subsystem.  Under OpenGL this means NULLing out the current DC and
-** HGLRC, deleting the rendering context, and releasing the DC acquired
-** for the window.  The state structure is also nulled out.
+** This routine unbinds the SDL-managed OpenGL context before renderer shutdown.
 **
 */
 void GLimp_Shutdown (void)
 {
-	if (qwglMakeCurrent && !qwglMakeCurrent (NULL, NULL))
-		ri.Con_Printf (PRINT_ALL, "ref_gl::R_Shutdown() - wglMakeCurrent failed\n");
+	if (ri.UnbindGLContext && ri.UnbindGLContext () != e_true)
+		ri.Con_Printf (PRINT_ALL, "ref_gl::R_Shutdown() - SDL_GL_MakeCurrent failed\n");
 
 	if (glw_state.log_fp)
 	{
@@ -261,7 +258,7 @@ qboolean GLimp_InitGL (void)
 		0,
 		0  // layer masks ignored
 	};
-	int		pixelformat;
+
 	cvar_t *stereo;
 
 	stereo = ri.Cvar_Get ("cl_stereo", "0", 0);
@@ -294,12 +291,6 @@ qboolean GLimp_InitGL (void)
 	** startup the OpenGL subsystem by creating a context and making
 	** it current
 	*/
-	// if (!qwglMakeCurrent (glw_state.hDC, glw_state.hGLRC))
-	//{
-	//	ri.Con_Printf (PRINT_ALL, "GLimp_Init() - qwglMakeCurrent failed\n");
-
-	//	goto fail;
-	//}
 
 	if (!VerifyDriver ())
 	{

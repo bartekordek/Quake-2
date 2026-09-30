@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "ref_gl/gl_warp.h"
 #include "math/constants.h"
 #include "shared/boolean_cpp.hpp"
+#include "shared/assert.h"
 
 void R_Clear (void);
 
@@ -1292,7 +1293,8 @@ qboolean R_Init ()
 		if (gl_ext_multitexture->value)
 		{
 			ri.Con_Printf (PRINT_ALL, "...using GL_SGIS_multitexture (via GLEW)\n");
-			qglMTexCoord2fSGIS	 = (void (APIENTRY *) (GLenum, GLfloat, GLfloat)) qwglGetProcAddress ("glMTexCoord2fSGIS");
+			Q2_Assert (false, "GL_SGIS_multitexture not implemented");
+			//qglMTexCoord2fSGIS	 = (void (APIENTRY *) (GLenum, GLfloat, GLfloat)) qwglGetProcAddress ("glMTexCoord2fSGIS");
 			qglSelectTextureSGIS = (void (APIENTRY *) (GLenum)) glSelectTextureSGIS;
 		}
 		else
