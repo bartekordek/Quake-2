@@ -194,11 +194,11 @@ void GL_DrawAliasFrameLerp (dmdl_t *paliashdr, float backlerp)
 			if (count < 0)
 			{
 				count = -count;
-				qglBegin (GL_TRIANGLE_FAN);
+				glBegin (GL_TRIANGLE_FAN);
 			}
 			else
 			{
-				qglBegin (GL_TRIANGLE_STRIP);
+				glBegin (GL_TRIANGLE_STRIP);
 			}
 
 			// PMM - added double damage shell
@@ -248,11 +248,11 @@ void GL_DrawAliasFrameLerp (dmdl_t *paliashdr, float backlerp)
 			if (count < 0)
 			{
 				count = -count;
-				qglBegin (GL_TRIANGLE_FAN);
+				glBegin (GL_TRIANGLE_FAN);
 			}
 			else
 			{
-				qglBegin (GL_TRIANGLE_STRIP);
+				glBegin (GL_TRIANGLE_STRIP);
 			}
 
 			if (currententity->flags & (RF_SHELL_RED | RF_SHELL_GREEN | RF_SHELL_BLUE))
@@ -331,10 +331,10 @@ void GL_DrawAliasShadow (dmdl_t *paliashdr, int posenum)
 		if (count < 0)
 		{
 			count = -count;
-			qglBegin (GL_TRIANGLE_FAN);
+			glBegin (GL_TRIANGLE_FAN);
 		}
 		else
-			qglBegin (GL_TRIANGLE_STRIP);
+			glBegin (GL_TRIANGLE_STRIP);
 
 		do
 		{
@@ -772,7 +772,7 @@ void R_DrawAliasModel (entity_t *e)
 	qglDisable( GL_CULL_FACE );
 	qglPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 	qglDisable( GL_TEXTURE_2D );
-	qglBegin( GL_TRIANGLE_STRIP );
+	glBegin( GL_TRIANGLE_STRIP );
 	for ( i = 0; i < 8; i++ )
 	{
 		qglVertex3fv( bbox[i] );

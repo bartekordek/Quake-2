@@ -74,7 +74,7 @@ void Draw_Char (int x, int y, int num)
 
 	GL_Bind (draw_chars->texnum);
 
-	qglBegin (GL_QUADS);
+	glBegin (GL_QUADS);
 	qglTexCoord2f (fcol, frow);
 	qglVertex2f (x, y);
 	qglTexCoord2f (fcol + size, frow);
@@ -149,7 +149,7 @@ void Draw_StretchPic (int x, int y, int w, int h, char *pic)
 		qglDisable (GL_ALPHA_TEST);
 
 	GL_Bind (gl->texnum);
-	qglBegin (GL_QUADS);
+	glBegin (GL_QUADS);
 	qglTexCoord2f (gl->sl, gl->tl);
 	qglVertex2f (x, y);
 	qglTexCoord2f (gl->sh, gl->tl);
@@ -186,7 +186,7 @@ void Draw_Pic (int x, int y, char *pic)
 		qglDisable (GL_ALPHA_TEST);
 
 	GL_Bind (gl->texnum);
-	qglBegin (GL_QUADS);
+	glBegin (GL_QUADS);
 	qglTexCoord2f (gl->sl, gl->tl);
 	qglVertex2f (x, y);
 	qglTexCoord2f (gl->sh, gl->tl);
@@ -224,7 +224,7 @@ void Draw_TileClear (int x, int y, int w, int h, char *pic)
 		qglDisable (GL_ALPHA_TEST);
 
 	GL_Bind (image->texnum);
-	qglBegin (GL_QUADS);
+	glBegin (GL_QUADS);
 	qglTexCoord2f (x / 64.0, y / 64.0);
 	qglVertex2f (x, y);
 	qglTexCoord2f ((x + w) / 64.0, y / 64.0);
@@ -262,7 +262,7 @@ void Draw_Fill (int x, int y, int w, int h, int c)
 	color.c = d_8to24table[c];
 	qglColor3f (color.v[0] / 255.0, color.v[1] / 255.0, color.v[2] / 255.0);
 
-	qglBegin (GL_QUADS);
+	glBegin (GL_QUADS);
 
 	qglVertex2f (x, y);
 	qglVertex2f (x + w, y);
@@ -287,7 +287,7 @@ void Draw_FadeScreen (void)
 	qglEnable (GL_BLEND);
 	qglDisable (GL_TEXTURE_2D);
 	qglColor4f (0, 0, 0, 0.8);
-	qglBegin (GL_QUADS);
+	glBegin (GL_QUADS);
 
 	qglVertex2f (0, 0);
 	qglVertex2f (vid.width, 0);
@@ -383,7 +383,7 @@ void Draw_StretchRaw (int x, int y, int w, int h, int cols, int rows, byte *data
 	if ((gl_config.renderer == GL_RENDERER_MCD) || (gl_config.renderer & GL_RENDERER_RENDITION))
 		qglDisable (GL_ALPHA_TEST);
 
-	qglBegin (GL_QUADS);
+	glBegin (GL_QUADS);
 	qglTexCoord2f (0, 0);
 	qglVertex2f (x, y);
 	qglTexCoord2f (1, 0);

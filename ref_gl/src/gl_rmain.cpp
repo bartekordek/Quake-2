@@ -239,7 +239,7 @@ void R_DrawSpriteModel (entity_t *e)
 	else
 		qglDisable (GL_ALPHA_TEST);
 
-	qglBegin (GL_QUADS);
+	glBegin (GL_QUADS);
 
 	qglTexCoord2f (0, 1);
 	VectorMA (e->origin, -frame->origin_y, up, point);
@@ -295,12 +295,12 @@ void R_DrawNullModel (void)
 	qglDisable (GL_TEXTURE_2D);
 	qglColor3fv (shadelight);
 
-	qglBegin (GL_TRIANGLE_FAN);
+	glBegin (GL_TRIANGLE_FAN);
 	qglVertex3f (0, 0, -16);
 	for (i = 0; i <= 4; i++) qglVertex3f (16 * cos (i * M_PI / 2), 16 * sin (i * M_PI / 2), 0);
 	qglEnd ();
 
-	qglBegin (GL_TRIANGLE_FAN);
+	glBegin (GL_TRIANGLE_FAN);
 	qglVertex3f (0, 0, 16);
 	for (i = 4; i >= 0; i--) qglVertex3f (16 * cos (i * M_PI / 2), 16 * sin (i * M_PI / 2), 0);
 	qglEnd ();
@@ -417,7 +417,7 @@ void GL_DrawParticles (int num_particles, const particle_t particles[], const un
 	qglDepthMask (GL_FALSE);  // no z buffering
 	qglEnable (GL_BLEND);
 	GL_TexEnv (GL_MODULATE);
-	qglBegin (GL_TRIANGLES);
+	glBegin (GL_TRIANGLES);
 
 	VectorScale (vup, 1.5, up);
 	VectorScale (vright, 1.5, right);
@@ -473,7 +473,7 @@ void R_DrawParticles (void)
 
 		qglPointSize (gl_particle_size->value);
 
-		qglBegin (GL_POINTS);
+		glBegin (GL_POINTS);
 		for (i = 0, p = r_newrefdef.particles; i < r_newrefdef.num_particles; i++, p++)
 		{
 			*(int *) color = d_8to24table[p->color];
@@ -521,7 +521,7 @@ void R_PolyBlend (void)
 
 	qglColor4fv (v_blend);
 
-	qglBegin (GL_QUADS);
+	glBegin (GL_QUADS);
 
 	qglVertex3f (10, 100, 100);
 	qglVertex3f (10, -100, 100);
@@ -883,7 +883,7 @@ static void GL_DrawStereoPattern (void)
 
 	for (i = 0; i < 20; i++)
 	{
-		qglBegin (GL_LINES);
+		glBegin (GL_LINES);
 		GL_DrawColoredStereoLinePair (1, 0, 0, 0);
 		GL_DrawColoredStereoLinePair (1, 0, 0, 2);
 		GL_DrawColoredStereoLinePair (1, 0, 0, 4);
@@ -1564,7 +1564,7 @@ void R_DrawBeam (entity_t *e)
 
 	qglColor4f (r, g, b, e->alpha);
 
-	qglBegin (GL_TRIANGLE_STRIP);
+	glBegin (GL_TRIANGLE_STRIP);
 	for (i = 0; i < NUM_BEAM_SEGS; i++)
 	{
 		qglVertex3fv (start_points[i]);
