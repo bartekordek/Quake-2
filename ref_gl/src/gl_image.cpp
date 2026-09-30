@@ -20,9 +20,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "ref_gl/gl_image.h"
 #include "ref_gl/gl_local.h"
-#include "ref_gl/gl_draw.h"
-#include "shared/boolean_cpp.hpp"
+#include "ref_gl/gl_draw.hpp"
 #include "shared/memory.hpp"
+#include "shared/boolean_cpp.hpp"
 
 image_t gltextures[MAX_GLTEXTURES];
 int		numgltextures;
@@ -127,7 +127,7 @@ void GL_Bind (int texnum)
 	if (gl_state.currenttextures[gl_state.currenttmu] == texnum)
 		return;
 	gl_state.currenttextures[gl_state.currenttmu] = texnum;
-	qglBindTexture (GL_TEXTURE_2D, texnum);
+	glBindTexture (GL_TEXTURE_2D, texnum);
 }
 
 void GL_MBind (GLenum target, int texnum)

@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // draw.c
 
 #include "ref_gl/gl_local.h"
-#include "ref_gl/gl_draw.h"
+#include "ref_gl/gl_draw.hpp"
 #include "ref_gl/gl_image.h"
 
 image_t *draw_chars;

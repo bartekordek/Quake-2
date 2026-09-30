@@ -35,7 +35,6 @@ EXTERNC void	 QGL_Shutdown (void);
 #define APIENTRY
 #endif
 
-EXTERNC void (APIENTRY *qglBindTexture) (GLenum target, GLuint texture);
 EXTERNC void (APIENTRY *qglBlendFunc) (GLenum sfactor, GLenum dfactor);
 EXTERNC void (APIENTRY *qglClear) (GLbitfield mask);
 EXTERNC void (APIENTRY *qglClearColor) (GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha);

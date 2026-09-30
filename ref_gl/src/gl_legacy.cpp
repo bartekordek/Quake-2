@@ -6,8 +6,8 @@
 
 GL_Legacy &GL_Legacy::Get_instance ()
 {
-	static GL_Legacy instance;
-	return instance;
+	static GL_Legacy s_instance;
+	return s_instance;
 }
 
 void GL_Legacy::LogNewFrame ()

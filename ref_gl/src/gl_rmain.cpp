@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "ref_gl/gl_local.h"
 #include "ref_gl/gl_legacy.hpp"
 #include "ref_gl/gl_rsurf.h"
-#include "ref_gl/gl_draw.h"
+#include "ref_gl/gl_draw.hpp"
 #include "ref_gl/gl_image.h"
 #include "ref_gl/gl_warp.h"
 #include "math/constants.h"
