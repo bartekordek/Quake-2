@@ -37,13 +37,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include <stdio.h>
 
-#ifdef USE_GLEW
 #include <GL/glew.h>
 #ifdef _WIN32
 #include <GL/wglew.h>
-#endif
-#else
-#include <GL/gl.h>
 #endif
 #include <GL/glu.h>
 #include <math.h>

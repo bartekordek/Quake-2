@@ -1124,19 +1124,15 @@ qboolean R_Init ()
 
 	ri.Vid_MenuInit ();
 
-#ifdef USE_GLEW
+	GLenum glewErr = glewInit ();
+	if (glewErr != GLEW_OK)
 	{
-		GLenum glewErr = glewInit ();
-		if (glewErr != GLEW_OK)
-		{
-			ri.Con_Printf (PRINT_ALL, "GLEW init failed: %s\n", glewGetErrorString (glewErr));
-		}
-		else
-		{
-			ri.Con_Printf (PRINT_ALL, "Using GLEW %s\n", glewGetString (GLEW_VERSION));
-		}
+		ri.Con_Printf (PRINT_ALL, "GLEW init failed: %s\n", glewGetErrorString (glewErr));
 	}
-#endif
+	else
+	{
+		ri.Con_Printf (PRINT_ALL, "Using GLEW %s\n", glewGetString (GLEW_VERSION));
+	}
 
 	/*
 	** get our various GL strings
@@ -1235,7 +1231,6 @@ qboolean R_Init ()
 	** grab extensions
 	*/
 #ifdef WIN32
-#ifdef USE_GLEW
 	if (GLEW_EXT_compiled_vertex_array)
 	{
 		ri.Con_Printf (PRINT_ALL, "...enabling GL_EXT_compiled_vertex_array (via GLEW)\n");
@@ -1309,83 +1304,6 @@ qboolean R_Init ()
 	{
 		ri.Con_Printf (PRINT_ALL, "...GL_SGIS_multitexture not found\n");
 	}
-#else
-	if (strstr (gl_config.extensions_string, "GL_EXT_compiled_vertex_array") ||
-		strstr (gl_config.extensions_string, "GL_SGI_compiled_vertex_array"))
-	{
-		ri.Con_Printf (PRINT_ALL, "...enabling GL_EXT_compiled_vertex_array\n");
-		qglLockArraysEXT   = (void (APIENTRY *) (int, int)) qwglGetProcAddress ("glLockArraysEXT");
-		qglUnlockArraysEXT = (void (APIENTRY *) (void)) qwglGetProcAddress ("glUnlockArraysEXT");
-	}
-	else
-	{
-		ri.Con_Printf (PRINT_ALL, "...GL_EXT_compiled_vertex_array not found\n");
-	}
-
-	if (strstr (gl_config.extensions_string, "WGL_EXT_swap_control"))
-	{
-		qwglSwapIntervalEXT = (BOOL (WINAPI *) (int)) qwglGetProcAddress ("wglSwapIntervalEXT");
-		ri.Con_Printf (PRINT_ALL, "...enabling WGL_EXT_swap_control\n");
-	}
-	else
-	{
-		ri.Con_Printf (PRINT_ALL, "...WGL_EXT_swap_control not found\n");
-	}
-
-	if (strstr (gl_config.extensions_string, "GL_EXT_point_parameters"))
-	{
-		if (gl_ext_pointparameters->value)
-		{
-			qglPointParameterfEXT  = (void (APIENTRY *) (GLenum, GLfloat)) qwglGetProcAddress ("glPointParameterfEXT");
-			qglPointParameterfvEXT = (void (APIENTRY *) (GLenum, const GLfloat *)) qwglGetProcAddress ("glPointParameterfvEXT");
-			ri.Con_Printf (PRINT_ALL, "...using GL_EXT_point_parameters\n");
-		}
-		else
-		{
-			ri.Con_Printf (PRINT_ALL, "...ignoring GL_EXT_point_parameters\n");
-		}
-	}
-	else
-	{
-		ri.Con_Printf (PRINT_ALL, "...GL_EXT_point_parameters not found\n");
-	}
-
-	if (strstr (gl_config.extensions_string, "GL_EXT_paletted_texture") &&
-		strstr (gl_config.extensions_string, "GL_EXT_shared_texture_palette"))
-	{
-		if (gl_ext_palettedtexture->value)
-		{
-			ri.Con_Printf (PRINT_ALL, "...using GL_EXT_shared_texture_palette\n");
-			qglColorTableEXT = (void (APIENTRY *) (int, int, int, int, int, const void *)) qwglGetProcAddress ("glColorTableEXT");
-		}
-		else
-		{
-			ri.Con_Printf (PRINT_ALL, "...ignoring GL_EXT_shared_texture_palette\n");
-		}
-	}
-	else
-	{
-		ri.Con_Printf (PRINT_ALL, "...GL_EXT_shared_texture_palette not found\n");
-	}
-
-	if (strstr (gl_config.extensions_string, "GL_SGIS_multitexture"))
-	{
-		if (gl_ext_multitexture->value)
-		{
-			ri.Con_Printf (PRINT_ALL, "...using GL_SGIS_multitexture\n");
-			qglMTexCoord2fSGIS	 = (void (APIENTRY *) (GLenum, GLfloat, GLfloat)) qwglGetProcAddress ("glMTexCoord2fSGIS");
-			qglSelectTextureSGIS = (void (APIENTRY *) (GLenum)) qwglGetProcAddress ("glSelectTextureSGIS");
-		}
-		else
-		{
-			ri.Con_Printf (PRINT_ALL, "...ignoring GL_SGIS_multitexture\n");
-		}
-	}
-	else
-	{
-		ri.Con_Printf (PRINT_ALL, "...GL_SGIS_multitexture not found\n");
-	}
-#endif
 #endif
 
 	GL_SetDefaultState ();
