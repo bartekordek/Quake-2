@@ -35,8 +35,6 @@ EXTERNC void	 QGL_Shutdown (void);
 #define APIENTRY
 #endif
 
-EXTERNC void (APIENTRY *qglAccum) (GLenum op, GLfloat value);
-EXTERNC void (APIENTRY *qglAlphaFunc) (GLenum func, GLclampf ref);
 EXTERNC GLboolean (APIENTRY *qglAreTexturesResident) (GLsizei n, const GLuint *textures, GLboolean *residences);
 EXTERNC void (APIENTRY *qglArrayElement) (GLint i);
 EXTERNC void (APIENTRY *qglBegin) (GLenum mode);

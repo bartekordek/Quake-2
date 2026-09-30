@@ -31,8 +31,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "ref_gl/gl_local.h"
 #include "ref_gl/glw_win.h"
 
-void (APIENTRY *qglAccum) (GLenum op, GLfloat value);
-void (APIENTRY *qglAlphaFunc) (GLenum func, GLclampf ref);
 GLboolean (APIENTRY *qglAreTexturesResident) (GLsizei n, const GLuint *textures, GLboolean *residences);
 void (APIENTRY *qglArrayElement) (GLint i);
 void (APIENTRY *qglBegin) (GLenum mode);
@@ -2636,8 +2634,6 @@ static void APIENTRY logViewport (GLint x, GLint y, GLsizei width, GLsizei heigh
 */
 void QGL_Shutdown (void)
 {
-	qglAccum				  = NULL;
-	qglAlphaFunc			  = NULL;
 	qglAreTexturesResident	  = NULL;
 	qglArrayElement			  = NULL;
 	qglBegin				  = NULL;
@@ -3015,8 +3011,6 @@ qboolean QGL_Init (const char *dllname)
 
 	gl_config.allow_cds = e_true;
 
-	qglAccum = dllAccum = GPA ("glAccum");
-	qglAlphaFunc = dllAlphaFunc = GPA ("glAlphaFunc");
 	qglAreTexturesResident = dllAreTexturesResident = GPA ("glAreTexturesResident");
 	qglArrayElement = dllArrayElement = GPA ("glArrayElement");
 	qglBegin = dllBegin = GPA ("glBegin");
@@ -3383,8 +3377,6 @@ void GLimp_EnableLogging (qboolean enable)
 			fprintf (glw_state.log_fp, "%s\n", asctime (newtime));
 		}
 
-		qglAccum				  = logAccum;
-		qglAlphaFunc			  = logAlphaFunc;
 		qglAreTexturesResident	  = logAreTexturesResident;
 		qglArrayElement			  = logArrayElement;
 		qglBegin				  = logBegin;
@@ -3722,8 +3714,6 @@ void GLimp_EnableLogging (qboolean enable)
 	}
 	else
 	{
-		qglAccum				  = dllAccum;
-		qglAlphaFunc			  = dllAlphaFunc;
 		qglAreTexturesResident	  = dllAreTexturesResident;
 		qglArrayElement			  = dllArrayElement;
 		qglBegin				  = dllBegin;
