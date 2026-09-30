@@ -37,7 +37,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include <stdio.h>
 
+#ifdef USE_GLEW
+#include <GL/glew.h>
+#ifdef _WIN32
+#include <GL/wglew.h>
+#endif
+#else
 #include <GL/gl.h>
+#endif
 #include <GL/glu.h>
 #include <math.h>
 
@@ -226,7 +233,7 @@ EXTERNC int c_visible_textures;
 
 EXTERNC float r_world_matrix[16];
 
-void R_TranslatePlayerSkin (int playernum);
+void		 R_TranslatePlayerSkin (int playernum);
 EXTERNC void GL_Bind (int texnum);
 EXTERNC void GL_MBind (GLenum target, int texnum);
 EXTERNC void GL_TexEnv (GLenum value);
@@ -247,7 +254,7 @@ EXTERNC int registration_sequence;
 void V_AddBlend (float r, float g, float b, float a, float *v_blend);
 
 qboolean R_Init ();
-void R_Shutdown (void);
+void	 R_Shutdown (void);
 
 EXTERNC void	 R_RenderView (refdef_t *fd);
 EXTERNC void	 GL_ScreenShot_f (void);
@@ -423,7 +430,6 @@ EXTERNC void	 GLimp_LogNewFrame (void);
 
 EXTERNC void MYgluPerspective (GLdouble fovy, GLdouble aspect, GLdouble zNear, GLdouble zFar);
 EXTERNC void GL_Strings_f (void);
-
 
 EXTERNC unsigned r_rawpalette[256];
 #endif	// __ref_gl_gl_local_h__

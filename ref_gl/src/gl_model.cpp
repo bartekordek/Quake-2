@@ -351,10 +351,9 @@ RadiusFromBounds
 */
 float RadiusFromBounds (vec3_t mins, vec3_t maxs)
 {
-	int	   i;
 	vec3_t corner;
 
-	for (i = 0; i < 3; i++)
+	for (int i = 0; i < 3; i++)
 	{
 		corner[i] = fabs (mins[i]) > fabs (maxs[i]) ? fabs (mins[i]) : fabs (maxs[i]);
 	}
@@ -369,22 +368,20 @@ Mod_LoadSubmodels
 */
 void Mod_LoadSubmodels (lump_t *l)
 {
-	int		  i, j;
-
 	dmodel_t *in = (dmodel_t *) (mod_base + l->fileofs);
 	if (l->filelen % sizeof (*in))
 	{
 		ri.Sys_Error (ERR_DROP, "MOD_LoadBmodel: funny lump size in %s", loadmodel->name);
 	}
 	int		  count			= l->filelen / sizeof (*in);
-	mmodel_t *out			= (mmodel_t *)Hunk_Alloc (count * sizeof (*out));
+	mmodel_t *out			= (mmodel_t *) Hunk_Alloc (count * sizeof (*out));
 
 	loadmodel->submodels	= out;
 	loadmodel->numsubmodels = count;
 
-	for (i = 0; i < count; i++, in++, out++)
+	for (int i = 0; i < count; i++, in++, out++)
 	{
-		for (j = 0; j < 3; j++)
+		for (int j = 0; j < 3; j++)
 		{  // spread the mins / maxs by a pixel
 			out->mins[j]   = LittleFloat (in->mins[j]) - 1;
 			out->maxs[j]   = LittleFloat (in->maxs[j]) + 1;
@@ -404,8 +401,6 @@ Mod_LoadEdges
 */
 void Mod_LoadEdges (lump_t *l)
 {
-	int		 i;
-
 	dedge_t *in = (dedge_t *) (mod_base + l->fileofs);
 	if (l->filelen % sizeof (*in))
 		ri.Sys_Error (ERR_DROP, "MOD_LoadBmodel: funny lump size in %s", loadmodel->name);
@@ -415,7 +410,7 @@ void Mod_LoadEdges (lump_t *l)
 	loadmodel->edges	= out;
 	loadmodel->numedges = count;
 
-	for (i = 0; i < count; i++, in++, out++)
+	for (int i = 0; i < count; i++, in++, out++)
 	{
 		out->v[0] = (unsigned short) LittleShort (in->v[0]);
 		out->v[1] = (unsigned short) LittleShort (in->v[1]);

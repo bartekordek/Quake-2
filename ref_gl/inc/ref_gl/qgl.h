@@ -415,7 +415,11 @@ EXTERNC BOOL (WINAPI *qwglSwapIntervalEXT) (int interval);
 #define GL_SHARED_TEXTURE_PALETTE_EXT 0x81FB
 #endif
 
+#ifndef GL_TEXTURE0_SGIS
 #define GL_TEXTURE0_SGIS 0x835E
+#endif
+#ifndef GL_TEXTURE1_SGIS
 #define GL_TEXTURE1_SGIS 0x835F
+#endif
 
 #endif	// __QGL_H__

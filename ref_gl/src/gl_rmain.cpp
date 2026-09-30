@@ -1124,16 +1124,30 @@ qboolean R_Init ()
 
 	ri.Vid_MenuInit ();
 
+#ifdef USE_GLEW
+	{
+		GLenum glewErr = glewInit ();
+		if (glewErr != GLEW_OK)
+		{
+			ri.Con_Printf (PRINT_ALL, "GLEW init failed: %s\n", glewGetErrorString (glewErr));
+		}
+		else
+		{
+			ri.Con_Printf (PRINT_ALL, "Using GLEW %s\n", glewGetString (GLEW_VERSION));
+		}
+	}
+#endif
+
 	/*
 	** get our various GL strings
 	*/
-	gl_config.vendor_string = (const char*)qglGetString (GL_VENDOR);
+	gl_config.vendor_string = (const char *) qglGetString (GL_VENDOR);
 	ri.Con_Printf (PRINT_ALL, "GL_VENDOR: %s\n", gl_config.vendor_string);
-	gl_config.renderer_string = (const char*)qglGetString (GL_RENDERER);
+	gl_config.renderer_string = (const char *) qglGetString (GL_RENDERER);
 	ri.Con_Printf (PRINT_ALL, "GL_RENDERER: %s\n", gl_config.renderer_string);
-	gl_config.version_string = (const char*)qglGetString (GL_VERSION);
+	gl_config.version_string = (const char *) qglGetString (GL_VERSION);
 	ri.Con_Printf (PRINT_ALL, "GL_VERSION: %s\n", gl_config.version_string);
-	gl_config.extensions_string = (const char*)qglGetString (GL_EXTENSIONS);
+	gl_config.extensions_string = (const char *) qglGetString (GL_EXTENSIONS);
 	ri.Con_Printf (PRINT_ALL, "GL_EXTENSIONS: %s\n", gl_config.extensions_string);
 
 	strcpy (renderer_buffer, gl_config.renderer_string);
@@ -1221,6 +1235,81 @@ qboolean R_Init ()
 	** grab extensions
 	*/
 #ifdef WIN32
+#ifdef USE_GLEW
+	if (GLEW_EXT_compiled_vertex_array)
+	{
+		ri.Con_Printf (PRINT_ALL, "...enabling GL_EXT_compiled_vertex_array (via GLEW)\n");
+		qglLockArraysEXT   = (void (APIENTRY *) (int, int)) glLockArraysEXT;
+		qglUnlockArraysEXT = (void (APIENTRY *) (void)) glUnlockArraysEXT;
+	}
+	else
+	{
+		ri.Con_Printf (PRINT_ALL, "...GL_EXT_compiled_vertex_array not found\n");
+	}
+
+	if (WGLEW_EXT_swap_control)
+	{
+		qwglSwapIntervalEXT = wglSwapIntervalEXT;
+		ri.Con_Printf (PRINT_ALL, "...enabling WGL_EXT_swap_control (via GLEW)\n");
+	}
+	else
+	{
+		ri.Con_Printf (PRINT_ALL, "...WGL_EXT_swap_control not found\n");
+	}
+
+	if (GLEW_EXT_point_parameters)
+	{
+		if (gl_ext_pointparameters->value)
+		{
+			qglPointParameterfEXT  = (void (APIENTRY *) (GLenum, GLfloat)) glPointParameterfEXT;
+			qglPointParameterfvEXT = (void (APIENTRY *) (GLenum, const GLfloat *)) glPointParameterfvEXT;
+			ri.Con_Printf (PRINT_ALL, "...using GL_EXT_point_parameters (via GLEW)\n");
+		}
+		else
+		{
+			ri.Con_Printf (PRINT_ALL, "...ignoring GL_EXT_point_parameters\n");
+		}
+	}
+	else
+	{
+		ri.Con_Printf (PRINT_ALL, "...GL_EXT_point_parameters not found\n");
+	}
+
+	if (GLEW_EXT_paletted_texture && GLEW_EXT_shared_texture_palette)
+	{
+		if (gl_ext_palettedtexture->value)
+		{
+			ri.Con_Printf (PRINT_ALL, "...using GL_EXT_shared_texture_palette (via GLEW)\n");
+			qglColorTableEXT = (void (APIENTRY *) (int, int, int, int, int, const void *)) glColorTableEXT;
+		}
+		else
+		{
+			ri.Con_Printf (PRINT_ALL, "...ignoring GL_EXT_shared_texture_palette\n");
+		}
+	}
+	else
+	{
+		ri.Con_Printf (PRINT_ALL, "...GL_EXT_shared_texture_palette not found\n");
+	}
+
+	if (GLEW_SGIS_multitexture)
+	{
+		if (gl_ext_multitexture->value)
+		{
+			ri.Con_Printf (PRINT_ALL, "...using GL_SGIS_multitexture (via GLEW)\n");
+			qglMTexCoord2fSGIS	 = (void (APIENTRY *) (GLenum, GLfloat, GLfloat)) qwglGetProcAddress ("glMTexCoord2fSGIS");
+			qglSelectTextureSGIS = (void (APIENTRY *) (GLenum)) glSelectTextureSGIS;
+		}
+		else
+		{
+			ri.Con_Printf (PRINT_ALL, "...ignoring GL_SGIS_multitexture\n");
+		}
+	}
+	else
+	{
+		ri.Con_Printf (PRINT_ALL, "...GL_SGIS_multitexture not found\n");
+	}
+#else
 	if (strstr (gl_config.extensions_string, "GL_EXT_compiled_vertex_array") ||
 		strstr (gl_config.extensions_string, "GL_SGI_compiled_vertex_array"))
 	{
@@ -1297,6 +1386,7 @@ qboolean R_Init ()
 		ri.Con_Printf (PRINT_ALL, "...GL_SGIS_multitexture not found\n");
 	}
 #endif
+#endif
 
 	GL_SetDefaultState ();
 
@@ -1368,7 +1458,7 @@ void R_BeginFrame (float camera_separation)
 
 	if (gl_log->modified)
 	{
-		GLimp_EnableLogging (gl_log->value  > 0.f ? e_true : e_false);
+		GLimp_EnableLogging (gl_log->value > 0.f ? e_true : e_false);
 		gl_log->modified = e_false;
 	}
 
@@ -1576,10 +1666,7 @@ void R_DrawBeam (entity_t *e)
 
 //===================================================================
 
-
-
 struct image_s *R_RegisterSkin (const char *name);
-
 
 void R_RenderFrame (refdef_t *fd);
 
@@ -1595,7 +1682,7 @@ GetRefAPI
 
 @@@@@@@@@@@@@@@@@@@@@
 */
-__declspec (dllexport) refexport_t GetRefAPI (refimport_t rimp)
+EXTERNC __declspec (dllexport) refexport_t GetRefAPI (refimport_t rimp)
 {
 	refexport_t re;
 
