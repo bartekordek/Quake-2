@@ -7,6 +7,8 @@ set( PROJECT_NAME ref_gl )
 
 project(${PROJECT_NAME} LANGUAGES C CXX)
 
+find_package(OpenGL REQUIRED)
+
 set( CMAKE_ENABLE_EXPORTS e_true )
 
 if( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC" )
@@ -42,7 +44,7 @@ list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/win32/q_shwin.c)
 
 add_library( ${PROJECT_NAME} SHARED ${SOURCES} )
 
-set(DEPENDENCIES shared)
+set(DEPENDENCIES shared OpenGL::GL OpenGL::GLU glew_s)
 if (MSVC)
 list(APPEND DEPENDENCIES winmm )
 endif()
@@ -62,5 +64,5 @@ else()
     endif()
 endif()
 
-target_include_directories(${PROJECT_NAME} PUBLIC inc PRIVATE src)
-target_compile_definitions(${PROJECT_NAME} PRIVATE C_ONLY=1 )
+target_include_directories(${PROJECT_NAME} PUBLIC inc PRIVATE src $ENV{GLEW_ROOT}/include)
+target_compile_definitions(${PROJECT_NAME} PRIVATE C_ONLY=1 USE_GLEW)
