@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 // r_main.c
 #include "ref_gl/gl_local.h"
+#include "ref_gl/gl_legacy.hpp"
 #include "ref_gl/gl_rsurf.h"
 #include "ref_gl/gl_draw.h"
 #include "ref_gl/gl_image.h"
@@ -1378,7 +1379,7 @@ void R_BeginFrame (float camera_separation)
 
 	if (gl_log->value)
 	{
-		GLimp_LogNewFrame ();
+		GL_Legacy::Get_instance ().LogNewFrame ();
 	}
 
 	/*
