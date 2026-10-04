@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // GL_RSURF.C: surface-related refresh code
 #include <assert.h>
 
+#include "ref_gl/gl_legacy.hpp"
 #include "ref_gl/gl_local.h"
 #include "ref_gl/gl_light.hpp"
 #include "ref_gl/gl_rsurf.h"
@@ -232,8 +233,10 @@ void R_DrawTriangleOutlines (void)
 	int		  i, j;
 	glpoly_t *p;
 
-	if (!gl_showtris->value)
+	if (!GL_Legacy::Get_instance ().gl_showtris->value)
+	{
 		return;
+	}
 
 	qglDisable (GL_TEXTURE_2D);
 	qglDisable (GL_DEPTH_TEST);
@@ -330,19 +333,19 @@ void R_BlendLightmaps (void)
 	** set the appropriate blending mode unless we're only looking at the
 	** lightmaps.
 	*/
-	if (!gl_lightmap->value)
+	if (!GL_Legacy::Get_instance ().gl_lightmap->value)
 	{
 		qglEnable (GL_BLEND);
 
-		if (gl_saturatelighting->value)
+		if (GL_Legacy::Get_instance ().gl_saturatelighting->value)
 		{
 			qglBlendFunc (GL_ONE, GL_ONE);
 		}
 		else
 		{
-			if (gl_monolightmap->string[0] != '0')
+			if (GL_Legacy::Get_instance ().gl_monolightmap->string[0] != '0')
 			{
-				switch (toupper (gl_monolightmap->string[0]))
+				switch (toupper (GL_Legacy::Get_instance ().gl_monolightmap->string[0]))
 				{
 					case 'I':
 						qglBlendFunc (GL_ZERO, GL_SRC_COLOR);
@@ -388,7 +391,7 @@ void R_BlendLightmaps (void)
 	/*
 	** render dynamic lightmaps
 	*/
-	if (gl_dynamic->value)
+	if (GL_Legacy::Get_instance ().gl_dynamic->value)
 	{
 		LM_InitBlock ();
 
@@ -525,7 +528,7 @@ void R_RenderBrushPoly (msurface_t *fa)
 	if ((fa->dlightframe == r_framecount))
 	{
 	dynamic:
-		if (gl_dynamic->value)
+		if (GL_Legacy::Get_instance ().gl_dynamic->value)
 		{
 			if (!(fa->texinfo->flags & (SURF_SKY | SURF_TRANS33 | SURF_TRANS66 | SURF_WARP)))
 			{
@@ -707,7 +710,7 @@ static void GL_RenderLightmappedPoly (msurface_t *surf)
 	if ((surf->dlightframe == r_framecount))
 	{
 	dynamic:
-		if (gl_dynamic->value)
+		if (GL_Legacy::Get_instance ().gl_dynamic->value)
 		{
 			if (!(surf->texinfo->flags & (SURF_SKY | SURF_TRANS33 | SURF_TRANS66 | SURF_WARP)))
 			{
@@ -863,7 +866,7 @@ void R_DrawInlineBModel (void)
 	dlight_t   *lt;
 
 	// calculate dynamic lighting for bmodel
-	if (!gl_flashblend->value)
+	if (!GL_Legacy::Get_instance ().gl_flashblend->value)
 	{
 		lt = r_newrefdef.dlights;
 		for (k = 0; k < r_newrefdef.num_dlights; k++, lt++)
@@ -1203,7 +1206,7 @@ void R_DrawWorld (void)
 		GL_TexEnv (GL_REPLACE);
 		GL_SelectTexture (GL_TEXTURE1_SGIS);
 
-		if (gl_lightmap->value)
+		if (GL_Legacy::Get_instance ().gl_lightmap->value)
 			GL_TexEnv (GL_REPLACE);
 		else
 			GL_TexEnv (GL_MODULATE);
@@ -1246,19 +1249,19 @@ void R_MarkLeaves (void)
 	mleaf_t *leaf;
 	int		 cluster;
 
-	if (r_oldviewcluster == r_viewcluster && r_oldviewcluster2 == r_viewcluster2 && !r_novis->value && r_viewcluster != -1)
+	if (r_oldviewcluster == r_viewcluster && r_oldviewcluster2 == r_viewcluster2 && !GL_Legacy::Get_instance ().r_novis->value && r_viewcluster != -1)
 		return;
 
 	// development aid to let you run around and see exactly where
 	// the pvs ends
-	if (gl_lockpvs->value)
+	if (GL_Legacy::Get_instance ().gl_lockpvs->value)
 		return;
 
 	r_visframecount++;
 	r_oldviewcluster  = r_viewcluster;
 	r_oldviewcluster2 = r_viewcluster2;
 
-	if (r_novis->value || r_viewcluster == -1 || !r_worldmodel->vis)
+	if (GL_Legacy::Get_instance ().r_novis->value || r_viewcluster == -1 || !r_worldmodel->vis)
 	{
 		// mark everything
 		for (i = 0; i < r_worldmodel->numleafs; i++) r_worldmodel->leafs[i].visframe = r_visframecount;
@@ -1565,22 +1568,22 @@ void GL_BeginBuildingLightmaps (model_t *m)
 	** only alpha lightmaps but that can at least support the GL_ALPHA
 	** format then we should change this code to use real alpha maps.
 	*/
-	if (toupper (gl_monolightmap->string[0]) == 'A')
+	if (toupper (GL_Legacy::Get_instance ().gl_monolightmap->string[0]) == 'A')
 	{
 		gl_lms.internal_format = gl_tex_alpha_format;
 	}
 	/*
 	** try to do hacked colored lighting with a blended texture
 	*/
-	else if (toupper (gl_monolightmap->string[0]) == 'C')
+	else if (toupper (GL_Legacy::Get_instance ().gl_monolightmap->string[0]) == 'C')
 	{
 		gl_lms.internal_format = gl_tex_alpha_format;
 	}
-	else if (toupper (gl_monolightmap->string[0]) == 'I')
+	else if (toupper (GL_Legacy::Get_instance ().gl_monolightmap->string[0]) == 'I')
 	{
 		gl_lms.internal_format = GL_INTENSITY8;
 	}
-	else if (toupper (gl_monolightmap->string[0]) == 'L')
+	else if (toupper (GL_Legacy::Get_instance ().gl_monolightmap->string[0]) == 'L')
 	{
 		gl_lms.internal_format = GL_LUMINANCE8;
 	}

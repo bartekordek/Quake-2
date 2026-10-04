@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // gl_warp.c -- sky and water polygons
 
 #include "ref_gl/gl_local.h"
+#include "ref_gl/gl_legacy.hpp"
 #include "ref_gl/gl_warp.h"
 #include "math/constants.h"
 
@@ -613,10 +614,10 @@ void  R_SetSky (const char *name, float rotate, vec3_t axis)
 	for (i = 0; i < 6; i++)
 	{
 		// chop down rotating skies for less memory
-		if (gl_skymip->value || skyrotate)
-			gl_picmip->value++;
+		if (GL_Legacy::Get_instance ().gl_skymip->value || skyrotate)
+			GL_Legacy::Get_instance ().gl_picmip->value++;
 
-		if (qglColorTableEXT && gl_ext_palettedtexture->value)
+		if (qglColorTableEXT && GL_Legacy::Get_instance ().gl_ext_palettedtexture->value)
 			Com_sprintf (pathname, sizeof (pathname), "env/%s%s.pcx", skyname, suf[i]);
 		else
 			Com_sprintf (pathname, sizeof (pathname), "env/%s%s.tga", skyname, suf[i]);
@@ -625,9 +626,9 @@ void  R_SetSky (const char *name, float rotate, vec3_t axis)
 		if (!sky_images[i])
 			sky_images[i] = r_notexture;
 
-		if (gl_skymip->value || skyrotate)
+		if (GL_Legacy::Get_instance ().gl_skymip->value || skyrotate)
 		{  // take less memory
-			gl_picmip->value--;
+			GL_Legacy::Get_instance ().gl_picmip->value--;
 			sky_min = 1.0 / 256;
 			sky_max = 255.0 / 256;
 		}

@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // gl_mesh.c: triangle model functions
 
 #include "ref_gl/gl_local.h"
+#include "ref_gl/gl_legacy.hpp"
 #include "ref_gl/gl_light.hpp"
 #include "math/constants.h"
 
@@ -151,7 +152,7 @@ void GL_DrawAliasFrameLerp (dmdl_t *paliashdr, float backlerp)
 
 	GL_LerpVerts (paliashdr->num_xyz, v, ov, verts, lerp, move, frontv, backv);
 
-	if (gl_vertex_arrays->value)
+	if (GL_Legacy::Get_instance ().gl_vertex_arrays->value)
 	{
 		float colorArray[MAX_VERTS * 4];
 
@@ -613,20 +614,20 @@ void R_DrawAliasModel (entity_t *e)
 			if (shadelight[0] > shadelight[1])
 			{
 				if (shadelight[0] > shadelight[2])
-					r_lightlevel->value = 150 * shadelight[0];
+					GL_Legacy::Get_instance ().r_lightlevel->value = 150 * shadelight[0];
 				else
-					r_lightlevel->value = 150 * shadelight[2];
+					GL_Legacy::Get_instance ().r_lightlevel->value = 150 * shadelight[2];
 			}
 			else
 			{
 				if (shadelight[1] > shadelight[2])
-					r_lightlevel->value = 150 * shadelight[1];
+					GL_Legacy::Get_instance ().r_lightlevel->value = 150 * shadelight[1];
 				else
-					r_lightlevel->value = 150 * shadelight[2];
+					GL_Legacy::Get_instance ().r_lightlevel->value = 150 * shadelight[2];
 			}
 		}
 
-		if (gl_monolightmap->string[0] != '0')
+		if (GL_Legacy::Get_instance ().gl_monolightmap->string[0] != '0')
 		{
 			float s = shadelight[0];
 
@@ -759,7 +760,7 @@ void R_DrawAliasModel (entity_t *e)
 		currententity->oldframe = 0;
 	}
 
-	if (!r_lerpmodels->value)
+	if (!GL_Legacy::Get_instance ().r_lerpmodels->value)
 		currententity->backlerp = 0;
 	GL_DrawAliasFrameLerp (paliashdr, currententity->backlerp);
 
@@ -800,7 +801,7 @@ void R_DrawAliasModel (entity_t *e)
 		qglDepthRange (gldepthmin, gldepthmax);
 
 #if 1
-	if (gl_shadows->value && !(currententity->flags & (RF_TRANSLUCENT | RF_WEAPONMODEL)))
+	if (GL_Legacy::Get_instance ().gl_shadows->value && !(currententity->flags & (RF_TRANSLUCENT | RF_WEAPONMODEL)))
 	{
 		qglPushMatrix ();
 		R_RotateForEntity (e);

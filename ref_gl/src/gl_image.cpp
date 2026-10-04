@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "ref_gl/gl_image.h"
+#include "ref_gl/gl_legacy.hpp"
 #include "ref_gl/gl_local.h"
 #include "ref_gl/gl_draw.hpp"
 #include "shared/memory.hpp"
@@ -59,7 +60,7 @@ void GL_SetTexturePalette (unsigned palette[256])
 		temptable[i * 3 + 2] = (palette[i] >> 16) & 0xff;
 	}
 
-	if (qglColorTableEXT && gl_ext_palettedtexture->value)
+	if (qglColorTableEXT && GL_Legacy::Get_instance().gl_ext_palettedtexture->value)
 	{
 		qglColorTableEXT (GL_SHARED_TEXTURE_PALETTE_EXT, GL_RGB, 256, GL_RGB, GL_UNSIGNED_BYTE, temptable);
 	}
@@ -122,7 +123,7 @@ void GL_TexEnv (GLenum mode)
 
 void GL_Bind (int texnum)
 {
-	if (gl_nobind->value && draw_chars)	 // performance evaluation option
+	if (GL_Legacy::Get_instance ().gl_nobind->value && draw_chars)	 // performance evaluation option
 		texnum = draw_chars->texnum;
 	if (gl_state.currenttextures[gl_state.currenttmu] == texnum)
 		return;
@@ -953,17 +954,21 @@ qboolean GL_Upload32 (unsigned *data, int width, int height, qboolean mipmap)
 	uploaded_paletted = e_false;
 
 	for (scaled_width = 1; scaled_width < width; scaled_width <<= 1);
-	if (gl_round_down->value && scaled_width > width && mipmap)
+	if (GL_Legacy::Get_instance ().gl_round_down->value && scaled_width > width && mipmap)
+	{
 		scaled_width >>= 1;
+	}
 	for (scaled_height = 1; scaled_height < height; scaled_height <<= 1);
-	if (gl_round_down->value && scaled_height > height && mipmap)
+	if (GL_Legacy::Get_instance ().gl_round_down->value && scaled_height > height && mipmap)
+	{
 		scaled_height >>= 1;
+	}
 
 	// let people sample down the world textures for speed
 	if (mipmap)
 	{
-		scaled_width >>= (int) gl_picmip->value;
-		scaled_height >>= (int) gl_picmip->value;
+		scaled_width >>= (int) GL_Legacy::Get_instance ().gl_picmip->value;
+		scaled_height >>= (int) GL_Legacy::Get_instance ().gl_picmip->value;
 	}
 
 	// don't ever bother with >256 textures
@@ -1023,7 +1028,7 @@ qboolean GL_Upload32 (unsigned *data, int width, int height, qboolean mipmap)
 	{
 		if (!mipmap)
 		{
-			if (qglColorTableEXT && gl_ext_palettedtexture->value && samples == gl_solid_format)
+			if (qglColorTableEXT && GL_Legacy::Get_instance ().gl_ext_palettedtexture->value && samples == gl_solid_format)
 			{
 				uploaded_paletted = e_true;
 				GL_BuildPalettedTexture (paletted_texture, (unsigned char *) data, scaled_width, scaled_height);
@@ -1043,7 +1048,7 @@ qboolean GL_Upload32 (unsigned *data, int width, int height, qboolean mipmap)
 
 	GL_LightScaleTexture (scaled, scaled_width, scaled_height, to_qboolean(!mipmap));
 
-	if (qglColorTableEXT && gl_ext_palettedtexture->value && (samples == gl_solid_format))
+	if (qglColorTableEXT && GL_Legacy::Get_instance ().gl_ext_palettedtexture->value && (samples == gl_solid_format))
 	{
 		uploaded_paletted = e_true;
 		GL_BuildPalettedTexture (paletted_texture, (unsigned char *) scaled, scaled_width, scaled_height);
@@ -1070,7 +1075,7 @@ qboolean GL_Upload32 (unsigned *data, int width, int height, qboolean mipmap)
 			if (scaled_height < 1)
 				scaled_height = 1;
 			miplevel++;
-			if (qglColorTableEXT && gl_ext_palettedtexture->value && samples == gl_solid_format)
+			if (qglColorTableEXT && GL_Legacy::Get_instance ().gl_ext_palettedtexture->value && samples == gl_solid_format)
 			{
 				uploaded_paletted = e_true;
 				GL_BuildPalettedTexture (paletted_texture, (unsigned char *) scaled, scaled_width, scaled_height);
@@ -1135,7 +1140,7 @@ qboolean GL_Upload8 (byte *data, int width, int height, qboolean mipmap, qboolea
 	if (s > sizeof (trans) / 4)
 		ri.Sys_Error (ERR_DROP, "GL_Upload8: too large");
 
-	if (qglColorTableEXT && gl_ext_palettedtexture->value && is_sky)
+	if (qglColorTableEXT && GL_Legacy::Get_instance ().gl_ext_palettedtexture->value && is_sky)
 	{
 		qglTexImage2D (GL_TEXTURE_2D, 0, GL_COLOR_INDEX8_EXT, width, height, 0, GL_COLOR_INDEX, GL_UNSIGNED_BYTE, data);
 

@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "ref_gl/gl_light.hpp"
 #include "ref_gl/gl_local.h"
+#include "ref_gl/gl_legacy.hpp"
 #include "math/constants.h"
 
 int r_dlightframecount;
@@ -78,8 +79,10 @@ void R_RenderDlights (void)
 	int		  i;
 	dlight_t *l;
 
-	if (!gl_flashblend->value)
+	if (!GL_Legacy::Get_instance ().gl_flashblend->value)
+	{
 		return;
+	}
 
 	r_dlightframecount = r_framecount + 1;	// because the count hasn't
 											//  advanced yet for this frame
@@ -162,7 +165,7 @@ void R_PushDlights (void)
 	int		  i;
 	dlight_t *l;
 
-	if (gl_flashblend->value)
+	if (GL_Legacy::Get_instance ().gl_flashblend->value)
 		return;
 
 	r_dlightframecount = r_framecount + 1;	// because the count hasn't
@@ -265,7 +268,7 @@ int RecursiveLightPoint (mnode_t *node, vec3_t start, vec3_t end)
 
 			for (maps = 0; maps < MAXLIGHTMAPS && surf->styles[maps] != 255; maps++)
 			{
-				for (i = 0; i < 3; i++) scale[i] = gl_modulate->value * r_newrefdef.lightstyles[surf->styles[maps]].rgb[i];
+				for (i = 0; i < 3; i++) scale[i] = GL_Legacy::Get_instance ().gl_modulate->value * r_newrefdef.lightstyles[surf->styles[maps]].rgb[i];
 
 				pointcolor[0] += lightmap[0] * scale[0] * (1.0 / 255);
 				pointcolor[1] += lightmap[1] * scale[1] * (1.0 / 255);
@@ -333,7 +336,7 @@ void R_LightPoint (vec3_t p, vec3_t color)
 		}
 	}
 
-	VectorScale (color, gl_modulate->value, color);
+	VectorScale (color, GL_Legacy::Get_instance ().gl_modulate->value, color);
 }
 
 //===================================================================
@@ -484,7 +487,8 @@ void R_BuildLightMap (msurface_t *surf, byte *dest, int stride)
 		{
 			bl = s_blocklights;
 
-			for (i = 0; i < 3; i++) scale[i] = gl_modulate->value * r_newrefdef.lightstyles[surf->styles[maps]].rgb[i];
+			for (i = 0; i < 3; i++)
+				scale[i] = GL_Legacy::Get_instance ().gl_modulate->value * r_newrefdef.lightstyles[surf->styles[maps]].rgb[i];
 
 			if (scale[0] == 1.0F && scale[1] == 1.0F && scale[2] == 1.0F)
 			{
@@ -517,7 +521,7 @@ void R_BuildLightMap (msurface_t *surf, byte *dest, int stride)
 		{
 			bl = s_blocklights;
 
-			for (i = 0; i < 3; i++) scale[i] = gl_modulate->value * r_newrefdef.lightstyles[surf->styles[maps]].rgb[i];
+			for (i = 0; i < 3; i++) scale[i] = GL_Legacy::Get_instance ().gl_modulate->value * r_newrefdef.lightstyles[surf->styles[maps]].rgb[i];
 
 			if (scale[0] == 1.0F && scale[1] == 1.0F && scale[2] == 1.0F)
 			{
@@ -550,7 +554,7 @@ store:
 	stride -= (smax << 2);
 	bl			 = s_blocklights;
 
-	monolightmap = gl_monolightmap->string[0];
+	monolightmap = GL_Legacy::Get_instance ().gl_monolightmap->string[0];
 
 	if (monolightmap == '0')
 	{

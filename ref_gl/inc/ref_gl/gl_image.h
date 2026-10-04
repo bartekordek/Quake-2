@@ -12,5 +12,6 @@ EXTERNC void	GL_TextureMode (const char *string);
 EXTERNC void	GL_TextureAlphaMode (const char *string);
 EXTERNC void	GL_TextureSolidMode (const char *string);
 EXTERNC image_t *GL_LoadPic (const char *name, byte *pic, int width, int height, imagetype_t type, int bits);
+void			 GL_ImageList_f (void);
 
 #endif	// __ref_gl_gl_image_h__

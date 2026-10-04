@@ -30,6 +30,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 **
 */
 #include "ref_gl/gl_local.h"
+#include "ref_gl/gl_legacy.hpp"
 #include "shared/assert.h"
 
 #ifdef _WIN32
@@ -44,7 +45,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 glwstate_t glw_state;
 
-extern cvar_t  *vid_fullscreen;
 extern cvar_t  *vid_ref;
 EXTERNC cvar_t *gl_allow_software;
 
@@ -84,11 +84,11 @@ rserr_t GLimp_SetMode (int *pwidth, int *pheight, int mode, qboolean fullscreen)
 		vs.dmPelsHeight = height;
 		vs.dmFields		= DM_PELSWIDTH | DM_PELSHEIGHT;
 
-		if (gl_bitdepth->value != 0)
+		if (GL_Legacy::Get_instance ().gl_bitdepth->value != 0)
 		{
-			vs.dmBitsPerPel = gl_bitdepth->value;
+			vs.dmBitsPerPel = GL_Legacy::Get_instance ().gl_bitdepth->value;
 			vs.dmFields |= DM_BITSPERPEL;
-			ri.Con_Printf (PRINT_ALL, "...using gl_bitdepth of %d\n", (int) gl_bitdepth->value);
+			ri.Con_Printf (PRINT_ALL, "...using gl_bitdepth of %d\n", (int) GL_Legacy::Get_instance ().gl_bitdepth->value);
 		}
 		else
 		{
@@ -132,7 +132,7 @@ rserr_t GLimp_SetMode (int *pwidth, int *pheight, int mode, qboolean fullscreen)
 			// dm.dmPelsHeight = height;
 			// dm.dmFields		= DM_PELSWIDTH | DM_PELSHEIGHT;
 
-			if (gl_bitdepth->value != 0)
+			if (GL_Legacy::Get_instance ().gl_bitdepth->value != 0)
 			{
 				// dm.dmBitsPerPel = gl_bitdepth->value;
 				// dm.dmFields |= DM_BITSPERPEL;
@@ -342,7 +342,7 @@ void GLimp_EndFrame (void)
 	err = qglGetError ();
 	assert (err == GL_NO_ERROR);
 
-	if (stricmp (gl_drawbuffer->string, "GL_BACK") == 0)
+	if (stricmp (GL_Legacy::Get_instance ().gl_drawbuffer->string, "GL_BACK") == 0)
 	{
 		ri.Swap_buffers ();
 	}

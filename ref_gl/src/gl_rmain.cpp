@@ -74,70 +74,8 @@ refdef_t r_newrefdef;
 
 int r_viewcluster, r_viewcluster2, r_oldviewcluster, r_oldviewcluster2;
 
-cvar_t *r_norefresh;
-cvar_t *r_drawentities;
-cvar_t *r_drawworld;
-cvar_t *r_speeds;
-cvar_t *r_fullbright;
-cvar_t *r_novis;
-cvar_t *r_nocull;
-cvar_t *r_lerpmodels;
-cvar_t *r_lefthand;
-
-cvar_t *r_lightlevel;  // FIXME: This is a HACK to get the client's light level
-
-cvar_t *gl_nosubimage;
-cvar_t *gl_allow_software;
-
-cvar_t *gl_vertex_arrays;
-
-cvar_t *gl_particle_min_size;
-cvar_t *gl_particle_max_size;
-cvar_t *gl_particle_size;
-cvar_t *gl_particle_att_a;
-cvar_t *gl_particle_att_b;
-cvar_t *gl_particle_att_c;
-
-cvar_t *gl_ext_swapinterval;
-cvar_t *gl_ext_palettedtexture;
-cvar_t *gl_ext_multitexture;
-cvar_t *gl_ext_pointparameters;
-cvar_t *gl_ext_compiled_vertex_array;
-
-cvar_t *gl_log;
-cvar_t *gl_bitdepth;
-cvar_t *gl_drawbuffer;
-cvar_t *gl_driver;
-cvar_t *gl_lightmap;
-cvar_t *gl_shadows;
-cvar_t *gl_mode;
-cvar_t *gl_dynamic;
-cvar_t *gl_monolightmap;
-cvar_t *gl_modulate;
-cvar_t *gl_nobind;
-cvar_t *gl_round_down;
-cvar_t *gl_picmip;
-cvar_t *gl_skymip;
-cvar_t *gl_showtris;
-cvar_t *gl_ztrick;
-cvar_t *gl_finish;
-cvar_t *gl_clear;
-cvar_t *gl_cull;
-cvar_t *gl_polyblend;
-cvar_t *gl_flashblend;
-cvar_t *gl_playermip;
-cvar_t *gl_saturatelighting;
-cvar_t *gl_swapinterval;
-cvar_t *gl_texturemode;
-cvar_t *gl_texturealphamode;
-cvar_t *gl_texturesolidmode;
-cvar_t *gl_lockpvs;
-
-cvar_t *gl_3dlabs_broken;
-
-cvar_t *vid_fullscreen;
 cvar_t *vid_gamma;
-cvar_t *vid_ref;
+
 
 /*
 =================
@@ -150,7 +88,7 @@ qboolean R_CullBox (vec3_t mins, vec3_t maxs)
 {
 	int i;
 
-	if (r_nocull->value)
+	if (GL_Legacy::Get_instance ().r_nocull->value)
 		return e_false;
 
 	for (i = 0; i < 4; i++)
@@ -461,7 +399,7 @@ R_DrawParticles
 */
 void R_DrawParticles (void)
 {
-	if (gl_ext_pointparameters->value && qglPointParameterfEXT)
+	if (GL_Legacy::Get_instance ().gl_ext_pointparameters->value && qglPointParameterfEXT)
 	{
 		int				  i;
 		unsigned char	  color[4];
@@ -471,7 +409,7 @@ void R_DrawParticles (void)
 		qglEnable (GL_BLEND);
 		qglDisable (GL_TEXTURE_2D);
 
-		qglPointSize (gl_particle_size->value);
+		qglPointSize (GL_Legacy::Get_instance ().gl_particle_size->value);
 
 		glBegin (GL_POINTS);
 		for (i = 0, p = r_newrefdef.particles; i < r_newrefdef.num_particles; i++, p++)
@@ -503,7 +441,7 @@ R_PolyBlend
 */
 void R_PolyBlend (void)
 {
-	if (!gl_polyblend->value)
+	if (!GL_Legacy::Get_instance ().gl_polyblend->value)
 		return;
 	if (!v_blend[3])
 		return;
@@ -729,7 +667,7 @@ void R_SetupGL (void)
 	//
 	// set drawing parms
 	//
-	if (gl_cull->value)
+	if (GL_Legacy::Get_instance ().gl_cull->value)
 		qglEnable (GL_CULL_FACE);
 	else
 		qglDisable (GL_CULL_FACE);
@@ -746,11 +684,11 @@ R_Clear
 */
 void R_Clear (void)
 {
-	if (gl_ztrick->value)
+	if (GL_Legacy::Get_instance ().gl_ztrick->value)
 	{
 		static int trickframe;
 
-		if (gl_clear->value)
+		if (GL_Legacy::Get_instance ().gl_clear->value)
 			qglClear (GL_COLOR_BUFFER_BIT);
 
 		trickframe++;
@@ -769,7 +707,7 @@ void R_Clear (void)
 	}
 	else
 	{
-		if (gl_clear->value)
+		if (GL_Legacy::Get_instance ().gl_clear->value)
 			qglClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		else
 			qglClear (GL_DEPTH_BUFFER_BIT);
@@ -811,7 +749,7 @@ void R_RenderView (refdef_t *fd)
 
 	R_PushDlights ();
 
-	if (gl_finish->value)
+	if (GL_Legacy::Get_instance ().gl_finish->value)
 		qglFinish ();
 
 	R_SetupFrame ();
@@ -920,16 +858,16 @@ void R_SetLightLevel (void)
 	if (shadelight[0] > shadelight[1])
 	{
 		if (shadelight[0] > shadelight[2])
-			r_lightlevel->value = 150 * shadelight[0];
+			GL_Legacy::Get_instance ().r_lightlevel->value = 150 * shadelight[0];
 		else
-			r_lightlevel->value = 150 * shadelight[2];
+			GL_Legacy::Get_instance ().r_lightlevel->value = 150 * shadelight[2];
 	}
 	else
 	{
 		if (shadelight[1] > shadelight[2])
-			r_lightlevel->value = 150 * shadelight[1];
+			GL_Legacy::Get_instance ().r_lightlevel->value = 150 * shadelight[1];
 		else
-			r_lightlevel->value = 150 * shadelight[2];
+			GL_Legacy::Get_instance ().r_lightlevel->value = 150 * shadelight[2];
 	}
 }
 
@@ -946,82 +884,6 @@ void R_RenderFrame (refdef_t *fd)
 	R_SetGL2D ();
 }
 
-void R_Register (void)
-{
-	r_lefthand					 = ri.Cvar_Get ("hand", "0", CVAR_USERINFO | CVAR_ARCHIVE);
-	r_norefresh					 = ri.Cvar_Get ("r_norefresh", "0", 0);
-	r_fullbright				 = ri.Cvar_Get ("r_fullbright", "0", 0);
-	r_drawentities				 = ri.Cvar_Get ("r_drawentities", "1", 0);
-	r_drawworld					 = ri.Cvar_Get ("r_drawworld", "1", 0);
-	r_novis						 = ri.Cvar_Get ("r_novis", "0", 0);
-	r_nocull					 = ri.Cvar_Get ("r_nocull", "0", 0);
-	r_lerpmodels				 = ri.Cvar_Get ("r_lerpmodels", "1", 0);
-	r_speeds					 = ri.Cvar_Get ("r_speeds", "0", 0);
-
-	r_lightlevel				 = ri.Cvar_Get ("r_lightlevel", "0", 0);
-
-	gl_nosubimage				 = ri.Cvar_Get ("gl_nosubimage", "0", 0);
-	gl_allow_software			 = ri.Cvar_Get ("gl_allow_software", "0", 0);
-
-	gl_particle_min_size		 = ri.Cvar_Get ("gl_particle_min_size", "2", CVAR_ARCHIVE);
-	gl_particle_max_size		 = ri.Cvar_Get ("gl_particle_max_size", "40", CVAR_ARCHIVE);
-	gl_particle_size			 = ri.Cvar_Get ("gl_particle_size", "40", CVAR_ARCHIVE);
-	gl_particle_att_a			 = ri.Cvar_Get ("gl_particle_att_a", "0.01", CVAR_ARCHIVE);
-	gl_particle_att_b			 = ri.Cvar_Get ("gl_particle_att_b", "0.0", CVAR_ARCHIVE);
-	gl_particle_att_c			 = ri.Cvar_Get ("gl_particle_att_c", "0.01", CVAR_ARCHIVE);
-
-	gl_modulate					 = ri.Cvar_Get ("gl_modulate", "1", CVAR_ARCHIVE);
-	gl_log						 = ri.Cvar_Get ("gl_log", "0", 0);
-	gl_bitdepth					 = ri.Cvar_Get ("gl_bitdepth", "0", 0);
-
-	gl_mode						 = ri.Cvar_Get ("gl_mode", "3", CVAR_ARCHIVE);
-	gl_lightmap					 = ri.Cvar_Get ("gl_lightmap", "0", 0);
-	gl_shadows					 = ri.Cvar_Get ("gl_shadows", "0", CVAR_ARCHIVE);
-	gl_dynamic					 = ri.Cvar_Get ("gl_dynamic", "1", 0);
-	gl_nobind					 = ri.Cvar_Get ("gl_nobind", "0", 0);
-	gl_round_down				 = ri.Cvar_Get ("gl_round_down", "1", 0);
-	gl_picmip					 = ri.Cvar_Get ("gl_picmip", "0", 0);
-	gl_skymip					 = ri.Cvar_Get ("gl_skymip", "0", 0);
-	gl_showtris					 = ri.Cvar_Get ("gl_showtris", "0", 0);
-	gl_ztrick					 = ri.Cvar_Get ("gl_ztrick", "0", 0);
-	gl_finish					 = ri.Cvar_Get ("gl_finish", "0", CVAR_ARCHIVE);
-	gl_clear					 = ri.Cvar_Get ("gl_clear", "0", 0);
-	gl_cull						 = ri.Cvar_Get ("gl_cull", "1", 0);
-	gl_polyblend				 = ri.Cvar_Get ("gl_polyblend", "1", 0);
-	gl_flashblend				 = ri.Cvar_Get ("gl_flashblend", "0", 0);
-	gl_playermip				 = ri.Cvar_Get ("gl_playermip", "0", 0);
-	gl_monolightmap				 = ri.Cvar_Get ("gl_monolightmap", "0", 0);
-	gl_driver					 = ri.Cvar_Get ("gl_driver", "opengl32", CVAR_ARCHIVE);
-	gl_texturemode				 = ri.Cvar_Get ("gl_texturemode", "GL_LINEAR_MIPMAP_NEAREST", CVAR_ARCHIVE);
-	gl_texturealphamode			 = ri.Cvar_Get ("gl_texturealphamode", "default", CVAR_ARCHIVE);
-	gl_texturesolidmode			 = ri.Cvar_Get ("gl_texturesolidmode", "default", CVAR_ARCHIVE);
-	gl_lockpvs					 = ri.Cvar_Get ("gl_lockpvs", "0", 0);
-
-	gl_vertex_arrays			 = ri.Cvar_Get ("gl_vertex_arrays", "0", CVAR_ARCHIVE);
-
-	gl_ext_swapinterval			 = ri.Cvar_Get ("gl_ext_swapinterval", "1", CVAR_ARCHIVE);
-	gl_ext_palettedtexture		 = ri.Cvar_Get ("gl_ext_palettedtexture", "1", CVAR_ARCHIVE);
-	gl_ext_multitexture			 = ri.Cvar_Get ("gl_ext_multitexture", "1", CVAR_ARCHIVE);
-	gl_ext_pointparameters		 = ri.Cvar_Get ("gl_ext_pointparameters", "1", CVAR_ARCHIVE);
-	gl_ext_compiled_vertex_array = ri.Cvar_Get ("gl_ext_compiled_vertex_array", "1", CVAR_ARCHIVE);
-
-	gl_drawbuffer				 = ri.Cvar_Get ("gl_drawbuffer", "GL_BACK", 0);
-	gl_swapinterval				 = ri.Cvar_Get ("gl_swapinterval", "1", CVAR_ARCHIVE);
-
-	gl_saturatelighting			 = ri.Cvar_Get ("gl_saturatelighting", "0", 0);
-
-	gl_3dlabs_broken			 = ri.Cvar_Get ("gl_3dlabs_broken", "1", CVAR_ARCHIVE);
-
-	vid_fullscreen				 = ri.Cvar_Get ("vid_fullscreen", "0", CVAR_ARCHIVE);
-	vid_gamma					 = ri.Cvar_Get ("vid_gamma", "1.0", CVAR_ARCHIVE);
-	vid_ref						 = ri.Cvar_Get ("vid_ref", "soft", CVAR_ARCHIVE);
-
-	ri.Cmd_AddCommand ("imagelist", GL_ImageList_f);
-	ri.Cmd_AddCommand ("screenshot", GL_ScreenShot_f);
-	ri.Cmd_AddCommand ("modellist", Mod_Modellist_f);
-	ri.Cmd_AddCommand ("gl_strings", GL_Strings_f);
-}
-
 /*
 ==================
 R_SetMode
@@ -1032,36 +894,36 @@ qboolean R_SetMode (void)
 	rserr_t	 err;
 	qboolean fullscreen;
 
-	if (vid_fullscreen->modified && !gl_config.allow_cds)
+	if (GL_Legacy::Get_instance ().vid_fullscreen->modified && !gl_config.allow_cds)
 	{
 		ri.Con_Printf (PRINT_ALL, "R_SetMode() - CDS not allowed with this driver\n");
-		ri.Cvar_SetValue ("vid_fullscreen", !vid_fullscreen->value);
-		vid_fullscreen->modified = e_false;
+		ri.Cvar_SetValue ("vid_fullscreen", !GL_Legacy::Get_instance ().vid_fullscreen->value);
+		GL_Legacy::Get_instance ().vid_fullscreen->modified = e_false;
 	}
 
-	fullscreen				 = to_qboolean (vid_fullscreen->value);
+	fullscreen				 = to_qboolean (GL_Legacy::Get_instance ().vid_fullscreen->value);
 
-	vid_fullscreen->modified = e_false;
-	gl_mode->modified		 = e_false;
+	GL_Legacy::Get_instance ().vid_fullscreen->modified = e_false;
+	GL_Legacy::Get_instance ().gl_mode->modified		 = e_false;
 
-	if ((err = GLimp_SetMode ((int *) &vid.width, (int *) &vid.height, gl_mode->value, fullscreen)) == rserr_ok)
+	if ((err = GLimp_SetMode ((int *) &vid.width, (int *) &vid.height, GL_Legacy::Get_instance ().gl_mode->value, fullscreen)) == rserr_ok)
 	{
-		gl_state.prev_mode = gl_mode->value;
+		gl_state.prev_mode = GL_Legacy::Get_instance ().gl_mode->value;
 	}
 	else
 	{
 		if (err == rserr_invalid_fullscreen)
 		{
 			ri.Cvar_SetValue ("vid_fullscreen", 0);
-			vid_fullscreen->modified = e_false;
+			GL_Legacy::Get_instance ().vid_fullscreen->modified = e_false;
 			ri.Con_Printf (PRINT_ALL, "ref_gl::R_SetMode() - fullscreen unavailable in this mode\n");
-			if ((err = GLimp_SetMode ((int *) &vid.width, (int *) &vid.height, gl_mode->value, e_false)) == rserr_ok)
+			if ((err = GLimp_SetMode ((int *) &vid.width, (int *) &vid.height, GL_Legacy::Get_instance ().gl_mode->value, e_false)) == rserr_ok)
 				return e_true;
 		}
 		else if (err == rserr_invalid_mode)
 		{
 			ri.Cvar_SetValue ("gl_mode", gl_state.prev_mode);
-			gl_mode->modified = e_false;
+			GL_Legacy::Get_instance ().gl_mode->modified = e_false;
 			ri.Con_Printf (PRINT_ALL, "ref_gl::R_SetMode() - invalid mode\n");
 		}
 
@@ -1096,13 +958,13 @@ qboolean R_Init ()
 
 	Draw_GetPalette ();
 
-	R_Register ();
+	GL_Legacy::Get_instance ().R_Register ();
 
 	// initialize our QGL dynamic bindings
-	if (!QGL_Init (gl_driver->string))
+	if (!QGL_Init (GL_Legacy::Get_instance ().gl_driver->string))
 	{
 		QGL_Shutdown ();
-		ri.Con_Printf (PRINT_ALL, "ref_gl::R_Init() - could not load \"%s\"\n", gl_driver->string);
+		ri.Con_Printf (PRINT_ALL, "ref_gl::R_Init() - could not load \"%s\"\n", GL_Legacy::Get_instance ().gl_driver->string);
 		return e_false;
 	}
 
@@ -1178,7 +1040,7 @@ qboolean R_Init ()
 	else
 		gl_config.renderer = GL_RENDERER_OTHER;
 
-	if (toupper (gl_monolightmap->string[1]) != 'F')
+	if (toupper (GL_Legacy::Get_instance ().gl_monolightmap->string[1]) != 'F')
 	{
 		if (gl_config.renderer == GL_RENDERER_PERMEDIA2)
 		{
@@ -1214,7 +1076,7 @@ qboolean R_Init ()
 
 	if (gl_config.renderer & GL_RENDERER_3DLABS)
 	{
-		if (gl_3dlabs_broken->value)
+		if (GL_Legacy::Get_instance ().gl_3dlabs_broken->value)
 			gl_config.allow_cds = e_false;
 		else
 			gl_config.allow_cds = e_true;
@@ -1256,7 +1118,7 @@ qboolean R_Init ()
 
 	if (GLEW_EXT_point_parameters)
 	{
-		if (gl_ext_pointparameters->value)
+		if (GL_Legacy::Get_instance ().gl_ext_pointparameters->value)
 		{
 			qglPointParameterfEXT  = (void (APIENTRY *) (GLenum, GLfloat)) glPointParameterfEXT;
 			qglPointParameterfvEXT = (void (APIENTRY *) (GLenum, const GLfloat *)) glPointParameterfvEXT;
@@ -1274,7 +1136,7 @@ qboolean R_Init ()
 
 	if (GLEW_EXT_paletted_texture && GLEW_EXT_shared_texture_palette)
 	{
-		if (gl_ext_palettedtexture->value)
+		if (GL_Legacy::Get_instance ().gl_ext_palettedtexture->value)
 		{
 			ri.Con_Printf (PRINT_ALL, "...using GL_EXT_shared_texture_palette (via GLEW)\n");
 			qglColorTableEXT = (void (APIENTRY *) (int, int, int, int, int, const void *)) glColorTableEXT;
@@ -1291,7 +1153,7 @@ qboolean R_Init ()
 
 	if (GLEW_SGIS_multitexture)
 	{
-		if (gl_ext_multitexture->value)
+		if (GL_Legacy::Get_instance ().gl_ext_multitexture->value)
 		{
 			ri.Con_Printf (PRINT_ALL, "...using GL_SGIS_multitexture (via GLEW)\n");
 			Q2_Assert (false, "GL_SGIS_multitexture not implemented");
@@ -1369,7 +1231,7 @@ void R_BeginFrame (float camera_separation)
 	/*
 	** change modes if necessary
 	*/
-	if (gl_mode->modified || vid_fullscreen->modified)
+	if (GL_Legacy::Get_instance ().gl_mode->modified || GL_Legacy::Get_instance ().vid_fullscreen->modified)
 	{  // FIXME: only restart if CDS is required
 		cvar_t *ref;
 
@@ -1377,7 +1239,7 @@ void R_BeginFrame (float camera_separation)
 		ref->modified = e_true;
 	}
 
-	if (gl_log->value)
+	if (GL_Legacy::Get_instance ().gl_log->value)
 	{
 		GL_Legacy::Get_instance ().LogNewFrame ();
 	}
@@ -1423,13 +1285,13 @@ void R_BeginFrame (float camera_separation)
 	/*
 	** draw buffer stuff
 	*/
-	if (gl_drawbuffer->modified)
+	if (GL_Legacy::Get_instance ().gl_drawbuffer->modified)
 	{
-		gl_drawbuffer->modified = e_false;
+		GL_Legacy::Get_instance ().gl_drawbuffer->modified = e_false;
 
 		if (gl_state.camera_separation == 0 || !gl_state.stereo_enabled)
 		{
-			if (Q_stricmp (gl_drawbuffer->string, "GL_FRONT") == 0)
+			if (Q_stricmp (GL_Legacy::Get_instance ().gl_drawbuffer->string, "GL_FRONT") == 0)
 				qglDrawBuffer (GL_FRONT);
 			else
 			{
@@ -1441,22 +1303,22 @@ void R_BeginFrame (float camera_separation)
 	/*
 	** texturemode stuff
 	*/
-	if (gl_texturemode->modified)
+	if (GL_Legacy::Get_instance ().gl_texturemode->modified)
 	{
-		GL_TextureMode (gl_texturemode->string);
-		gl_texturemode->modified = e_false;
+		GL_TextureMode (GL_Legacy::Get_instance ().gl_texturemode->string);
+		GL_Legacy::Get_instance ().gl_texturemode->modified = e_false;
 	}
 
-	if (gl_texturealphamode->modified)
+	if (GL_Legacy::Get_instance ().gl_texturealphamode->modified)
 	{
-		GL_TextureAlphaMode (gl_texturealphamode->string);
-		gl_texturealphamode->modified = e_false;
+		GL_TextureAlphaMode (GL_Legacy::Get_instance ().gl_texturealphamode->string);
+		GL_Legacy::Get_instance ().gl_texturealphamode->modified = e_false;
 	}
 
-	if (gl_texturesolidmode->modified)
+	if (GL_Legacy::Get_instance ().gl_texturesolidmode->modified)
 	{
-		GL_TextureSolidMode (gl_texturesolidmode->string);
-		gl_texturesolidmode->modified = e_false;
+		GL_TextureSolidMode (GL_Legacy::Get_instance ().gl_texturesolidmode->string);
+		GL_Legacy::Get_instance ().gl_texturesolidmode->modified = e_false;
 	}
 
 	/*

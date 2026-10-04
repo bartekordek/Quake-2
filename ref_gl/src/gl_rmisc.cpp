@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "ref_gl/gl_local.h"
 #include "ref_gl/gl_image.h"
+#include "ref_gl/gl_legacy.hpp"
 #include "ref_gl/include_glew.hpp"
 
 /*
@@ -192,9 +193,9 @@ void GL_SetDefaultState( void )
 	qglPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
 	qglShadeModel (GL_FLAT);
 
-	GL_TextureMode( gl_texturemode->string );
-	GL_TextureAlphaMode( gl_texturealphamode->string );
-	GL_TextureSolidMode( gl_texturesolidmode->string );
+	GL_TextureMode ( GL_Legacy::Get_instance().gl_texturemode->string);
+	GL_TextureAlphaMode( GL_Legacy::Get_instance().gl_texturealphamode->string );
+	GL_TextureSolidMode( GL_Legacy::Get_instance().gl_texturesolidmode->string );
 
 	qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter_min);
 	qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter_max);
@@ -210,17 +211,17 @@ void GL_SetDefaultState( void )
 	{
 		float attenuations[3];
 
-		attenuations[0] = gl_particle_att_a->value;
-		attenuations[1] = gl_particle_att_b->value;
-		attenuations[2] = gl_particle_att_c->value;
+		attenuations[0] = GL_Legacy::Get_instance ().gl_particle_att_a->value;
+		attenuations[1] = GL_Legacy::Get_instance ().gl_particle_att_b->value;
+		attenuations[2] = GL_Legacy::Get_instance ().gl_particle_att_c->value;
 
 		qglEnable( GL_POINT_SMOOTH );
-		qglPointParameterfEXT( GL_POINT_SIZE_MIN_EXT, gl_particle_min_size->value );
-		qglPointParameterfEXT( GL_POINT_SIZE_MAX_EXT, gl_particle_max_size->value );
+		qglPointParameterfEXT( GL_POINT_SIZE_MIN_EXT, GL_Legacy::Get_instance ().gl_particle_min_size->value );
+		qglPointParameterfEXT( GL_POINT_SIZE_MAX_EXT, GL_Legacy::Get_instance ().gl_particle_max_size->value );
 		qglPointParameterfvEXT( GL_DISTANCE_ATTENUATION_EXT, attenuations );
 	}
 
-	if ( qglColorTableEXT && gl_ext_palettedtexture->value )
+	if (qglColorTableEXT && GL_Legacy::Get_instance ().gl_ext_palettedtexture->value)
 	{
 		qglEnable( GL_SHARED_TEXTURE_PALETTE_EXT );
 
@@ -232,15 +233,15 @@ void GL_SetDefaultState( void )
 
 void GL_UpdateSwapInterval( void )
 {
-	if ( gl_swapinterval->modified )
+	if (GL_Legacy::Get_instance ().gl_swapinterval->modified)
 	{
-		gl_swapinterval->modified = e_false;
+		GL_Legacy::Get_instance ().gl_swapinterval->modified = e_false;
 
 		if ( !gl_state.stereo_enabled )
 		{
 #ifdef _WIN32
 			if ( qwglSwapIntervalEXT )
-				qwglSwapIntervalEXT( gl_swapinterval->value );
+				qwglSwapIntervalEXT (GL_Legacy::Get_instance ().gl_swapinterval->value);
 #endif
 		}
 	}

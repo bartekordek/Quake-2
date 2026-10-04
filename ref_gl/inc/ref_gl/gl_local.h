@@ -158,65 +158,8 @@ EXTERNC cvar_t *r_drawentities;
 EXTERNC cvar_t *r_drawworld;
 EXTERNC cvar_t *r_speeds;
 EXTERNC cvar_t *r_fullbright;
-EXTERNC cvar_t *r_novis;
-EXTERNC cvar_t *r_nocull;
-EXTERNC cvar_t *r_lerpmodels;
 
-EXTERNC cvar_t *r_lightlevel;  // FIXME: This is a HACK to get the client's light level
-
-EXTERNC cvar_t *gl_vertex_arrays;
-
-EXTERNC cvar_t *gl_ext_swapinterval;
-EXTERNC cvar_t *gl_ext_palettedtexture;
-EXTERNC cvar_t *gl_ext_multitexture;
-EXTERNC cvar_t *gl_ext_pointparameters;
-EXTERNC cvar_t *gl_ext_compiled_vertex_array;
-
-EXTERNC cvar_t *gl_particle_min_size;
-EXTERNC cvar_t *gl_particle_max_size;
-EXTERNC cvar_t *gl_particle_size;
-EXTERNC cvar_t *gl_particle_att_a;
-EXTERNC cvar_t *gl_particle_att_b;
-EXTERNC cvar_t *gl_particle_att_c;
-
-EXTERNC cvar_t *gl_nosubimage;
-EXTERNC cvar_t *gl_bitdepth;
-EXTERNC cvar_t *gl_mode;
-EXTERNC cvar_t *gl_log;
-EXTERNC cvar_t *gl_lightmap;
-EXTERNC cvar_t *gl_shadows;
-EXTERNC cvar_t *gl_dynamic;
-EXTERNC cvar_t *gl_monolightmap;
-EXTERNC cvar_t *gl_nobind;
-EXTERNC cvar_t *gl_round_down;
-EXTERNC cvar_t *gl_picmip;
-EXTERNC cvar_t *gl_skymip;
-EXTERNC cvar_t *gl_showtris;
-EXTERNC cvar_t *gl_finish;
-EXTERNC cvar_t *gl_ztrick;
-EXTERNC cvar_t *gl_clear;
-EXTERNC cvar_t *gl_cull;
-EXTERNC cvar_t *gl_poly;
-EXTERNC cvar_t *gl_texsort;
-EXTERNC cvar_t *gl_polyblend;
-EXTERNC cvar_t *gl_flashblend;
-EXTERNC cvar_t *gl_lightmaptype;
-EXTERNC cvar_t *gl_modulate;
-EXTERNC cvar_t *gl_playermip;
-EXTERNC cvar_t *gl_drawbuffer;
-EXTERNC cvar_t *gl_3dlabs_broken;
-EXTERNC cvar_t *gl_driver;
-EXTERNC cvar_t *gl_swapinterval;
-EXTERNC cvar_t *gl_texturemode;
-EXTERNC cvar_t *gl_texturealphamode;
-EXTERNC cvar_t *gl_texturesolidmode;
-EXTERNC cvar_t *gl_saturatelighting;
-EXTERNC cvar_t *gl_lockpvs;
-
-EXTERNC cvar_t *vid_fullscreen;
 EXTERNC cvar_t *vid_gamma;
-
-EXTERNC cvar_t *intensity;
 
 EXTERNC int gl_lightmap_format;
 EXTERNC int gl_solid_format;
@@ -306,7 +249,6 @@ EXTERNC struct image_s *R_RegisterSkin (const char *name);
 
 void			 LoadPCX (const char *filename, byte **pic, byte **palette, int *width, int *height);
 EXTERNC image_t *GL_FindImage (const char *name, imagetype_t type);
-EXTERNC void	 GL_ImageList_f (void);
 
 EXTERNC void GL_SetTexturePalette (unsigned palette[256]);
 
