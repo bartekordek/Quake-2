@@ -2,7 +2,23 @@ cmake_minimum_required(VERSION 3.5)
 
 project(quake-2-main)
 
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address")
+option(ENABLE_ADDRESS_SANITIZER "Enable AddressSanitizer" OFF)
+
+if(ENABLE_ADDRESS_SANITIZER)
+    if(MSVC)
+        set(ADDRESS_SANITIZER_FLAG "/fsanitize=address")
+    elseif(CMAKE_C_COMPILER_ID MATCHES "GNU|Clang" AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        set(ADDRESS_SANITIZER_FLAG "-fsanitize=address")
+    else()
+        message(FATAL_ERROR "AddressSanitizer is not supported by this compiler")
+    endif()
+
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${ADDRESS_SANITIZER_FLAG}")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${ADDRESS_SANITIZER_FLAG}")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${ADDRESS_SANITIZER_FLAG}")
+    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${ADDRESS_SANITIZER_FLAG}")
+    set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} ${ADDRESS_SANITIZER_FLAG}")
+endif()
 
 macro(CmakeToWindow InputPath OutputPath)
     string(REGEX REPLACE "/" "\\\\" ${OutputPath} "${InputPath}")

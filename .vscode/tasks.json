@@ -2,7 +2,157 @@
     // See https://go.microsoft.com/fwlink/?LinkId=733558
     // for the documentation about the tasks.json format
     "version": "2.0.0",
+    "inputs": [
+        {
+            "id": "configuration",
+            "type": "pickString",
+            "description": "Select configuration",
+            "options": [
+                "Debug",
+                "Release",
+                "RelWithDebInfo"
+            ],
+            "default": "Debug"
+        },
+        {
+            "id": "platform",
+            "type": "pickString",
+            "description": "Select platform",
+            "options": [
+                "Win64",
+                "Linux"
+            ]
+        },
+        {
+            "id": "tracy_enabled",
+            "type": "pickString",
+            "description": "Toggle tracy",
+            "options": [
+                "ON",
+                "OFF"
+            ],
+            "default": "OFF"
+        },
+        {
+            "id": "tracy_callstack",
+            "type": "pickString",
+            "description": "Toggle callstack",
+            "options": [
+                "ON",
+                "OFF"
+            ],
+            "default": "OFF"
+        },
+        {
+            "id": "address_sanitizer",
+            "type": "pickString",
+            "description": "Toggle AddressSanitizer",
+            "options": [
+                "ON",
+                "OFF"
+            ],
+            "default": "OFF"
+        },
+        {
+            "id": "projects",
+            "type": "pickString",
+            "description": "Choose project",
+            "options": [
+                "quake2"
+            ],
+            "default": "quake2"
+        }
+    ],
     "tasks": [
+        {
+            "label": "[CMake][Create]",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "-S",
+                ".",
+                "-B Build_${input:platform}",
+                "-DENABLE_TRACY=${input:tracy_enabled}",
+                "-DTRACY_CALLSTACK=${input:tracy_callstack}",
+                "-DENABLE_ADDRESS_SANITIZER=${input:address_sanitizer}",
+                "-DCMAKE_BUILD_TYPE=${input:configuration}",
+                "-DCMAKE_POLICY_VERSION_MINIMUM=3.5"
+            ],
+            "group": {
+                "kind": "build",
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "revealProblems": "onProblem",
+                "focus": true,
+                "panel": "dedicated",
+                "showReuseMessage": false,
+                "clear": true
+            },
+            "options": {
+                "cwd": "${workspaceFolder}"
+            }
+        },
+        {
+            "label": "[CMake][Build][Quake2][Win64][Debug]",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "--build",
+                "Build_Win64",
+                "--config",
+                "Debug",
+                "--target",
+                "quake2",
+                "-j1"
+            ],
+            "group": {
+                "kind": "build",
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "revealProblems": "onProblem",
+                "focus": true,
+                "panel": "dedicated",
+                "showReuseMessage": false,
+                "clear": true
+            },
+            "options": {
+                "cwd": "${workspaceFolder}"
+            }
+        },
+        {
+            "label": "[CMake][Build][Quake2]",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "--build",
+                "Build_${input:platform}",
+                "--config",
+                "${input:configuration}",
+                "--target",
+                "quake2",
+                "-j1"
+            ],
+            "group": {
+                "kind": "build",
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "revealProblems": "onProblem",
+                "focus": true,
+                "panel": "dedicated",
+                "showReuseMessage": false,
+                "clear": true
+            },
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "dependsOn": "[CMake][Create]"
+        },
         {
             "label": "[Linux][CMAKE][CREATE]",
             "type": "shell",
@@ -37,7 +187,8 @@
                 "cmake",
                 "-S",
                 ".",
-                "-B Build-Windows"
+                "-B Build-Windows",
+                "-DCMAKE_POLICY_VERSION_MINIMUM=3.5"
             ],
             "group": {
                 "kind": "build",
