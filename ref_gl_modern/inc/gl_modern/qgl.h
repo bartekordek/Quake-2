@@ -384,39 +384,10 @@ EXTERNC	void ( APIENTRY * qglSelectTextureSGIS)( GLenum );
 
 #ifdef _WIN32
 
-EXTERNC  int   ( WINAPI * qwglChoosePixelFormat )(HDC, CONST PIXELFORMATDESCRIPTOR *);
-EXTERNC  int   ( WINAPI * qwglDescribePixelFormat) (HDC, int, UINT, LPPIXELFORMATDESCRIPTOR);
-EXTERNC  int   ( WINAPI * qwglGetPixelFormat)(HDC);
-EXTERNC  BOOL  ( WINAPI * qwglSetPixelFormat)(HDC, int, CONST PIXELFORMATDESCRIPTOR *);
-EXTERNC  BOOL  ( WINAPI * qwglSwapBuffers)(HDC);
-
-EXTERNC BOOL  ( WINAPI * qwglCopyContext)(HGLRC, HGLRC, UINT);
-EXTERNC HGLRC ( WINAPI * qwglCreateContext)(HDC);
-EXTERNC HGLRC ( WINAPI * qwglCreateLayerContext)(HDC, int);
-EXTERNC BOOL  ( WINAPI * qwglDeleteContext)(HGLRC);
-EXTERNC HGLRC ( WINAPI * qwglGetCurrentContext)(VOID);
-EXTERNC HDC   ( WINAPI * qwglGetCurrentDC)(VOID);
 EXTERNC PROC  ( WINAPI * qwglGetProcAddress)(LPCSTR);
 EXTERNC BOOL  ( WINAPI * qwglMakeCurrent)(HDC, HGLRC);
-EXTERNC BOOL  ( WINAPI * qwglShareLists)(HGLRC, HGLRC);
-EXTERNC BOOL  ( WINAPI * qwglUseFontBitmaps)(HDC, DWORD, DWORD, DWORD);
-
-EXTERNC BOOL  ( WINAPI * qwglUseFontOutlines)(HDC, DWORD, DWORD, DWORD, FLOAT,
-                                           FLOAT, int, LPGLYPHMETRICSFLOAT);
-
-EXTERNC BOOL ( WINAPI * qwglDescribeLayerPlane)(HDC, int, int, UINT,
-                                            LPLAYERPLANEDESCRIPTOR);
-EXTERNC int  ( WINAPI * qwglSetLayerPaletteEntries)(HDC, int, int, int,
-                                                CONST COLORREF *);
-EXTERNC int  ( WINAPI * qwglGetLayerPaletteEntries)(HDC, int, int, int,
-                                                COLORREF *);
-EXTERNC BOOL ( WINAPI * qwglRealizeLayerPalette)(HDC, int, BOOL);
-EXTERNC BOOL ( WINAPI * qwglSwapLayerBuffers)(HDC, UINT);
 
 EXTERNC BOOL ( WINAPI * qwglSwapIntervalEXT)( int interval );
-
-EXTERNC BOOL ( WINAPI * qwglGetDeviceGammaRampEXT ) ( unsigned char *pRed, unsigned char *pGreen, unsigned char *pBlue );
-EXTERNC BOOL ( WINAPI * qwglSetDeviceGammaRampEXT ) ( const unsigned char *pRed, const unsigned char *pGreen, const unsigned char *pBlue );
 
 #endif
 
