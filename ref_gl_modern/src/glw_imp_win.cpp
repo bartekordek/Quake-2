@@ -298,13 +298,6 @@ qboolean GLimp_InitGL (void)
 	** startup the OpenGL subsystem by creating a context and making
 	** it current
 	*/
-	// if ((glw_state.hGLRC = qwglCreateContext (glw_state.hDC)) == 0)
-	//{
-	//	ri.Con_Printf (PRINT_ALL, "GLimp_Init() - qwglCreateContext failed\n");
-
-	//	goto fail;
-	//}
-
 	// if (!qwglMakeCurrent (glw_state.hDC, glw_state.hGLRC))
 	//{
 	//	ri.Con_Printf (PRINT_ALL, "GLimp_Init() - qwglMakeCurrent failed\n");
@@ -365,8 +358,6 @@ void GLimp_EndFrame (void)
 	if (stricmp (gl_drawbuffer->string, "GL_BACK") == 0)
 	{
 		ri.Swap_buffers ();
-		// if (!qwglSwapBuffers (glw_state.hDC))
-		//	ri.Sys_Error (ERR_FATAL, "GLimp_EndFrame() - SwapBuffers() failed!\n");
 	}
 	// ri.Swap_buffers ();
 }
