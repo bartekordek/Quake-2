@@ -1,6 +1,7 @@
 #include "gl_modern/shader.hpp"
 #include "shared/assert.h"
 #include <GL/glew.h>
+#include <glm/gtc/type_ptr.hpp>
 #include <fstream>
 #include <sstream>
 
@@ -92,7 +93,17 @@ void Shader::set_uniform_1i (const std::string &name, std::int32_t value) const
 	glUseProgram (m_program_id);
 
 	const std::int32_t location = glGetUniformLocation (m_program_id, name.c_str ());
-	glUniform1i (location, value);
+	if (location >= 0)
+		glUniform1i (location, value);
+}
+
+void Shader::set_uniform_mat4 (const std::string &name, const glm::mat4 &value) const
+{
+	glUseProgram (m_program_id);
+
+	const std::int32_t location = glGetUniformLocation (m_program_id, name.c_str ());
+	if (location >= 0)
+		glUniformMatrix4fv (location, 1, GL_FALSE, glm::value_ptr (value));
 }
 
 Shader::~Shader ()

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "shared/noncopyable.hpp"
+#include <glm/mat4x4.hpp>
 #include <string>
 #include <cstdint>
 
@@ -14,6 +15,7 @@ namespace Q2
 		void init (const char *vertex_shader, const char *fragment_shader);
 		void use ();
 		void set_uniform_1i (const std::string &name, std::int32_t value) const;
+		void set_uniform_mat4 (const std::string &name, const glm::mat4 &value) const;
 		void set_name (const char* in_name);
 		~Shader ();
 
