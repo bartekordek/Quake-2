@@ -8,8 +8,10 @@
 #include "gl_modern/attribute_meta.hpp"
 #include "gl_modern/lightmapstate.hpp"
 #include "gl_modern/shader.hpp"
+#include "gl_modern/camera.hpp"
 
 #include "shared/assert.h"
+#include <vector>
 
 #define GL_LIGHTMAP_FORMAT GL_RGBA
 
@@ -24,15 +26,14 @@ PolygonStore &PolygonStore::get_instance ()
 
 Polygon *PolygonStore::get_or_create (msurface_s *surface_info)
 {
-	auto it = m_polygons.find (surface_info->texinfo->image->name);
+	auto it = m_polygons.find (surface_info);
 	if (it != m_polygons.end ())
 	{
 		return it->second;
 	}
 
-	Polygon *result								   = new Polygon (surface_info);
-	image_t *image								   = R_TextureAnimation (surface_info->texinfo);
-	m_polygons[surface_info->texinfo->image->name] = result;
+	Polygon *result		  = new Polygon (surface_info);
+	m_polygons[surface_info] = result;
 
 	return result;
 }
@@ -50,47 +51,44 @@ Polygon::Polygon (msurface_s *in_surface) : m_surface_info (in_surface)
 		glGenBuffers (1, &m_polygon_data.m_vbo);
 
 		glBindVertexArray (m_polygon_data.m_vao);
-		const std::uint32_t vertex_size = VERTEXSIZE;
+		glBindBuffer (GL_ARRAY_BUFFER, m_polygon_data.m_vbo);
 
-		std::vector<float> vertex_data;
-		float			  *v = p->verts[0];
-		for (std::size_t i = 1u; i < p->numverts - 1u; ++i, v += vertex_size)
+		constexpr std::uint32_t vertex_size = VERTEXSIZE;
+
+		// Fan-triangulate: (0, i, i+1) for i in [1, numverts-2]
+		std::vector<float> vertex_triangulated;
+		float			  *verts = p->verts[0];
+		m_triangles_count		 = 0u;
+
+		for (int i = 1; i < p->numverts - 1; ++i)
 		{
-			for (std::size_t j = 0u; j < 5; ++j)
-			{
-				vertex_data.push_back (v[j]);
-			}
+			const float *v0 = verts;
+			const float *v1 = verts + i * vertex_size;
+			const float *v2 = verts + (i + 1) * vertex_size;
+
+			for (std::uint32_t j = 0; j < vertex_size; ++j) vertex_triangulated.push_back (v0[j]);
+			for (std::uint32_t j = 0; j < vertex_size; ++j) vertex_triangulated.push_back (v1[j]);
+			for (std::uint32_t j = 0; j < vertex_size; ++j) vertex_triangulated.push_back (v2[j]);
+			m_triangles_count += 3u;
 		}
 
-		std::vector<float> vertex_trianulated;
-		const std::size_t  vertex_count = vertex_data.size ();
-		m_triangles_count				= 0u;
-		for (std::size_t i = 1u; i < vertex_count - 1u; ++i)
-		{
-			vertex_trianulated.push_back (vertex_data[0]);
-			vertex_trianulated.push_back (vertex_data[i]);
-			vertex_trianulated.push_back (vertex_data[i + 1]);
-			++m_triangles_count;
-		}
+		glBufferData (GL_ARRAY_BUFFER, vertex_triangulated.size () * sizeof (float), vertex_triangulated.data (), GL_STATIC_DRAW);
 
-		glBufferData (GL_ARRAY_BUFFER, sizeof (vertex_trianulated), vertex_trianulated.data (), GL_STATIC_DRAW);
+		const GLsizei stride = static_cast<GLsizei> (vertex_size * sizeof (float));
+		glVertexAttribPointer (0, 3, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<void *> (0));
+		glEnableVertexAttribArray (0);
+		glVertexAttribPointer (1, 2, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<void *> (3 * sizeof (float)));
+		glEnableVertexAttribArray (1);
+		glVertexAttribPointer (2, 2, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<void *> (5 * sizeof (float)));
+		glEnableVertexAttribArray (2);
 
-		std::vector<AttributeMeta> attributeInfo;
-		attributeInfo.push_back (AttributeMeta ("pos", 0, 3, (int) GL_FLOAT, false, vertex_size * sizeof (float), nullptr));
-		attributeInfo.push_back (
-			AttributeMeta ("uv", 1, 2, (int) GL_FLOAT, false, vertex_size * sizeof (float), (void *) (3 * sizeof (float))));
-
-		for (const auto &att : attributeInfo)
-		{
-			glVertexAttribPointer (att.index, att.size, att.type, att.normalized, att.stride, att.pointer);
-			glEnableVertexAttribArray (att.index);
-		}
+		glBindVertexArray (0);
 
 		m_texId = m_surface_info->texinfo->image->texnum;
 	}
 
 	m_shader = std::make_unique<Shader> ();
-	m_shader->init ("../shaders/basic_texture.vert", "../shaders/basic_texture.frag");
+	m_shader->init ("../shaders/lightmap.vert", "../shaders/lightmap.frag");
 }
 
 void Polygon::set_name (const char *in_name)
@@ -99,7 +97,7 @@ void Polygon::set_name (const char *in_name)
 
 	char buffer[256u];
 
-	if (m_image->texnum)
+	if (m_image && m_image->texnum)
 	{
 		glBindTexture (GL_TEXTURE_2D, m_image->texnum);
 
@@ -131,19 +129,19 @@ void Polygon::draw_impl (std::uint32_t in_tex_id)
 {
 	IRenderable::draw ();
 
-	auto &gl_state		= Q2::glstate_t::get_instance ();
-	auto &gl_lms		= Q2::Light_map_state::get_instance ();
+	auto &gl_state = Q2::glstate_t::get_instance ();
+	auto &gl_lms   = Q2::Light_map_state::get_instance ();
 
 	qboolean is_dynamic = e_false;
 
-	auto &fa			= m_surface_info;
+	auto &fa = m_surface_info;
 
-	m_image				= R_TextureAnimation (fa->texinfo);
+	m_image	 = R_TextureAnimation (fa->texinfo);
+	in_tex_id = m_image ? m_image->texnum : in_tex_id;
 
-	glBindTexture (GL_TEXTURE_2D, in_tex_id);
-
-	if (fa->texinfo->flags & SURF_DRAWTURB)
+	if (fa->flags & SURF_DRAWTURB)
 	{
+		EmitWaterPolys (fa);
 		return;
 	}
 
@@ -185,9 +183,9 @@ void Polygon::draw_impl (std::uint32_t in_tex_id)
 
 	if (is_dynamic)
 	{
-		if ((fa->styles[maps] >= 32 || fa->styles[maps] == 0) && (fa->dlightframe != r_framecount))
+		if (maps < MAXLIGHTMAPS && (fa->styles[maps] >= 32 || fa->styles[maps] == 0) && (fa->dlightframe != r_framecount))
 		{
-			unsigned temp[34 * 34];
+			unsigned temp[128 * 128];
 			int		 smax, tmax;
 
 			smax = (fa->extents[0] >> 4) + 1;
@@ -196,6 +194,11 @@ void Polygon::draw_impl (std::uint32_t in_tex_id)
 			R_BuildLightMap (fa, (byte *) temp, smax * 4);
 			R_SetCacheState (fa);
 
+			// DrawGLPoly binds via glBindTexture and bypasses GL_BindTexture's cache —
+			// force the lightmap onto unit 0 before TexSubImage.
+			glActiveTexture (GL_TEXTURE0);
+			gl_state.currenttextures[0] = -1;
+			gl_state.currenttmu			= 0;
 			GL_BindTexture (gl_state.lightmap_textures[fa->lightmaptexturenum]);
 
 			qglTexSubImage2D (GL_TEXTURE_2D, 0, fa->light_s, fa->light_t, smax, tmax, GL_LIGHTMAP_FORMAT, GL_UNSIGNED_BYTE, temp);
@@ -223,58 +226,45 @@ void Polygon::overwerite_tex_id (std::uint32_t tex_id)
 
 void Polygon::draw_surface (msurface_s *surface_info, std::uint32_t tex_id)
 {
-	// TODO: implement this function
-	// GL_BindTexture (tex_id);
-	// msurface_s *surf = surface_info;
-	// for (; surf != 0; surf = surf->lightmapchain)
-	//{
-	//	if (surf->polys)
-	//	{
-	//		DrawGLPolyChain (surf->polys, 0, 0);
-	//	}
-	//}
+	GL_BindTexture (tex_id);
 }
 
 void Polygon::DrawGLFlowingPoly (msurface_s *fa)
 {
-	// int		  i;
-	// float	 *v;
-	// glpoly_t *p;
-	// float	  scroll;
-
-	// p	   = fa->polys;
-
-	// scroll = -64 * ((r_newrefdef.time / 40.0) - (int) (r_newrefdef.time / 40.0));
-	// if (scroll == 0.0)
-	//	scroll = -64.0;
-
-	// qglBegin (GL_POLYGON);
-	// v = p->verts[0];
-	// for (i = 0; i < p->numverts; i++, v += VERTEXSIZE)
-	//{
-	//	qglTexCoord2f ((v[3] + scroll), v[4]);
-	//	qglVertex3fv (v);
-	// }
-	// qglEnd ();
+	// Flowing UVs not yet updated per-frame in the VBO; draw static for now.
+	DrawGLPoly (fa->polys);
 }
 
 void Polygon::DrawGLPoly (glpoly_s *p)
 {
-	// int	   i;
-	// float *v;
+	if (!p || m_triangles_count == 0 || !m_shader)
+		return;
 
-	// qglBegin (GL_POLYGON);
-	// v = p->verts[0];
-	// for (i = 0; i < p->numverts; i++, v += VERTEXSIZE)
-	//{
-	//	qglTexCoord2f (v[3], v[4]);
-	//	qglVertex3fv (v);
-	// }
-	// qglEnd ();
+	auto	   &gl_state = glstate_t::get_instance ();
+	const auto &camera	 = Camera::get_instance ();
+
+	const std::uint32_t base_tex = m_image ? m_image->texnum : m_texId;
+	const std::uint32_t lm_tex	 = gl_state.lightmap_textures[m_surface_info->lightmaptexturenum];
 
 	m_shader->use ();
+	m_shader->set_uniform_mat4 ("uMVP", camera.mvp ());
+	m_shader->set_uniform_1i ("uBaseTexture", 0);
+	m_shader->set_uniform_1i ("uLightmap", 1);
+
+	glActiveTexture (GL_TEXTURE0);
+	glBindTexture (GL_TEXTURE_2D, base_tex);
+	gl_state.currenttextures[0] = static_cast<int> (base_tex);
+
+	glActiveTexture (GL_TEXTURE1);
+	glBindTexture (GL_TEXTURE_2D, lm_tex);
+	gl_state.currenttextures[1] = static_cast<int> (lm_tex);
+
 	glBindVertexArray (m_polygon_data.m_vao);
-	glDrawArrays (GL_TRIANGLES, 0, m_triangles_count);
+	glDrawArrays (GL_TRIANGLES, 0, static_cast<GLsizei> (m_triangles_count));
+	glBindVertexArray (0);
+
+	glActiveTexture (GL_TEXTURE0);
+	gl_state.currenttmu = 0;
 }
 
 }  // namespace Q2

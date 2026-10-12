@@ -96,7 +96,7 @@ private:
 	image_t						*m_image{nullptr};
 	std::array<TextureVertex, 4> m_data;
 	float						 m_x{-1.f};
-	float						 m_y{-1.f};
+	float						 m_y{1.f};	 // top of screen in NDC (Quake y=0)
 	float						 m_width{2.f};
 	float						 m_height{2.f};
 	float						 m_scale{1.0f};

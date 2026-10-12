@@ -1000,7 +1000,7 @@ qboolean GL_Upload32 (unsigned *data, int width, int height, qboolean mipmap)
 	if (samples == gl_solid_format)
 		comp = GL_RGB;
 	else if (samples == gl_alpha_format)
-		comp = GL_RGB8;
+		comp = GL_RGBA8;
 	else
 	{
 		ri.Con_Printf (PRINT_ALL, "Unknown number of texture components %i\n", samples);
@@ -1035,7 +1035,8 @@ qboolean GL_Upload32 (unsigned *data, int width, int height, qboolean mipmap)
 			{
 				if (samples == gl_solid_format)
 				{
-					qglTexImage2D (GL_TEXTURE_2D, 0, gl_tex_solid_format, scaled_width, scaled_height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+					// In-memory pixels are always RGBA (4 bytes). GL_RGB would read 3 and stripe the image.
+					qglTexImage2D (GL_TEXTURE_2D, 0, gl_tex_solid_format, scaled_width, scaled_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 				}
 				else if (samples == gl_alpha_format)
 				{

@@ -13,7 +13,8 @@ float to_x_normalized (float in_x)
 
 float to_y_normalized (float in_y)
 {
-	return (2.f * in_y / static_cast<float> (vid.height)) - 1.f;
+	// Quake screen space: y=0 is top → NDC +1
+	return 1.f - (2.f * in_y / static_cast<float> (vid.height));
 }
 
 float to_x_normalized (float in_x, float width)

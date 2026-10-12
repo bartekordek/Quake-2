@@ -73,11 +73,12 @@ Texture::Texture (const char *in_name)
 
 Texture::Texture (image_t *in_image, const char *in_name)
 {
-	m_name	= in_name;
-	m_image = in_image;
-	m_id	= m_image->texnum;
+	m_name		= in_name;
+	m_image		= in_image;
+	m_id		= m_image->texnum;
+	m_colorMode = ColorMode::RGBA;
+	m_hasAlpha	= in_image && in_image->has_alpha;
 	init ();
-	m_colorMode = ColorMode::RGBM;
 
 	set_name (in_name);
 }
@@ -126,7 +127,7 @@ void Texture::changeScale (float in_scale)
 	}
 
 	m_scale = in_scale;
-
+	initialize_data ();
 	update_buffer_data ();
 }
 
@@ -137,7 +138,7 @@ void Texture::set_has_alpha (bool inHasAlpha)
 
 bool Texture::has_alpha () const
 {
-	return false;
+	return m_hasAlpha;
 }
 
 const std::string &Texture::get_path () const
@@ -262,6 +263,7 @@ void Texture::draw (const PosAndUV &in_data)
 	m_data[3].V							 = in_data.Data[3].V;
 
 	const std::array<float, 32> vertices = createBufferData (m_data);
+	glBindVertexArray (m_vao);
 	glBindBuffer (GL_ARRAY_BUFFER, m_vbo);
 	glBufferSubData (GL_ARRAY_BUFFER, 0, sizeof (float) * vertices.size (), vertices.data ());
 
@@ -275,28 +277,34 @@ void Texture::fetch_uv ()
 		return;
 	}
 
-	m_width		= width_to_normalized (m_image->width);
-	m_height	= height_to_normalized (m_image->height);
+	m_width	 = width_to_normalized (m_image->width);
+	m_height = height_to_normalized (m_image->height);
 
-	m_data[0].X = m_x + m_width;
-	m_data[0].Y = m_y + m_height;
-	m_data[0].U = m_image->sl;
+	const float x0 = m_x;
+	const float x1 = m_x + m_width;
+	const float y0 = m_y;				 // top
+	const float y1 = m_y - m_height;	 // bottom (NDC Y decreases downward)
+
+	// Match EBO order: 0 TR, 1 BL, 2 BR, 3 TL
+	m_data[0].X = x1;
+	m_data[0].Y = y0;
+	m_data[0].U = m_image->sh;
 	m_data[0].V = m_image->tl;
 
-	m_data[1].X = m_x;
-	m_data[1].Y = m_y;
-	m_data[1].U = m_image->sh;
-	m_data[1].V = m_image->tl;
+	m_data[1].X = x0;
+	m_data[1].Y = y1;
+	m_data[1].U = m_image->sl;
+	m_data[1].V = m_image->th;
 
-	m_data[2].X = m_x + m_width;
-	m_data[2].Y = m_y;
+	m_data[2].X = x1;
+	m_data[2].Y = y1;
 	m_data[2].U = m_image->sh;
 	m_data[2].V = m_image->th;
 
-	m_data[3].X = m_x;
-	m_data[3].Y = m_y + m_height;
+	m_data[3].X = x0;
+	m_data[3].Y = y0;
 	m_data[3].U = m_image->sl;
-	m_data[3].V = m_image->th;
+	m_data[3].V = m_image->tl;
 }
 
 std::array<float, 32> Texture::createBufferData (float in_scale) const
@@ -313,20 +321,39 @@ std::array<float, 32> Texture::createBufferData (float in_scale) const
 
 void Texture::update_buffer_data ()
 {
-	initialize_data ();
+	// Refresh positions from m_x/m_y/size; preserve UVs already in m_data
+	const float x0 = m_x;
+	const float x1 = m_x + m_width;
+	const float y0 = m_y;
+	const float y1 = m_y - m_height;
+
+	m_data[0].X = x1;
+	m_data[0].Y = y0;
+	m_data[1].X = x0;
+	m_data[1].Y = y1;
+	m_data[2].X = x1;
+	m_data[2].Y = y1;
+	m_data[3].X = x0;
+	m_data[3].Y = y0;
 
 	const std::array<float, 32> vertices = createBufferData (m_data);
+	glBindVertexArray (m_vao);
 	glBindBuffer (GL_ARRAY_BUFFER, m_vbo);
 	glBufferSubData (GL_ARRAY_BUFFER, 0, sizeof (float) * vertices.size (), vertices.data ());
 }
 
 void Texture::initialize_data ()
 {
-	// X, Y, U, V
-	m_data[0] = TextureVertex{m_x + m_width, m_y + m_height, m_scale, m_scale};
-	m_data[1] = TextureVertex{m_x, m_y, 0.f, 0.f};
-	m_data[2] = TextureVertex{m_x + m_width, m_y, m_scale, 0.f};
-	m_data[3] = TextureVertex{m_x, m_y + m_height, 0.f, m_scale};
+	const float x0 = m_x;
+	const float x1 = m_x + m_width;
+	const float y0 = m_y;
+	const float y1 = m_y - m_height;
+
+	// 0 TR, 1 BL, 2 BR, 3 TL — full UV by default
+	m_data[0] = TextureVertex{x1, y0, m_scale, 0.f};
+	m_data[1] = TextureVertex{x0, y1, 0.f, m_scale};
+	m_data[2] = TextureVertex{x1, y1, m_scale, m_scale};
+	m_data[3] = TextureVertex{x0, y0, 0.f, 0.f};
 }
 
 std::array<float, 32> Texture::createBufferData (const std::array<TextureVertex, 4> &in_arg) const
@@ -345,31 +372,28 @@ void Texture::draw ()
 {
 	IRenderable::draw ();
 
-	if (has_alpha ())
-	{
-		glDisable (GL_ALPHA_TEST);
-	}
+	glDisable (GL_DEPTH_TEST);
+	glDisable (GL_CULL_FACE);
+	glEnable (GL_BLEND);
+	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glActiveTexture (GL_TEXTURE0);
 	glBindTexture (GL_TEXTURE_2D, m_id);
 
-	// glTexImage2D (GL_TEXTURE_2D, 0, inData.internal_format, inData.imgW, inData.imgH, 0, inData.format, inData.data_type, inData.data);
-	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
 	m_shader->use ();
-	if (m_colorMode == ColorMode::RGBM)
-	{
-		m_shader->set_uniform_1i ("mode", 1);
-	}
+	m_shader->set_uniform_1i ("tex", 0);
+	m_shader->set_uniform_1i ("mode", m_colorMode == ColorMode::RGBM ? 1 : 0);
 
 	glBindVertexArray (m_vao);
 	glDrawElements (GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	glBindVertexArray (0);
 
-	if (has_alpha ())
-	{
-		glEnable (GL_ALPHA_TEST);
-	}
+	glDisable (GL_BLEND);
 }
 
 void Texture::draw (const RenderData &inData)

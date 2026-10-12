@@ -423,9 +423,13 @@ void CMod_LoadBrushSides (lump_t *l)
 		num = LittleShort (in->planenum);
 		out->plane = &map_planes[num];
 		j = LittleShort (in->texinfo);
-		if (j >= numtexinfo)
+		// Bevel / nodraw sides are stored as texinfo -1
+		if (j < 0)
+			out->surface = &nullsurface;
+		else if (j >= numtexinfo)
 			Com_Error (ERR_DROP, "Bad brushside texinfo");
-		out->surface = &map_surfaces[j];
+		else
+			out->surface = &map_surfaces[j];
 	}
 }
 

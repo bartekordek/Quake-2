@@ -29,6 +29,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <GL/glew.h>
 #include "gl_modern/gl_local.h"
 #include "gl_modern/gl_draw.h"
+#include "gl_modern/alias_draw.hpp"
 #include "math/constants.h"
 #include <cstdint>
 
@@ -137,8 +138,6 @@ cvar_t *gl_3dlabs_broken;
 cvar_t *vid_fullscreen;
 cvar_t *vid_gamma;
 cvar_t *vid_ref;
-
-Q2::Camera g_camera;
 
 void APIENTRY glDebugOutput (GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length,
 							 const char *  // message
@@ -329,83 +328,39 @@ void R_DrawEntitiesOnList (void)
 	if (!r_drawentities->value)
 		return;
 
-	// draw non-transparent first
+	// Core profile: only alias models have a modern path so far.
+	// Brush/sprite/beam still use removed immediate-mode APIs.
 	for (i = 0; i < r_newrefdef.num_entities; i++)
 	{
 		currententity = &r_newrefdef.entities[i];
 		if (currententity->flags & RF_TRANSLUCENT)
-			continue;  // solid
-
+			continue;
 		if (currententity->flags & RF_BEAM)
-		{
-			R_DrawBeam (currententity);
-		}
-		else
-		{
-			currentmodel = currententity->model;
-			if (!currentmodel)
-			{
-				R_DrawNullModel ();
-				continue;
-			}
-			switch (currentmodel->type)
-			{
-				case mod_alias:
-					R_DrawAliasModel (currententity);
-					break;
-				case mod_brush:
-					R_DrawBrushModel (currententity);
-					break;
-				case mod_sprite:
-					R_DrawSpriteModel (currententity);
-					break;
-				default:
-					ri.Sys_Error (ERR_DROP, "Bad modeltype");
-					break;
-			}
-		}
+			continue;
+
+		currentmodel = currententity->model;
+		if (!currentmodel)
+			continue;
+		if (currentmodel->type == mod_alias)
+			R_DrawAliasModel (currententity);
 	}
 
-	// draw transparent entities
-	// we could sort these if it ever becomes a problem...
-	qglDepthMask (0);  // no z writes
+	qglDepthMask (0);
 	for (i = 0; i < r_newrefdef.num_entities; i++)
 	{
 		currententity = &r_newrefdef.entities[i];
 		if (!(currententity->flags & RF_TRANSLUCENT))
-			continue;  // solid
-
+			continue;
 		if (currententity->flags & RF_BEAM)
-		{
-			R_DrawBeam (currententity);
-		}
-		else
-		{
-			currentmodel = currententity->model;
+			continue;
 
-			if (!currentmodel)
-			{
-				R_DrawNullModel ();
-				continue;
-			}
-			switch (currentmodel->type)
-			{
-				case mod_alias:
-					R_DrawAliasModel (currententity);
-					break;
-				case mod_brush:
-					R_DrawBrushModel (currententity);
-					break;
-				case mod_sprite:
-					R_DrawSpriteModel (currententity);
-					break;
-				default:
-					ri.Sys_Error (ERR_DROP, "Bad modeltype");
-					break;
-			}
-		}
+		currentmodel = currententity->model;
+		if (!currentmodel)
+			continue;
+		if (currentmodel->type == mod_alias)
+			R_DrawAliasModel (currententity);
 	}
-	qglDepthMask (1);  // back to writing
+	qglDepthMask (1);
 }
 
 /*
@@ -414,54 +369,73 @@ void R_DrawEntitiesOnList (void)
 */
 void GL_DrawParticles (int num_particles, const particle_t particles[], const unsigned colortable[768])
 {
-	// TODO:
-	return;
-
 	const particle_t *p;
 	int				  i;
 	vec3_t			  up, right;
 	float			  scale;
 	byte			  color[4];
 
-	GL_BindTexture (r_particletexture->texnum);
-	qglDepthMask (GL_FALSE);  // no z buffering
-	qglEnable (GL_BLEND);
-	GL_TexEnv (GL_MODULATE);
-	qglBegin (GL_TRIANGLES);
+	if (!r_particletexture || num_particles <= 0)
+		return;
+
+	/* pos3 + uv2 + rgba4, 3 verts per particle */
+	static float verts[MAX_PARTICLES * 3 * 9];
+	if (num_particles > MAX_PARTICLES)
+		num_particles = MAX_PARTICLES;
 
 	VectorScale (vup, 1.5, up);
 	VectorScale (vright, 1.5, right);
 
 	for (p = particles, i = 0; i < num_particles; i++, p++)
 	{
-		// hack a scale up to keep particles from disapearing
-		scale = (p->origin[0] - r_origin[0]) * vpn[0] + (p->origin[1] - r_origin[1]) * vpn[1] + (p->origin[2] - r_origin[2]) * vpn[2];
+		float *dst = verts + i * 27;
 
+		scale = (p->origin[0] - r_origin[0]) * vpn[0] + (p->origin[1] - r_origin[1]) * vpn[1] + (p->origin[2] - r_origin[2]) * vpn[2];
 		if (scale < 20)
 			scale = 1;
 		else
 			scale = 1 + scale * 0.004;
 
 		*(int *) color = colortable[p->color];
-		color[3]	   = p->alpha * 255;
+		color[3]	   = (byte) (p->alpha * 255);
 
-		qglColor4ubv (color);
+		const float r = color[0] / 255.f;
+		const float g = color[1] / 255.f;
+		const float b = color[2] / 255.f;
+		const float a = color[3] / 255.f;
 
-		qglTexCoord2f (0.0625, 0.0625);
-		qglVertex3fv (p->origin);
+		dst[0] = p->origin[0];
+		dst[1] = p->origin[1];
+		dst[2] = p->origin[2];
+		dst[3] = 0.0625f;
+		dst[4] = 0.0625f;
+		dst[5] = r;
+		dst[6] = g;
+		dst[7] = b;
+		dst[8] = a;
 
-		qglTexCoord2f (1.0625, 0.0625);
-		qglVertex3f (p->origin[0] + up[0] * scale, p->origin[1] + up[1] * scale, p->origin[2] + up[2] * scale);
+		dst[9]	= p->origin[0] + up[0] * scale;
+		dst[10] = p->origin[1] + up[1] * scale;
+		dst[11] = p->origin[2] + up[2] * scale;
+		dst[12] = 1.0625f;
+		dst[13] = 0.0625f;
+		dst[14] = r;
+		dst[15] = g;
+		dst[16] = b;
+		dst[17] = a;
 
-		qglTexCoord2f (0.0625, 1.0625);
-		qglVertex3f (p->origin[0] + right[0] * scale, p->origin[1] + right[1] * scale, p->origin[2] + right[2] * scale);
+		dst[18] = p->origin[0] + right[0] * scale;
+		dst[19] = p->origin[1] + right[1] * scale;
+		dst[20] = p->origin[2] + right[2] * scale;
+		dst[21] = 0.0625f;
+		dst[22] = 1.0625f;
+		dst[23] = r;
+		dst[24] = g;
+		dst[25] = b;
+		dst[26] = a;
 	}
 
-	qglEnd ();
-	qglDisable (GL_BLEND);
-	qglColor4f (1, 1, 1, 1);
-	qglDepthMask (1);  // back to normal Z buffering
-	GL_TexEnv (GL_REPLACE);
+	R_DrawCameraTriangles (verts, num_particles * 3, r_particletexture->texnum, 1, 0);
 }
 
 /*
@@ -471,39 +445,7 @@ R_DrawParticles
 */
 void R_DrawParticles (void)
 {
-	if (gl_ext_pointparameters->value && qglPointParameterfEXT)
-	{
-		int				  i;
-		unsigned char	  color[4];
-		const particle_t *p;
-
-		qglDepthMask (GL_FALSE);
-		qglEnable (GL_BLEND);
-		qglDisable (GL_TEXTURE_2D);
-
-		qglPointSize (gl_particle_size->value);
-
-		qglBegin (GL_POINTS);
-		for (i = 0, p = r_newrefdef.particles; i < r_newrefdef.num_particles; i++, p++)
-		{
-			*(int *) color = d_8to24table[p->color];
-			color[3]	   = p->alpha * 255;
-
-			qglColor4ubv (color);
-
-			qglVertex3fv (p->origin);
-		}
-		qglEnd ();
-
-		qglDisable (GL_BLEND);
-		qglColor4f (1.0F, 1.0F, 1.0F, 1.0F);
-		qglDepthMask (GL_TRUE);
-		qglEnable (GL_TEXTURE_2D);
-	}
-	else
-	{
-		GL_DrawParticles (r_newrefdef.num_particles, r_newrefdef.particles, d_8to24table);
-	}
+	GL_DrawParticles (r_newrefdef.num_particles, r_newrefdef.particles, d_8to24table);
 }
 
 /*
@@ -694,8 +636,7 @@ R_SetupGL
 void R_SetupGL (void)
 {
 	float screenaspect;
-	//	float	yfov;
-	int x, x2, y2, y, w, h;
+	int	  x, x2, y2, y, w, h;
 
 	//
 	// set up viewport
@@ -705,36 +646,26 @@ void R_SetupGL (void)
 	y  = floor (vid.height - r_newrefdef.y * vid.height / vid.height);
 	y2 = ceil (vid.height - (r_newrefdef.y + r_newrefdef.height) * vid.height / vid.height);
 
-	w  = x2 - x;
-	h  = y - y2;
+	w = x2 - x;
+	h = y - y2;
 
 	qglViewport (x, y2, w, h);
 
-	//
-	// set up projection matrix
-	//
 	screenaspect = (float) r_newrefdef.width / r_newrefdef.height;
-	//	yfov = 2*atan((float)r_newrefdef.height/r_newrefdef.width)*180/M_PI;
-	// qglMatrixMode (GL_PROJECTION);
-	// qglLoadIdentity ();
-	// MYgluPerspective (r_newrefdef.fov_y, screenaspect, 4, 4096);
 
 	qglCullFace (GL_FRONT);
 
-	// qglMatrixMode (GL_MODELVIEW);
-	// qglLoadIdentity ();
+	auto &camera = Q2::Camera::get_instance ();
+	camera.reset_view ();
+	camera.set_perspective (r_newrefdef.fov_y, screenaspect, 4.f, 4096.f,
+							Q2::glstate_t::get_instance ().camera_separation);
 
-	g_camera.rotate (-90.f, 1.f, 0.f, 0.f);	 // put Z going up
-	g_camera.rotate (90.f, 0.f, 0.f, 1.f);	 // put Z going up
-	g_camera.rotate (-r_newrefdef.viewangles[2], 1.f, 0.f, 0.f);
-	g_camera.rotate (-r_newrefdef.viewangles[0], 0.f, 1.f, 0.f);
-	g_camera.rotate (-r_newrefdef.viewangles[1], 0.f, 0.f, 1.f);
-	g_camera.translate (-r_newrefdef.vieworg[0], -r_newrefdef.vieworg[1], -r_newrefdef.vieworg[2]);
-
-	//	if ( gl_state.camera_separation != 0 && gl_state.stereo_enabled )
-	//		qglTranslatef ( gl_state.camera_separation, 0, 0 );
-
-	// qglGetFloatv (GL_MODELVIEW_MATRIX, r_world_matrix);
+	camera.rotate (-90.f, 1.f, 0.f, 0.f);  // put Z going up
+	camera.rotate (90.f, 0.f, 0.f, 1.f);	  // put Z going up
+	camera.rotate (-r_newrefdef.viewangles[2], 1.f, 0.f, 0.f);
+	camera.rotate (-r_newrefdef.viewangles[0], 0.f, 1.f, 0.f);
+	camera.rotate (-r_newrefdef.viewangles[1], 0.f, 0.f, 1.f);
+	camera.translate (-r_newrefdef.vieworg[0], -r_newrefdef.vieworg[1], -r_newrefdef.vieworg[2]);
 
 	//
 	// set drawing parms
@@ -745,7 +676,6 @@ void R_SetupGL (void)
 		qglDisable (GL_CULL_FACE);
 
 	qglDisable (GL_BLEND);
-	// qglDisable (GL_ALPHA_TEST);
 	qglEnable (GL_DEPTH_TEST);
 }
 
@@ -834,13 +764,14 @@ void R_RenderView (refdef_t *fd)
 
 	R_DrawWorld ();
 
-	//R_DrawEntitiesOnList ();
+	glActiveTexture (GL_TEXTURE0);
+	R_DrawEntitiesOnList ();
 
 	//R_RenderDlights ();
 
-	//R_DrawParticles ();
+	R_DrawParticles ();
 
-	//R_DrawAlphaSurfaces ();
+	R_DrawAlphaSurfaces ();
 
 	//R_Flash ();
 
@@ -853,21 +784,14 @@ void R_RenderView (refdef_t *fd)
 
 void R_SetGL2D (void)
 {
-	// TODO:
-	return;
-
-	// set 2D virtual screen size
+	// Restore full-screen 2D state after the 3D pass (shader HUD uses NDC)
 	qglViewport (0, 0, vid.width, vid.height);
-	qglMatrixMode (GL_PROJECTION);
-	qglLoadIdentity ();
-	qglOrtho (0, vid.width, vid.height, 0, -99999, 99999);
-	qglMatrixMode (GL_MODELVIEW);
-	qglLoadIdentity ();
 	qglDisable (GL_DEPTH_TEST);
 	qglDisable (GL_CULL_FACE);
 	qglDisable (GL_BLEND);
-	qglEnable (GL_ALPHA_TEST);
-	qglColor4f (1, 1, 1, 1);
+	glActiveTexture (GL_TEXTURE0);
+	glBindVertexArray (0);
+	glUseProgram (0);
 }
 
 static void GL_DrawColoredStereoLinePair (float r, float g, float b, float y)
@@ -1430,18 +1354,7 @@ void R_BeginFrame (float camera_separation)
 	/*
 	** go into 2D mode
 	*/
-
-	// qglViewport (0, 0, vid.width, vid.height);
-	// qglMatrixMode (GL_PROJECTION);
-	// qglLoadIdentity ();
-	// qglOrtho (0, vid.width, vid.height, 0, -99999, 99999);
-	// qglMatrixMode (GL_MODELVIEW);
-	// qglLoadIdentity ();
-	// qglDisable (GL_DEPTH_TEST);
-	// qglDisable (GL_CULL_FACE);
-	// qglDisable (GL_BLEND);
-	// qglEnable (GL_ALPHA_TEST);
-	// qglColor4f (1, 1, 1, 1);
+	R_SetGL2D ();
 
 	/*
 	** draw buffer stuff

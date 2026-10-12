@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "gl_modern/gl_rmain.h"
 #include "gl_modern/gl_local.h"
+#include "gl_modern/alias_draw.hpp"
 #include "math/constants.h"
 
 /*
@@ -52,6 +53,9 @@ float r_avertexnormal_dots[SHADEDOT_QUANT][256] =
 	;
 
 float *shadedots = r_avertexnormal_dots[0];
+
+float	 g_alias_mvp[16];
+unsigned g_alias_skin;
 
 void GL_LerpVerts (int nverts, dtrivertx_t *v, dtrivertx_t *ov, dtrivertx_t *verts, float *lerp, float move[3], float frontv[3],
 				   float backv[3])
@@ -120,10 +124,6 @@ void GL_DrawAliasFrameLerp (dmdl_t *paliashdr, float backlerp)
 	else
 		alpha = 1.0;
 
-	// PMM - added double shell
-	if (currententity->flags & (RF_SHELL_RED | RF_SHELL_GREEN | RF_SHELL_BLUE | RF_SHELL_DOUBLE | RF_SHELL_HALF_DAM))
-		qglDisable (GL_TEXTURE_2D);
-
 	frontlerp = 1.0 - backlerp;
 
 	// move should be the delta back to the previous frame * backlerp
@@ -151,147 +151,115 @@ void GL_DrawAliasFrameLerp (dmdl_t *paliashdr, float backlerp)
 
 	GL_LerpVerts (paliashdr->num_xyz, v, ov, verts, lerp, move, frontv, backv);
 
-	if (gl_vertex_arrays->value)
 	{
-		float colorArray[MAX_VERTS * 4];
-
-		qglEnableClientState (GL_VERTEX_ARRAY);
-		qglVertexPointer (3, GL_FLOAT, 16, s_lerped);  // padded for SIMD
-
-		//		if ( currententity->flags & ( RF_SHELL_RED | RF_SHELL_GREEN | RF_SHELL_BLUE ) )
-		// PMM - added double damage shell
-		if (currententity->flags & (RF_SHELL_RED | RF_SHELL_GREEN | RF_SHELL_BLUE | RF_SHELL_DOUBLE | RF_SHELL_HALF_DAM))
+		enum
 		{
-			qglColor4f (shadelight[0], shadelight[1], shadelight[2], alpha);
-		}
-		else
-		{
-			qglEnableClientState (GL_COLOR_ARRAY);
-			qglColorPointer (3, GL_FLOAT, 0, colorArray);
-
-			//
-			// pre light everything
-			//
-			for (i = 0; i < paliashdr->num_xyz; i++)
-			{
-				float l				  = shadedots[verts[i].lightnormalindex];
-
-				colorArray[i * 3 + 0] = l * shadelight[0];
-				colorArray[i * 3 + 1] = l * shadelight[1];
-				colorArray[i * 3 + 2] = l * shadelight[2];
-			}
-		}
-
-		if (qglLockArraysEXT != 0)
-			qglLockArraysEXT (0, paliashdr->num_xyz);
+			ALIAS_VERT_FLOATS	 = 9,
+			ALIAS_MAX_DRAW_VERTS = MAX_VERTS * 6
+		};
+		static float	draw_buf[ALIAS_MAX_DRAW_VERTS * ALIAS_VERT_FLOATS];
+		int				nverts	 = 0;
+		const qboolean	is_shell = (currententity->flags & (RF_SHELL_RED | RF_SHELL_GREEN | RF_SHELL_BLUE | RF_SHELL_DOUBLE | RF_SHELL_HALF_DAM))
+									   ? e_true
+									   : e_false;
 
 		while (1)
 		{
-			// get the vertex count and primitive type
+			int		 prim_count;
+			qboolean fan;
+			float	 tmp[256][ALIAS_VERT_FLOATS];
+			int		 nv;
+
 			count = *order++;
 			if (!count)
-				break;	// done
-			if (count < 0)
-			{
-				count = -count;
-				qglBegin (GL_TRIANGLE_FAN);
-			}
-			else
-			{
-				qglBegin (GL_TRIANGLE_STRIP);
-			}
+				break;
+			fan		   = (count < 0) ? e_true : e_false;
+			prim_count = fan ? -count : count;
+			if (prim_count > 256)
+				prim_count = 256;
 
-			// PMM - added double damage shell
-			if (currententity->flags & (RF_SHELL_RED | RF_SHELL_GREEN | RF_SHELL_BLUE | RF_SHELL_DOUBLE | RF_SHELL_HALF_DAM))
+			nv = 0;
+			for (i = 0; i < prim_count; i++)
 			{
-				do
+				float s, tcoord;
+
+				if (is_shell)
 				{
+					s		  = 0.f;
+					tcoord	  = 0.f;
 					index_xyz = order[2];
 					order += 3;
-
-					qglVertex3fv (s_lerped[index_xyz]);
-
-				} while (--count);
-			}
-			else
-			{
-				do
+					l = 1.f;
+				}
+				else
 				{
-					// texture coordinates come from the draw list
-					qglTexCoord2f (((float *) order)[0], ((float *) order)[1]);
-					index_xyz = order[2];
-
-					order += 3;
-
-					// normals and vertexes come from the frame list
-					//					l = shadedots[verts[index_xyz].lightnormalindex];
-
-					//					qglColor4f (l* shadelight[0], l*shadelight[1], l*shadelight[2], alpha);
-					qglArrayElement (index_xyz);
-
-				} while (--count);
-			}
-			qglEnd ();
-		}
-
-		if (qglUnlockArraysEXT != 0)
-			qglUnlockArraysEXT ();
-	}
-	else
-	{
-		while (1)
-		{
-			// get the vertex count and primitive type
-			count = *order++;
-			if (!count)
-				break;	// done
-			if (count < 0)
-			{
-				count = -count;
-				qglBegin (GL_TRIANGLE_FAN);
-			}
-			else
-			{
-				qglBegin (GL_TRIANGLE_STRIP);
-			}
-
-			if (currententity->flags & (RF_SHELL_RED | RF_SHELL_GREEN | RF_SHELL_BLUE))
-			{
-				do
-				{
+					s		  = ((float *) order)[0];
+					tcoord	  = ((float *) order)[1];
 					index_xyz = order[2];
 					order += 3;
-
-					qglColor4f (shadelight[0], shadelight[1], shadelight[2], alpha);
-					qglVertex3fv (s_lerped[index_xyz]);
-
-				} while (--count);
-			}
-			else
-			{
-				do
-				{
-					// texture coordinates come from the draw list
-					qglTexCoord2f (((float *) order)[0], ((float *) order)[1]);
-					index_xyz = order[2];
-					order += 3;
-
-					// normals and vertexes come from the frame list
 					l = shadedots[verts[index_xyz].lightnormalindex];
+				}
 
-					qglColor4f (l * shadelight[0], l * shadelight[1], l * shadelight[2], alpha);
-					qglVertex3fv (s_lerped[index_xyz]);
-				} while (--count);
+				tmp[nv][0] = s_lerped[index_xyz][0];
+				tmp[nv][1] = s_lerped[index_xyz][1];
+				tmp[nv][2] = s_lerped[index_xyz][2];
+				tmp[nv][3] = s;
+				tmp[nv][4] = tcoord;
+				tmp[nv][5] = is_shell ? shadelight[0] : l * shadelight[0];
+				tmp[nv][6] = is_shell ? shadelight[1] : l * shadelight[1];
+				tmp[nv][7] = is_shell ? shadelight[2] : l * shadelight[2];
+				tmp[nv][8] = alpha;
+				nv++;
 			}
 
-			qglEnd ();
+			if (fan)
+			{
+				for (i = 1; i + 1 < nv; i++)
+				{
+					int corner;
+					if (nverts + 3 > ALIAS_MAX_DRAW_VERTS)
+						break;
+					for (corner = 0; corner < 9; corner++)
+						draw_buf[(nverts + 0) * ALIAS_VERT_FLOATS + corner] = tmp[0][corner];
+					for (corner = 0; corner < 9; corner++)
+						draw_buf[(nverts + 1) * ALIAS_VERT_FLOATS + corner] = tmp[i][corner];
+					for (corner = 0; corner < 9; corner++)
+						draw_buf[(nverts + 2) * ALIAS_VERT_FLOATS + corner] = tmp[i + 1][corner];
+					nverts += 3;
+				}
+			}
+			else
+			{
+				for (i = 0; i + 2 < nv; i++)
+				{
+					int i0, i1, i2, corner;
+					if (nverts + 3 > ALIAS_MAX_DRAW_VERTS)
+						break;
+					if (i & 1)
+					{
+						i0 = i + 1;
+						i1 = i;
+						i2 = i + 2;
+					}
+					else
+					{
+						i0 = i;
+						i1 = i + 1;
+						i2 = i + 2;
+					}
+					for (corner = 0; corner < 9; corner++)
+						draw_buf[(nverts + 0) * ALIAS_VERT_FLOATS + corner] = tmp[i0][corner];
+					for (corner = 0; corner < 9; corner++)
+						draw_buf[(nverts + 1) * ALIAS_VERT_FLOATS + corner] = tmp[i1][corner];
+					for (corner = 0; corner < 9; corner++)
+						draw_buf[(nverts + 2) * ALIAS_VERT_FLOATS + corner] = tmp[i2][corner];
+					nverts += 3;
+				}
+			}
 		}
-	}
 
-	//	if ( currententity->flags & ( RF_SHELL_RED | RF_SHELL_GREEN | RF_SHELL_BLUE ) )
-	// PMM - added double damage shell
-	if (currententity->flags & (RF_SHELL_RED | RF_SHELL_GREEN | RF_SHELL_BLUE | RF_SHELL_DOUBLE | RF_SHELL_HALF_DAM))
-		qglEnable (GL_TEXTURE_2D);
+		Alias_DrawTriangles (draw_buf, nverts, g_alias_skin, g_alias_mvp, is_shell ? 0 : 1);
+	}
 }
 
 #if 1
@@ -695,123 +663,71 @@ void R_DrawAliasModel (entity_t *e)
 	c_alias_polys += paliashdr->num_tris;
 
 	//
-	// draw all the triangles
+	// draw all the triangles (core-profile shader path)
 	//
-	if (currententity->flags & RF_DEPTHHACK)  // hack the depth range to prevent view model from poking into walls
+	if (currententity->flags & RF_DEPTHHACK)
 		qglDepthRange (gldepthmin, gldepthmin + 0.3 * (gldepthmax - gldepthmin));
 
-	if ((currententity->flags & RF_WEAPONMODEL) && (r_lefthand->value == 1.0F))
 	{
-		qglMatrixMode (GL_PROJECTION);
-		qglPushMatrix ();
-		qglLoadIdentity ();
-		qglScalef (-1, 1, 1);
-		MYgluPerspective (r_newrefdef.fov_y, (float) r_newrefdef.width / r_newrefdef.height, 4, 4096);
-		qglMatrixMode (GL_MODELVIEW);
+		const int lefthand = ((currententity->flags & RF_WEAPONMODEL) && (r_lefthand->value == 1.0F)) ? 1 : 0;
+		if (lefthand)
+			qglCullFace (GL_BACK);
 
-		qglCullFace (GL_BACK);
-	}
+		e->angles[PITCH] = -e->angles[PITCH];
+		Alias_ComputeMVP (e, lefthand, g_alias_mvp);
+		e->angles[PITCH] = -e->angles[PITCH];
 
-	qglPushMatrix ();
-	e->angles[PITCH] = -e->angles[PITCH];  // sigh.
-	R_RotateForEntity (e);
-	e->angles[PITCH] = -e->angles[PITCH];  // sigh.
-
-	// select skin
-	if (currententity->skin)
-		skin = currententity->skin;	 // custom player skin
-	else
-	{
-		if (currententity->skinnum >= MAX_MD2SKINS)
-			skin = currentmodel->skins[0];
+		if (currententity->skin)
+			skin = currententity->skin;
 		else
 		{
-			skin = currentmodel->skins[currententity->skinnum];
-			if (!skin)
+			if (currententity->skinnum >= MAX_MD2SKINS)
 				skin = currentmodel->skins[0];
+			else
+			{
+				skin = currentmodel->skins[currententity->skinnum];
+				if (!skin)
+					skin = currentmodel->skins[0];
+			}
 		}
-	}
-	if (!skin)
-		skin = r_notexture;	 // fallback...
-	GL_BindTexture (skin->texnum);
+		if (!skin)
+			skin = r_notexture;
+		g_alias_skin = skin->texnum;
 
-	// draw it
+		if (currententity->flags & RF_TRANSLUCENT)
+		{
+			qglEnable (GL_BLEND);
+			glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		}
 
-	qglShadeModel (GL_SMOOTH);
+		if ((currententity->frame >= paliashdr->num_frames) || (currententity->frame < 0))
+		{
+			ri.Con_Printf (PRINT_ALL, "R_DrawAliasModel %s: no such frame %d\n", currentmodel->name, currententity->frame);
+			currententity->frame	= 0;
+			currententity->oldframe = 0;
+		}
 
-	GL_TexEnv (GL_MODULATE);
-	if (currententity->flags & RF_TRANSLUCENT)
-	{
-		qglEnable (GL_BLEND);
-	}
+		if ((currententity->oldframe >= paliashdr->num_frames) || (currententity->oldframe < 0))
+		{
+			ri.Con_Printf (PRINT_ALL, "R_DrawAliasModel %s: no such oldframe %d\n", currentmodel->name, currententity->oldframe);
+			currententity->frame	= 0;
+			currententity->oldframe = 0;
+		}
 
-	if ((currententity->frame >= paliashdr->num_frames) || (currententity->frame < 0))
-	{
-		ri.Con_Printf (PRINT_ALL, "R_DrawAliasModel %s: no such frame %d\n", currentmodel->name, currententity->frame);
-		currententity->frame	= 0;
-		currententity->oldframe = 0;
-	}
+		if (!r_lerpmodels->value)
+			currententity->backlerp = 0;
+		GL_DrawAliasFrameLerp (paliashdr, currententity->backlerp);
 
-	if ((currententity->oldframe >= paliashdr->num_frames) || (currententity->oldframe < 0))
-	{
-		ri.Con_Printf (PRINT_ALL, "R_DrawAliasModel %s: no such oldframe %d\n", currentmodel->name, currententity->oldframe);
-		currententity->frame	= 0;
-		currententity->oldframe = 0;
-	}
-
-	if (!r_lerpmodels->value)
-		currententity->backlerp = 0;
-	GL_DrawAliasFrameLerp (paliashdr, currententity->backlerp);
-
-	GL_TexEnv (GL_REPLACE);
-	qglShadeModel (GL_FLAT);
-
-	qglPopMatrix ();
-
-#if 0
-	qglDisable( GL_CULL_FACE );
-	qglPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
-	qglDisable( GL_TEXTURE_2D );
-	qglBegin( GL_TRIANGLE_STRIP );
-	for ( i = 0; i < 8; i++ )
-	{
-		qglVertex3fv( bbox[i] );
-	}
-	qglEnd();
-	qglEnable( GL_TEXTURE_2D );
-	qglPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
-	qglEnable( GL_CULL_FACE );
-#endif
-
-	if ((currententity->flags & RF_WEAPONMODEL) && (r_lefthand->value == 1.0F))
-	{
-		qglMatrixMode (GL_PROJECTION);
-		qglPopMatrix ();
-		qglMatrixMode (GL_MODELVIEW);
-		qglCullFace (GL_FRONT);
+		if (lefthand)
+			qglCullFace (GL_FRONT);
 	}
 
 	if (currententity->flags & RF_TRANSLUCENT)
-	{
 		qglDisable (GL_BLEND);
-	}
 
 	if (currententity->flags & RF_DEPTHHACK)
 		qglDepthRange (gldepthmin, gldepthmax);
 
-#if 1
-	if (gl_shadows->value && !(currententity->flags & (RF_TRANSLUCENT | RF_WEAPONMODEL)))
-	{
-		qglPushMatrix ();
-		R_RotateForEntity (e);
-		qglDisable (GL_TEXTURE_2D);
-		qglEnable (GL_BLEND);
-		qglColor4f (0, 0, 0, 0.5);
-		GL_DrawAliasShadow (paliashdr, currententity->frame);
-		qglEnable (GL_TEXTURE_2D);
-		qglDisable (GL_BLEND);
-		qglPopMatrix ();
-	}
-#endif
-	qglColor4f (1, 1, 1, 1);
+	(void) bbox;
+	(void) i;
 }

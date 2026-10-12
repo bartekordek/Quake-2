@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "gl_modern/i_renderable.hpp"
 #include "shared/config.h"
 
@@ -65,7 +64,7 @@ private:
 	PolygonStore ()	 = default;
 	~PolygonStore () = default;
 
-	std::unordered_map<std::string, Polygon*> m_polygons;
+	std::unordered_map<msurface_s *, Polygon *> m_polygons;
 };
 
 };	// namespace Q2

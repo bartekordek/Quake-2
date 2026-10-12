@@ -1,9 +1,9 @@
 #version 330 core
 
-out vec4 FragColor;
-
-in vec2 TexCoord;
 in vec3 VertColor;
+in vec2 TexCoord;
+
+out vec4 FragColor;
 
 uniform sampler2D tex;
 
@@ -18,14 +18,15 @@ vec4 decodeRGBM(vec4 rgbm)
 
 void main()
 {
-    
-    if( mode == 0) 
-    {
-        FragColor = texture(tex, TexCoord);
-    }
-    else if ( mode == 1 )
-    {
-        vec4 rgba_value = texture(tex, TexCoord);
-        FragColor = decodeRGBM(rgba_value);
-    }
+    vec4 color;
+    if (mode == 1)
+        color = decodeRGBM(texture(tex, TexCoord));
+    else
+        color = texture(tex, TexCoord);
+
+    // Quake GL_ALPHA_TEST equivalent — index 255 / low alpha is transparent
+    if (color.a < 0.666)
+        discard;
+
+    FragColor = color;
 }

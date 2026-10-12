@@ -41,6 +41,12 @@ void Draw_InitLocal (void)
 {
 	// load console characters (don't bilerp characters)
 	draw_chars = GL_FindImage ("pics/conchars.pcx", it_pic);
+	if (draw_chars)
+	{
+		GL_BindTexture (draw_chars->texnum);
+		qglTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		qglTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	}
 }
 
 /*
@@ -66,45 +72,38 @@ void Draw_Char (int int_x, int int_y, int num)
 	const float col = num & 15;
 
 	static Q2::Texture font_atlas_tex (draw_chars, "pics/conchars.pcx");
-	const float		   width	 = font_atlas_tex.get_width ();
-	const float		   height	 = font_atlas_tex.get_height ();
 	constexpr float	   char_size = 8.f;
-	const float		   fraction	 = char_size / width;
-	const float		   frow		 = row * fraction;
-	const float		   fcol		 = col * fraction;
+	constexpr float	   size		 = 0.0625f;	 // 16x16 cells in 128x128 atlas
+	const float		   frow		 = row * size;
+	const float		   fcol		 = col * size;
 
-	const float x0				 = Q2::to_x_normalized (int_x);
-	const float y0				 = Q2::to_y_normalized (int_y);
-	const float x1				 = Q2::to_x_normalized (int_x + char_size);
-	const float y1				 = Q2::to_y_normalized (int_y + char_size);
+	const float x0 = Q2::to_x_normalized (static_cast<float> (int_x));
+	const float y0 = Q2::to_y_normalized (static_cast<float> (int_y));
+	const float x1 = Q2::to_x_normalized (static_cast<float> (int_x) + char_size);
+	const float y1 = Q2::to_y_normalized (static_cast<float> (int_y) + char_size);
 
-	const float Upx				 = width * fcol;
-	const float Vpx				 = height * frow;
-	const float Upx2			 = Upx / 0.0625;
-	const float Vpx2			 = Vpx / 0.0625;
-
-	const float size			 = char_size / width;
-
+	// Classic Quake quad order: TL, TR, BR, BL — mapped into Texture EBO slots
+	// EBO: 0 TR, 1 BL, 2 BR, 3 TL
 	static Q2::PosAndUV pau;
-	pau.Data[0].U = fcol + size;
-	pau.Data[0].V = frow;
-	pau.Data[0].X = x1;
-	pau.Data[0].Y = y0;
-
-	pau.Data[1].U = fcol;
-	pau.Data[1].V = frow + size;
-	pau.Data[1].X = x0;
-	pau.Data[1].Y = y1;
-
-	pau.Data[2].U = fcol + size;
-	pau.Data[2].V = frow + size;
-	pau.Data[2].X = x1;
-	pau.Data[2].Y = y1;
-
-	pau.Data[3].U = fcol;
-	pau.Data[3].V = frow;
 	pau.Data[3].X = x0;
 	pau.Data[3].Y = y0;
+	pau.Data[3].U = fcol;
+	pau.Data[3].V = frow;			 // TL
+
+	pau.Data[0].X = x1;
+	pau.Data[0].Y = y0;
+	pau.Data[0].U = fcol + size;
+	pau.Data[0].V = frow;			 // TR
+
+	pau.Data[2].X = x1;
+	pau.Data[2].Y = y1;
+	pau.Data[2].U = fcol + size;
+	pau.Data[2].V = frow + size;	 // BR
+
+	pau.Data[1].X = x0;
+	pau.Data[1].Y = y1;
+	pau.Data[1].U = fcol;
+	pau.Data[1].V = frow + size;	 // BL
 
 	font_atlas_tex.draw (pau);
 }
@@ -275,20 +274,24 @@ Draw_FadeScreen
 */
 void Draw_FadeScreen (void)
 {
-	qglEnable (GL_BLEND);
-	qglDisable (GL_TEXTURE_2D);
-	qglColor4f (0, 0, 0, 0.8);
-	qglBegin (GL_QUADS);
+	static Q2::Quad fade ("fade_screen");
+	Q2::DrawData	dd;
 
-	qglVertex2f (0, 0);
-	qglVertex2f (vid.width, 0);
-	qglVertex2f (vid.width, vid.height);
-	qglVertex2f (0, vid.height);
+	dd.color.r = 0.f;
+	dd.color.g = 0.f;
+	dd.color.b = 0.f;
+	dd.color.a = 0.8f;
+	dd.pos.x   = -1.f;
+	dd.pos.y   = -1.f;
+	dd.size.w  = 2.f;
+	dd.size.h  = 2.f;
 
-	qglEnd ();
-	qglColor4f (1, 1, 1, 1);
-	qglEnable (GL_TEXTURE_2D);
-	qglDisable (GL_BLEND);
+	glDisable (GL_DEPTH_TEST);
+	glDisable (GL_CULL_FACE);
+	glEnable (GL_BLEND);
+	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	fade.draw (dd);
+	glDisable (GL_BLEND);
 }
 
 //====================================================================

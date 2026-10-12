@@ -40,8 +40,8 @@ void Quad::init ()
 	glBufferData (GL_ELEMENT_ARRAY_BUFFER, sizeof (indices), indices, GL_STATIC_DRAW);
 
 	std::vector<AttributeMeta> attributeInfo;
-	attributeInfo.push_back (AttributeMeta ("pos", 0, 3, (int) GL_FLOAT, false, 8 * sizeof (float), nullptr));
-	attributeInfo.push_back (AttributeMeta ("col", 1, 3, (int) GL_FLOAT, false, 8 * sizeof (float), (void *) (3 * sizeof (float))));
+	attributeInfo.push_back (AttributeMeta ("pos", 0, 3, (int) GL_FLOAT, false, 7 * sizeof (float), nullptr));
+	attributeInfo.push_back (AttributeMeta ("col", 1, 4, (int) GL_FLOAT, false, 7 * sizeof (float), (void *) (3 * sizeof (float))));
 
 	for (const auto &att : attributeInfo)
 	{
@@ -96,7 +96,7 @@ std::array<float, 28> Quad::createBufferData (const std::array<QuadVertex, 4> &i
 		in_arg[2].pos.x,   in_arg[2].pos.y,	  in_arg[2].pos.z,	 in_arg[2].color.r,
 		in_arg[2].color.g, in_arg[2].color.b, in_arg[2].color.a,  // bottom left
 		in_arg[3].pos.x,   in_arg[3].pos.y,	  in_arg[3].pos.z,	 in_arg[3].color.r,
-		in_arg[2].color.g, in_arg[3].color.b, in_arg[3].color.a	 // top let
+		in_arg[3].color.g, in_arg[3].color.b, in_arg[3].color.a	 // top left
 	};
 	return result;
 }

@@ -21,6 +21,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "gl_modern/gl_warp.h"
 #include "gl_modern/gl_local.h"
+#include "gl_modern/gl_surf.h"
+#include "gl_modern/alias_draw.hpp"
 #include "math/constants.h"
 
 extern model_t *loadmodel;
@@ -205,49 +207,98 @@ EmitWaterPolys
 Does a water warp on the pre-fragmented glpoly_t chain
 =============
 */
+extern float GL_InverseIntensity (void);
+
 void EmitWaterPolys (msurface_t *fa)
 {
-	glpoly_t *p, *bp;
+	glpoly_t *bp;
 	float	 *v;
 	int		  i;
 	float	  s, t, os, ot;
 	float	  scroll;
 	float	  rdt = r_newrefdef.time;
+	float	  alpha;
+	float	  intens;
+	image_t	 *image;
+
+	enum
+	{
+		WATER_FLOATS	= 9,
+		MAX_WATER_VERTS = 16384
+	};
+	static float verts[MAX_WATER_VERTS * WATER_FLOATS];
+	int			 count = 0;
 
 	if (fa->texinfo->flags & SURF_FLOWING)
 		scroll = -64 * ((r_newrefdef.time * 0.5) - (int) (r_newrefdef.time * 0.5));
 	else
 		scroll = 0;
+
+	if (fa->texinfo->flags & SURF_TRANS33)
+		alpha = 0.33f;
+	else if (fa->texinfo->flags & SURF_TRANS66)
+		alpha = 0.66f;
+	else
+		alpha = 1.f;
+
+	intens = GL_InverseIntensity ();
+	image  = R_TextureAnimation (fa->texinfo);
+	if (!image)
+		return;
+
 	for (bp = fa->polys; bp; bp = bp->next)
 	{
-		p = bp;
+		float *base;
+		int	   nverts;
 
-		qglBegin (GL_TRIANGLE_FAN);
-		for (i = 0, v = p->verts[0]; i < p->numverts; i++, v += VERTEXSIZE)
+		if (bp->numverts < 3)
+			continue;
+
+		base   = bp->verts[0];
+		nverts = bp->numverts;
+
+		for (i = 1; i < nverts - 1; i++)
 		{
-			os = v[3];
-			ot = v[4];
+			int	   corner;
+			float *srcv[3];
 
-#if !id386
-			s = os + r_turbsin[(int) ((ot * 0.125 + r_newrefdef.time) * TURBSCALE) & 255];
-#else
-			s = os + r_turbsin[Q_ftol (((ot * 0.125 + rdt) * TURBSCALE)) & 255];
-#endif
-			s += scroll;
-			s *= (1.0 / 64);
+			if (count + 3 > MAX_WATER_VERTS)
+				break;
 
-#if !id386
-			t = ot + r_turbsin[(int) ((os * 0.125 + rdt) * TURBSCALE) & 255];
-#else
-			t = ot + r_turbsin[Q_ftol (((os * 0.125 + rdt) * TURBSCALE)) & 255];
-#endif
-			t *= (1.0 / 64);
+			srcv[0] = base;
+			srcv[1] = base + i * VERTEXSIZE;
+			srcv[2] = base + (i + 1) * VERTEXSIZE;
 
-			qglTexCoord2f (s, t);
-			qglVertex3fv (v);
+			for (corner = 0; corner < 3; corner++)
+			{
+				float *dst = verts + (count + corner) * WATER_FLOATS;
+				v		   = srcv[corner];
+				os		   = v[3];
+				ot		   = v[4];
+
+				s = os + r_turbsin[(int) ((ot * 0.125f + rdt) * TURBSCALE) & 255];
+				s += scroll;
+				s *= (1.0f / 64.0f);
+
+				t = ot + r_turbsin[(int) ((os * 0.125f + rdt) * TURBSCALE) & 255];
+				t *= (1.0f / 64.0f);
+
+				dst[0] = v[0];
+				dst[1] = v[1];
+				dst[2] = v[2];
+				dst[3] = s;
+				dst[4] = t;
+				dst[5] = intens;
+				dst[6] = intens;
+				dst[7] = intens;
+				dst[8] = alpha;
+			}
+			count += 3;
 		}
-		qglEnd ();
 	}
+
+	if (count > 0)
+		R_DrawCameraTriangles (verts, count, image->texnum, 1, 0);
 }
 
 //===================================================================
@@ -535,6 +586,45 @@ void MakeSkyVec (float s, float t, int axis)
 	qglVertex3fv (v);
 }
 
+static void SkyVec (float s, float t, int axis, float out[5])
+{
+	vec3_t v, b;
+	int	   j, k;
+
+	b[0] = s * 2300;
+	b[1] = t * 2300;
+	b[2] = 2300;
+
+	for (j = 0; j < 3; j++)
+	{
+		k = st_to_vec[axis][j];
+		if (k < 0)
+			v[j] = -b[-k - 1];
+		else
+			v[j] = b[k - 1];
+	}
+
+	s = (s + 1) * 0.5;
+	t = (t + 1) * 0.5;
+
+	if (s < sky_min)
+		s = sky_min;
+	else if (s > sky_max)
+		s = sky_max;
+	if (t < sky_min)
+		t = sky_min;
+	else if (t > sky_max)
+		t = sky_max;
+
+	t = 1.0 - t;
+
+	out[0] = v[0];
+	out[1] = v[1];
+	out[2] = v[2];
+	out[3] = s;
+	out[4] = t;
+}
+
 /*
 ==============
 R_DrawSkyBox
@@ -543,34 +633,22 @@ R_DrawSkyBox
 int	 skytexorder[6] = {0, 2, 1, 3, 4, 5};
 void R_DrawSkyBox (void)
 {
-	// TODO
-	return;
+	int	  i;
+	float verts[4][5];
 
-	int i;
-
-#if 0
-qglEnable (GL_BLEND);
-GL_TexEnv( GL_MODULATE );
-qglColor4f (1,1,1,0.5);
-qglDisable (GL_DEPTH_TEST);
-#endif
 	if (skyrotate)
-	{  // check for no sky at all
+	{
 		for (i = 0; i < 6; i++)
 			if (skymins[0][i] < skymaxs[0][i] && skymins[1][i] < skymaxs[1][i])
 				break;
 		if (i == 6)
-			return;	 // nothing visible
+			return;
 	}
-
-	qglPushMatrix ();
-	qglTranslatef (r_origin[0], r_origin[1], r_origin[2]);
-	qglRotatef (r_newrefdef.time * skyrotate, skyaxis[0], skyaxis[1], skyaxis[2]);
 
 	for (i = 0; i < 6; i++)
 	{
 		if (skyrotate)
-		{  // hack, forces full sky to draw when rotating
+		{
 			skymins[0][i] = -1;
 			skymins[1][i] = -1;
 			skymaxs[0][i] = 1;
@@ -580,22 +658,16 @@ qglDisable (GL_DEPTH_TEST);
 		if (skymins[0][i] >= skymaxs[0][i] || skymins[1][i] >= skymaxs[1][i])
 			continue;
 
-		GL_BindTexture (sky_images[skytexorder[i]]->texnum);
+		if (!sky_images[skytexorder[i]])
+			continue;
 
-		qglBegin (GL_QUADS);
-		MakeSkyVec (skymins[0][i], skymins[1][i], i);
-		MakeSkyVec (skymins[0][i], skymaxs[1][i], i);
-		MakeSkyVec (skymaxs[0][i], skymaxs[1][i], i);
-		MakeSkyVec (skymaxs[0][i], skymins[1][i], i);
-		qglEnd ();
+		SkyVec (skymins[0][i], skymins[1][i], i, verts[0]);
+		SkyVec (skymins[0][i], skymaxs[1][i], i, verts[1]);
+		SkyVec (skymaxs[0][i], skymaxs[1][i], i, verts[2]);
+		SkyVec (skymaxs[0][i], skymins[1][i], i, verts[3]);
+
+		R_DrawSkyQuad (sky_images[skytexorder[i]]->texnum, r_newrefdef.time * skyrotate, skyaxis, r_origin, verts);
 	}
-	qglPopMatrix ();
-#if 0
-glDisable (GL_BLEND);
-glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-glColor4f (1,1,1,0.5);
-glEnable (GL_DEPTH_TEST);
-#endif
 }
 
 /*
