@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "gl_modern/gl_state.hpp"
 #include <GL/glew.h>
 #include "gl_modern/gl_local.h"
-#include "gl_modern/gl_draw.h"
+#include "gl_modern/gl_draw.hpp"
 #include <cstdint>
 
 image_t gltextures[MAX_GLTEXTURES];

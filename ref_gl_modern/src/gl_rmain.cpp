@@ -28,7 +28,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "shared/assert.h"
 #include <GL/glew.h>
 #include "gl_modern/gl_local.h"
-#include "gl_modern/gl_draw.h"
+#include "gl_modern/gl_draw.hpp"
 #include "gl_modern/alias_draw.hpp"
 #include "math/constants.h"
 #include <cstdint>

@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "gl_modern/gl_local.h"
 #include "gl_modern/gl_image.h"
 #include "gl_modern/gl_main.h"
-#include "gl_modern/gl_draw.h"
+#include "gl_modern/gl_draw.hpp"
 #include "gl_modern/texture.hpp"
 #include "gl_modern/quad.hpp"
 #include "gl_modern/utils.hpp"

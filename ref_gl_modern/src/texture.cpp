@@ -2,7 +2,7 @@
 #include "gl_modern/texture.hpp"
 #include "gl_modern/shader.hpp"
 #include "gl_modern/gl_image.h"
-#include "gl_modern/gl_draw.h"
+#include "gl_modern/gl_draw.hpp"
 #include "gl_modern/gl_local.h"
 #include "gl_modern/attribute_meta.hpp"
 #include "gl_modern/utils.hpp"
