@@ -235,36 +235,6 @@ qboolean GLimp_Init (void)
 
 qboolean GLimp_InitGL (void)
 {
-	PIXELFORMATDESCRIPTOR pfd = {
-		sizeof (PIXELFORMATDESCRIPTOR),	 // size of this pfd
-		1,								 // version number
-		PFD_DRAW_TO_WINDOW |			 // support window
-			PFD_SUPPORT_OPENGL |		 // support OpenGL
-			PFD_DOUBLEBUFFER,			 // double buffered
-		PFD_TYPE_RGBA,					 // RGBA type
-		24,								 // 24-bit color depth
-		0,
-		0,
-		0,
-		0,
-		0,
-		0,	// color bits ignored
-		0,	// no alpha buffer
-		0,	// shift bit ignored
-		0,	// no accumulation buffer
-		0,
-		0,
-		0,
-		0,				 // accum bits ignored
-		32,				 // 32-bit z-buffer
-		0,				 // no stencil buffer
-		0,				 // no auxiliary buffer
-		PFD_MAIN_PLANE,	 // main layer
-		0,				 // reserved
-		0,
-		0,
-		0  // layer masks ignored
-	};
 	int		pixelformat;
 	cvar_t *stereo;
 
@@ -273,11 +243,12 @@ qboolean GLimp_InitGL (void)
 	/*
 	** set PFD_STEREO if necessary
 	*/
+	bool isStereo = false;
 	if (stereo->value != 0)
 	{
 		ri.Con_Printf (PRINT_ALL, "...attempting to use stereo\n");
-		pfd.dwFlags |= PFD_STEREO;
 		Q2::glstate_t::get_instance ().stereo_enabled = e_true;
+		isStereo = true;
 	}
 	else
 	{
@@ -287,7 +258,7 @@ qboolean GLimp_InitGL (void)
 	/*
 	** report if stereo is desired but unavailable
 	*/
-	if (!(pfd.dwFlags & PFD_STEREO) && (stereo->value != 0))
+	if (!isStereo && (stereo->value != 0))
 	{
 		ri.Con_Printf (PRINT_ALL, "...failed to select stereo pixel format\n");
 		ri.Cvar_SetValue ("cl_stereo", 0);
@@ -298,28 +269,14 @@ qboolean GLimp_InitGL (void)
 	** startup the OpenGL subsystem by creating a context and making
 	** it current
 	*/
-	// if (!qwglMakeCurrent (glw_state.hDC, glw_state.hGLRC))
-	//{
-	//	ri.Con_Printf (PRINT_ALL, "GLimp_Init() - qwglMakeCurrent failed\n");
-
-	//	goto fail;
-	//}
 
 	if (!VerifyDriver ())
 	{
 		ri.Con_Printf (PRINT_ALL, "GLimp_Init() - no hardware acceleration detected\n");
-		goto fail;
+		return e_false;
 	}
 
-	/*
-	** print out PFD specifics
-	*/
-	ri.Con_Printf (PRINT_ALL, "GL PFD: color(%d-bits) Z(%d-bit)\n", (int) pfd.cColorBits, (int) pfd.cDepthBits);
-
 	return e_true;
-
-fail:
-	return e_false;
 }
 
 /*
