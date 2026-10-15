@@ -24,7 +24,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "gl_modern/gl_rmisc.h"
 #include "gl_modern/gl_state.hpp"
 #include "gl_modern/gl_warp.h"
-#include "gl_modern/gl_state.hpp"
 #include "shared/assert.h"
 #include <GL/glew.h>
 #include "gl_modern/gl_local.h"

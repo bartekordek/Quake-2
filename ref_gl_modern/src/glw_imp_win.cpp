@@ -40,7 +40,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <windows.h>
 
 #include "gl_modern/glw_win.h"
-#include "gl_modern/glw.h"
 #include <string>
 // ToDo: do we really need to have this here?
 #include "../../quake2/inc/quake2/windows/winquake.h"
@@ -51,6 +50,8 @@ glwstate_t glw_state;
 extern cvar_t  *vid_fullscreen;
 extern cvar_t  *vid_ref;
 EXTERNC cvar_t *gl_allow_software;
+
+qboolean GLimp_InitGL (void);
 
 static qboolean VerifyDriver (void)
 {
