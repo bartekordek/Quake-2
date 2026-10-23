@@ -88,7 +88,7 @@ Polygon::Polygon (msurface_s *in_surface) : m_surface_info (in_surface)
 	}
 
 	m_shader = std::make_unique<Shader> ();
-	m_shader->init ("../shaders/lightmap.vert", "../shaders/lightmap.frag");
+	m_shader->init ("../shaders/lightmap.vert", "../shaders/lightmap.frag", "Polygon/Lightmap");
 }
 
 void Polygon::set_name (const char *in_name)

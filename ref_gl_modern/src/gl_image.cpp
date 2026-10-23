@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "gl_modern/gl_image.h"
 #include "gl_modern/gl_state.hpp"
+#include "gl_modern/texture.hpp"
 #include <GL/glew.h>
 #include "gl_modern/gl_local.h"
 #include "gl_modern/gl_draw.hpp"
@@ -35,9 +36,6 @@ static unsigned char gammatable[256];
 cvar_t *intensity;
 
 unsigned d_8to24table[256];
-
-qboolean GL_Upload8 (byte *data, int width, int height, qboolean mipmap, qboolean is_sky);
-qboolean GL_Upload32 (unsigned *data, int width, int height, qboolean mipmap);
 
 int gl_solid_format		= 3;
 int gl_alpha_format		= 4;
@@ -1228,59 +1226,28 @@ image_t *GL_LoadPic (const char *name, byte *pic, int width, int height, imagety
 
 	// load little pics into the scrap
 	// if (image->type == it_pic && bits == 8 && image->width < 64 && image->height < 64)
-	if (0)
-	{
-		int x, y;
-		int i, j, k;
-		int texnum;
 
-		texnum = Scrap_AllocBlock (image->width, image->height, &x, &y);
-		if (texnum == -1)
-			goto nonscrap;
-		scrap_dirty = e_true;
+	Q2::TextureUploadMeta meta;
+	meta.pic			 = reinterpret_cast<std::byte *> (pic);
+	meta.width			 = width;
+	meta.height			 = height;
+	meta.bits			 = bits;
+	meta.mipmap			 = (image->type != it_pic && image->type != it_sky) ? e_true : e_false;
+	meta.is_sky			 = (image->type == it_sky) ? e_true : e_false;
+	meta.format			 = (bits == 8) ? GL_COLOR_INDEX : GL_RGBA;
+	meta.internal_format = (bits == 8) ? GL_COLOR_INDEX8_EXT : GL_RGBA;
 
-		// copy the texels into the scrap block
-		k			= 0;
-		for (i = 0; i < image->height; i++)
-			for (j = 0; j < image->width; j++, k++) scrap_texels[texnum][(y + i) * BLOCK_WIDTH + x + j] = pic[k];
+	Q2::Texture *texture = Q2::TextureStore::get_instance ().get_or_create (image, name);
 
-		std::uint32_t tex{0u};
-		glGenTextures (1, &tex);
-		image->texnum	 = tex;
-		image->scrap	 = e_true;
-		image->has_alpha = e_true;
-		image->sl		 = (x + 0.01) / (float) BLOCK_WIDTH;
-		image->sh		 = (x + image->width - 0.01) / (float) BLOCK_WIDTH;
-		image->tl		 = (y + 0.01) / (float) BLOCK_WIDTH;
-		image->th		 = (y + image->height - 0.01) / (float) BLOCK_WIDTH;
-	}
-	else
-	{
-	nonscrap:
-		image->scrap = e_false;
-		std::uint32_t tex{0u};
-		glGenTextures (1, &tex);
-		image->texnum = tex;
-		GL_BindTexture (image->texnum);
-		if (bits == 8)
-		{
-			const qboolean mipmap = (image->type != it_pic && image->type != it_sky) ? e_true : e_false;
-			const qboolean is_sky = (image->type == it_sky) ? e_true : e_false;
-			image->has_alpha	  = GL_Upload8 (pic, width, height, mipmap, is_sky);
-		}
-		else
-		{
-			const qboolean mipmap = (image->type != it_pic && image->type != it_sky) ? e_true : e_false;
-			image->has_alpha	  = GL_Upload32 ((unsigned *) pic, width, height, mipmap);
-		}
-		image->upload_width	 = upload_width;  // after power of 2 and scales
-		image->upload_height = upload_height;
-		image->paletted		 = uploaded_paletted;
-		image->sl			 = 0;
-		image->sh			 = 1;
-		image->tl			 = 0;
-		image->th			 = 1;
-	}
+	image->scrap		 = e_false;
+	image->has_alpha	 = texture->upload (meta);
+	image->upload_width	 = upload_width;  // after power of 2 and scales
+	image->upload_height = upload_height;
+	image->paletted		 = uploaded_paletted;
+	image->sl			 = 0;
+	image->sh			 = 1;
+	image->tl			 = 0;
+	image->th			 = 1;
 
 	return image;
 }

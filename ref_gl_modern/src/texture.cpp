@@ -6,7 +6,9 @@
 #include "gl_modern/gl_local.h"
 #include "gl_modern/attribute_meta.hpp"
 #include "gl_modern/utils.hpp"
+#include "shared/assert.h"
 
+#include <cstring>
 #include <vector>
 
 EXTERNC viddef_t vid;
@@ -40,18 +42,37 @@ Texture *TextureStore::get (const std::string &inName) const
 	return nullptr;
 }
 
-Texture *TextureStore::get_or_create (const std::string &inName)
+Texture *TextureStore::get_or_create (const std::string &in_name)
 {
-	auto it = m_textureCache.find (inName);
+	auto it = m_textureCache.find (in_name);
 	if (it != m_textureCache.end ())
 	{
 		return it->second.get ();
 	}
 	std::unique_ptr<Texture> newTexture = std::make_unique<Texture> ();
 	Texture					*result		= newTexture.get ();
-	result->set_path (inName);
+	result->set_path (in_name);
 
-	m_textureCache[inName] = std::move (newTexture);
+	m_textureCache[in_name] = std::move (newTexture);
+	return result;
+}
+
+Texture *TextureStore::get_or_create (image_t *in_image, const char *in_name)
+{
+	Q2_Assert (in_image != nullptr, "NULL IMAGE");
+	Q2_Assert (in_name != nullptr && in_name[0] != '\0', "EMPTY NAME!");
+
+	auto it = m_textureCache.find (in_name);
+	if (it != m_textureCache.end ())
+	{
+		it->second->set_image (in_image);
+		it->second->set_name (in_name);
+		return it->second.get ();
+	}
+
+	std::unique_ptr<Texture> newTexture = std::make_unique<Texture> (in_image, in_name);
+	Texture					*result		= newTexture.get ();
+	m_textureCache[in_name]				= std::move (newTexture);
 	return result;
 }
 
@@ -61,25 +82,47 @@ TextureStore::~TextureStore ()
 
 Texture::Texture ()
 {
+	m_id = generate_texture ();
+	m_name = "Generic texture";
 	init ();
 }
 
 Texture::Texture (const char *in_name)
 {
+	m_id   = generate_texture ();
+	m_name = in_name;
 	init ();
-	glGenTextures (1, &m_id);
 	set_name (in_name);
+}
+
+std::uint32_t Texture::generate_texture () const
+{
+	std::uint32_t result{0u};
+	glGenTextures (1, &result);
+	return result;
+}
+
+void Texture::set_image (image_t *in_image)
+{
+	Q2_Assert (in_image != nullptr, "NULL IMAGE");
+	m_image	   = in_image;
+	m_hasAlpha = in_image->has_alpha == e_true;
+
+	if (in_image->texnum != 0)
+		m_id = static_cast<std::uint32_t> (in_image->texnum);
+	else
+		m_id = generate_texture ();
+
+	Q2_Assert (m_id != 0u, "Texture id is 0");
+	in_image->texnum = static_cast<int> (m_id);
 }
 
 Texture::Texture (image_t *in_image, const char *in_name)
 {
+	Q2_Assert (in_name != nullptr && in_name[0] != '\0', "EMPTY NAME!");
 	m_name		= in_name;
-	m_image		= in_image;
-	m_id		= m_image->texnum;
 	m_colorMode = ColorMode::RGBA;
-	m_hasAlpha	= in_image && in_image->has_alpha;
-	init ();
-
+	set_image (in_image);
 	set_name (in_name);
 }
 
@@ -116,7 +159,32 @@ void Texture::init ()
 	}
 
 	m_shader = std::make_unique<Shader> ();
-	m_shader->init ("../shaders/basic_texture.vert", "../shaders/basic_texture.frag");
+	m_shader->init ("../shaders/basic_texture.vert", "../shaders/basic_texture.frag", m_name.c_str ());
+	set_name (m_name.c_str ());
+}
+
+qboolean Texture::upload (const TextureUploadMeta &in_meta)
+{
+	Q2_Assert (m_id != 0u, "Texture id is 0");
+	Q2_Assert (in_meta.pic != nullptr, "EMPTY PIXELS");
+
+	GL_BindTexture (static_cast<int> (m_id));
+
+	qboolean has_alpha = e_false;
+	if (in_meta.bits == 8)
+	{
+		has_alpha = GL_Upload8 (reinterpret_cast<byte *> (in_meta.pic), in_meta.width, in_meta.height, in_meta.mipmap, in_meta.is_sky);
+	}
+	else
+	{
+		has_alpha = GL_Upload32 (reinterpret_cast<unsigned *> (in_meta.pic), in_meta.width, in_meta.height, in_meta.mipmap);
+	}
+
+	m_hasAlpha = has_alpha == e_true;
+	if (m_image)
+		m_image->has_alpha = has_alpha;
+
+	return has_alpha;
 }
 
 void Texture::changeScale (float in_scale)
@@ -183,24 +251,40 @@ void Texture::set_path (const std::string &inPath)
 
 void Texture::set_name (const char *in_name)
 {
+	Q2_Assert (in_name != nullptr && in_name[0] != '\0', "EMPTY NAME!");
+
 	char buffer[256u];
 
-	glBindTexture (GL_TEXTURE_2D, m_id);
+	if (m_id != 0u)
+	{
+		GL_BindTexture (static_cast<int> (m_id));
+		sprintf (buffer, "Texture: %s", in_name);
+		glObjectLabel (GL_TEXTURE, m_id, -1, buffer);
+	}
 
-	sprintf (buffer, "Texture: %s", in_name);
-	glObjectLabel (GL_TEXTURE, m_id, -1, buffer);
+	if (m_vao != 0u)
+	{
+		sprintf (buffer, "VAO: %s", in_name);
+		glObjectLabel (GL_VERTEX_ARRAY, m_vao, -1, buffer);
+	}
 
-	sprintf (buffer, "VAO: %s", in_name);
-	glObjectLabel (GL_VERTEX_ARRAY, m_vao, -1, buffer);
+	if (m_vbo != 0u)
+	{
+		sprintf (buffer, "VBO: %s", in_name);
+		glObjectLabel (GL_BUFFER, m_vbo, -1, buffer);
+	}
 
-	sprintf (buffer, "VBO: %s", in_name);
-	glObjectLabel (GL_BUFFER, m_vbo, -1, buffer);
+	if (m_ebo != 0u)
+	{
+		sprintf (buffer, "IBO: %s", in_name);
+		glObjectLabel (GL_BUFFER, m_ebo, -1, buffer);
+	}
 
-	sprintf (buffer, "IBO: %s", in_name);
-	glObjectLabel (GL_BUFFER, m_ebo, -1, buffer);
-
-	sprintf (buffer, "Shader: %s", in_name);
-	m_shader->set_name (buffer);
+	if (m_shader)
+	{
+		sprintf (buffer, "Shader: %s", in_name);
+		m_shader->set_name (buffer);
+	}
 }
 
 void Texture::set_pos_global (float in_x, float in_y)

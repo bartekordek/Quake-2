@@ -8,6 +8,8 @@
 
 EXTERNC void	 Scrap_Upload (void);
 EXTERNC qboolean scrap_dirty;
+EXTERNC qboolean GL_Upload8 (byte *data, int width, int height, qboolean mipmap, qboolean is_sky);
+EXTERNC qboolean GL_Upload32 (unsigned *data, int width, int height, qboolean mipmap);
 EXTERNC image_t *GL_LoadPic (const char *name, byte *pic, int width, int height, imagetype_t type, int bits);
 EXTERNC void	 GL_TextureMode (const char *string);
 EXTERNC void	 GL_TextureAlphaMode (const char *string);

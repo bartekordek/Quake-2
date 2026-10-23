@@ -1,8 +1,10 @@
 #pragma once
 
 #include "gl_modern/i_renderable.hpp"
+#include "shared/boolean.h"
 #include <string>
 #include <cstdint>
+#include <cstddef>
 #include <array>
 #include <memory>
 #include <unordered_map>
@@ -56,6 +58,18 @@ struct PosAndUV
 	std::array<TextureVertex, 4> Data;
 };
 
+struct TextureUploadMeta
+{
+	std::byte	*pic{nullptr};
+	std::int32_t width{0};
+	std::int32_t height{0};
+	qboolean	 mipmap{e_false};
+	qboolean	 is_sky{e_false};
+	std::int32_t bits{8};
+	std::int32_t format{0};
+	std::int32_t internal_format{0};
+};
+
 class Texture: public IRenderable
 {
 public:
@@ -77,6 +91,8 @@ public:
 	void			   fetch_uv_and_apply_them ();
 	float			   get_width () const;
 	float			   get_height () const;
+	void			   set_image (image_t *in_image);
+	qboolean		   upload (const TextureUploadMeta &in_meta);
 
 	void set_name (const char *in_name);
 
@@ -85,6 +101,7 @@ public:
 	Q2_NONCOPYABLE (Texture)
 protected:
 private:
+	std::uint32_t				 generate_texture () const;
 	std::array<float, 32>		 createBufferData (float in_scale) const;
 	std::array<float, 32>		 createBufferData (const std::array<TextureVertex, 4> &in_arg) const;
 	void						 update_buffer_data ();
@@ -117,6 +134,7 @@ public:
 	static TextureStore &get_instance ();
 	Texture				*get (const std::string &inName) const;
 	Texture				*get_or_create (const std::string &inName);
+	Texture				*get_or_create (image_t *in_image, const char *in_name);
 
 protected:
 private:

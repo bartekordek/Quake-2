@@ -31,6 +31,48 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "gl_modern/alias_draw.hpp"
 #include "math/constants.h"
 #include <cstdint>
+#include <cstring>
+
+static char g_gl_extensions_string[64 * 1024];
+
+/*
+===============
+R_BuildExtensionsString
+
+Portable replacement for glGetString(GL_EXTENSIONS): enumerate with
+GL_NUM_EXTENSIONS / glGetStringi into one space-separated string.
+===============
+*/
+static void R_BuildExtensionsString (void)
+{
+	GLint		num	 = 0;
+	std::size_t used = 0;
+
+	Q2_Assert (glGetStringi != nullptr, "glGetStringi was not loaded");
+
+	g_gl_extensions_string[0] = '\0';
+	glGetIntegerv (GL_NUM_EXTENSIONS, &num);
+
+	for (GLint i = 0; i < num; i++)
+	{
+		const char *ext = reinterpret_cast<const char *> (glGetStringi (GL_EXTENSIONS, static_cast<GLuint> (i)));
+		if (!ext || !ext[0])
+			continue;
+
+		const std::size_t len = std::strlen (ext);
+		if (used + len + 2 >= sizeof (g_gl_extensions_string))
+			break;
+
+		if (used > 0)
+			g_gl_extensions_string[used++] = ' ';
+
+		std::memcpy (g_gl_extensions_string + used, ext, len);
+		used += len;
+		g_gl_extensions_string[used] = '\0';
+	}
+
+	gl_config.extensions_string = g_gl_extensions_string;
+}
 
 void R_Clear (void);
 
@@ -1075,6 +1117,12 @@ qboolean R_Init ()
 		return e_false;
 	}
 
+	glewExperimental			= 1;
+	const auto glew_init_result = glewInit ();
+	Q2_Assert (glew_init_result == GLEW_OK, "Cannot initialize glew.");
+	Q2_Assert (glObjectLabel != nullptr, "glObjectLabel was not loaded");
+	(void) qglGetError ();
+
 	ri.Vid_MenuInit ();
 
 	/*
@@ -1086,7 +1134,7 @@ qboolean R_Init ()
 	ri.Con_Printf (PRINT_ALL, "GL_RENDERER: %s\n", gl_config.renderer_string);
 	gl_config.version_string = reinterpret_cast<const char *> (qglGetString (GL_VERSION));
 	ri.Con_Printf (PRINT_ALL, "GL_VERSION: %s\n", gl_config.version_string);
-	gl_config.extensions_string = reinterpret_cast<const char *> (qglGetString (GL_EXTENSIONS));
+	R_BuildExtensionsString ();
 	ri.Con_Printf (PRINT_ALL, "GL_EXTENSIONS: %s\n", gl_config.extensions_string);
 
 	strcpy (renderer_buffer, gl_config.renderer_string);
@@ -1173,18 +1221,16 @@ qboolean R_Init ()
 	/*
 	** grab extensions
 	*/
-#ifdef WIN32
 	if (gl_config.extensions_string)
 	{
-		if (strstr (gl_config.extensions_string, "WGL_EXT_swap_control"))
-		{
-			qwglSwapIntervalEXT = (BOOL (WINAPI *) (int)) qwglGetProcAddress ("wglSwapIntervalEXT");
+#ifdef WIN32
+		// Platform swap-control entry point; not listed in GL_EXTENSIONS.
+		qwglSwapIntervalEXT = (BOOL (WINAPI *) (int)) qwglGetProcAddress ("wglSwapIntervalEXT");
+		if (qwglSwapIntervalEXT)
 			ri.Con_Printf (PRINT_ALL, "...enabling WGL_EXT_swap_control\n");
-		}
 		else
-		{
 			ri.Con_Printf (PRINT_ALL, "...WGL_EXT_swap_control not found\n");
-		}
+#endif
 
 		if (strstr (gl_config.extensions_string, "GL_EXT_point_parameters"))
 		{
@@ -1222,7 +1268,6 @@ qboolean R_Init ()
 			ri.Con_Printf (PRINT_ALL, "...GL_EXT_shared_texture_palette not found\n");
 		}
 	}
-#endif
 
 	GL_SetDefaultState ();
 
@@ -1242,25 +1287,11 @@ qboolean R_Init ()
 	if (err != GL_NO_ERROR)
 		ri.Con_Printf (PRINT_ALL, "glGetError() = 0x%x\n", err);
 
-	glewExperimental			= 1;
-	const auto glew_init_result = glewInit ();
-	Q2_Assert (glew_init_result == GLEW_OK, "Cannot initialize glew.");
-	// GLEW_OK
-
 	if (glDebugMessageCallback)
 	{
 		glDebugMessageCallback (glDebugOutput, 0);
 		glEnable (GL_DEBUG_OUTPUT);
 		glEnable (GL_DEBUG_OUTPUT_SYNCHRONOUS);
-		// checkLastCommandForErrors ();
-
-		// glEnable( GL_DEBUG_OUTPUT );
-		// checkLastCommandForErrors();
-
-		// glDebugMessageCallback( glDebugOutput, 0 );
-		////checkLastCommandForErrors();
-
-		// glEnable( GL_DEBUG_OUTPUT_SYNCHRONOUS );
 	}
 
 	return e_true;

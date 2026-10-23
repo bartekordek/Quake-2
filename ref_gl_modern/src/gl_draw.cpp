@@ -72,6 +72,12 @@ void Draw_Char (int int_x, int int_y, int num)
 	const float col = num & 15;
 
 	static Q2::Texture font_atlas_tex (draw_chars, "pics/conchars.pcx");
+	static bool		   font_ready = false;
+	if (!font_ready)
+	{
+		font_atlas_tex.init ();
+		font_ready = true;
+	}
 	constexpr float	   char_size = 8.f;
 	constexpr float	   size		 = 0.0625f;	 // 16x16 cells in 128x128 atlas
 	const float		   frow		 = row * size;

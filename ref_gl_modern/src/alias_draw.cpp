@@ -20,7 +20,7 @@ void ensure_alias_resources ()
 		return;
 
 	g_alias_shader = std::make_unique<Q2::Shader> ();
-	g_alias_shader->init ("../shaders/alias.vert", "../shaders/alias.frag");
+	g_alias_shader->init ("../shaders/alias.vert", "../shaders/alias.frag", "Alias");
 
 	glGenVertexArrays (1, &g_alias_vao);
 	glGenBuffers (1, &g_alias_vbo);

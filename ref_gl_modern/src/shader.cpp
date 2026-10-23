@@ -2,6 +2,7 @@
 #include "shared/assert.h"
 #include <GL/glew.h>
 #include <glm/gtc/type_ptr.hpp>
+#include <cstring>
 #include <fstream>
 #include <sstream>
 
@@ -11,8 +12,9 @@ Shader::Shader ()
 {
 }
 
-void Shader::init (const char *vertex_shader, const char *fragment_shader)
+void Shader::init (const char *vertex_shader, const char *fragment_shader, const char *in_name)
 {
+	Q2_Assert (in_name != nullptr && strlen (in_name) > 0, "EMPTY NAME!");
 	m_fragment_shader_path = fragment_shader;
 	m_vertex_shader_path   = vertex_shader;
 
@@ -66,10 +68,13 @@ void Shader::init (const char *vertex_shader, const char *fragment_shader)
 	glAttachShader (m_program_id, m_vertex_id);
 	glAttachShader (m_program_id, m_fragment_id);
 	glLinkProgram (m_program_id);
+
+	set_name (in_name);
 }
 
 void Shader::set_name (const char *in_name)
 {
+	Q2_Assert (in_name != nullptr && in_name[0] != '\0', "EMPTY NAME!");
 	m_name = in_name;
 
 	char buffer[512u];

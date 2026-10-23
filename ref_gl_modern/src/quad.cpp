@@ -1,6 +1,7 @@
 #include "gl_modern/quad.hpp"
 #include "gl_modern/attribute_meta.hpp"
 #include "gl_modern/shader.hpp"
+#include "shared/assert.h"
 #include <GL/glew.h>
 #include <vector>
 
@@ -8,13 +9,14 @@ namespace Q2
 {
 Quad::Quad ()
 {
+	m_name = "quad";
 	init ();
 }
 
 Quad::Quad (const char *in_name)
 {
-	init ();
 	m_name = in_name;
+	init ();
 	set_name (in_name);
 }
 
@@ -50,7 +52,7 @@ void Quad::init ()
 	}
 
 	m_shader = std::make_unique<Shader> ();
-	m_shader->init ("../shaders/quad.vert", "../shaders/quad.frag");
+	m_shader->init ("../shaders/quad.vert", "../shaders/quad.frag", m_name.c_str ());
 }
 
 void Quad::set_name (const char *in_name)
