@@ -388,6 +388,61 @@ void Cmd_Noclip_f (edict_t *ent)
 
 /*
 ==================
+Cmd_Setpos_f
+
+Teleport for tooling / automated repros.
+Usage: setpos <x> <y> <z> [pitch yaw]
+==================
+*/
+void Cmd_Setpos_f (edict_t *ent)
+{
+	vec3_t origin;
+	int	   i;
+
+	if (deathmatch->value && !sv_cheats->value)
+	{
+		gi.cprintf (ent, PRINT_HIGH, "You must run the server with '+set cheats 1' to enable this command.\n");
+		return;
+	}
+
+	if (gi.argc () < 4)
+	{
+		gi.cprintf (ent, PRINT_HIGH, "Usage: setpos <x> <y> <z> [pitch yaw]\n");
+		return;
+	}
+
+	origin[0] = atof (gi.argv (1));
+	origin[1] = atof (gi.argv (2));
+	origin[2] = atof (gi.argv (3));
+
+	VectorCopy (origin, ent->s.origin);
+	VectorCopy (origin, ent->s.old_origin);
+	ent->s.event = EV_OTHER_TELEPORT;
+	gi.linkentity (ent);
+
+	for (i = 0; i < 3; i++)
+		ent->client->ps.pmove.origin[i] = origin[i] * 8;
+
+	VectorClear (ent->velocity);
+	VectorClear (ent->client->oldvelocity);
+	VectorClear (ent->client->ps.pmove.velocity);
+
+	if (gi.argc () >= 6)
+	{
+		ent->client->ps.viewangles[0] = atof (gi.argv (4)); /* pitch */
+		ent->client->ps.viewangles[1] = atof (gi.argv (5)); /* yaw */
+		ent->client->ps.viewangles[2] = 0;
+		VectorCopy (ent->client->ps.viewangles, ent->client->v_angle);
+		for (i = 0; i < 3; i++)
+			ent->client->ps.pmove.delta_angles[i] =
+				ANGLE2SHORT (ent->client->v_angle[i]) - ent->client->resp.cmd_angles[i];
+	}
+
+	gi.cprintf (ent, PRINT_HIGH, "setpos %s\n", vtos (origin));
+}
+
+/*
+==================
 Cmd_Use_f
 
 Use an inventory item
@@ -955,6 +1010,8 @@ void ClientCommand (edict_t *ent)
 		Cmd_Notarget_f (ent);
 	else if (Q_stricmp (cmd, "noclip") == 0)
 		Cmd_Noclip_f (ent);
+	else if (Q_stricmp (cmd, "setpos") == 0)
+		Cmd_Setpos_f (ent);
 	else if (Q_stricmp (cmd, "inven") == 0)
 		Cmd_Inven_f (ent);
 	else if (Q_stricmp (cmd, "invnext") == 0)
