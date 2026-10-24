@@ -4,10 +4,65 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <cstring>
 #include <fstream>
+#include <functional>
 #include <sstream>
 
 namespace Q2
 {
+
+ShaderStore::ShaderStore ()
+{
+}
+
+ShaderStore &ShaderStore::get_instance ()
+{
+	static ShaderStore s_instance;
+	return s_instance;
+}
+
+Shader *ShaderStore::get_or_create_shader (const ShaderKey &key)
+{
+	Shader *result = nullptr;
+
+	const auto it  = m_shaders.find (key);
+	if (it != m_shaders.end ())
+	{
+		result = it->second.get ();
+	}
+	else
+	{
+		auto shader = std::make_unique<Shader> ();
+		result		= shader.get ();
+		shader->init (key.vertex.c_str (), key.fragment.c_str (), (key.vertex + "+" + key.fragment).c_str ());
+		m_shaders.emplace (key, std::move (shader));
+	}
+
+	return result;
+}
+
+bool ShaderKey::operator== (const ShaderKey &other) const
+{
+	return vertex == other.vertex && fragment == other.fragment;
+}
+
+bool ShaderKey::operator< (const ShaderKey &other) const
+{
+	if (vertex != other.vertex)
+		return vertex < other.vertex;
+	return fragment < other.fragment;
+}
+
+std::size_t ShaderKeyHash::operator() (const ShaderKey &key) const noexcept
+{
+	const std::size_t h1 = std::hash<std::string>{}(key.vertex);
+	const std::size_t h2 = std::hash<std::string>{}(key.fragment);
+	return h1 ^ (h2 + 0x9e3779b97f4a7c15ULL + (h1 << 6) + (h1 >> 2));
+}
+
+ShaderStore::~ShaderStore ()
+{
+}
+
 Shader::Shader ()
 {
 }

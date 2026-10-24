@@ -123,7 +123,7 @@ private:
 	std::uint32_t				 m_vao{0u};
 	std::uint32_t				 m_vbo{0u};
 	std::uint32_t				 m_ebo{0u};
-	std::unique_ptr<Shader>		 m_shader;
+	Shader*						 m_shader{nullptr};
 };
 
 class TextureStore

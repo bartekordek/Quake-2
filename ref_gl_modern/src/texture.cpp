@@ -158,8 +158,11 @@ void Texture::init ()
 		glEnableVertexAttribArray (att.index);
 	}
 
-	m_shader = std::make_unique<Shader> ();
-	m_shader->init ("../shaders/basic_texture.vert", "../shaders/basic_texture.frag", m_name.c_str ());
+	ShaderKey shaderKey;
+	shaderKey.fragment = "../shaders/basic_texture.frag";
+	shaderKey.vertex   = "../shaders/basic_texture.vert";
+	m_shader		   = ShaderStore::get_instance ().get_or_create_shader (shaderKey);
+	m_shader->set_name (m_name.c_str ());
 	set_name (m_name.c_str ());
 }
 
