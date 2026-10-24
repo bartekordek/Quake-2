@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "gl_modern/gl_rmisc.h"
 #include "gl_modern/gl_state.hpp"
 #include "gl_modern/gl_warp.h"
+#include "gl_modern/gpu_memory.hpp"
 #include "shared/assert.h"
 #include <GL/glew.h>
 #include "gl_modern/gl_local.h"
@@ -998,6 +999,7 @@ void R_Register (void)
 	ri.Cmd_AddCommand ("screenshot", GL_ScreenShot_f);
 	ri.Cmd_AddCommand ("modellist", Mod_Modellist_f);
 	ri.Cmd_AddCommand ("gl_strings", GL_Strings_f);
+	ri.Cmd_AddCommand ("gpu_mem", GL_GpuMemory_f);
 }
 
 /*
@@ -1308,6 +1310,7 @@ void R_Shutdown (void)
 	ri.Cmd_RemoveCommand ("screenshot");
 	ri.Cmd_RemoveCommand ("imagelist");
 	ri.Cmd_RemoveCommand ("gl_strings");
+	ri.Cmd_RemoveCommand ("gpu_mem");
 
 	Mod_FreeAll ();
 
