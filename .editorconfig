@@ -1,0 +1,10 @@
+# https://editorconfig.org
+root = true
+
+# LF when saving C and C++ sources. Applies on save in Cursor, VS Code, and Visual Studio.
+[*.{c,h,cc,cpp,cxx,hh,hpp,hxx,inl,ipp}]
+end_of_line = lf
+
+# Vendored trees keep their own line endings (SDL also ships its own root .editorconfig).
+[deps/**]
+end_of_line = unset
