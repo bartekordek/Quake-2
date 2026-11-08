@@ -55,14 +55,8 @@ qboolean create_window (int x, int y, int w, int h, qboolean fullscreen)
 	SDL_GL_SetAttribute (SDL_GL_CONTEXT_MINOR_VERSION, 3);
 	SDL_GL_SetAttribute (SDL_GL_ACCELERATED_VISUAL, 1);
 
-	if (re.renderer_type == RendererTypes::OpenGL_Modern)
-	{
-		SDL_GL_SetAttribute (SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-	}
-	else
-	{
-		SDL_GL_SetAttribute (SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
-	}
+	// Compatibility profile: RenderDoc does not capture it. Core would.
+	SDL_GL_SetAttribute (SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
 	
 	SDL_GL_SetAttribute (SDL_GL_DOUBLEBUFFER, 1);
 	SDL_GL_SetAttribute (SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
