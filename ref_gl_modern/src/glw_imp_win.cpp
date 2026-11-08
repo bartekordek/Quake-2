@@ -32,6 +32,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "gl_modern/gl_local.h"
 #include "gl_modern/gl_state.hpp"
+#include "gl_modern/frame_buffer.hpp"
+#include "gl_modern/gl_rmain.h"
 
 #include "shared/assert.h"
 
@@ -50,6 +52,7 @@ glwstate_t glw_state;
 extern cvar_t  *vid_fullscreen;
 extern cvar_t  *vid_ref;
 EXTERNC cvar_t *gl_allow_software;
+extern Q2::Framebuffer g_framebuffer;
 
 qboolean GLimp_InitGL (void);
 
@@ -189,6 +192,7 @@ rserr_t GLimp_SetMode (int *pwidth, int *pheight, int mode, qboolean fullscreen)
 			{
 				return rserr_invalid_mode;
 			}
+			InitGlew ();
 			ri.Vid_NewWindow (width, height);
 		}
 		else
@@ -308,16 +312,17 @@ EXTERNC void GLimp_BeginFrame (float camera_separation)
 */
 void GLimp_EndFrame (void)
 {
-	int err;
+	// Drain any pending GL errors so they cannot block the resolve/swap.
+	while (glGetError () != GL_NO_ERROR)
+	{
+	}
 
-	err = glGetError ();
-	assert (err == GL_NO_ERROR);
+	g_framebuffer.render ();
 
 	if (stricmp (gl_drawbuffer->string, "GL_BACK") == 0)
 	{
 		ri.Swap_buffers ();
 	}
-	// ri.Swap_buffers ();
 }
 
 /*

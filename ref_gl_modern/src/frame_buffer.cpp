@@ -31,6 +31,7 @@ void Framebuffer::create (std::int32_t width, std::int32_t height)
 	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glFramebufferTexture2D (GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_color, 0);
+	glBindTexture (GL_TEXTURE_2D, 0);
 
 	// Depth as renderbuffer (we don't sample it yet)
 	glGenRenderbuffers (1, &m_depth);
@@ -43,7 +44,7 @@ void Framebuffer::create (std::int32_t width, std::int32_t height)
 
 	glBindFramebuffer (GL_FRAMEBUFFER, 0);
 
-	m_shader = ShaderStore::get_instance ().get_or_create_shader ({"shaders/fbo.vert", "shaders/fbo.frag"});
+	m_shader = ShaderStore::get_instance ().get_or_create_shader ({"../shaders/fbo.vert", "../shaders/fbo.frag"});
 
 	const glm::vec2	   tr{1.f, 1.f};
 	std::vector<float> quadVertices = {-tr.x, tr.y, 0.0f, 1.0f, -tr.x, -tr.y, 0.0f, 0.0f, tr.x, -tr.y, 1.0f, 0.0f,
@@ -71,24 +72,30 @@ void Framebuffer::create (std::int32_t width, std::int32_t height)
 
 void Framebuffer::render ()
 {
-	if (!m_shader || m_vao == 0u || m_color == 0u)
-	{
-		return;
-	}
+	Q2_Assert (m_shader != nullptr, "Shader is null");
+	Q2_Assert (m_vao != 0u, "VAO is 0");
+	Q2_Assert (m_vbo != 0u, "VBO is 0");
+	Q2_Assert (m_color != 0u, "Color texture is 0");
+	Q2_Assert (m_width > 0 && m_height > 0, "Framebuffer dimensions are invalid");
 
-	// Caller should already have unbound the FBO (see GLimp_EndFrame).
-	glViewport (0, 0, m_width, m_height);
+	glBindFramebuffer (GL_FRAMEBUFFER, 0);
+	glClearColor (0.1f, 0.1f, 0.1f, 1.0f);
+	glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 	glDisable (GL_DEPTH_TEST);
 
 	m_shader->use ();
+	glBindVertexArray (m_vao);
 
-	glActiveTexture (GL_TEXTURE0);
 	glBindTexture (GL_TEXTURE_2D, m_color);
+	
 	m_shader->set_uniform_1i ("screenTexture", 0);
 
-	glBindVertexArray (m_vao);
+	
 	glDrawArrays (GL_TRIANGLES, 0, 6);
 	glBindVertexArray (0);
+
+	glBindTexture (GL_TEXTURE_2D, 0);
 }
 
 void Framebuffer::bind () const

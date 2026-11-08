@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // r_main.c
 #include "gl_modern/gl_rmain.h"
 #include "gl_modern/camera.hpp"
+#include "gl_modern/frame_buffer.hpp"
 #include "gl_modern/gl_main.h"
 #include "gl_modern/gl_rmisc.h"
 #include "gl_modern/gl_state.hpp"
@@ -35,6 +36,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <cstring>
 
 static char g_gl_extensions_string[64 * 1024];
+Q2::Framebuffer g_framebuffer;
 
 /*
 ===============
@@ -1028,6 +1030,8 @@ qboolean R_SetMode (void)
 	rserr_t		 err = GLimp_SetMode (&width, &height, gl_mode->value, fullscreen);
 	vid.width		 = width;
 	vid.height		 = height;
+	g_framebuffer.create (width, height);
+
 	if (err == rserr_ok)
 	{
 		Q2::glstate_t::get_instance ().prev_mode = gl_mode->value;
@@ -1111,6 +1115,8 @@ qboolean R_Init ()
 	// set our "safe" modes
 	Q2::glstate_t::get_instance ().prev_mode = 3;
 
+	
+
 	// create the window and set up the context
 	if (!R_SetMode ())
 	{
@@ -1119,11 +1125,7 @@ qboolean R_Init ()
 		return e_false;
 	}
 
-	glewExperimental			= 1;
-	const auto glew_init_result = glewInit ();
-	Q2_Assert (glew_init_result == GLEW_OK, "Cannot initialize glew.");
-	Q2_Assert (glObjectLabel != nullptr, "glObjectLabel was not loaded");
-	(void) qglGetError ();
+	//InitGlew ();
 
 	ri.Vid_MenuInit ();
 
@@ -1299,6 +1301,15 @@ qboolean R_Init ()
 	return e_true;
 }
 
+void InitGlew()
+{
+	glewExperimental			= 1;
+	const auto glew_init_result = glewInit ();
+	Q2_Assert (glew_init_result == GLEW_OK, "Cannot initialize glew.");
+	Q2_Assert (glObjectLabel != nullptr, "glObjectLabel was not loaded");
+	(void) qglGetError ();
+}
+
 /*
 ===============
 R_Shutdown
@@ -1379,15 +1390,11 @@ void R_BeginFrame (float camera_separation)
 		}
 	}
 
-	glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glClearColor (0.f, 0.f, 0.f, 0.f);
-
-	GLimp_BeginFrame (camera_separation);
-
 	/*
-	** go into 2D mode
+	** Default framebuffer draw-buffer setup must happen before binding the FBO.
+	** glDrawBuffer(GL_BACK/GL_FRONT) is GL_INVALID_OPERATION while an FBO is bound.
 	*/
-	R_SetGL2D ();
+	GLimp_BeginFrame (camera_separation);
 
 	/*
 	** draw buffer stuff
@@ -1406,6 +1413,17 @@ void R_BeginFrame (float camera_separation)
 			}
 		}
 	}
+
+	g_framebuffer.bind ();
+	glDrawBuffer (GL_COLOR_ATTACHMENT0);
+
+	glClearColor (0.f, 0.f, 0.f, 1.f);
+	glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	/*
+	** go into 2D mode
+	*/
+	R_SetGL2D ();
 
 	/*
 	** texturemode stuff
