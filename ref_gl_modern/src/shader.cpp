@@ -124,6 +124,15 @@ void Shader::init (const char *vertex_shader, const char *fragment_shader, const
 	glAttachShader (m_program_id, m_fragment_id);
 	glLinkProgram (m_program_id);
 
+	GLint result{0};
+	glGetProgramiv (m_program_id, GL_LINK_STATUS, &result);
+	if (GL_FALSE == result)
+	{
+		GLchar eLog[1024] = {0};
+		glGetProgramInfoLog (m_program_id, sizeof (eLog), nullptr, eLog);
+		Q2_Assert (false, "Link error: %s", eLog);
+	}
+
 	set_name (in_name);
 }
 
