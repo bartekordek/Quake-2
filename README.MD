@@ -26,3 +26,12 @@ Thanks to Robert Duffy for doing the grunt work of building this release.
 
 John Carmack
 Id Software
+
+## Known issues (modern port)
+
+### Mouse look jitter
+- Symptom: view jitters when moving the mouse.
+- Workaround: enabling Windows **High performance** power plan made it disappear.
+- Likely related to frame pacing / CPU power management / uncapped FPS vs vsync, not the window-rect typo fix.
+- Status: deferred — fix later.
+- Also check later: `gl_swapinterval`, relative mouse (SDL), high-DPI mouse path.
