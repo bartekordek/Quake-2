@@ -265,6 +265,7 @@ void SWimp_EndFrame (void)
 */
 rserr_t SWimp_SetMode( int *pwidth, int *pheight, int mode, qboolean fullscreen )
 {
+	// TODO: no need to have such a measure, SDL should do it itself.
 	const char *win_fs[] = { "W", "FS" };
 	rserr_t retval = rserr_ok;
 
