@@ -202,7 +202,7 @@ EXTERNC cvar_t *gl_texturesolidmode;
 EXTERNC cvar_t *gl_saturatelighting;
 EXTERNC cvar_t *gl_lockpvs;
 
-EXTERNC cvar_t *vid_fullscreen;
+extern cvar_t *vid_fullscreen;
 EXTERNC cvar_t *vid_gamma;
 
 EXTERNC cvar_t *intensity;

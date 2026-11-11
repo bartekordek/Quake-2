@@ -2,7 +2,7 @@
 #include "shared/image.h"
 #include "shared/assert.h"
 #include "shared/cvar.h"
-#include "quake2/windows/window_util.h"
+#include "quake2/windows/window_util.hpp"
 
 void	 R_BeginRegistration (const char *model);
 image_s *R_RegisterSkin (const char *name);
@@ -25,20 +25,8 @@ void	 SWimp_AppActivate (qboolean active);
 
 refimport_t ri;
 
-typedef struct vidmode_s
-{
-	const char *description;
-	int			width, height;
-	int			mode;
-} vidmode_t;
-
-vidmode_t vid_modes[] = {{"Mode 0: 320x240", 320, 240, 0},	  {"Mode 1: 400x300", 400, 300, 1},	  {"Mode 2: 512x384", 512, 384, 2},
-						 {"Mode 3: 640x480", 640, 480, 3},	  {"Mode 4: 800x600", 800, 600, 4},	  {"Mode 5: 960x720", 960, 720, 5},
-						 {"Mode 6: 1024x768", 1024, 768, 6},  {"Mode 7: 1152x864", 1152, 864, 7}, {"Mode 8: 1280x960", 1280, 960, 8},
-						 {"Mode 9: 1600x1200", 1600, 1200, 9}};
-
-cvar_t *opengl_mode;
-cvar_t *vid_fullscreen;
+cvar_t		   *opengl_mode;
+EXTERNC cvar_t *vid_fullscreen = nullptr;
 
 refexport_t ImportModernOpenglApi (refimport_t inImport)
 {

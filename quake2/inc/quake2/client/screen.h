@@ -1,3 +1,5 @@
+#pragma once
+
 /*
 Copyright (C) 1997-2001 Id Software, Inc.
 
@@ -18,6 +20,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 // screen.h
+
+#include "shared/config.h"
 
 void	SCR_Init (void);
 
@@ -49,7 +53,7 @@ extern	char		crosshair_pic[MAX_QPATH];
 extern	int			crosshair_width, crosshair_height;
 
 void SCR_AddDirtyPoint (int x, int y);
-void SCR_DirtyScreen (void);
+EXTERNC void SCR_DirtyScreen (void);
 
 //
 // scr_cin.c

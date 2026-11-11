@@ -1,3 +1,5 @@
+#pragma once
+
 /*
 Copyright (C) 1997-2001 Id Software, Inc.
 
@@ -19,6 +21,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 // vid.h -- video driver defs
 
+#include "shared/config.h"
+
 typedef struct vrect_s
 {
 	int				x,y,width,height;
@@ -30,13 +34,13 @@ typedef struct
 	int		height;
 } viddef_t;
 
-extern	viddef_t	viddef;				// global video state
+EXTERNC	viddef_t	viddef;				// global video state
 
 // Video module initialisation etc
-void	VID_Init (void);
-void	VID_Shutdown (void);
-void	VID_CheckChanges (void);
+EXTERNC void VID_Init (void);
+EXTERNC void VID_Shutdown (void);
+EXTERNC void VID_CheckChanges (void);
 
-void	VID_MenuInit( void );
-void	VID_MenuDraw( void );
+EXTERNC void	VID_MenuInit( void );
+EXTERNC void	VID_MenuDraw( void );
 const char *VID_MenuKey( int );

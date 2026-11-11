@@ -26,9 +26,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define REF_POWERVR	3
 #define REF_VERITE	4
 
-extern cvar_t *vid_ref;
-extern cvar_t *vid_fullscreen;
-extern cvar_t *vid_gamma;
+EXTERNC cvar_t *vid_ref;
+EXTERNC cvar_t *vid_fullscreen;
+EXTERNC cvar_t *vid_gamma;
 extern cvar_t *scr_viewsize;
 
 cvar_t *gl_mode;

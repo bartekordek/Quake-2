@@ -1,4 +1,4 @@
-#include "quake2/windows/window_util.h"
+#include "quake2/windows/window_util.hpp"
 #include "quake2/windows/import_sdl.h"
 #include "quake2/input/event_handler.h"
 #include "quake2/input/input.h"
@@ -57,7 +57,7 @@ qboolean create_window (int x, int y, int w, int h, qboolean fullscreen)
 
 	// Compatibility profile: RenderDoc does not capture it. Core would.
 	SDL_GL_SetAttribute (SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
-	
+
 	SDL_GL_SetAttribute (SDL_GL_DOUBLEBUFFER, 1);
 	SDL_GL_SetAttribute (SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
 
@@ -84,12 +84,10 @@ qboolean create_window (int x, int y, int w, int h, qboolean fullscreen)
 	g_windowdata.rect.right	 = x + w;
 	g_windowdata.rect.bottom = y + h;
 
-
-
 	return e_true;
 }
 
-void Set_opengl_version(int major, int minor)
+void Set_opengl_version (int major, int minor)
 {
 	std::int32_t operatoion_result = SDL_GL_SetAttribute (SDL_GL_CONTEXT_MAJOR_VERSION, major);
 	Q2_Assert (operatoion_result == 0, "CANNOT SET GL MAJOR VERSION!");
@@ -98,7 +96,7 @@ void Set_opengl_version(int major, int minor)
 	Q2_Assert (operatoion_result == 0, "CANNOT SET GL MAJOR VERSION!");
 }
 
-void SetVideoMode(VideoSettings* inVideoSettings)
+void SetVideoMode (VideoSettings *inVideoSettings)
 {
 	SDL_DisplayMode dm;
 	dm.w = inVideoSettings->dmPelsWidth;
@@ -106,7 +104,7 @@ void SetVideoMode(VideoSettings* inVideoSettings)
 	SDL_SetWindowDisplayMode (g_window, &dm);
 }
 
-void update_buffer()
+void update_buffer ()
 {
 	SDL_GL_SwapWindow (g_window);
 }
@@ -308,14 +306,14 @@ void HandleWindowEvent (SDL_WindowEvent &event)
 		{
 			log_str ("SDL_WINDOWEVENT_ENTER");
 			SDL_ShowCursor (SDL_TRUE);
-			
+
 			break;
 		}
 		case SDL_WINDOWEVENT_LEAVE:
 		{
 			log_str ("SDL_WINDOWEVENT_LEAVE");
 			SDL_ShowCursor (SDL_FALSE);
-			
+
 			break;
 		}
 		case SDL_WINDOWEVENT_FOCUS_GAINED:

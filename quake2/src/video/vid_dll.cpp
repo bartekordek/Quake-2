@@ -20,18 +20,19 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // Main windowed and fullscreen graphics interface module. This module
 // is used for both the software and OpenGL rendering versions of the
 // Quake refresh engine.
+#include "quake2/client/vid.h"
 #include <assert.h>
 #include <float.h>
 #include <SDL_video.h>
 
 #include "quake2/client/client.h"
 #include "quake2/windows/winquake.h"
-#include "quake2/windows/window_util.h"
+#include "quake2/windows/window_util.hpp"
 #include "renderer/modern_opengl_c_.h"
 // #include "zmouse.h"
 
 // Structure containing functions exported from refresh DLL
-refexport_t re;
+EXTERNC refexport_t re = {};
 
 cvar_t *win_noalttab;
 
@@ -42,16 +43,16 @@ cvar_t *win_noalttab;
 static UINT MSH_MOUSEWHEEL;
 
 // Console variables that we need to access from this module
-cvar_t *vid_gamma;
-cvar_t *vid_ref;   // Name of Refresh DLL loaded
-cvar_t *vid_xpos;  // X coordinate of window position
-cvar_t *vid_ypos;  // Y coordinate of window position
-cvar_t *vid_fullscreen;
+EXTERNC cvar_t *vid_gamma	  = nullptr;
+EXTERNC cvar_t *vid_ref		  = nullptr;  // Name of Refresh DLL loaded
+cvar_t		   *vid_xpos	  = nullptr;  // X coordinate of window position
+cvar_t		   *vid_ypos	  = nullptr;  // Y coordinate of window position
+EXTERNC cvar_t *vid_fullscreen;
 
 // Global variables used internally by this module
 viddef_t  viddef;		   // global video state; used by other modules
 HINSTANCE reflib_library;  // Handle to refresh DLL
-qboolean  reflib_active = 0;
+EXTERNC qboolean reflib_active = e_false;
 
 HWND cl_hwnd;  // Main window handle for life of program
 
@@ -66,7 +67,7 @@ EXTERNC unsigned sys_msg_time;
 /*
 ** WIN32 helper functions
 */
-extern qboolean s_win95;
+EXTERNC qboolean s_win95;
 
 static void WIN_DisableAltTab (void)
 {
@@ -116,7 +117,7 @@ DLL GLUE
 */
 
 #define MAXPRINTMSG 4096
-void VID_Printf (int print_level, char *fmt, ...)
+void VID_Printf (int print_level, const char *fmt, ...)
 {
 	va_list			argptr;
 	char			msg[MAXPRINTMSG];
@@ -141,7 +142,7 @@ void VID_Printf (int print_level, char *fmt, ...)
 	}
 }
 
-void VID_Error (int err_level, char *fmt, ...)
+void VID_Error (int err_level, const char *fmt, ...)
 {
 	va_list			argptr;
 	char			msg[MAXPRINTMSG];
@@ -206,92 +207,23 @@ byte scantokey[128] = {
 	'x',		  // 073
 	'c',		  // 074
 	'v',		  // 075
-	'b',
-	'n',
-	'm',
-	',',
-	'.',
-	'/',
-	K_SHIFT,
- '*',
-	K_ALT,
-	' ',
-	0,
-	K_F1,
-	K_F2,
-	K_F3,
+	'b', 'n', 'm', ',', '.', '/', K_SHIFT, '*', K_ALT, ' ', 0, K_F1, K_F2, K_F3,
 
-	K_F4,
-	 K_F5,
+	K_F4, K_F5,
 	// 3
-	K_F6,
-	 K_F7,
-	 K_F8,
-	K_F9,
-  K_F10,
- K_PAUSE,
- 0,
-	K_HOME,
- K_UPARROW,
- K_PGUP,
- K_KP_MINUS,
- K_LEFTARROW,
- K_KP_5,
- K_RIGHTARROW,
+	K_F6, K_F7, K_F8, K_F9, K_F10, K_PAUSE, 0, K_HOME, K_UPARROW, K_PGUP, K_KP_MINUS, K_LEFTARROW, K_KP_5, K_RIGHTARROW,
 
-	K_KP_PLUS,
-	 K_END,
+	K_KP_PLUS, K_END,
 	// 4
-	K_DOWNARROW,
- K_PGDN,
- K_INS,
- K_DEL,
- 0,
-	0,
-	0,
-	K_F11,
-	K_F12,
-	0,
-	0,
-	0,
-	0,
-	0,
+	K_DOWNARROW, K_PGDN, K_INS, K_DEL, 0, 0, 0, K_F11, K_F12, 0, 0, 0, 0, 0,
 
-	0,
-	 0,
+	0, 0,
 	// 5
-	0,
-	 0,
-	 0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 
-	0,
-	 0,
+	0, 0,
 	// 6
-	0,
-	 0,
-	 0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 
 	0,
 	0  // 7
@@ -361,7 +293,7 @@ int MapKey (int key)
 	}
 }
 
-void AppActivate (qboolean fActive, qboolean minimize)
+EXTERNC void AppActivate (qboolean fActive, qboolean minimize)
 {
 	Minimized = minimize;
 
@@ -468,10 +400,10 @@ LONG WINAPI MainWndProc (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			fActive	   = LOWORD (wParam);
 			fMinimized = (BOOL) HIWORD (wParam);
 
-			AppActivate (fActive != WA_INACTIVE, fMinimized);
+			AppActivate ((qboolean) (fActive != WA_INACTIVE), (qboolean) fMinimized);
 
 			if (reflib_active)
-				re.AppActivate (!(fActive == WA_INACTIVE));
+				re.AppActivate ((qboolean) !(fActive == WA_INACTIVE));
 		}
 			return DefWindowProc (hWnd, uMsg, wParam, lParam);
 
@@ -556,8 +488,9 @@ LONG WINAPI MainWndProc (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 		case MM_MCINOTIFY:
 		{
-			LONG CDAudio_MessageHandler (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-			lRet = CDAudio_MessageHandler (hWnd, uMsg, wParam, lParam);
+			//LONG CDAudio_MessageHandler (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+			//lRet = CDAudio_MessageHandler (hWnd, uMsg, wParam, lParam);
+			// TODO:
 		}
 		break;
 
@@ -599,19 +532,10 @@ typedef struct vidmode_s
 	int			mode;
 } vidmode_t;
 
-vidmode_t vid_modes[] =
-{
-	{ "Mode 0: 320x240",   320, 240,   0 },
-	{ "Mode 1: 400x300",   400, 300,   1 },
-	{ "Mode 2: 512x384",   512, 384,   2 },
-	{ "Mode 3: 640x480",   640, 480,   3 },
-	{ "Mode 4: 800x600",   800, 600,   4 },
-	{ "Mode 5: 960x720",   960, 720,   5 },
-	{ "Mode 6: 1024x768",  1024, 768,  6 },
-	{ "Mode 7: 1152x864",  1152, 864,  7 },
-	{ "Mode 8: 1280x960",  1280, 960, 8 },
-	{ "Mode 9: 1600x1200", 1600, 1200, 9 }
-};
+vidmode_t vid_modes[] = {{"Mode 0: 320x240", 320, 240, 0},	  {"Mode 1: 400x300", 400, 300, 1},	  {"Mode 2: 512x384", 512, 384, 2},
+						 {"Mode 3: 640x480", 640, 480, 3},	  {"Mode 4: 800x600", 800, 600, 4},	  {"Mode 5: 960x720", 960, 720, 5},
+						 {"Mode 6: 1024x768", 1024, 768, 6},  {"Mode 7: 1152x864", 1152, 864, 7}, {"Mode 8: 1280x960", 1280, 960, 8},
+						 {"Mode 9: 1600x1200", 1600, 1200, 9}};
 
 qboolean VID_GetModeInfo (int *width, int *height, int mode)
 {
@@ -726,7 +650,7 @@ qboolean VID_LoadRefresh (const char *name)
 
 	if (strcmp (name, "ref_gl_modern.dll") == 0)
 	{
-		if ((GetRefAPI = (void *) GetProcAddress (reflib_library, "GetRefAPI")) == 0)
+		if ((GetRefAPI = (GetRefAPI_t) GetProcAddress (reflib_library, "GetRefAPI")) == 0)
 		{
 			Com_Error (ERR_FATAL, "GetProcAddress failed on %s", name);
 		}
@@ -735,7 +659,7 @@ qboolean VID_LoadRefresh (const char *name)
 	}
 	else
 	{
-		GetRefAPI = GetProcAddress (reflib_library, "GetRefAPI");
+		GetRefAPI = (GetRefAPI_t) GetProcAddress (reflib_library, "GetRefAPI");
 		if (!GetRefAPI)
 		{
 			Com_Error (ERR_FATAL, "GetProcAddress failed on %s", name);

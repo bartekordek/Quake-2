@@ -1067,7 +1067,7 @@ typedef struct
 #define VIDREF_SOFT	 2
 #define VIDREF_OTHER 3
 
-extern int vidref_val;
+EXTERNC int vidref_val;
 // PGM
 // ==================
 

@@ -310,7 +310,7 @@ EXTERNC void Cbuf_InsertText(const char *text);
 // inserted at the beginning of the buffer, before any remaining unexecuted
 // commands.
 
-EXTERNC void Cbuf_ExecuteText(int exec_when, char *text);
+EXTERNC void Cbuf_ExecuteText(int exec_when, const char *text);
 // this can be used in place of either Cbuf_AddText or Cbuf_InsertText
 
 EXTERNC void Cbuf_AddEarlyCommands(qboolean clear);

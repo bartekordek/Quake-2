@@ -1,3 +1,5 @@
+#pragma once
+
 /*
 Copyright (C) 1997-2001 Id Software, Inc.
 
@@ -21,6 +23,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //
 // console
 //
+
+#include "shared/config.h"
 
 #define	NUM_CON_TIMES 4
 
@@ -59,4 +63,4 @@ void Con_CenteredPrint (const char *text);
 void Con_Clear_f (void);
 void Con_DrawNotify (void);
 void Con_ClearNotify (void);
-void Con_ToggleConsole_f (void);
+EXTERNC void Con_ToggleConsole_f (void);

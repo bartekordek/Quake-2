@@ -1,3 +1,5 @@
+#pragma once
+
 /*
 Copyright (C) 1997-2001 Id Software, Inc.
 
@@ -18,6 +20,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#include "shared/config.h"
+
 struct sfx_s;
 
 void S_Init (void);
@@ -29,10 +33,10 @@ void S_StartLocalSound (const char *s);
 
 void S_RawSamples (int samples, int rate, int width, int channels, byte *data);
 
-void S_StopAllSounds(void);
+EXTERNC void S_StopAllSounds(void);
 void S_Update (vec3_t origin, vec3_t v_forward, vec3_t v_right, vec3_t v_up);
 
-void S_Activate (qboolean active);
+EXTERNC void S_Activate (qboolean active);
 
 void S_BeginRegistration (void);
 struct sfx_s *S_RegisterSound (const char *sample);
