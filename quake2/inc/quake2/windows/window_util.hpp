@@ -23,4 +23,21 @@ EXTERNC qboolean Get_Is_InForeground ();
 EXTERNC void	 SetVideoMode (VideoSettings* inVideoSettings);
 EXTERNC void	 Set_opengl_version(int major, int minor);
 
+class WindowUtil
+{
+public:
+	static WindowUtil &GetInstance ()
+	{
+		static WindowUtil instance;
+		return instance;
+	}
+
+	void toggle_cursor (bool inIsOn);
+
+protected:
+private:
+	WindowUtil ();
+	~WindowUtil ();
+};
+
 #endif	// __window_util_h__

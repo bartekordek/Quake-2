@@ -198,7 +198,7 @@ void IN_ActivateMouse (void)
 	outRect.top	   = window_rect.top;
 	outRect.bottom = window_rect.bottom;
 
-	while (ShowCursor (FALSE) >= 0);
+	WindowUtil::GetInstance ().toggle_cursor (false);
 }
 
 /*
@@ -222,7 +222,7 @@ void IN_DeactivateMouse (void)
 
 	ClipCursor (NULL);
 	ReleaseCapture ();
-	while (ShowCursor (TRUE) < 0);
+	WindowUtil::GetInstance ().toggle_cursor (true);
 }
 
 /*

@@ -34,6 +34,27 @@ struct WindowsData
 
 WindowsData g_windowdata;
 
+WindowUtil::WindowUtil()
+{
+
+}
+
+void WindowUtil::toggle_cursor (bool inIsOn)
+{
+	if (inIsOn)
+	{
+		SDL_ShowCursor (SDL_ENABLE);
+	}
+	else
+	{
+		SDL_ShowCursor (SDL_DISABLE);
+	}
+}
+
+WindowUtil::~WindowUtil ()
+{
+}
+
 qboolean create_window (int x, int y, int w, int h, qboolean fullscreen)
 {
 	Uint32 flags = SDL_WINDOW_SHOWN | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_OPENGL;
@@ -197,6 +218,10 @@ void fetch_events ()
 				break;
 			}
 			case SDL_APP_WILLENTERBACKGROUND:
+			{
+				AppActivate (e_false, e_false);
+				break;
+			}
 			case SDL_APP_DIDENTERFOREGROUND:
 			{
 				AppActivate (e_true, e_false);
@@ -305,14 +330,14 @@ void HandleWindowEvent (SDL_WindowEvent &event)
 		case SDL_WINDOWEVENT_ENTER:
 		{
 			log_str ("SDL_WINDOWEVENT_ENTER");
-			SDL_ShowCursor (SDL_TRUE);
+			SDL_ShowCursor (SDL_FALSE);
 
 			break;
 		}
 		case SDL_WINDOWEVENT_LEAVE:
 		{
 			log_str ("SDL_WINDOWEVENT_LEAVE");
-			SDL_ShowCursor (SDL_FALSE);
+			SDL_ShowCursor (SDL_TRUE);
 
 			break;
 		}

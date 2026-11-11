@@ -295,6 +295,8 @@ int MapKey (int key)
 
 EXTERNC void AppActivate (qboolean fActive, qboolean minimize)
 {
+	Com_Printf ("AppActivate %d %d\n", fActive, minimize);
+
 	Minimized = minimize;
 
 	Key_ClearStates ();
