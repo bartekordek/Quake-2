@@ -28,7 +28,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "quake2/client/client.h"
 #include "quake2/windows/winquake.h"
 #include "quake2/windows/window_util.hpp"
-#include "renderer/modern_opengl_c_.h"
 // #include "zmouse.h"
 
 // Structure containing functions exported from refresh DLL
@@ -43,11 +42,11 @@ cvar_t *win_noalttab;
 static UINT MSH_MOUSEWHEEL;
 
 // Console variables that we need to access from this module
-EXTERNC cvar_t *vid_gamma	  = nullptr;
-EXTERNC cvar_t *vid_ref		  = nullptr;  // Name of Refresh DLL loaded
-cvar_t		   *vid_xpos	  = nullptr;  // X coordinate of window position
-cvar_t		   *vid_ypos	  = nullptr;  // Y coordinate of window position
-EXTERNC cvar_t *vid_fullscreen;
+EXTERNC cvar_t *vid_gamma	   = nullptr;
+EXTERNC cvar_t *vid_ref		   = nullptr;  // Name of Refresh DLL loaded
+cvar_t		   *vid_xpos	   = nullptr;  // X coordinate of window position
+cvar_t		   *vid_ypos	   = nullptr;  // Y coordinate of window position
+EXTERNC cvar_t *vid_fullscreen = nullptr;
 
 // Global variables used internally by this module
 viddef_t  viddef;		   // global video state; used by other modules
@@ -432,6 +431,7 @@ qboolean VID_LoadRefresh (const char *name)
 		{
 			Com_Error (ERR_FATAL, "GetProcAddress failed on %s", name);
 		}
+		//TODO:
 		re				 = GetRefAPI (ri);
 		re.renderer_type = OpenGL_Modern;
 	}

@@ -28,15 +28,21 @@ list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/server/sv_user.c)
 list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/server/sv_world.c)
 list(APPEND SOURCES $ENV{Q2_ROOT_DIR}/win32/q_shwin.c)
 
+find_package(OpenGL REQUIRED)
 include_directories( SYSTEM ${Q2_ROOT_DIR}/deps/SDL/include )
+include_directories($ENV{GLEW_ROOT}/include)
+
 
 set(DEPENDENCIES
 PRIVATE game
+PRIVATE glew_s
+PRIVATE glm::glm
+PRIVATE OpenGL::GL
 PRIVATE ref_gl
 PRIVATE ref_gl_modern
 PRIVATE ref_soft
-PRIVATE shared
 PRIVATE SDL2-static
+PRIVATE shared
 )
 
 if (MSVC)
