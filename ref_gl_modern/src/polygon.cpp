@@ -145,19 +145,6 @@ void Polygon::draw_impl (std::uint32_t in_tex_id)
 		return;
 	}
 
-	//======
-	// PGM
-	if (fa->texinfo->flags & SURF_FLOWING)
-	{
-		DrawGLFlowingPoly (fa);
-	}
-	else
-	{
-		DrawGLPoly (fa->polys);
-	}
-	// PGM
-	//======
-
 	/*
 	** check for lightmap modification
 	*/
@@ -183,15 +170,13 @@ void Polygon::draw_impl (std::uint32_t in_tex_id)
 
 	if (is_dynamic)
 	{
+		unsigned temp[128 * 128];
+		const int32_t	smax = (fa->extents[0] >> 4) + 1;
+		const int32_t	tmax = (fa->extents[1] >> 4) + 1;
+		GL_BindTexture (gl_state.lightmap_textures[fa->lightmaptexturenum]);
+		R_BuildLightMap (fa, (byte *) temp, smax * 4);
 		if (maps < MAXLIGHTMAPS && (fa->styles[maps] >= 32 || fa->styles[maps] == 0) && (fa->dlightframe != r_framecount))
 		{
-			unsigned temp[128 * 128];
-			int		 smax, tmax;
-
-			smax = (fa->extents[0] >> 4) + 1;
-			tmax = (fa->extents[1] >> 4) + 1;
-
-			R_BuildLightMap (fa, (byte *) temp, smax * 4);
 			R_SetCacheState (fa);
 
 			// DrawGLPoly binds via glBindTexture and bypasses GL_BindTexture's cache —
@@ -199,9 +184,6 @@ void Polygon::draw_impl (std::uint32_t in_tex_id)
 			glActiveTexture (GL_TEXTURE0);
 			gl_state.currenttextures[0] = -1;
 			gl_state.currenttmu			= 0;
-			GL_BindTexture (gl_state.lightmap_textures[fa->lightmaptexturenum]);
-
-			qglTexSubImage2D (GL_TEXTURE_2D, 0, fa->light_s, fa->light_t, smax, tmax, GL_LIGHTMAP_FORMAT, GL_UNSIGNED_BYTE, temp);
 
 			fa->lightmapchain								 = gl_lms.lightmap_surfaces[fa->lightmaptexturenum];
 			gl_lms.lightmap_surfaces[fa->lightmaptexturenum] = fa;
@@ -211,12 +193,27 @@ void Polygon::draw_impl (std::uint32_t in_tex_id)
 			fa->lightmapchain			= gl_lms.lightmap_surfaces[0];
 			gl_lms.lightmap_surfaces[0] = fa;
 		}
+		qglTexSubImage2D (GL_TEXTURE_2D, 0, fa->light_s, fa->light_t, smax, tmax, GL_LIGHTMAP_FORMAT, GL_UNSIGNED_BYTE, temp);
 	}
 	else
 	{
 		fa->lightmapchain								 = gl_lms.lightmap_surfaces[fa->lightmaptexturenum];
 		gl_lms.lightmap_surfaces[fa->lightmaptexturenum] = fa;
 	}
+
+	
+	//======
+	// PGM
+	if (fa->texinfo->flags & SURF_FLOWING)
+	{
+		DrawGLFlowingPoly (fa);
+	}
+	else
+	{
+		DrawGLPoly (fa->polys);
+	}
+	// PGM
+	//======
 }
 
 void Polygon::overwerite_tex_id (std::uint32_t tex_id)
