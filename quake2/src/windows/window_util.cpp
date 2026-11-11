@@ -201,7 +201,7 @@ void fetch_events ()
 			case SDL_APP_WILLENTERBACKGROUND:
 			case SDL_APP_DIDENTERFOREGROUND:
 			{
-				AppActivate (e_false, e_false);
+				AppActivate (e_true, e_false);
 				break;
 			}
 			case SDL_KEYDOWN:
