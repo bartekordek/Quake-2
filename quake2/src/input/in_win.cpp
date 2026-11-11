@@ -181,7 +181,7 @@ void IN_ActivateMouse (void)
 	window_center_x = (window_rect.right + window_rect.left) / 2;
 	window_center_y = (window_rect.top + window_rect.bottom) / 2;
 
-	SetCursorPos (window_center_x, window_center_y);
+	Q2_SetMousePos (window_center_x, window_center_y);
 
 	old_x = window_center_x;
 	old_y = window_center_y;
