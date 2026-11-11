@@ -34,6 +34,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "gl_modern/gl_state.hpp"
 #include "gl_modern/frame_buffer.hpp"
 #include "gl_modern/gl_rmain.h"
+#include "gl_modern/renderer.hpp"
 
 #include "shared/assert.h"
 
@@ -240,41 +241,6 @@ qboolean GLimp_Init (void)
 
 qboolean GLimp_InitGL (void)
 {
-	int		pixelformat;
-	cvar_t *stereo;
-
-	stereo = ri.Cvar_Get ("cl_stereo", "0", 0);
-
-	/*
-	** set PFD_STEREO if necessary
-	*/
-	bool isStereo = false;
-	if (stereo->value != 0)
-	{
-		ri.Con_Printf (PRINT_ALL, "...attempting to use stereo\n");
-		Q2::glstate_t::get_instance ().stereo_enabled = e_true;
-		isStereo = true;
-	}
-	else
-	{
-		Q2::glstate_t::get_instance ().stereo_enabled = e_false;
-	}
-
-	/*
-	** report if stereo is desired but unavailable
-	*/
-	if (!isStereo && (stereo->value != 0))
-	{
-		ri.Con_Printf (PRINT_ALL, "...failed to select stereo pixel format\n");
-		ri.Cvar_SetValue ("cl_stereo", 0);
-		Q2::glstate_t::get_instance ().stereo_enabled = e_false;
-	}
-
-	/*
-	** startup the OpenGL subsystem by creating a context and making
-	** it current
-	*/
-
 	if (!VerifyDriver ())
 	{
 		ri.Con_Printf (PRINT_ALL, "GLimp_Init() - no hardware acceleration detected\n");
@@ -287,20 +253,9 @@ qboolean GLimp_InitGL (void)
 /*
 ** GLimp_BeginFrame
 */
-EXTERNC void GLimp_BeginFrame (float camera_separation)
+EXTERNC void GLimp_BeginFrame (void)
 {
-	if (camera_separation < 0 && Q2::glstate_t::get_instance ().stereo_enabled)
-	{
-		qglDrawBuffer (GL_BACK_LEFT);
-	}
-	else if (camera_separation > 0 && Q2::glstate_t::get_instance ().stereo_enabled)
-	{
-		qglDrawBuffer (GL_BACK_RIGHT);
-	}
-	else
-	{
-		qglDrawBuffer (GL_BACK);
-	}
+	qglDrawBuffer (GL_BACK);
 }
 
 /*
@@ -312,17 +267,7 @@ EXTERNC void GLimp_BeginFrame (float camera_separation)
 */
 void GLimp_EndFrame (void)
 {
-	// Drain any pending GL errors so they cannot block the resolve/swap.
-	while (glGetError () != GL_NO_ERROR)
-	{
-	}
-
-	g_framebuffer.render ();
-
-	if (stricmp (gl_drawbuffer->string, "GL_BACK") == 0)
-	{
-		ri.Swap_buffers ();
-	}
+	gl_modern::Renderer::get_instance ().end_frame ();
 }
 
 /*
@@ -330,6 +275,7 @@ void GLimp_EndFrame (void)
 */
 void GLimp_AppActivate (qboolean active)
 {
+	auto x = 0;
 }
 
 #endif	// _WIN32

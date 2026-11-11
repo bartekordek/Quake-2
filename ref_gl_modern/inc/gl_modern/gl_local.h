@@ -375,7 +375,7 @@ IMPLEMENTATION SPECIFIC FUNCTIONS
 ====================================================================
 */
 
-EXTERNC void	 GLimp_BeginFrame (float camera_separation);
+EXTERNC void	 GLimp_BeginFrame (void);
 EXTERNC void	 GLimp_EndFrame (void);
 EXTERNC qboolean GLimp_Init (void);
 EXTERNC void	 GLimp_Shutdown (void);

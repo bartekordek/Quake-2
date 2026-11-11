@@ -24,9 +24,6 @@ public:
 	int currenttextures[2];
 	int currenttmu;
 
-	float camera_separation;
-	bool  stereo_enabled;
-
 	unsigned char originalRedGammaTable[256];
 	unsigned char originalGreenGammaTable[256];
 	unsigned char originalBlueGammaTable[256];

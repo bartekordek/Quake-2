@@ -12,7 +12,7 @@ public:
 	static Camera &get_instance ();
 
 	void reset_view ();
-	void set_perspective (float fovy_degrees, float aspect, float z_near, float z_far, float camera_separation = 0.f);
+	void set_perspective (float fovy_degrees, float aspect, float z_near, float z_far);
 
 	void rotate (float angle, float x, float y, float z);
 	void translate (float x, float y, float z);

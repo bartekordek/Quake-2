@@ -80,9 +80,9 @@ qboolean create_window (int x, int y, int w, int h, qboolean fullscreen)
 	g_windowdata.screen_h	 = dm.h;
 
 	g_windowdata.rect.left	 = x;
-	g_windowdata.rect.bottom = y + h;
-	g_windowdata.rect.right	 = x + h;
 	g_windowdata.rect.top	 = y;
+	g_windowdata.rect.right	 = x + w;
+	g_windowdata.rect.bottom = y + h;
 
 
 

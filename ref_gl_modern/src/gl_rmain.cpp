@@ -666,9 +666,6 @@ void MYgluPerspective (double fovy, double aspect, double zNear, double zFar)
 	xmin = ymin * aspect;
 	xmax = ymax * aspect;
 
-	xmin += -(2 * Q2::glstate_t::get_instance ().camera_separation) / zNear;
-	xmax += -(2 * Q2::glstate_t::get_instance ().camera_separation) / zNear;
-
 	qglFrustum (xmin, xmax, ymin, ymax, zNear, zFar);
 }
 
@@ -701,8 +698,7 @@ void R_SetupGL (void)
 
 	auto &camera = Q2::Camera::get_instance ();
 	camera.reset_view ();
-	camera.set_perspective (r_newrefdef.fov_y, screenaspect, 4.f, 4096.f,
-							Q2::glstate_t::get_instance ().camera_separation);
+	camera.set_perspective (r_newrefdef.fov_y, screenaspect, 4.f, 4096.f);
 
 	camera.rotate (-90.f, 1.f, 0.f, 0.f);  // put Z going up
 	camera.rotate (90.f, 0.f, 0.f, 1.f);	  // put Z going up
@@ -836,47 +832,6 @@ void R_SetGL2D (void)
 	glActiveTexture (GL_TEXTURE0);
 	glBindVertexArray (0);
 	glUseProgram (0);
-}
-
-static void GL_DrawColoredStereoLinePair (float r, float g, float b, float y)
-{
-	qglColor3f (r, g, b);
-	qglVertex2f (0, y);
-	qglVertex2f (vid.width, y);
-	qglColor3f (0, 0, 0);
-	qglVertex2f (0, y + 1);
-	qglVertex2f (vid.width, y + 1);
-}
-
-static void GL_DrawStereoPattern (void)
-{
-	int i;
-
-	if (!(gl_config.renderer & GL_RENDERER_INTERGRAPH))
-		return;
-
-	if (!Q2::glstate_t::get_instance ().stereo_enabled)
-		return;
-
-	R_SetGL2D ();
-
-	qglDrawBuffer (GL_BACK_LEFT);
-
-	for (i = 0; i < 20; i++)
-	{
-		qglBegin (GL_LINES);
-		GL_DrawColoredStereoLinePair (1, 0, 0, 0);
-		GL_DrawColoredStereoLinePair (1, 0, 0, 2);
-		GL_DrawColoredStereoLinePair (1, 0, 0, 4);
-		GL_DrawColoredStereoLinePair (1, 0, 0, 6);
-		GL_DrawColoredStereoLinePair (0, 1, 0, 8);
-		GL_DrawColoredStereoLinePair (1, 1, 0, 10);
-		GL_DrawColoredStereoLinePair (1, 1, 0, 12);
-		GL_DrawColoredStereoLinePair (0, 1, 0, 14);
-		qglEnd ();
-
-		GLimp_EndFrame ();
-	}
 }
 
 /*
@@ -1275,13 +1230,6 @@ qboolean R_Init ()
 
 	GL_SetDefaultState ();
 
-	/*
-	** draw our stereo patterns
-	*/
-#if 0  // commented out until H3D pays us the money they owe us
-	GL_DrawStereoPattern();
-#endif
-
 	GL_InitImages ();
 	Mod_Init ();
 	R_InitParticleTexture ();
@@ -1345,7 +1293,7 @@ R_BeginFrame
 */
 void R_BeginFrame (float camera_separation)
 {
-	Q2::glstate_t::get_instance ().camera_separation = camera_separation;
+	(void) camera_separation;
 
 	/*
 	** change modes if necessary
@@ -1394,7 +1342,7 @@ void R_BeginFrame (float camera_separation)
 	** Default framebuffer draw-buffer setup must happen before binding the FBO.
 	** glDrawBuffer(GL_BACK/GL_FRONT) is GL_INVALID_OPERATION while an FBO is bound.
 	*/
-	GLimp_BeginFrame (camera_separation);
+	GLimp_BeginFrame ();
 
 	/*
 	** draw buffer stuff
@@ -1403,15 +1351,10 @@ void R_BeginFrame (float camera_separation)
 	{
 		gl_drawbuffer->modified = e_false;
 
-		if (Q2::glstate_t::get_instance ().camera_separation == 0 || !Q2::glstate_t::get_instance ().stereo_enabled)
-		{
-			if (Q_stricmp (gl_drawbuffer->string, "GL_FRONT") == 0)
-				qglDrawBuffer (GL_FRONT);
-			else
-			{
-				qglDrawBuffer (GL_BACK);
-			}
-		}
+		if (Q_stricmp (gl_drawbuffer->string, "GL_FRONT") == 0)
+			qglDrawBuffer (GL_FRONT);
+		else
+			qglDrawBuffer (GL_BACK);
 	}
 
 	g_framebuffer.bind ();
