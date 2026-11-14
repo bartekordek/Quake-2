@@ -39,7 +39,6 @@ PRIVATE glew_s
 PRIVATE glm::glm
 PRIVATE OpenGL::GL
 PRIVATE ref_gl
-PRIVATE ref_gl_modern
 PRIVATE ref_soft
 PRIVATE SDL2-static
 PRIVATE shared
