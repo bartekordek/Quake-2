@@ -129,6 +129,8 @@ void Polygon::draw_impl (std::uint32_t in_tex_id)
 {
 	IRenderable::draw ();
 
+
+
 	auto &gl_state = Q2::glstate_t::get_instance ();
 	auto &gl_lms   = Q2::Light_map_state::get_instance ();
 
@@ -144,6 +146,12 @@ void Polygon::draw_impl (std::uint32_t in_tex_id)
 		EmitWaterPolys (fa);
 		return;
 	}
+
+	const int32_t smax = (fa->extents[0] >> 4) + 1;
+	const int32_t tmax = (fa->extents[1] >> 4) + 1;
+	constexpr std::size_t temp_size = 128u * 128u;
+	static unsigned		  temp[temp_size];
+	bool				  temp_has_changed = false;
 
 	/*
 	** check for lightmap modification
@@ -168,13 +176,14 @@ void Polygon::draw_impl (std::uint32_t in_tex_id)
 		}
 	}
 
+	const bool needs_restore = (fa->dlightframe == r_framecount);
 	if (is_dynamic)
 	{
-		unsigned temp[128 * 128];
 		const int32_t	smax = (fa->extents[0] >> 4) + 1;
 		const int32_t	tmax = (fa->extents[1] >> 4) + 1;
 		GL_BindTexture (gl_state.lightmap_textures[fa->lightmaptexturenum]);
 		R_BuildLightMap (fa, (byte *) temp, smax * 4);
+		temp_has_changed = true;
 		if (maps < MAXLIGHTMAPS && (fa->styles[maps] >= 32 || fa->styles[maps] == 0) && (fa->dlightframe != r_framecount))
 		{
 			R_SetCacheState (fa);
@@ -211,9 +220,18 @@ void Polygon::draw_impl (std::uint32_t in_tex_id)
 	else
 	{
 		DrawGLPoly (fa->polys);
+		if (needs_restore)
+		{
+			R_BuildLightMap (fa, (byte *) temp, smax * 4);
+		}
 	}
 	// PGM
 	//======
+
+	if (temp_has_changed)
+	{
+		std::memset (&temp, 0, temp_size);
+	}
 }
 
 void Polygon::overwerite_tex_id (std::uint32_t tex_id)
