@@ -1512,7 +1512,6 @@ void R_DrawBeam (entity_t *e)
 //===================================================================
 
 void			R_BeginRegistration (const char *map);
-struct image_s *R_RegisterSkin (const char *name);
 void			R_EndRegistration (void);
 
 void R_RenderFrame (refdef_t *fd);
@@ -1529,49 +1528,6 @@ GetRefAPI
 
 @@@@@@@@@@@@@@@@@@@@@
 */
-refexport_t GetRefAPI (refimport_t rimp)
-{
-	refexport_t re;
-
-	ri					   = rimp;
-
-	re.api_version		   = API_VERSION;
-
-	re.BeginRegistration   = R_BeginRegistration;
-	re.RegisterModel	   = R_RegisterModel;
-	re.RegisterSkin		   = R_RegisterSkin;
-	re.RegisterPic		   = Draw_FindPic;
-	re.SetSky			   = R_SetSky;
-	re.EndRegistration	   = R_EndRegistration;
-
-	re.RenderFrame		   = R_RenderFrame;
-
-	re.DrawGetPicSize	   = Draw_GetPicSize;
-	re.DrawPic			   = Draw_Pic;
-	re.DrawStretchPic	   = Draw_StretchPic;
-	re.DrawChar			   = Draw_Char;
-	re.DrawTileClear	   = Draw_TileClear;
-	re.DrawFill			   = Draw_Fill;
-	re.DrawFadeScreen	   = Draw_FadeScreen;
-
-	re.DrawStretchRaw	   = Draw_StretchRaw;
-
-	re.Init				   = R_Init;
-	re.Shutdown			   = R_Shutdown;
-
-	re.CinematicSetPalette = R_SetPalette;
-	re.BeginFrame		   = R_BeginFrame;
-	re.EndFrame			   = GLimp_EndFrame;
-
-	re.AppActivate		   = GLimp_AppActivate;
-
-	re.create_window	   = ri.create_window;
-	re.Swap_buffers		   = ri.Swap_buffers;
-
-	Swap_Init ();
-
-	return re;
-}
 
 void APIENTRY glDebugOutput (GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const char *message,
 							 const void *userParam)

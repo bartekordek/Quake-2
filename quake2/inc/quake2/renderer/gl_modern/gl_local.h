@@ -287,6 +287,7 @@ EXTERNC void			R_SetPalette (const unsigned char *palette);
 EXTERNC int				Draw_GetPalette (void);
 EXTERNC void			GL_ResampleTexture (unsigned *in, int inwidth, int inheight, unsigned *out, int outwidth, int outheight);
 EXTERNC struct image_s *R_RegisterSkin (const char *name);
+EXTERNC void			R_RenderFrame (refdef_t *fd);
 
 void			 LoadPCX (const char *filename, byte **pic, byte **palette, int *width, int *height);
 EXTERNC image_t *GL_FindImage (const char *name, imagetype_t type);

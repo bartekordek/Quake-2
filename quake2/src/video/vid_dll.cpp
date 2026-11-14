@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // is used for both the software and OpenGL rendering versions of the
 // Quake refresh engine.
 #include "quake2/client/vid.h"
+#include "quake2/renderer/irenderer.hpp"
 #include <assert.h>
 #include <float.h>
 #include <SDL_video.h>
@@ -427,13 +428,7 @@ qboolean VID_LoadRefresh (const char *name)
 
 	if (strcmp (name, "ref_gl_modern.dll") == 0)
 	{
-		if ((GetRefAPI = (GetRefAPI_t) GetProcAddress (reflib_library, "GetRefAPI")) == 0)
-		{
-			Com_Error (ERR_FATAL, "GetProcAddress failed on %s", name);
-		}
-		//TODO:
-		re				 = GetRefAPI (ri);
-		re.renderer_type = OpenGL_Modern;
+		re				 = CreateRefAPI (RendererType::OpenGLModern, ri);
 	}
 	else
 	{
