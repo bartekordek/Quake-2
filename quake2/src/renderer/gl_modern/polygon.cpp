@@ -129,8 +129,6 @@ void Polygon::draw_impl (std::uint32_t in_tex_id)
 {
 	IRenderable::draw ();
 
-
-
 	auto &gl_state = Q2::glstate_t::get_instance ();
 	auto &gl_lms   = Q2::Light_map_state::get_instance ();
 
@@ -149,9 +147,7 @@ void Polygon::draw_impl (std::uint32_t in_tex_id)
 
 	const int32_t smax = (fa->extents[0] >> 4) + 1;
 	const int32_t tmax = (fa->extents[1] >> 4) + 1;
-	constexpr std::size_t temp_size = 128u * 128u;
-	static unsigned		  temp[temp_size];
-	bool				  temp_has_changed = false;
+	static unsigned temp[128 * 128];
 
 	/*
 	** check for lightmap modification
@@ -179,11 +175,8 @@ void Polygon::draw_impl (std::uint32_t in_tex_id)
 	const bool needs_restore = (fa->dlightframe == r_framecount);
 	if (is_dynamic)
 	{
-		const int32_t	smax = (fa->extents[0] >> 4) + 1;
-		const int32_t	tmax = (fa->extents[1] >> 4) + 1;
 		GL_BindTexture (gl_state.lightmap_textures[fa->lightmaptexturenum]);
 		R_BuildLightMap (fa, (byte *) temp, smax * 4);
-		temp_has_changed = true;
 		if (maps < MAXLIGHTMAPS && (fa->styles[maps] >= 32 || fa->styles[maps] == 0) && (fa->dlightframe != r_framecount))
 		{
 			R_SetCacheState (fa);
@@ -210,7 +203,6 @@ void Polygon::draw_impl (std::uint32_t in_tex_id)
 		gl_lms.lightmap_surfaces[fa->lightmaptexturenum] = fa;
 	}
 
-	
 	//======
 	// PGM
 	if (fa->texinfo->flags & SURF_FLOWING)
@@ -220,17 +212,22 @@ void Polygon::draw_impl (std::uint32_t in_tex_id)
 	else
 	{
 		DrawGLPoly (fa->polys);
-		if (needs_restore)
-		{
-			R_BuildLightMap (fa, (byte *) temp, smax * 4);
-		}
 	}
 	// PGM
 	//======
 
-	if (temp_has_changed)
+	if (needs_restore)
 	{
-		std::memset (&temp, 0, temp_size);
+		const int saved_dlightframe = fa->dlightframe;
+		fa->dlightframe				= 0;
+		R_BuildLightMap (fa, (byte *) temp, smax * 4);
+		fa->dlightframe = saved_dlightframe;
+
+		glActiveTexture (GL_TEXTURE0);
+		gl_state.currenttextures[0] = -1;
+		gl_state.currenttmu			= 0;
+		GL_BindTexture (gl_state.lightmap_textures[fa->lightmaptexturenum]);
+		qglTexSubImage2D (GL_TEXTURE_2D, 0, fa->light_s, fa->light_t, smax, tmax, GL_LIGHTMAP_FORMAT, GL_UNSIGNED_BYTE, temp);
 	}
 }
 
