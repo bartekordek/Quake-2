@@ -427,6 +427,8 @@ void plat_blocked (edict_t *self, edict_t *other)
 
 void Use_Plat (edict_t *ent, edict_t *other, edict_t *activator)
 { 
+	(void)other;
+	(void)activator;
 	if (ent->think)
 		return;		// already down
 	plat_go_down (ent);
@@ -435,6 +437,8 @@ void Use_Plat (edict_t *ent, edict_t *other, edict_t *activator)
 
 void Touch_Plat_Center (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf)
 {
+	(void)plane;
+	(void)surf;
 	if (!other->client)
 		return;
 		
@@ -599,12 +603,16 @@ void rotating_blocked (edict_t *self, edict_t *other)
 
 void rotating_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
 {
+	(void)plane;
+	(void)surf;
 	if (self->avelocity[0] || self->avelocity[1] || self->avelocity[2])
 		T_Damage (other, self, self, vec3_origin, other->s.origin, vec3_origin, self->dmg, 1, 0, MOD_CRUSH);
 }
 
 void rotating_use (edict_t *self, edict_t *other, edict_t *activator)
 {
+	(void)other;
+	(void)activator;
 	if (!VectorCompare (self->avelocity, vec3_origin))
 	{
 		self->s.sound = 0;

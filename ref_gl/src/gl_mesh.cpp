@@ -305,6 +305,7 @@ EXTERNC vec3_t lightspot;
 
 void GL_DrawAliasShadow (dmdl_t *paliashdr, int posenum)
 {
+	(void)posenum;
 	dtrivertx_t	  *verts;
 	int			  *order;
 	vec3_t		   point;

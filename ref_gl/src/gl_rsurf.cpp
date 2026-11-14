@@ -1522,6 +1522,7 @@ GL_BeginBuildingLightmaps
 */
 void GL_BeginBuildingLightmaps (model_t *m)
 {
+	(void)m;
 	static lightstyle_t lightstyles[MAX_LIGHTSTYLES];
 	int					i;
 	unsigned			dummy[128 * 128];

@@ -354,6 +354,7 @@ void GLimp_EndFrame (void)
 */
 void GLimp_AppActivate (qboolean active)
 {
+	(void)active;
 }
 
 #endif	// _WIN32

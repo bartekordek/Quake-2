@@ -1074,6 +1074,7 @@ void R_BeginFrame (float camera_separation)
 {
 	extern void Draw_BuildGammaTable (void);
 
+	(void)camera_separation;
 	/*
 	** rebuild the gamma correction palette if necessary
 	*/

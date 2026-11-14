@@ -773,6 +773,7 @@ qboolean ai_checkattack (edict_t *self, float dist)
 	vec3_t		temp;
 	qboolean	hesDeadJim;
 
+	(void)dist;
 // this causes monsters to run blindly to the combat point w/o firing
 	if (self->goalentity)
 	{

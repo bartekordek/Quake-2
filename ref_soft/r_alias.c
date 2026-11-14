@@ -1007,6 +1007,7 @@ void R_AliasSetUpLerpData( dmdl_t *pmdl, float backlerp )
 	vec3_t	translation, vectors[3];
 	int		i;
 
+	(void)pmdl;
 	frontlerp = 1.0F - backlerp;
 
 	/*
