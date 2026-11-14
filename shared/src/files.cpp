@@ -132,8 +132,6 @@ void	FS_CreatePath (const char *path)
 	std::size_t i{1u};
 	std::size_t path_len = strlen (path);
 
-	const char	*ofs;
-
 	for (i = 1; i < path_len;++i)
 	{
 		if (sub[i] == '/')

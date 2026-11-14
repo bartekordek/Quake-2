@@ -307,9 +307,6 @@ void R_RenderBrushPoly (msurface_t *fa)
 {
 	Q2::Polygon *polygon = Q2::PolygonStore::get_instance ().get_or_create (fa);
 
-	int		 maps;
-	qboolean is_dynamic = e_false;
-
 	c_brush_polys++;
 	polygon->draw ();
 }

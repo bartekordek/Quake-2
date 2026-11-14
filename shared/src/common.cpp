@@ -549,7 +549,7 @@ For proxy protecting
 
 ====================
 */
-byte	COM_BlockSequenceCheckByte (byte *base, int length, int sequence, int challenge)
+byte	COM_BlockSequenceCheckByte (byte * /*base*/, int /*length*/, int /*sequence*/, int /*challenge*/)
 {
 	Sys_Error("COM_BlockSequenceCheckByte called\n");
 

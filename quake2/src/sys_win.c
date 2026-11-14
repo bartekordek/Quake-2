@@ -552,9 +552,9 @@ HINSTANCE global_hInstance;
 
 int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-	MSG	  msg;
 	int	  time, oldtime, newtime;
 	char *cddir;
+	(void)nCmdShow;
 
 	/* previous instances do not exist in Win32 */
 	if (hPrevInstance)
