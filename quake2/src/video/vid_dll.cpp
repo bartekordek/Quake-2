@@ -540,6 +540,9 @@ VID_Init
 */
 void VID_Init (void)
 {
+	int			i;
+	const char *forced_renderer;
+
 	/* Create the video variables so we know how to start the graphics drivers */
 	vid_ref		   = Cvar_Get ("vid_ref", "soft", CVAR_ARCHIVE);
 	vid_xpos	   = Cvar_Get ("vid_xpos", "3", CVAR_ARCHIVE);
@@ -547,6 +550,21 @@ void VID_Init (void)
 	vid_fullscreen = Cvar_Get ("vid_fullscreen", "0", CVAR_ARCHIVE);
 	vid_gamma	   = Cvar_Get ("vid_gamma", "1", CVAR_ARCHIVE);
 	win_noalttab   = Cvar_Get ("win_noalttab", "0", CVAR_ARCHIVE);
+
+	/*
+	** --renderer <name> forces vid_ref after config.cfg / +set, so the flag wins.
+	** Example: quake2.exe --renderer gl_modern
+	*/
+	i = COM_CheckParm ("--renderer");
+	if (i > 0 && i + 1 < COM_Argc ())
+	{
+		forced_renderer = COM_Argv (i + 1);
+		if (forced_renderer[0])
+		{
+			Com_Printf ("Forcing renderer from command line: %s\n", forced_renderer);
+			Cvar_Set ("vid_ref", forced_renderer);
+		}
+	}
 
 	/* Add some console commands that we want to handle */
 	Cmd_AddCommand ("vid_restart", VID_Restart_f);
